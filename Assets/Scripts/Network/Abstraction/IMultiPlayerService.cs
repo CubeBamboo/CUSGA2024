@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 
-namespace Shuile.Network.Abstration
+namespace Shuile.Network
 {
     public interface IMultiPlayerService
     {

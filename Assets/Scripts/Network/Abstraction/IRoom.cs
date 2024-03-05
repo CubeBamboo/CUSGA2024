@@ -1,4 +1,4 @@
-﻿namespace Shuile.Network.Abstration
+namespace Shuile.Network
 {
     public interface IRoom
     {
