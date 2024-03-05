@@ -14,7 +14,6 @@ namespace CbUtils
                 //lazy load
                 if (!instance && !isQuit)
                 {
-                    //TODO: if we need a prefab?
                     var go = new GameObject("MonoSingleton:" + typeof(T).ToString());
                     instance = go.AddComponent<T>();
                 }
