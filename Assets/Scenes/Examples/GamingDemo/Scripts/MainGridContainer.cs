@@ -6,8 +6,8 @@ using UnityEngine;
 namespace CUSGA2024
 {
     //just a grid layout
-    public class MainGridContainer : SimpleGridContainer<GameObject>
-    {
+    //public class MainGridContainer : SimpleGridContainer<GameObject>
+    //{
         
-    }
+    //}
 }

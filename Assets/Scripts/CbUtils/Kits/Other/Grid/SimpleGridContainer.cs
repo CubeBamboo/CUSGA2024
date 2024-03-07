@@ -5,12 +5,19 @@ using UnityEngine;
 
 namespace CbUtils
 {
+    //public interface IGridContainer<T>
+    //{
+    //    public abstract bool HasContent(Vector3Int pos);
+
+    //    public abstract bool RemoveContent(Vector3Int pos, System.Action<T> OnRemove = null);
+    //}
+
     /// <summary>
     /// [early access] it need a gridlayout component, it defines the bounds and the content
     /// </summary>
     /// <typeparam name="T">content type</typeparam>
     [RequireComponent(typeof(GridLayout))]
-    public class SimpleGridContainer<T> : MonoBehaviour
+    public class SimpleGridContainer<T>
     {
         public int width, height;
         private GridLayout mGrid { get; set; }
@@ -18,14 +25,15 @@ namespace CbUtils
         /// <summary>
         /// not recommend to access directly, you'll lose the bounds check.
         /// </summary>
-        public Dictionary<Vector3Int, T> contents { get; protected set; }
+        public Dictionary<Vector3Int, T> contents = new();
 
         public Vector3 cellSize => mGrid.cellSize;
 
-        public void Awake()
+        public SimpleGridContainer(GridLayout grid)
         {
-            mGrid = GetComponent<GridLayout>();
-            contents = new();
+            this.mGrid = grid;
+            width = -1;
+            height = -1;
         }
 
         public void OnDrawGizmosSelected()
@@ -45,7 +53,9 @@ namespace CbUtils
             }
         }
 
-        public bool IsOutOfBound(Vector3Int pos) => pos.x < 0 || pos.y < 0 || pos.x >= width || pos.y >= height;
+        public bool IsOutOfBound(Vector3Int pos) => width < 0 || height < 0 ?
+                                                        false :
+                                                        pos.x < 0 || pos.y < 0 || pos.x >= width || pos.y >= height;
 
         public bool HasContent(Vector3Int pos) => contents.ContainsKey(pos);
 

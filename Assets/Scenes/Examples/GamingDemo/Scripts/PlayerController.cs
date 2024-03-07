@@ -1,16 +1,17 @@
 using CbUtils;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 namespace CUSGA2024
 {
     public class BlockClearHelper
     {
-        private MainGridContainer grid;
+        private SimpleGridContainer<GameObject> grid;
         private HashSet<Vector3Int> blockToClearFlag = new(); //有则表示方块不要清除
 
-        public BlockClearHelper(MainGridContainer grid)
+        public BlockClearHelper(SimpleGridContainer<GameObject> grid)
         {
             this.grid = grid;
         }
@@ -19,10 +20,14 @@ namespace CUSGA2024
         public void CheckBlockClear()
         {
             blockToClearFlag.Clear();
-            //遍历字典所有方块，在地面则开始dfs，遇到bool is true || 周围为空则结束
             foreach (var item in grid.contents)
             {
-                //blockToClearFlag.Add(item.Key);
+                blockToClearFlag.Add(item.Key);
+            }
+
+            //遍历字典所有方块，在地面则开始dfs，遇到bool-notClear is true || 周围为空则结束
+            foreach (var item in grid.contents)
+            {
                 //在地面
                 if (item.Key.y == 0)
                 {
@@ -30,9 +35,9 @@ namespace CUSGA2024
                 }
             }
 
-            foreach(var toClear in blockToClearFlag)
+            foreach(var item in blockToClearFlag)
             {
-                grid.RemoveContent(toClear, go => Object.Destroy(go));
+                grid.RemoveContent(item, go => Object.Destroy(go));
             }
         }
 
@@ -47,11 +52,10 @@ namespace CUSGA2024
             if (!grid.HasContent(blockPosition))
                 return;
 
-            if (blockToClearFlag.Contains(blockPosition))
+            if (!blockToClearFlag.Contains(blockPosition))
                 return;
 
             blockToClearFlag.Remove(blockPosition);
-            Debug.Log($"remove block in {blockPosition}");
 
             depth++;
             //搜索上下左右
@@ -67,7 +71,7 @@ namespace CUSGA2024
     }
 
     //提供接口来控制两名玩家的逻辑
-    [RequireComponent(typeof(MainGridContainer))]
+    [RequireComponent(typeof(GridLayout))]
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer blockPrefab;
@@ -76,14 +80,16 @@ namespace CUSGA2024
 
         [SerializeField] private Transform blockParent;
 
-        public MainGridContainer grid { get; private set; }
+        public SimpleGridContainer<GameObject> grid { get; private set; }
 
         //for block clear check
         private BlockClearHelper blockClearHelper;
 
         private void Awake()
         {
-            grid = GetComponent<MainGridContainer>();
+            grid = new(GetComponent<GridLayout>());
+            grid.width = 16; //TODO: 重构
+            grid.height = 8;
         }
 
         private void Start()
