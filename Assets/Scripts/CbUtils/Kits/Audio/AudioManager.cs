@@ -6,7 +6,9 @@ namespace CbUtils
 {
     public class AudioManager : CbUtils.MonoSingletons<AudioManager>
     {
-        private AudioSource bgmSource, sfxSource, voiceSource;
+        private AudioSource bgmSource, sfxSource, voiceSource, otherSource;
+
+        public AudioSource OtherSource => otherSource;
 
         protected override void Awake()
         {
@@ -20,6 +22,7 @@ namespace CbUtils
             bgmSource = gameObject.AddComponent<AudioSource>();
             sfxSource = gameObject.AddComponent<AudioSource>();
             voiceSource = gameObject.AddComponent<AudioSource>();
+            otherSource = gameObject.AddComponent<AudioSource>();
         }
 
         #region PlayAudio
@@ -43,6 +46,12 @@ namespace CbUtils
         {
             voiceSource.clip = clip;
             voiceSource.Play();
+        }
+
+        public void PlayOther(AudioClip clip)
+        {
+            otherSource.clip = clip;
+            otherSource.Play();
         }
 
         #endregion
