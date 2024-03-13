@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: db0c0a0eead43a74e82a98c4a55a7f85, type: 3}
   bpm: 113.4
-  offset: -518
+  offset: 1636

@@ -14,6 +14,10 @@ namespace Shuile.Audio
         /// </summary>
         void Play();
         /// <summary>
+        /// 在特定时间播放
+        /// </summary>
+        void PlayScheduled(double time);
+        /// <summary>
         /// 暂停
         /// </summary>
         void Pause();

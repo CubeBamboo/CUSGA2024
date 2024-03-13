@@ -5,8 +5,8 @@ using UnityEditor;
 
 namespace CbUtils.Example
 {
-    /*
-    [CustomEditor(typeof(XX))]
+    
+    [CustomEditor(typeof(CbFoo))]
     public class InspectorExtExample : Editor
     {
         //private XX obj;
@@ -20,13 +20,29 @@ namespace CbUtils.Example
         {
             DrawDefaultInspector();
 
-            if (GUILayout.Button("Debug"))
+            if (GUILayout.Button("NormalPlay"))
             {
                 //some code...
+                CbFoo foo = (CbFoo)target;
+                foo.Play();
+            }
+
+            if (GUILayout.Button("PlayDelay"))
+            {
+                //some code...
+                CbFoo foo = (CbFoo)target;
+                foo.PlayDelayed();
+            }
+
+            if (GUILayout.Button("PlayScheduled"))
+            {
+                //some code...
+                CbFoo foo = (CbFoo)target;
+                foo.PlayScheduled();
             }
         }
     }
-    */
+    
     
     /*
     public class EditorExt : MonoBehaviour

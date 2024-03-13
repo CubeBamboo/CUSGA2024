@@ -1,68 +1,66 @@
 using CbUtils;
+using Shuile.Audio;
 using UnityEngine;
 
-//control the music time progress
-public class MusicRhythmManager : MonoSingletons<MusicRhythmManager>
+namespace Shuile
 {
-    [SerializeField] private LevelConfigSO levelConfig;
-    [SerializeField] private MusicConfigSO currentMusic;
-    private float currentTime; // timer for music playing
-    private bool isPlaying = false;
-
-    private AudioSource audioSource; // for music playing
-
-    public bool playOnAwake = true;
-
-    public bool IsPlaying => isPlaying;
-    public float MissTolerance => levelConfig.missTolerance;
-    public float CurrentTime => currentTime;
-    public float BpmInterval => 60f / currentMusic.bpm;
-    public float MusicBpm => currentMusic.bpm;
-    public float MusicOffset => currentMusic.offset;
-
-    protected override void Awake()
+    //control the music time progress
+    public class MusicRhythmManager : MonoSingletons<MusicRhythmManager>
     {
-        base.Awake();
-        audioSource = gameObject.AddComponent<AudioSource>(); //not audiomanager...
-    }
+        [SerializeField] private LevelConfigSO levelConfig;
+        [SerializeField] private MusicConfigSO currentMusic;
+        [SerializeField] private PlayerConfigSO playerConfig;
+        private float currentTime; // timer for music playing
+        private bool isPlaying = false;
 
-    private void Start()
-    {
-        //Time.timeScale = 0.5f; // TODO: delete. just for test
-        InitMusic();
-        currentTime = 0;
-        StartPlay();
-    }
+        private IAudioPlayer audioPlayer = new SimpleAudioPlayer(); // for music playing
 
-    void FixedUpdate()
-    {
-        if (!isPlaying)
-            return;
+        public bool playOnAwake = true;
 
-        currentTime += Time.fixedDeltaTime;
-    }
+        public bool IsPlaying => isPlaying;
+        public float MissTolerance => levelConfig.missTolerance;
+        public float CurrentTime => currentTime;
+        public float BpmInterval => 60f / currentMusic.bpm;
+        public float MusicBpm => currentMusic.bpm;
+        public float MusicOffset => currentMusic.offset;
 
-    private void InitMusic()
-    {
-        audioSource.clip = currentMusic.clip;
-        audioSource.playOnAwake = false;
-        audioSource.loop = true;
-        audioSource.volume = 0.4f;
-    }
+        protected override void Awake()
+        {
+            base.Awake();
+        }
 
-    public void StartPlay()
-    {
-        //audioSource.pitch = 0.5f; // TODO: delete.
-        float offset = currentMusic.offset * 0.001f;
+        private void Start()
+        {
+            InitMusic();
+            currentTime = 0;
+            if(playOnAwake)
+                StartPlay();
+        }
 
-        // play clip
-        if (currentMusic.offset > 0)
-            audioSource.PlayScheduled(AudioSettings.dspTime + offset);
-        else
-            audioSource.PlayDelayed(offset);
+        void FixedUpdate()
+        {
+            if (!isPlaying)
+                return;
 
-        currentTime = -offset;
-        isPlaying = true; // -> start timing
+            currentTime += Time.fixedDeltaTime;
+        }
 
+        private void InitMusic()
+        {
+            audioPlayer.LoadClip(currentMusic.clip);
+            audioPlayer.Volume = 0.4f;
+        }
+
+        public void StartPlay()
+        {
+            float offsetInSeconds = (currentMusic.offset + playerConfig.globalOffset) * 0.001f;
+
+            // play clip
+            audioPlayer.Play();
+
+            currentTime = -offsetInSeconds;
+            isPlaying = true; // -> start timing
+
+        }
     }
 }

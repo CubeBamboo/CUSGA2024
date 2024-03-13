@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace CUSGA2024
+namespace Shuile
 {
     //处理玩家输入，联系playerInput和playercontroller
     public class RhythmInputHandler : MonoBehaviour

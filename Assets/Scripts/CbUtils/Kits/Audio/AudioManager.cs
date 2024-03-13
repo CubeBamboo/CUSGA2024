@@ -20,9 +20,13 @@ namespace CbUtils
         private void InitComponent()
         {
             bgmSource = gameObject.AddComponent<AudioSource>();
+            bgmSource.playOnAwake = false;
             sfxSource = gameObject.AddComponent<AudioSource>();
+            sfxSource.playOnAwake = false;
             voiceSource = gameObject.AddComponent<AudioSource>();
+            voiceSource.playOnAwake = false;
             otherSource = gameObject.AddComponent<AudioSource>();
+            otherSource.playOnAwake = false;
         }
 
         #region PlayAudio
