@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99c82a3f015cd03418aab37daff42583, type: 3}
   m_Name: CubebambooSettings
   m_EditorClassIdentifier: 
-  globalOffset: 180
+  globalOffset: 200
