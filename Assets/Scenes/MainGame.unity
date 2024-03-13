@@ -580,6 +580,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelConfig: {fileID: 11400000, guid: 33051b7261f31514783d021c269ff9be, type: 2}
   currentMusic: {fileID: 11400000, guid: 31808be9e34b37e449be2b72963f0a0d, type: 2}
+  playerConfig: {fileID: 11400000, guid: e840ec97e75580341944e4bf37eb34d0, type: 2}
   playOnAwake: 1
 --- !u!4 &1352100087
 Transform:

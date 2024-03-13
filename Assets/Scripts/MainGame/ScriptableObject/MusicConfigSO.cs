@@ -6,6 +6,9 @@ using UnityEngine;
 public class MusicConfigSO : ScriptableObject
 {
     public AudioClip clip;
-    public float bpm; //TODO: value > 0 check
-    public float offset; //in ms
+    public float bpm;
+    /// <summary>
+    /// (in ms) define where is the first beat in audio clip.
+    /// </summary>
+    public float offset;
 }

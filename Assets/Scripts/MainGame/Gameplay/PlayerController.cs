@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CUSGA2024
+namespace Shuile
 {
     public class PlayerController : MonoBehaviour
     {
