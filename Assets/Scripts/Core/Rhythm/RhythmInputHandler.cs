@@ -1,12 +1,8 @@
-using CbUtils;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Shuile.Gameplay;
 
-namespace Shuile
+namespace Shuile.Rhythm
 {
     //处理玩家输入，联系playerInput和playercontroller
     public class RhythmInputHandler : MonoBehaviour
@@ -29,14 +25,14 @@ namespace Shuile
 #if UNITY_EDITOR
         private void OnGUI()
         {
-            GUI.skin.label.fontSize = 40;
-            GUILayout.Label($"hitOffset:{currentHitOffset}");
-            GUILayout.Label($"RealGameTime:{Time.fixedTime}");
+            //GUI.skin.label.fontSize = 40;
+            //GUILayout.Label($"hitOffset:{currentHitOffset}");
+            //GUILayout.Label($"RealGameTime:{Time.fixedTime}");
 
-            if (!MusicRhythmManager.Instance.IsPlaying)
-                return;
+            //if (!MusicRhythmManager.Instance.IsPlaying)
+            //    return;
 
-            GUILayout.Label($"CurrentTime:{MusicRhythmManager.Instance.CurrentTime}");
+            //GUILayout.Label($"RhythmCheckTime:{MusicRhythmManager.Instance.CurrentTime}");
         }
 #endif
 

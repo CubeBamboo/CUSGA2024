@@ -20,25 +20,11 @@ namespace CbUtils.Example
         {
             DrawDefaultInspector();
 
-            if (GUILayout.Button("NormalPlay"))
+            if (GUILayout.Button("Attack"))
             {
                 //some code...
                 CbFoo foo = (CbFoo)target;
-                foo.Play();
-            }
-
-            if (GUILayout.Button("PlayDelay"))
-            {
-                //some code...
-                CbFoo foo = (CbFoo)target;
-                foo.PlayDelayed();
-            }
-
-            if (GUILayout.Button("PlayScheduled"))
-            {
-                //some code...
-                CbFoo foo = (CbFoo)target;
-                foo.PlayScheduled();
+                foo.Attack();
             }
         }
     }

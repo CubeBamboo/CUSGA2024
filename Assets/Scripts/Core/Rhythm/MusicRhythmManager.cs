@@ -1,19 +1,20 @@
 using CbUtils;
-using Shuile.Audio;
 using UnityEngine;
+using Shuile.Audio;
+using Shuile.Framework;
 
-namespace Shuile
+namespace Shuile.Rhythm
 {
-    //control the music time progress
+    //control the music play and music time progress
     public class MusicRhythmManager : MonoSingletons<MusicRhythmManager>
     {
         [SerializeField] private LevelConfigSO levelConfig;
         [SerializeField] private MusicConfigSO currentMusic;
-        [SerializeField] private PlayerConfigSO playerConfig;
+        [SerializeField] private PlayerSettingsConfigSO playerConfig;
         private float currentTime; // timer for music playing
         private bool isPlaying = false;
 
-        private IAudioPlayer audioPlayer = new SimpleAudioPlayer(); // for music playing
+        private IAudioPlayer audioPlayer; // for music playing
 
         public bool playOnAwake = true;
 
@@ -27,6 +28,8 @@ namespace Shuile
         protected override void Awake()
         {
             base.Awake();
+
+            MainGame.Interface.TryGet(out audioPlayer);
         }
 
         private void Start()
@@ -37,7 +40,7 @@ namespace Shuile
                 StartPlay();
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             if (!isPlaying)
                 return;
