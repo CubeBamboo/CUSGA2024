@@ -7,8 +7,8 @@ namespace Shuile
     /// <summary>
     /// use for player settings
     /// </summary>
-    [CreateAssetMenu(fileName = "New Player Config", menuName = "Config/PlayerConfig")]
-    public class PlayerConfigSO : ScriptableObject
+    [CreateAssetMenu(fileName = "New PlayerSettingsConfig", menuName = "Config/PlayerSettings Config")]
+    public class PlayerSettingsConfigSO : ScriptableObject
     {
         /// <summary>
         /// (in ms) time need to delay when judge rhythm

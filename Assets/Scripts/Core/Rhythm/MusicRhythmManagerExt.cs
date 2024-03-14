@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Rhythm
 {
     public static class MusicRhythmManagerExt
     {
