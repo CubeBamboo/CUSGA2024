@@ -1,14 +1,20 @@
 using Shuile;
+using Shuile.Rhythm;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 
 public class CbFoo : MonoBehaviour
 {
-    public GameObject player;
+    //private SpriteRenderer spriteRenderer;
 
-    public void Attack()
+    private void Start()
     {
-        player.GetComponent<IAttackable>().OnAttack(1);
+        //spriteRenderer = GetComponent<SpriteRenderer>();
+
+        //AutoPlayChartManager.Instance.OnRhythmHit += () =>
+        //{
+        //    spriteRenderer.color = new Color(Random.value, Random.value, Random.value);
+        //};
     }
 }

@@ -8,32 +8,23 @@ namespace Shuile.Rhythm
         /// check if input in current time is in beat (quarter step).
         /// </summary>
         /// <param name="hitOffset">return float.NaN if not hit on</param>
-        public static bool CheckBeatRhythm(this MusicRhythmManager rhythmManager, out float hitOffset)
+        public static bool CheckBeatRhythm(this MusicRhythmManager rhythmManager, float inputTime, out float hitOffset)
         {
-            float missTolerance = rhythmManager.MissTolerance * 0.001f;
-            float bpmInterval = rhythmManager.BpmInterval;
+            float missTolerance = rhythmManager.MissToleranceInSeconds;
 
-            // get the nearest note's time
-            float inputTime = rhythmManager.CurrentTime; // no need to add offset
-            float progress = inputTime % bpmInterval;
-
-            // TODO : check if note has been hit...
+            // get the nearest note's time and judge
             hitOffset = float.NaN;
+            SingleNote targetNote = PlayerChartManager.Instance.TryGetNearestNote();
+            if(targetNote == null)
+                return false;
 
-            // hit this beat note
-            if (progress < missTolerance)
+            bool ret = Mathf.Abs(inputTime - targetNote.targetTime) < missTolerance;
+            if(ret)
             {
-                hitOffset = progress;
-                return true;
+                PlayerChartManager.Instance.HitNote(targetNote);
+                hitOffset = inputTime - targetNote.targetTime;
             }
-
-            // hit next beat note
-            if (bpmInterval - progress < missTolerance)
-            {
-                hitOffset = progress - bpmInterval;
-                return true;
-            }
-            return false;
+            return ret;
         }
     }
 }

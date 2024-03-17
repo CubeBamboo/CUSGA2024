@@ -25,14 +25,15 @@ namespace Shuile.Rhythm
 #if UNITY_EDITOR
         private void OnGUI()
         {
-            //GUI.skin.label.fontSize = 40;
-            //GUILayout.Label($"hitOffset:{currentHitOffset}");
-            //GUILayout.Label($"RealGameTime:{Time.fixedTime}");
+            GUI.skin.label.fontSize = 40;
+            GUILayout.Label($"hitOffset:{currentHitOffset}");
+            GUILayout.Label($"RealGameTime:{Time.fixedTime}");
 
-            //if (!MusicRhythmManager.Instance.IsPlaying)
-            //    return;
+            if (!MusicRhythmManager.Instance.IsPlaying)
+                return;
 
-            //GUILayout.Label($"RhythmCheckTime:{MusicRhythmManager.Instance.CurrentTime}");
+            GUILayout.Label($"RhythmCheckTime:{MusicRhythmManager.Instance.CurrentTime}");
+            GUILayout.Label($"PlayerNoteCount:{PlayerChartManager.Instance.Count}");
         }
 #endif
 
@@ -42,7 +43,7 @@ namespace Shuile.Rhythm
                 return;
             if (context.phase != InputActionPhase.Started)
                 return;
-            if (!MusicRhythmManager.Instance.CheckBeatRhythm(out currentHitOffset))
+            if (!MusicRhythmManager.Instance.CheckBeatRhythm(MusicRhythmManager.Instance.CurrentTime, out currentHitOffset))
                 return;
 
             switch(context.action.name)
