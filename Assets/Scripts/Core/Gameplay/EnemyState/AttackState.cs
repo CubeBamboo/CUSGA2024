@@ -1,4 +1,10 @@
+using DG.Tweening;
+
+using System;
+
 using UnityEngine;
+
+using UObject = UnityEngine.Object;
 
 namespace Shuile.Gameplay.EnemyState
 {
@@ -9,12 +15,12 @@ namespace Shuile.Gameplay.EnemyState
 
         public AttackState(Enemy enemy) : base(enemy)
         {
-            playerCtrl = Object.FindObjectOfType<PlayerController>();  // TODO: 暂时这样获取
+            playerCtrl = UObject.FindObjectOfType<PlayerController>();  // TODO: 暂时这样获取
         }
 
         public override void Judge()
         {
-            var dst = Mathf.Abs(playerCtrl.transform.position.x - enemy.transform.position.x);
+            var dst = Math.Abs(Mathf.RoundToInt(playerCtrl.transform.position.x) - enemy.Position);
 
             /* 当前是攻击前摇
              *   当前在攻击范围内
@@ -31,6 +37,8 @@ namespace Shuile.Gameplay.EnemyState
             {
                 isPrepareAttack = false;
                 // 播放攻击动画
+                enemy.transform.GetChild(0).GetComponent<SpriteRenderer>().DOColor(Color.green, 0.1f).OnComplete(
+                    () => enemy.transform.GetChild(0).GetComponent<SpriteRenderer>().DOColor(Color.white, 0.1f));
                 if (dst <= enemy.Property.attackRange)
                 {
                     //if (弹刀)
@@ -63,6 +71,7 @@ namespace Shuile.Gameplay.EnemyState
         {
             isPrepareAttack = true;
             // TODO: 攻击前摇动画
+            enemy.transform.GetChild(0).GetComponent<SpriteRenderer>().DOColor(Color.yellow, 0.1f);
         }
     }
 }

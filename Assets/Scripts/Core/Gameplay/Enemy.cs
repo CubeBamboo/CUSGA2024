@@ -9,32 +9,53 @@ namespace Shuile.Gameplay
     public class Enemy : MonoBehaviour, IAttackable
     {
         [SerializeField] private EnemyPropertySO property;
+        [SerializeField] private bool isPreset = false;
         private int health;
         private State currentState;
+        private int position;
 
-        public readonly State dieState;
-        public readonly State idleState;
-        public readonly State attackState;
+        public State dieState;
+        public State idleState;
+        public State attackState;
 
         public int Health => health;
         public State CurrentState => currentState;
         public EnemyPropertySO Property => property;
-
-        public Enemy()
+        public bool IsAlive => health > 0;
+        public int Position
         {
-            dieState = null;
-            idleState = new IdleState(this);
-            attackState = new AttackState(this);
+            get => position;
+            set
+            {
+                if (position == value || !EnemyManager.Instance.IsValidPosition(value))
+                    return;
+                EnemyManager.Instance.UpdateEnemyPosition(this, value);
+                transform.position = transform.position.With(x: value);
+                position = value;
+            }
         }
 
         private void Awake()
         {
             health = property.healthPoint;
+            idleState = new IdleState(this);
+            attackState = new AttackState(this);
+            dieState = new DieState(this);
         }
 
         private void Start()
         {
-            GotoState(idleState);
+            if (isPreset)
+            {
+                position = Mathf.RoundToInt(transform.position.x);
+                EnemyManager.Instance.UpdateEnemyPosition(this, position);
+            }
+            GotoState(new SpawnState(this));
+        }
+
+        public void JudgeUpdate()
+        {
+            CurrentState?.Judge();
         }
 
         public void OnAttack(int attackPoint)
@@ -60,7 +81,7 @@ namespace Shuile.Gameplay
                 return;
 #endif
             }    
-            currentState.ExitState();
+            currentState?.ExitState();
             currentState = state;
             currentState.EnterState();
         }

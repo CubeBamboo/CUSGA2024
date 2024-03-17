@@ -1,4 +1,8 @@
+using System;
+
 using UnityEngine;
+
+using UObject = UnityEngine.Object;
 
 namespace Shuile.Gameplay.EnemyState
 {
@@ -9,12 +13,12 @@ namespace Shuile.Gameplay.EnemyState
 
         public IdleState(Enemy enemy) : base(enemy)
         {
-            playerCtrl = Object.FindObjectOfType<PlayerController>();  // TODO: 暂时这样获取
+            playerCtrl = UObject.FindObjectOfType<PlayerController>();  // TODO: 暂时这样获取
         }
 
         public override void Judge()
         {
-            var dst = Mathf.Abs(playerCtrl.transform.position.x - enemy.transform.position.x);
+            var dst = Mathf.Abs(playerCtrl.transform.position.x - enemy.Position);
             if (dst <= enemy.Property.attackRange)
             {
                 enemy.GotoState(enemy.attackState);
@@ -28,7 +32,7 @@ namespace Shuile.Gameplay.EnemyState
             }
             if (dst <= enemy.Property.viewRange)
             {
-                enemy.transform.Translate((playerCtrl.transform.position - enemy.transform.position).normalized, Space.World);
+                enemy.Position += Math.Sign(Mathf.RoundToInt(playerCtrl.transform.position.x) - enemy.Position);
                 moveSleep = enemy.Property.moveInterval;
             }
         }
