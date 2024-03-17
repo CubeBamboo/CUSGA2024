@@ -21,8 +21,8 @@ namespace Shuile
 #if UNITY_EDITOR
         private void OnGUI()
         {
-            GUI.skin.label.fontSize = 40;
-            GUILayout.Label($"Health:{property.currentHealthPoint}");
+            //GUI.skin.label.fontSize = 40;
+            //GUILayout.Label($"Health:{property.currentHealthPoint}");
         }
 
 #endif

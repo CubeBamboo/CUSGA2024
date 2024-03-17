@@ -6,7 +6,7 @@ using UnityEditor;
 namespace CbUtils.Example
 {
     
-    [CustomEditor(typeof(CbFoo))]
+    /*[CustomEditor(typeof(CbFoo))]
     public class InspectorExtExample : Editor
     {
         //private XX obj;
@@ -20,14 +20,9 @@ namespace CbUtils.Example
         {
             DrawDefaultInspector();
 
-            if (GUILayout.Button("Attack"))
-            {
-                //some code...
-                CbFoo foo = (CbFoo)target;
-                foo.Attack();
-            }
+            
         }
-    }
+    }*/
     
     
     /*
