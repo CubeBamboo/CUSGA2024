@@ -94,5 +94,18 @@ namespace Shuile.Gameplay
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidPosition(int pos) => pos >= 0 && pos < enemyPosition.Length;
+
+        // author: CubeBamboo
+        public bool TryGetEnemyAtPosition(int pos, out Enemy enemy)
+        {
+            enemy = null;
+            if (IsValidPosition(pos) && enemyPosition[pos].Count > 0)
+            {
+                enemy = enemyPosition[pos][0];
+                return true;
+            }
+            return false;
+        }
+        // end
     }
 }

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Shuile.Gameplay.EnemyState;
 
 using System;
@@ -62,6 +63,16 @@ namespace Shuile.Gameplay
         {
             if (health <= 0)
                 return;
+
+            // author: CubeBamboo
+            SpriteRenderer mRenderer = GetComponentInChildren<SpriteRenderer>();
+            mRenderer.color = Color.white;
+            mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f).OnComplete(() =>
+                mRenderer.DOColor(Color.white, 0.2f));
+            var initPos = transform.position;
+            transform.DOShakePosition(0.2f, strength: 0.2f).OnComplete(() =>
+                    transform.position = initPos);
+            // end
 
             health = Mathf.Max(0, health - attackPoint);
             if (health == 0)

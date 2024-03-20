@@ -51,6 +51,12 @@ namespace CbUtils
 
             isQuit = false;
             Instance = this as T;
+
+            OnAwake();
+        }
+
+        protected virtual void OnAwake()
+        {
         }
     }
 }
