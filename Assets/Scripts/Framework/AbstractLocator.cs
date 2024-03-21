@@ -18,13 +18,9 @@ namespace Shuile.Framework
 
         protected abstract void OnInit();
 
-        public void Register<S>(S instance)
-        {
-            if (!mContainer.TryAdd(typeof(S), instance))
-            {
-                throw new Exception($"An instance of type {typeof(S)} is already registered");
-            }
-        }
+        public void Register<S>(S instance) => mContainer.Add(typeof(S), instance);
+
+        public void UnRegister<S>() => mContainer.Remove(typeof(S));
 
         public S Get<S>()
         {
