@@ -1,3 +1,5 @@
+using DG.Tweening;
+
 using Shuile.Gameplay.EnemyState;
 
 using System;
@@ -30,7 +32,7 @@ namespace Shuile.Gameplay
                 if (position == value || !EnemyManager.Instance.IsValidPosition(value))
                     return;
                 EnemyManager.Instance.UpdateEnemyPosition(this, value);
-                transform.position = transform.position.With(x: value);
+                transform.DOMoveX(value, 0.1f);
                 position = value;
             }
         }
@@ -80,7 +82,7 @@ namespace Shuile.Gameplay
 #else
                 return;
 #endif
-            }    
+            }
             currentState?.ExitState();
             currentState = state;
             currentState.EnterState();
