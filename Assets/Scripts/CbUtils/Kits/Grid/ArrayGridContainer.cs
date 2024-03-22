@@ -18,6 +18,9 @@ namespace CbUtils
         /// <summary> not recommend to access directly, you'll lose the bounds check. </summary>
         public T[,] contents;
 
+        public event System.Action<Vector3Int, T> OnAdd, OnModify, OnRemove;
+        public event System.Action<Vector3Int, Vector3Int> OnMove;
+
         public ArrayGridContainer(Vector3 originPosition, Vector3 cellSize, Vector3 cellGap, int width, int height)
         {
             this.width = width;
@@ -60,10 +63,10 @@ namespace CbUtils
             return contents[pos.x, pos.y];
         }
 
-        public bool Modify(Vector3Int pos, T newContent, System.Action<T> OnDo = null)
+        public bool Modify(Vector3Int pos, T newContent)
         {
-            OnDo?.Invoke(contents[pos.x, pos.y]);
             contents[pos.x, pos.y] = newContent;
+            OnModify?.Invoke(pos, newContent);
             return true;
         }
 
@@ -97,10 +100,11 @@ namespace CbUtils
             }
 
             contents[pos.x, pos.y] = content;
+            OnAdd?.Invoke(pos, content);
             return true;
         }
 
-        public bool Remove(Vector3Int pos, Action<T> OnDo = null)
+        public bool Remove(Vector3Int pos)
         {
             if (IsOutOfBound(pos) || !HasContent(pos))
             {
@@ -111,7 +115,7 @@ namespace CbUtils
             }
             else
             {
-                OnDo?.Invoke(contents[pos.x, pos.y]);
+                OnRemove?.Invoke(pos, contents[pos.x, pos.y]);
                 contents[pos.x, pos.y] = null;
                 return true;
             }
@@ -153,6 +157,28 @@ namespace CbUtils
             }
         }
 
+        /// <param name="OnMove">para - content to move</param>
+        /// <returns>return true if move successfully</returns>
+        public bool Move(Vector3Int pos, Vector3Int newPos)
+        {
+            if (IsOutOfBound(pos))
+            {
+                Debug.LogWarning($"Grid IndexOutOfRange: {pos}");
+                return false;
+            }
+
+            if(!HasContent(pos))
+                Debug.LogWarning($"Grid MoveContent(): no gameobject in {pos} and it may lead to some bugs.");
+            if (HasContent(newPos))
+                Debug.LogWarning($"Grid MoveContent(): already have a gameobject in {newPos} and it may lead to some bugs.");
+
+            contents[newPos.x, newPos.y] = contents[pos.x, pos.y];
+            OnMove?.Invoke(pos, newPos);
+            contents[pos.x, pos.y] = null;
+
+            return true;
+        }
+
     }
 
     public static class ArrayGridContainerExt
@@ -167,30 +193,6 @@ namespace CbUtils
             content = gridContainer.Get(pos);
             return content != null;
         }
-
-        /// <param name="OnMove">para - content to move</param>
-        /// <returns>return true if move successfully</returns>
-        public static bool Move<T>(this ArrayGridContainer<T> gridContainer, Vector3Int pos, Vector3Int newPos, System.Action<T> OnMove = null) where T : class
-        {
-            if (gridContainer.IsOutOfBound(pos))
-            {
-                Debug.LogWarning($"Grid IndexOutOfRange: {pos}");
-                return false;
-            }
-
-            if (gridContainer.HasContent(newPos))
-            {
-                Debug.LogWarning($"Grid MoveContent(): already have a gameobject in {newPos} and it may lead to some bugs.");
-            }
-
-            var contents = gridContainer.contents;
-            contents[newPos.x, newPos.y] = contents[pos.x, pos.y];
-            OnMove?.Invoke(contents[newPos.x, newPos.y]);
-            contents[pos.x, pos.y] = null;
-
-            return true;
-        }
-
 
         /// <summary>
         /// Get maximum row which have content in giving column by [0, startRow]. (return -1 if can't find)

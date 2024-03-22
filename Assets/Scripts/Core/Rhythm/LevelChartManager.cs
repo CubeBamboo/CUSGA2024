@@ -1,34 +1,46 @@
 using CbUtils;
+using Shuile.Rhythm;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Shuile.Rhythm
+namespace Shuile
 {
+    //TODO : abstract class
 
-    // manage chart of player, convert chart to runtime note object noteContainer
-    public class PlayerChartManager : MonoSingletons<PlayerChartManager>
+    // play chart for single level
+    // control enemy spawn and other event
+    // it will auto play.
+    public class LevelChartManager : MonoSingletons<LevelChartManager>
     {
+        public bool isPlay = true;
+
         private NoteContainer noteContainer = new();
 
         // chart part
-        private readonly ChartData chart = ChartData.CreatePlayerDefault;
+        private readonly ChartData chart = ChartData.CreateLevelDefault;
         private float[] absoluteTimeChartLoopPart;
         private int loopCount = 0;
         int nextNoteIndex = 0;
 
         private void Start()
         {
-            // convert current chart to absolute time chart
             UpdateAbsoluteTimeChart();
         }
 
         private void FixedUpdate()
         {
+            if (!isPlay) return;
+
             // if next note time is less than current time, add note to noteContainer and trigger some event
             float singleLoopInterval = chart.chartLoopLength * MusicRhythmManager.Instance.BpmInterval;
             float nextNoteTime = absoluteTimeChartLoopPart[nextNoteIndex] + loopCount * singleLoopInterval;
             if (MusicRhythmManager.Instance.CurrentTime > nextNoteTime)
             {
-                noteContainer.AddNote(nextNoteTime);
+                // process note event
+                NoteEventHelper.Process(chart.chartLoopPart[nextNoteIndex]); // TODO: Absolute2BeatTimeTime......?
+
+                // note play logic
                 nextNoteIndex++;
                 if (nextNoteIndex >= absoluteTimeChartLoopPart.Length) //enter next loop
                 {
@@ -36,8 +48,6 @@ namespace Shuile.Rhythm
                     nextNoteIndex %= absoluteTimeChartLoopPart.Length;
                 }
             }
-
-            noteContainer.UpdateNotePool(MusicRhythmManager.Instance.CurrentTime);
         }
 
         private void UpdateAbsoluteTimeChart()
@@ -46,8 +56,5 @@ namespace Shuile.Rhythm
         }
 
         public int Count => noteContainer.Count;
-
-        public SingleNote TryGetNearestNote() => noteContainer.TryGetNearestNote();
-        public void HitNote(SingleNote note) => noteContainer.ReleseNote(note);
     }
 }

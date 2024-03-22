@@ -1,8 +1,6 @@
 using DG.Tweening;
 using Shuile.Framework;
 using Shuile.Gameplay;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Shuile
@@ -26,7 +24,6 @@ namespace Shuile
             //GUI.skin.label.fontSize = 40;
             //GUILayout.Label($"Health:{property.currentHealthPoint}");
         }
-
 #endif
 
         public void Attack()

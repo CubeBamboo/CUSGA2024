@@ -18,8 +18,8 @@ namespace CbUtils
         /// <returns> false - already have content in pos </returns>
         bool Add(Vector3Int pos, T content);
         /// <returns> false - have nothing in pos </returns>
-        bool Remove(Vector3Int pos, System.Action<T> OnDo = null);
-        bool Modify(Vector3Int pos, T newContent, System.Action<T> OnDo = null);
+        bool Remove(Vector3Int pos);
+        bool Modify(Vector3Int pos, T newContent);
         void ForEach(System.Action<Vector3Int, T> OnDo);
         void Clear(System.Action<Vector3Int, T> OnDo = null);
     }

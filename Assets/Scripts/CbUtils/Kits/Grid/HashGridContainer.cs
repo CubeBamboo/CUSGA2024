@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace CbUtils
@@ -19,6 +20,8 @@ namespace CbUtils
         /// not recommend to access directly, you'll lose the bounds check.
         /// </summary>
         public Dictionary<Vector3Int, T> contents = new();
+
+        public event System.Action<Vector3Int, T> OnAdd, OnModify, OnRemove;
 
         public HashGridContainer(Vector3 originPosition, Vector3 cellSize, Vector3 cellGap, int width = -1, int height = -1)
         {
@@ -58,7 +61,7 @@ namespace CbUtils
             return contents.GetValueOrDefault(pos, default);
         }
 
-        public bool Modify(Vector3Int pos, T newContent, System.Action<T> OnDo = null)
+        public bool Modify(Vector3Int pos, T newContent)
         {
             if (IsOutOfBound(pos))
                 throw new IndexOutOfRangeException($"Grid IndexOutOfRange: {pos}");
@@ -68,11 +71,8 @@ namespace CbUtils
                 Debug.LogWarning($"Grid ModifyContent(): no gameobject in {pos}");
                 return false;
             }
-            else
-            {
-                OnDo?.Invoke(contents[pos]);
-            }
 
+            OnModify?.Invoke(pos, newContent);
             contents[pos] = newContent;
             return true;
         }
@@ -109,11 +109,12 @@ namespace CbUtils
                 return false;
             }
 
+            OnAdd?.Invoke(pos, content);
             contents.Add(pos, content);
             return true;
         }
 
-        public bool Remove(Vector3Int pos, System.Action<T> OnDo = null)
+        public bool Remove(Vector3Int pos)
         {
             if (IsOutOfBound(pos))
             {
@@ -126,11 +127,8 @@ namespace CbUtils
                 Debug.LogWarning($"Grid RemoveContent(): no gameobject in {pos}");
                 return false;
             }
-            else
-            {
-                OnDo?.Invoke(contents[pos]);
-            }
 
+            OnRemove?.Invoke(pos, contents[pos]);
             contents.Remove(pos);
             return true;
         }
@@ -159,7 +157,7 @@ namespace CbUtils
 
     public static class HashGridContainerExt
     {
-        public static void AddOrModifyContent<T>(this HashGridContainer<T> simpleGrid, Vector3Int pos, T content, System.Action<T> OnRemove = null)
+        public static void AddOrModifyContent<T>(this HashGridContainer<T> simpleGrid, Vector3Int pos, T content)
         {
             if (simpleGrid.IsOutOfBound(pos))
             {
@@ -173,8 +171,24 @@ namespace CbUtils
             }
             else
             {
-                simpleGrid.Modify(pos, content, OnRemove);
+                simpleGrid.Modify(pos, content);
             }
         }
+
+
+#if UNITY_EDITOR
+        public static void OnDrawGizmosSelected<T>(this HashGridContainer<T> self) where T : class
+        {
+            if (!EditorApplication.isPlaying) return;
+
+            foreach(var item in self.contents)
+            {
+                var pos = self.CellToWorld(item.Key);
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(pos, self.CellSize);
+            }
+        }
+#endif
+
     }
 }
