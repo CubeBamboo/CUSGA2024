@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 namespace Shuile.Rhythm
 {
-    // manage all notes, only one note pool, only manage note's targetTime and spawn/destroy note
+    /* just a collection of SingleNote, no logic
+     * only one note pool
+     */
     public class NoteContainer : INoteContainer
     {
         // note to hit
@@ -54,24 +56,5 @@ namespace Shuile.Rhythm
         void ReleseNote(SingleNote note);
         SingleNote TryGetNearestNote();
         void UpdateNotePool(float currentTime);
-    }
-
-    public class SingleNote
-    {
-        public float targetTime;
-
-        public SingleNote()
-        {
-        }
-
-        public SingleNote(float targetTime)
-        {
-            this.targetTime = targetTime;
-        }
-
-        public bool NeedRelese(float currentTime, float missTolerance)
-        {
-            return currentTime - targetTime > missTolerance;
-        }
     }
 }

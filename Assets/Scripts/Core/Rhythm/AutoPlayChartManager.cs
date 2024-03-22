@@ -10,7 +10,7 @@ namespace Shuile
         private NoteContainer noteContainer = new();
 
         // chart part
-        private ChartData chart => ChartData.Default;
+        private readonly ChartData chart = ChartData.CreatePlayerDefault;
         private float[] absoluteTimeChartLoopPart;
         private int loopCount = 0;
         int nextNoteIndex = 0;
