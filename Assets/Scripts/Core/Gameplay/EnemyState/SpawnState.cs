@@ -8,25 +8,21 @@ namespace Shuile.Gameplay.EnemyState
     {
         private bool spawned;
 
-        public SpawnState(Enemy enemy) : base(enemy)
-        {
-        }
-
         public override void Judge()
         {
             if (!spawned)
             {
                 spawned = true;
-                enemy.transform.GetChild(0).DOScale(Vector3.one, 0.1f);
+                BindEnemy.transform.GetChild(0).DOScale(Vector3.one, 0.1f);
                 return;
             }
-            enemy.GotoState(enemy.idleState);
-            enemy.CurrentState.Judge();
+            BindEnemy.GotoState(BindEnemy.idleState);
+            BindEnemy.CurrentState.Judge();
         }
 
         public override void EnterState()
         {
-            enemy.transform.GetChild(0).localScale = Vector3.zero;
+            BindEnemy.transform.GetChild(0).localScale = Vector3.zero;
             spawned = false;
         }
     }

@@ -11,17 +11,12 @@ namespace Shuile.Gameplay.EnemyState
         private PlayerController playerCtrl;
         private int moveSleep;
 
-        public IdleState(Enemy enemy) : base(enemy)
-        {
-            playerCtrl = UObject.FindObjectOfType<PlayerController>();  // TODO: 暂时这样获取
-        }
-
         public override void Judge()
         {
-            var dst = Mathf.Abs(playerCtrl.transform.position.x - enemy.Position);
-            if (dst <= enemy.Property.attackRange)
+            var dst = Mathf.Abs(playerCtrl.transform.position.x - BindEnemy.Position);
+            if (dst <= BindEnemy.Property.attackRange)
             {
-                enemy.GotoState(enemy.attackState);
+                BindEnemy.GotoState(BindEnemy.attackState);
                 return;
             }
 
@@ -30,17 +25,24 @@ namespace Shuile.Gameplay.EnemyState
                 moveSleep--;
                 return;
             }
-            if (dst <= enemy.Property.viewRange)
+            if (dst <= BindEnemy.Property.viewRange)
             {
-                enemy.Position += Math.Sign(Mathf.RoundToInt(playerCtrl.transform.position.x) - enemy.Position);
-                moveSleep = enemy.Property.moveInterval;
+                BindEnemy.Position += Math.Sign(Mathf.RoundToInt(playerCtrl.transform.position.x) - BindEnemy.Position);
+                moveSleep = BindEnemy.Property.moveInterval;
             }
         }
 
         public override void EnterState()
         {
             moveSleep = 0;
-            // moveSleep = enemy.Property.moveInterval;
+            // moveSleep = BindEnemy.Property.moveInterval;
+        }
+
+        public override void Rebind(Enemy newEnemy)
+        {
+            base.Rebind(newEnemy);
+
+            playerCtrl = UObject.FindObjectOfType<PlayerController>();  // TODO: 暂时这样获取
         }
     }
 }

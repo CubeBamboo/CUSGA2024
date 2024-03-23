@@ -40,9 +40,9 @@ namespace Shuile.Gameplay
         private void Awake()
         {
             health = property.healthPoint;
-            idleState = new IdleState(this);
-            attackState = new AttackState(this);
-            dieState = new DieState(this);
+            idleState = EnemyStateHelper.CreateAndBind<IdleState>(this);
+            attackState = EnemyStateHelper.CreateAndBind<PreAttackState>(this);
+            dieState = EnemyStateHelper.CreateAndBind<DieState>(this);
         }
 
         private void Start()
@@ -52,7 +52,7 @@ namespace Shuile.Gameplay
                 position = Mathf.RoundToInt(transform.position.x);
                 EnemyManager.Instance.UpdateEnemyPosition(this, position);
             }
-            GotoState(new SpawnState(this));
+            GotoState(EnemyStateHelper.CreateAndBind<SpawnState>(this));
         }
 
         public void JudgeUpdate()
