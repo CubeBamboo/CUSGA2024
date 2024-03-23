@@ -43,8 +43,8 @@ namespace Shuile.Rhythm
                 return;
             if (context.phase != InputActionPhase.Started)
                 return;
-            if (!MusicRhythmManager.Instance.CheckBeatRhythm(MusicRhythmManager.Instance.CurrentTime, out currentHitOffset))
-                return;
+            //if (!MusicRhythmManager.Instance.CheckBeatRhythm(MusicRhythmManager.Instance.CurrentTime, out currentHitOffset))
+            //    return;
 
             switch(context.action.name)
             {

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f790c3a6cb9b7954cacdafb7c3c1a5b9, type: 3}
   m_Name: VegatableEnemy
   m_EditorClassIdentifier: 
-  healthPoint: 1
+  healthPoint: 5
   attackPoint: 1
   viewRange: 3
   attackRange: 1
