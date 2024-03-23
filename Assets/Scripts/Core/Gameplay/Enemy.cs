@@ -1,4 +1,5 @@
 using DG.Tweening;
+
 using Shuile.Gameplay.EnemyState;
 
 using System;
@@ -31,7 +32,7 @@ namespace Shuile.Gameplay
                 if (position == value || !EnemyManager.Instance.IsValidPosition(value))
                     return;
                 EnemyManager.Instance.UpdateEnemyPosition(this, value);
-                transform.position = transform.position.With(x: value);
+                transform.DOMoveX(value, 0.1f);
                 position = value;
             }
         }
@@ -39,9 +40,9 @@ namespace Shuile.Gameplay
         private void Awake()
         {
             health = property.healthPoint;
-            idleState = new IdleState(this);
-            attackState = new AttackState(this);
-            dieState = new DieState(this);
+            idleState = EnemyStateHelper.CreateAndBind<IdleState>(this);
+            attackState = EnemyStateHelper.CreateAndBind<PreAttackState>(this);
+            dieState = EnemyStateHelper.CreateAndBind<DieState>(this);
         }
 
         private void Start()
@@ -51,7 +52,7 @@ namespace Shuile.Gameplay
                 position = Mathf.RoundToInt(transform.position.x);
                 EnemyManager.Instance.UpdateEnemyPosition(this, position);
             }
-            GotoState(new SpawnState(this));
+            GotoState(EnemyStateHelper.CreateAndBind<SpawnState>(this));
         }
 
         public void JudgeUpdate()
@@ -91,7 +92,7 @@ namespace Shuile.Gameplay
 #else
                 return;
 #endif
-            }    
+            }
             currentState?.ExitState();
             currentState = state;
             currentState.EnterState();
