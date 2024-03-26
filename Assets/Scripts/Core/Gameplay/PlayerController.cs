@@ -33,10 +33,10 @@ namespace Shuile
                 () => transform.DOScale(1f, 0.1f));
 
             // 搜索敌人
-            if (EnemyManager.Instance.TryGetEnemyAtPosition(Mathf.RoundToInt(transform.position.x), out var enemy))
+            /*if (EnemyManager.Instance.TryGetEnemyAtPosition(Mathf.RoundToInt(transform.position.x), out var enemy))
             {
                 enemy.OnAttack(property.attackPoint);
-            }
+            }*/
         }
 
         public void Move(float xDirection)
