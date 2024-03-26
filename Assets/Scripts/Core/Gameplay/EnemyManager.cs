@@ -11,10 +11,10 @@ namespace Shuile.Gameplay
 {
     public class EnemyManager : MonoSingletons<EnemyManager>
     {
-        private List<Enemy>[] enemyPosition;
         [SerializeField] private PlayerController playerCtrl;
         [SerializeField] private GameObject[] enemyPrefabs;
         private Transform enemyParent;
+        private readonly List<Enemy> enemyList = new();
 
         public ReadOnlyCollection<GameObject> EnemyPrefabs { get; private set; }
 
@@ -23,9 +23,6 @@ namespace Shuile.Gameplay
             base.Awake();
             EnemyPrefabs = new(enemyPrefabs);
             enemyParent = new GameObject("Enemies").transform;
-            enemyPosition = new List<Enemy>[10];  // 根据地图设计修改
-            for (int i = 0; i < enemyPosition.Length; i++)
-                enemyPosition[i] = new();
         }
 
         private void OnEnable()
@@ -40,69 +37,36 @@ namespace Shuile.Gameplay
 
         private void OnRhythmHit()
         {
-            var playerPos = Mathf.RoundToInt(playerCtrl.transform.position.x);  // Todo: 通过其他方式获取位置
-            if (!IsValidPosition(playerPos))
-                return;
-
-            // allocate and sort;
-            var judgeEnemies = new List<Enemy>(enemyPosition.Sum(l => l.Count));
-            judgeEnemies.AddRange(enemyPosition[playerPos]);
-            for (int i = 1; i < enemyPosition.Length; i++)
-            {
-                if (playerPos - i >= 0)
-                    judgeEnemies.AddRange(enemyPosition[playerPos - i]);
-                if (playerPos + i < enemyPosition.Length)
-                    judgeEnemies.AddRange(enemyPosition[playerPos + i]);
-            }
-
-            foreach (var enemy in judgeEnemies)
-                enemy.JudgeUpdate();
+            foreach (var enemy in enemyList)
+                enemy.Judge();
         }
 
         public void RemoveEnemy(Enemy enemy)
         {
-            foreach (var e in enemyPosition)
-            {
-                var index = e.IndexOf(enemy);
-                if (index == -1)
-                    continue;
-
-                e.UnorderedRemoveAt(index);
-                break;
-            }
+            LevelGrid.Instance.grid.Remove(enemy.GridPosition);
+            enemyList.UnorderedRemove(enemy);
+            Destroy(enemy.gameObject);
         }
 
-        public void SpawnEnemy(GameObject enemyPrefab, int pos)
+        public void SpawnEnemy(GameObject enemyPrefab, Vector3Int pos)
         {
-            if (!IsValidPosition(pos))
+            if (LevelGrid.Instance.grid.IsOutOfBound(pos))
                 return;
 
             var enemyObject = Instantiate(enemyPrefab, enemyParent);
             var enemy = enemyObject.GetComponent<Enemy>();
-            enemy.Position = pos;
+            enemy.GridPosition = pos;
+            enemyList.Add(enemy);
         }
-
-        public void UpdateEnemyPosition(Enemy enemy, int pos)
-        {
-            if (!IsValidPosition(pos))
-                return;
-
-            enemyPosition[enemy.Position].UnorderedRemove(enemy);
-            Debug.Log($"[{nameof(EnemyManager)}] Enemy {enemy.name} move from {enemy.Position} to {pos}");
-            enemyPosition[pos].Add(enemy);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsValidPosition(int pos) => pos >= 0 && pos < enemyPosition.Length;
 
         // author: CubeBamboo
-        public bool TryGetEnemyAtPosition(int pos, out Enemy enemy)
+        public bool TryGetEnemyAtPosition(Vector3Int pos, out Enemy enemy)
         {
             enemy = null;
-            if (IsValidPosition(pos) && enemyPosition[pos].Count > 0)
+            if (LevelGrid.Instance.grid.IsValidCell(pos))
             {
-                enemy = enemyPosition[pos][0];
-                return true;
+                enemy = LevelGrid.instance.grid.contents[pos.x, pos.y].GetComponent<Enemy>();
+                return enemy != null;
             }
             return false;
         }
