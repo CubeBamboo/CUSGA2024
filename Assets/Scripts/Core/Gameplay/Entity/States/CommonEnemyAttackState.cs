@@ -2,12 +2,6 @@
 
 namespace Shuile.Gameplay.Entity.States
 {
-    /// <summary>
-    /// 攻击行为
-    /// </summary>
-    /// <returns>返回true表示下次判定继续攻击</returns>
-    public delegate bool AttackBehaviour();
-
     public enum AttackStateType
     {
         PreAttack,
@@ -17,10 +11,17 @@ namespace Shuile.Gameplay.Entity.States
 
     public class CommonEnemyAttackState : EntityState
     {
+
+        /// <summary>
+        /// 攻击行为
+        /// </summary>
+        /// <returns>返回true表示下次判定继续攻击</returns>
+        public delegate bool AttackBehaviour(CommonEnemyAttackState state);
+
         public readonly Enemy enemy;
         private AttackStateType attackState;
         private readonly AttackBehaviour attackBehaviour;
-        private int counter;
+        public int counter;
         
         public CommonEnemyAttackState(BehaviourEntity entity, AttackBehaviour attackBehaviour) : base(entity)
         {
@@ -43,22 +44,24 @@ namespace Shuile.Gameplay.Entity.States
 
         public override void Judge()
         {
+            ++counter;
             if (attackState == AttackStateType.Attack)
             {
-                var isContinue = attackBehaviour();
+                var isContinue = attackBehaviour(this);
                 if (!isContinue)
                 {
                     AttackStateType attackStateType = enemy.Property.postAttackDuration != 0 ?
                                         AttackStateType.PostAttack :
                                         (enemy.Property.preAttackDuration != 0 ? AttackStateType.PreAttack : AttackStateType.Attack);
                     attackState = attackStateType;
+                    counter = 0;
                 }
 
                 return;
             }
 
             var endCount = attackState == AttackStateType.PreAttack ? enemy.Property.preAttackDuration : enemy.Property.postAttackDuration;
-            if (++counter >= endCount)
+            if (counter >= endCount)
             {
                 counter = 0;
                 attackState = attackState == AttackStateType.PreAttack || (attackState == AttackStateType.PostAttack && enemy.Property.preAttackDuration == 0) ?

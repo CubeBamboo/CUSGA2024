@@ -1,4 +1,4 @@
-﻿namespace Shuile.Gameplay.Entity
+﻿namespace Shuile.Gameplay.Entity.States
 {
     public delegate void OnJudge();
     public delegate void OnStateEnter();

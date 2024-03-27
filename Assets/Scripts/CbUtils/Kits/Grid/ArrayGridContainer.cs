@@ -230,6 +230,11 @@ namespace CbUtils
             return maxRow;
         }
 
+        public static Vector3 ToWorldSize<T>(this ArrayGridContainer<T> gridContainer, int gridCount) where T : class
+        { 
+            return gridContainer.CellSize * gridCount + gridContainer.CellGap * (gridCount - 1);
+        }
+
 #if UNITY_EDITOR
         public static void OnDrawGizmosSelected<T>(this ArrayGridContainer<T> self) where T : class
         {
