@@ -2,6 +2,7 @@ using CbUtils;
 using UnityEngine;
 using Shuile.Audio;
 using Shuile.Framework;
+using Cysharp.Threading.Tasks;
 
 namespace Shuile.Rhythm
 {
@@ -17,10 +18,14 @@ namespace Shuile.Rhythm
         private IAudioPlayer audioPlayer; // for music playing
 
         public bool playOnAwake = true;
+        public float playTimeScale = 1f;
 
         public bool IsPlaying => isPlaying;
         public float MissToleranceInSeconds => levelConfig.missTolerance * 0.001f;
         public float CurrentTime => currentTime;
+        /// <summary>
+        /// unit: second
+        /// </summary>
         public float BpmInterval => 60f / currentMusic.bpm;
         public float MusicBpm => currentMusic.bpm;
         public float MusicOffsetInSeconds => currentMusic.offset * 0.001f;
@@ -54,9 +59,12 @@ namespace Shuile.Rhythm
             audioPlayer.Volume = 0.4f;
         }
 
-        public void StartPlay()
+        public async void StartPlay()
         {
+            await UniTask.Delay(System.TimeSpan.FromSeconds(0.5f)); // delay to waiting for unity editor' play init
             float offsetInSeconds = (currentMusic.offset + playerConfig.globalOffset) * 0.001f;
+            Time.timeScale = playTimeScale;
+            audioPlayer.Pitch = playTimeScale;
 
             // play clip
             audioPlayer.Play();

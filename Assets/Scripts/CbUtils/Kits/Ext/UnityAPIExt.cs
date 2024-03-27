@@ -35,6 +35,11 @@ namespace CbUtils
             return go;
         }
 
+        public static void Destroy(this Object go)
+        {
+            Object.Destroy(go);
+        }
+
         #endregion
 
         #region UnityEngine.Events
@@ -44,6 +49,23 @@ namespace CbUtils
             self.AddListener(action);
             return new CustomUnRegister(() => self.RemoveListener(action));
         }
+
+        #endregion
+
+        #region CbUtils
+
+        public static Vector3Int ToCell(this Vector3 self, IPositionGrid grid)
+            => grid.WorldToCell(self);
+
+        public static Vector3 ToWorld(this Vector3Int self, IPositionGrid grid)
+            => grid.CellToWorld(self);
+
+        #endregion
+
+        #region Color
+
+        public static Color With(this Color self, float? r = null, float? g = null, float? b = null, float? a = null)
+            => new Color(r ?? self.r, g ?? self.g, b ?? self.b, a ?? self.a);
 
         #endregion
     }

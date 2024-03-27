@@ -9,7 +9,7 @@ namespace Shuile.Gameplay
     public class EnemyManager : MonoSingletons<EnemyManager>
     {
         [SerializeField] private PlayerController playerCtrl;
-        private List<Enemy> enemyList = new();
+        private readonly List<Enemy> enemyList = new();
         private Transform enemyParent;
         private PrefabConfigSO prefabs;
 

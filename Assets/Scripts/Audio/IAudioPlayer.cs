@@ -29,5 +29,6 @@ namespace Shuile.Audio
         /// 音量
         /// </summary>
         float Volume { get; set; }
+        float Pitch { get; set; }
     }
 }

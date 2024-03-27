@@ -11,7 +11,6 @@ namespace Shuile.Gameplay.Entity.States
 
     public class CommonEnemyAttackState : EntityState
     {
-
         /// <summary>
         /// 攻击行为
         /// </summary>
@@ -61,7 +60,7 @@ namespace Shuile.Gameplay.Entity.States
             }
 
             var endCount = attackState == AttackStateType.PreAttack ? enemy.Property.preAttackDuration : enemy.Property.postAttackDuration;
-            if (counter >= endCount)
+            if (++counter >= endCount)
             {
                 counter = 0;
                 attackState = attackState == AttackStateType.PreAttack || (attackState == AttackStateType.PostAttack && enemy.Property.preAttackDuration == 0) ?

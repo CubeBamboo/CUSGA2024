@@ -14,5 +14,8 @@ namespace Shuile
 
         public GameObject vegetableEnemy;
         public GameObject normalEnemy;
+
+        [Header("Mechanism")]
+        public GameObject laser;
     }
 }
