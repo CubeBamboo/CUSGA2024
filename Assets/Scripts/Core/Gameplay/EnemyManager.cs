@@ -1,9 +1,6 @@
 using CbUtils;
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
 using UnityEngine;
 
@@ -12,16 +9,23 @@ namespace Shuile.Gameplay
     public class EnemyManager : MonoSingletons<EnemyManager>
     {
         [SerializeField] private PlayerController playerCtrl;
-        [SerializeField] private GameObject[] enemyPrefabs;
-        private Transform enemyParent;
         private readonly List<Enemy> enemyList = new();
+        private Transform enemyParent;
+        private PrefabConfigSO prefabs;
 
-        public ReadOnlyCollection<GameObject> EnemyPrefabs { get; private set; }
+        public PrefabConfigSO EnemyPrefabs
+        {
+            get
+            {
+                if (prefabs == null)
+                    prefabs = GameplayService.Interface.Get<PrefabConfigSO>();
+                return prefabs;
+            }
+        }
 
         protected override void Awake()
         {
             base.Awake();
-            EnemyPrefabs = new(enemyPrefabs);
             enemyParent = new GameObject("Enemies").transform;
         }
 
@@ -45,7 +49,7 @@ namespace Shuile.Gameplay
         {
             LevelGrid.Instance.grid.Remove(enemy.GridPosition);
             enemyList.UnorderedRemove(enemy);
-            Destroy(enemy.gameObject);
+            // Destroy(enemy.gameObject);
         }
 
         public void SpawnEnemy(GameObject enemyPrefab, Vector3Int pos)
