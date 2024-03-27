@@ -14,13 +14,12 @@ namespace Shuile
         [SerializeField] private SpriteRenderer mRenderer;
 
         private ISceneLoader sceneLoader;
-        private LevelGrid levelGrid;
+        private LevelGrid levelGrid => LevelGrid.Instance;
         private MusicRhythmManager mRhythmManager => MusicRhythmManager.Instance;
 
         private void Start()
         {
             MainGame.Interface.TryGet(out sceneLoader);
-            MainGame.Interface.TryGet(out levelGrid);
             property.currentHealthPoint = property.maxHealthPoint;
 
             transform.position = levelGrid.grid.SnapToGrid(transform.position);
