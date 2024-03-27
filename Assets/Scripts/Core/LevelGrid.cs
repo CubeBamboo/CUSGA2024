@@ -1,7 +1,5 @@
 using CbUtils;
 using Shuile.Framework;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Shuile
@@ -14,21 +12,34 @@ namespace Shuile
         public Vector3 cellGap;
         public int width;
         public int height;
-
+        
         protected override void OnAwake()
         {
-            grid = new(startPosition, cellSize, cellGap, width, height);
+            grid = new ArrayGridContainer<GameObject>(startPosition, cellSize, cellGap, width, height); //TODO: positiongrid
             MainGame.Interface.Register<LevelGrid>(this);
         }
 
         private void OnDrawGizmosSelected()
         {
-            grid.OnDrawGizmosSelected();
+            //grid.OnDrawGizmosSelected();
         }
 
         private void OnDestroy()
         {
             MainGame.Interface.UnRegister<LevelGrid>();
+        }
+
+        public void GetRandomPosition(out Vector3 res)
+        {
+            res = new Vector3Int(Random.Range(0, width),
+                                 Random.Range(0, height))
+                                .ToWorld(grid);
+        }
+
+        public void GetRandomPosition(out Vector3Int res)
+        {
+            res = new Vector3Int(Random.Range(0, width),
+                                 Random.Range(0, height));
         }
     }
 }

@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vegetableEnemy: {fileID: 3418564270763865659, guid: 728774616213cbd4e9465f369b371956, type: 3}
   normalEnemy: {fileID: 3418564270763865659, guid: bed6d8ab2713c794ba1e909b55ab90af, type: 3}
+  laser: {fileID: 4784529181449652345, guid: 46fca5fda0616594f88291a7c395eaf0, type: 3}

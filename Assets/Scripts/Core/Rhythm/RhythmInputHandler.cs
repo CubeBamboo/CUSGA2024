@@ -12,14 +12,22 @@ namespace Shuile.Rhythm
 
         private float currentHitOffset = 0f;
 
+        private Keyboard keyboard;
+
         private void Start()
         {
+            keyboard = Keyboard.current; //TODO: refactor after demo complete
             playerInput.onActionTriggered += OnActionTriggered;
         }
 
         private void OnDestroy()
         {
             playerInput.onActionTriggered -= OnActionTriggered;
+        }
+
+        private void Update()
+        {
+            
         }
 
 #if UNITY_EDITOR

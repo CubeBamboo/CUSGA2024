@@ -17,6 +17,11 @@ namespace Shuile.Audio
             get => AudioManager.Instance.OtherSource.volume;
             set => AudioManager.Instance.OtherSource.volume = value;
         }
+        public float Pitch
+        {
+            get => AudioManager.Instance.OtherSource.pitch;
+            set => AudioManager.Instance.OtherSource.pitch = value;
+        }
 
         public void LoadClip(AudioClip clip)
         {

@@ -18,7 +18,7 @@ namespace Shuile
         private NoteContainer noteContainer = new();
 
         // chart part
-        private readonly ChartData chart = ChartData.CreateLevelDefault;
+        private readonly ChartData chart = ChartDataCreator.CreateLevelBreak();
         private float[] absoluteTimeChartLoopPart;
         private int loopCount = 0;
         int nextNoteIndex = 0;

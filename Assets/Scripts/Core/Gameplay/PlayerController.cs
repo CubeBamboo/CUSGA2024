@@ -1,7 +1,10 @@
+using UnityEngine;
+
+using CbUtils;
 using DG.Tweening;
 using Shuile.Framework;
 using Shuile.Gameplay;
-using UnityEngine;
+using Shuile.Rhythm;
 
 namespace Shuile
 {
@@ -11,11 +14,15 @@ namespace Shuile
         [SerializeField] private SpriteRenderer mRenderer;
 
         private ISceneLoader sceneLoader;
+        private LevelGrid levelGrid => LevelGrid.Instance;
+        private MusicRhythmManager mRhythmManager => MusicRhythmManager.Instance;
 
         private void Start()
         {
             MainGame.Interface.TryGet(out sceneLoader);
             property.currentHealthPoint = property.maxHealthPoint;
+
+            transform.position = levelGrid.grid.SnapToGrid(transform.position);
         }
 
 #if UNITY_EDITOR
@@ -26,6 +33,7 @@ namespace Shuile
         }
 #endif
 
+        // default attack, maybe add weapon feature later.
         public void Attack()
         {
             // 效果反馈
@@ -41,9 +49,13 @@ namespace Shuile
 
         public void Move(float xDirection)
         {
-            transform.DOMoveX(transform.position.x + xDirection, 0.2f)
-                     .SetEase(Ease.OutSine);
-            //transform.position += Vector3.right * xDirection;
+            transform.position += Vector3.right * xDirection;
+
+            //TODO: dotween interrupt process
+            //transform.DOMoveX(transform.position.x + xDirection, 0.2f)
+            //         .SetEase(Ease.OutSine);
+            //grid.Move(transform.position.ToCell(grid),
+            //    (transform.position + Vector3.right * xDirection).ToCell(grid));
         }
 
         public void OnAttack(int attackPoint)

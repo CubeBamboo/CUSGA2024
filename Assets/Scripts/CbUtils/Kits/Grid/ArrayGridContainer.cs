@@ -18,7 +18,7 @@ namespace CbUtils
         /// <summary> not recommend to access directly, you'll lose the bounds check. </summary>
         public T[,] contents;
 
-        public event System.Action<Vector3Int, T> OnAdd, OnModify, OnRemove;
+        public event System.Action<Vector3Int, T> OnAdd, OnRemove;
         public event System.Action<Vector3Int, Vector3Int> OnMove;
 
         public ArrayGridContainer(Vector3 originPosition, Vector3 cellSize, Vector3 cellGap, int width, int height)
@@ -65,8 +65,10 @@ namespace CbUtils
 
         public bool Modify(Vector3Int pos, T newContent)
         {
+            if(HasContent(pos))
+                OnRemove?.Invoke(pos, contents[pos.x, pos.y]);
             contents[pos.x, pos.y] = newContent;
-            OnModify?.Invoke(pos, newContent);
+            OnAdd?.Invoke(pos, newContent);
             return true;
         }
 
@@ -192,6 +194,21 @@ namespace CbUtils
         {
             content = gridContainer.Get(pos);
             return content != null;
+        }
+
+        /// <returns> 1: add, -1: modify </returns>
+        public static int AddOrModify<T>(this ArrayGridContainer<T> gridContainer, Vector3Int pos, T content) where T : class
+        {
+            if (gridContainer.HasContent(pos))
+            {
+                gridContainer.Modify(pos, content);
+                return -1;
+            }
+            else
+            {
+                gridContainer.Add(pos, content);
+                return 1;
+            }
         }
 
         /// <summary>
