@@ -11,9 +11,6 @@ namespace Shuile.Framework
             // global application
             this.Register<ISceneLoader>(new SceneLoaderManager());
             this.Register<IAudioPlayer>(new SimpleAudioPlayer());
-
-            // in level
-            this.Register<PrefabConfigSO>(UnityEngine.Resources.Load<PrefabConfigSO>("GlobalPrefabConfig")); //TODO: other load
         }
     }
 }

@@ -6,12 +6,12 @@ using UnityEngine;
 
 using UObject = UnityEngine.Object;
 
-namespace Shuile.Gameplay.EnemyState
+namespace Shuile.Gameplay.Entity.States
 {
-    public class AttackState : State
+    /*public class AttackState : EntityState
     {
         private PlayerController playerCtrl;
-        private State nextState = new PostAttackState();
+        private EntityState nextState = new PostAttackState();
 
         public override void Judge()
         {
@@ -42,5 +42,5 @@ namespace Shuile.Gameplay.EnemyState
             playerCtrl = UObject.FindObjectOfType<PlayerController>();  // TODO: 暂时这样获取
             nextState.Rebind(newEnemy);
         }
-    }
+    }*/
 }
