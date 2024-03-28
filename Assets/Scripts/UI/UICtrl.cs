@@ -3,7 +3,6 @@
  * TODO-list: resources aollcate and release
  */
 
-using Shuile.UI;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -81,22 +80,5 @@ namespace Shuile.Framework
         public abstract void DeInit();
         public abstract void Show();
         public abstract void Hide();
-    }
-
-    public static class UICtrlExt
-    {
-        public static void InitGameplay(this UICtrl self)
-        {
-            self.Register<EndGamePanel>(new EndGamePanel());
-            self.Register<PlayingPanel>(new PlayingPanel());
-            self.Register<HUDHpBarElement>(new HUDHpBarElement()); // TODO: [!] generate only when you need
-        }
-
-        public static void DeInitGameplay(this UICtrl self)
-        {
-            self.UnRegister<EndGamePanel>();
-            self.UnRegister<PlayingPanel>();
-            self.UnRegister<HUDHpBarElement>();
-        }
     }
 }

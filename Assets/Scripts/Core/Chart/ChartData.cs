@@ -1,3 +1,4 @@
+using Shuile.NoteProduct;
 using System.Collections.Generic;
 
 namespace Shuile.Rhythm
@@ -142,8 +143,17 @@ namespace Shuile.Rhythm
             for (int i = 0; i < chart.chartLoopPart.Length; i++)
             {
                 absoluteTimeChartLoopPart[i] = chart.chartLoopPart[i].targetTime * bpmInterval;
+                //absoluteTimeChartLoopPart[i] = BeatTime2AbsoluteTime(chart.chartLoopPart[i].targetTime, bpmInterval);
             }
             return absoluteTimeChartLoopPart;
+        }
+
+        /// <param name="countInMusicBar"></param>
+        /// <param name="timeInBeatSnap"></param>
+        /// <param name="bpmIntervalInMS"></param>
+        public static float BeatTime2AbsoluteTime(uint countInMusicBar, float timeInBeatSnap, float bpmIntervalInMS)
+        {
+            return (countInMusicBar + timeInBeatSnap) * bpmIntervalInMS;
         }
     }
 
