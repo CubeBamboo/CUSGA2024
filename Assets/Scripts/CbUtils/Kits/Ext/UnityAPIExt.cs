@@ -68,5 +68,18 @@ namespace CbUtils
             => new Color(r ?? self.r, g ?? self.g, b ?? self.b, a ?? self.a);
 
         #endregion
+
+        #region Physics
+
+        /// <summary> warpper for Physics2D.Raycast() </summary>
+        public static RaycastHit2D RayCast2DWithDebugLine(Vector2 origin, Vector2 direction, float distance = Mathf.Infinity, int layerMask = Physics2D.DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity)
+        {
+            var hit = Physics2D.Raycast(origin, direction, distance, layerMask, minDepth, maxDepth);
+            Debug.DrawLine(origin, origin + direction * distance, hit ? Color.red : Color.green, 0.1f);
+            return hit;
+        }
+
+        #endregion
+
     }
 }

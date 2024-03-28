@@ -1,10 +1,10 @@
-﻿using Shuile.Framework;
+using Shuile.Framework;
 
 using UnityEngine;
 
 namespace Shuile.Gameplay
 {
-    public class GameplayServiceMono : MonoBehaviour
+    /*public class GameplayServiceMono : MonoBehaviour
     {
         [SerializeField] private PlayerController playerController;
 
@@ -16,21 +16,24 @@ namespace Shuile.Gameplay
         private void OnDestroy()
         {
             GameplayService.Interface.UnRegister<PlayerController>();
-            GameplayService.Interface.UnregisterNotMono();
+            GameplayService.Interface.OnDeInit();
         }
-    }
+    }*/
 
     public class GameplayService : AbstractLocator<GameplayService>
     {
-        protected override void OnInit()
+        public override bool IsGlobal => false;
+
+        public override void OnInit()
         {
-            // Register in GameplayServiceMono
-            this.Register(Resources.Load<PrefabConfigSO>("GlobalPrefabConfig")); //TODO: other load
+            this.Register<PrefabConfigSO>(Resources.Load<PrefabConfigSO>("Gameplay/GlobalPrefabConfig")); //TODO: other load
+            this.Register<PlayerController>(Object.FindObjectOfType<PlayerController>());
         }
 
-        public void UnregisterNotMono()
+        public override void OnDeInit()
         {
             this.UnRegister<PrefabConfigSO>();
+            this.UnRegister<PlayerController>();
         }
     }
 }

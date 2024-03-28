@@ -1,4 +1,5 @@
 using CbUtils;
+using CbUtils.Event;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Framework;
@@ -16,9 +17,11 @@ namespace Shuile.Rhythm
         /// </summary>
         public float targetTime;
         /// <summary>
-        /// only for long note
+        /// only for long note, format is same as targetTime
         /// </summary>
         public float? endTime;
+
+        public float preShowTime;
 
         public NoteEventType eventType;
         public NoteEventData eventData;
@@ -56,6 +59,7 @@ namespace Shuile.Rhythm
             }
         }
 
+        // spawn random enemy in random position, destroy when touch player
         public static void SingleEnemySpawn(NoteEventData noteData)
         {
             var levelGrid = LevelGrid.Instance;
@@ -66,6 +70,7 @@ namespace Shuile.Rhythm
             Vector2 rectScale = new Vector2(15, 0);
             levelGrid.GetRandomPosition(out Vector3 randomPos);
 
+            // random enemy
             var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
             // instantiate
             var go = EnemyType2Prefab(randomType)
@@ -75,9 +80,19 @@ namespace Shuile.Rhythm
             // enter animation
             go.transform.DOScale(0f, 0.3f).From().SetEase(Ease.OutBounce);
 
-            // TODO: [FOR TEST]
-            // auto destroy
-            TestExt.DelayDestroy(16 * MusicRhythmManager.Instance.BpmInterval, go);
+            // TODO: [!][FOR TEST]
+            // destroy when touch player
+            var evtMono = go.AddComponent<Collider2DEventMono>();
+            evtMono.TriggerEntered += coll =>
+            {
+                if (coll.gameObject.CompareTag("Player"))
+                {
+                    go.transform.DOScale(0f, 0.3f).SetEase(Ease.InBounce).OnComplete(() =>
+                    {
+                        go.Destroy();
+                    });
+                }
+            };
         }
 
         /// <param name="interval">(unit: in seconds)</param>
@@ -95,7 +110,7 @@ namespace Shuile.Rhythm
             //UnityEngine.Debug.Log("MultiEnemySpawn End");
         }
 
-        // [!]TODO: add pre show time
+        // TODO: [!]add pre show time
         // TODO: belongs to mechanism event
         public static void LaserSpawn()
         {

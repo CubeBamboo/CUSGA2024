@@ -55,8 +55,6 @@ namespace CbUtils
             OnAwake();
         }
 
-        protected virtual void OnAwake()
-        {
-        }
+        protected virtual void OnAwake() { }
     }
 }
