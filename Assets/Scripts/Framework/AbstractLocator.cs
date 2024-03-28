@@ -13,10 +13,13 @@ namespace Shuile.Framework
 
         protected AbstractLocator()
         {
-            OnInit();
+            if(IsGlobal) OnInit();
         }
 
-        protected abstract void OnInit();
+        // if true, will call OnInit() when instance created
+        public abstract bool IsGlobal { get; }        
+        public abstract void OnInit();
+        public abstract void OnDeInit();
 
         public void Register<S>(S instance) => mContainer.Add(typeof(S), instance);
 

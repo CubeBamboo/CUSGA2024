@@ -21,6 +21,7 @@ namespace CbUtils
     }
 
     // container for state code
+    /// <typeparam name="TStateId"> recommend to use Enum </typeparam>
     public class FSM<TStateId>
     {
         protected Dictionary<TStateId, IState> _states = new();
@@ -95,9 +96,6 @@ namespace CbUtils
         public void Custom() => _currentState.Custom();
     }
 
-    /// <summary>
-    /// state based on derived class
-    /// </summary>
     public abstract class BaseState<TState, TTarget> : IState
     {
         protected FSM<TState> fsm;
