@@ -2,9 +2,6 @@ using UnityEngine;
 
 using CbUtils;
 using DG.Tweening;
-using Shuile.Framework;
-using Shuile.Rhythm;
-using static Shuile.PlayerController;
 
 namespace Shuile
 {
@@ -26,6 +23,9 @@ namespace Shuile
 
             // init pos
             transform.position = levelGrid.grid.SnapToGrid(transform.position);
+            if(levelGrid.grid.HasContent(transform.position.ToCell(levelGrid.grid)))
+                Debug.LogWarning("grid has content at player's position.");
+            levelGrid.grid.Add(transform.position.ToCell(levelGrid.grid), gameObject);
 
             // init event
             OnHpChangedEvent?.Invoke(property.currentHealthPoint);
@@ -47,6 +47,12 @@ namespace Shuile
                 () => transform.DOScale(1f, 0.1f));
 
             // 搜索敌人
+            Vector3Int targetPos = transform.position.ToCell(levelGrid.grid) + new Vector3Int(FaceDir, 0, 0);
+            if (levelGrid.grid.TryGet(targetPos, out var targetGo))
+            {
+                //TODO: 检查是否是敌人
+                targetGo.GetComponent<IAttackable>().OnAttack(property.attackPoint);
+            }
             /*if (EnemyManager.Instance.TryGetEnemyAtPosition(Mathf.RoundToInt(transform.position.x), out var enemy))
             {
                 enemy.OnAttack(property.attackPoint);
@@ -55,8 +61,18 @@ namespace Shuile
 
         public void Move(float xDirection)
         {
+            var cellPos = transform.position.ToCell(levelGrid.grid);
+            var nextPos = cellPos + new Vector3Int((int)xDirection, 0, 0);
+            if (levelGrid.grid.HasContent(nextPos))
+            {
+                Debug.Log("Player move fail");
+                return;
+            }
             transform.position += Vector3.right * xDirection;
             FaceDir = xDirection > 0 ? 1 : -1;
+
+            levelGrid.grid.Move(cellPos, nextPos);
+
             //TODO: dotween interrupt process
             //transform.DOMoveX(transform.position.x + xDirection, 0.2f)
             //         .SetEase(Ease.OutSine);
