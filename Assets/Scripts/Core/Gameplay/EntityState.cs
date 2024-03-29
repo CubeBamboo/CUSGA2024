@@ -1,7 +1,11 @@
 using System.Runtime.CompilerServices;
 
+using UnityEngine.Events;
+
 namespace Shuile.Gameplay
 {
+    public delegate void OnEntityStateChanged(EntityStateType from, EntityStateType to);
+
     public abstract class EntityState
     {
         protected BehaviourEntity entity;

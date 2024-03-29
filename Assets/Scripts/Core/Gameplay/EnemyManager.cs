@@ -1,6 +1,7 @@
 using CbUtils;
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using UnityEngine;
 
@@ -12,6 +13,8 @@ namespace Shuile.Gameplay
         private readonly List<Enemy> enemyList = new();
         private Transform enemyParent;
         private PrefabConfigSO prefabs;
+        private bool judging = false;
+        private readonly List<Enemy> removeList = new();
 
         public PrefabConfigSO EnemyPrefabs
         {
@@ -22,6 +25,7 @@ namespace Shuile.Gameplay
                 return prefabs;
             }
         }
+        public ReadOnlyCollection<Enemy> Enemies => enemyList.AsReadOnly();
 
         protected override void Awake()
         {
@@ -41,26 +45,42 @@ namespace Shuile.Gameplay
 
         private void OnRhythmHit()
         {
+            judging = true;
             foreach (var enemy in enemyList)
                 enemy.Judge();
+            
+            judging = false;
+            foreach (var enemy in removeList)
+                RemoveEnemyImmediate(enemy);
+            removeList.Clear();
         }
 
         public void RemoveEnemy(Enemy enemy)
         {
-            LevelGrid.Instance.grid.Remove(enemy.GridPosition);
-            enemyList.UnorderedRemove(enemy);
-            // Destroy(enemy.gameObject);
+            if (judging)
+            {
+                removeList.Add(enemy);
+                return;
+            }
+            RemoveEnemyImmediate(enemy);
         }
 
-        public void SpawnEnemy(GameObject enemyPrefab, Vector3Int pos)
+        private void RemoveEnemyImmediate(Enemy enemy)
         {
-            if (LevelGrid.Instance.grid.IsOutOfBound(pos))
-                return;
+            LevelGrid.Instance.grid.Remove(enemy.GridPosition);
+            enemyList.UnorderedRemove(enemy);
+        }
 
-            var enemyObject = Instantiate(enemyPrefab, enemyParent);
+        public Enemy SpawnEnemy(GameObject enemyPrefab, Vector3Int pos)
+        {
+            // if (LevelGrid.Instance.grid.IsOutOfBound(pos))
+            //     return null;
+
+            var enemyObject = Instantiate(enemyPrefab, LevelGrid.Instance.grid.CellToWorld(pos), Quaternion.identity, enemyParent);
             var enemy = enemyObject.GetComponent<Enemy>();
             enemy.GridPosition = pos;
             enemyList.Add(enemy);
+            return enemy;
         }
 
         // author: CubeBamboo

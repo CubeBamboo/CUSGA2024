@@ -27,8 +27,10 @@ namespace Shuile.Gameplay
     {
         protected EntityStateType state = EntityStateType.Idle;
         protected Dictionary<EntityStateType, EntityState> states = new();
-        private EntityState currentState = EmptyState.instance;
+        protected EntityState currentState = EmptyState.instance;
         private Vector3Int gridPosition;
+
+        public event OnEntityStateChanged OnStateChanged;
 
         public EntityStateType State => state;
 
@@ -70,13 +72,15 @@ namespace Shuile.Gameplay
             if (!states.TryGetValue(newState, out var newStateBehaviour))
                 currentState = EmptyState.instance;
 
+            var from = state;
+            state = newState;
             if (newStateBehaviour != currentState)
             {
                 currentState.ExitState();
-                state = newState;
                 currentState = newStateBehaviour;
                 currentState.EnterState();
             }
+            OnStateChanged?.Invoke(from, state);
         }
         
         public void Judge()

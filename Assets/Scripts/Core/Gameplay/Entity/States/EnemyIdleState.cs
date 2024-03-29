@@ -8,20 +8,21 @@ namespace Shuile.Gameplay.Entity.States
 {
     public class EnemyIdleState : EntityState
     {
-        private PlayerController playerCtrl;
         private int moveSleep;
 
         public EnemyIdleState(BehaviourEntity entity) : base(entity)
         {
             if (entity is not Enemy)
-                throw new InvalidCastException($"entity is {entity.GetType()} not {nameof(Enemy)}");
+                throw new ArgumentException($"entity is {entity.GetType()} not {nameof(Enemy)}", nameof(entity));
         }
 
         public override void Judge()
         {
-            var dst = Vector3.Distance(playerCtrl.transform.position, entity.transform.position);
-            var attackRange = (LevelGrid.Instance.grid.CellSize.x + LevelGrid.Instance.grid.CellGap.x) * ((Enemy)entity).Property.attackRange;
-            if (dst <= attackRange)
+            var player = GameplayService.Interface.Get<PlayerController>();
+            var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
+            var gridDistance = Vector3.Distance(playerPos, entity.GridPosition);
+
+            if (gridDistance <= ((Enemy)entity).Property.attackRange)
             {
                 entity.GotoState(EntityStateType.Attack);
                 return;
@@ -33,15 +34,17 @@ namespace Shuile.Gameplay.Entity.States
                 return;
             }
 
-
-            entity.GridPosition += new Vector3Int(Math.Sign(playerCtrl.transform.position.x - entity.transform.position.x), 0, 0);
+            // TODO: clever to find path
+            var moveTo = entity.GridPosition + new Vector3Int(Math.Sign(player.transform.position.x - entity.transform.position.x), 0, 0);
+            if (LevelGrid.Instance.grid.HasContent(moveTo))
+                return;  // TODO: ask another entity to move
+            entity.GridPosition = moveTo;
             moveSleep = ((Enemy)entity).Property.moveInterval;
         }
 
         public override void EnterState()
         {
             moveSleep = 0;
-            // moveSleep = BindEnemy.Property.moveInterval;
         }
 
         public override void ExitState()
