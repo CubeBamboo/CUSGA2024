@@ -63,13 +63,7 @@ namespace Shuile.Gameplay.Entity.States
             {
                 var isContinue = attackBehaviour(this);
                 if (!isContinue)
-                {
-                    AttackStateType attackStateType = enemy.Property.postAttackDuration != 0 ?
-                                        AttackStateType.PostAttack :
-                                        (enemy.Property.preAttackDuration != 0 ? AttackStateType.PreAttack : AttackStateType.Attack);
-                    attackState = attackStateType;
-                    counter = 0;
-                }
+                    NextState();
 
                 return;
             }
@@ -82,11 +76,35 @@ namespace Shuile.Gameplay.Entity.States
 
             var endCount = attackState == AttackStateType.PreAttack ? enemy.Property.preAttackDuration : enemy.Property.postAttackDuration;
             if (++counter >= endCount)
+                NextState();
+        }
+
+        private void NextState()
+        {
+            counter = 0;
+            if (attackState == AttackStateType.Attack)
             {
-                counter = 0;
-                attackState = attackState == AttackStateType.PreAttack || (attackState == AttackStateType.PostAttack && enemy.Property.preAttackDuration == 0) ?
-                    AttackStateType.Attack : AttackStateType.PreAttack;
+                attackState = AttackStateType.PostAttack;
+                if (enemy.Property.postAttackDuration != 0)
+                    return;
             }
+            if (attackState == AttackStateType.PostAttack)
+            {
+                var player = GameplayService.Interface.Get<PlayerController>();
+                var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
+                var gridDistance = Vector3.Distance(playerPos, entity.GridPosition);
+
+                if (gridDistance > ((Enemy)entity).Property.attackRange)
+                {
+                    GotoState(EntityStateType.Idle);
+                    return;
+                }
+                attackState = AttackStateType.PreAttack;
+                if (enemy.Property.preAttackDuration == 0)
+                    return;
+            }
+            if (attackState == AttackStateType.PreAttack)
+                attackState = AttackStateType.Attack;
         }
     }
 }
