@@ -22,7 +22,7 @@ public abstract class CSharpLazySingletons<T> where T : new()
     }
 }
 
-public class CSharpHungrySingletons<T> where T : new()
+public abstract class CSharpHungrySingletons<T> where T : new()
 {
     public static T Instance { get; } = new T();
 }
