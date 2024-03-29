@@ -100,11 +100,10 @@ namespace Shuile.Gameplay.Entity.States
                     return;
                 }
                 attackState = AttackStateType.PreAttack;
-                if (enemy.Property.preAttackDuration == 0)
+                if (enemy.Property.preAttackDuration != 0)
                     return;
             }
-            if (attackState == AttackStateType.PreAttack)
-                attackState = AttackStateType.Attack;
+            attackState = AttackStateType.Attack;
         }
     }
 }
