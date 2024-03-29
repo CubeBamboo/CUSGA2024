@@ -1,5 +1,4 @@
 using System;
-using Unity.Loading;
 using UnityEditor;
 using UnityEngine;
 
@@ -91,7 +90,7 @@ namespace CbUtils
             }
         }
 
-        public bool Add(Vector3Int pos, T content)
+        public bool Add(Vector3Int pos, T content) // maybe named "register"
         {
             if (IsOutOfBound(pos) || HasContent(pos))
             {
@@ -106,7 +105,7 @@ namespace CbUtils
             return true;
         }
 
-        public bool Remove(Vector3Int pos)
+        public bool Remove(Vector3Int pos) // maybe named "unregister"
         {
             if (IsOutOfBound(pos) || !HasContent(pos))
             {
@@ -181,6 +180,15 @@ namespace CbUtils
             return true;
         }
 
+        public bool TryGet(Vector3Int pos, out T res)
+        {
+            res = null;
+            if (IsOutOfBound(pos))
+                return false;
+
+            res = contents[pos.x, pos.y];
+            return res != null;
+        }
     }
 
     public static class ArrayGridContainerExt

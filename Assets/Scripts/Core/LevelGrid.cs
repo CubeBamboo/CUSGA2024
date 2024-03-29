@@ -7,15 +7,15 @@ namespace Shuile
     public class LevelGrid : MonoSingletons<LevelGrid>
     {
         public ArrayGridContainer<GameObject> grid { get; private set; }
-        public Vector2 startPosition;
-        public Vector3 cellSize;
-        public Vector3 cellGap;
-        public int width;
-        public int height;
+        public Vector2 startPosition; // Vector2(-8, -4)
+        public Vector3 cellSize; // Vector3(1, 1, 1)
+        public Vector3 cellGap; // Vector3(0, 0, 0)
+        public int width; // 16
+        public int height; // 1
         
         protected override void OnAwake()
         {
-            grid = new ArrayGridContainer<GameObject>(startPosition, cellSize, cellGap, width, height); //TODO: positiongrid
+            grid = new ArrayGridContainer<GameObject>(startPosition, cellSize, cellGap, width, height);
             MainGame.Interface.Register<LevelGrid>(this);
         }
 
