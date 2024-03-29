@@ -1,6 +1,6 @@
 ﻿using Shuile.Gameplay.Entity.States;
 
-using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -10,28 +10,63 @@ namespace Shuile.Gameplay.Entity.Enemies
 {
     public class MahouDefenseTower : Enemy
     {
+        [SerializeField] private int explosionDelay = 1;
         [SerializeField] private int bombCount;
         [SerializeField] private GameObject bombPrefab;
+        private static Transform bombParent;
+        private List<Bomb> bombs = new();
 
-        private static Lazy<Transform> BombParent { get; } = new(() => new GameObject("Bombs").transform, false);
+        public int ExplosionDelay
+        {
+            get => explosionDelay;
+            set => explosionDelay = value;
+        }
+
+        public static Transform BombParent
+        {
+            get
+            {
+                if (bombParent == null)
+                    bombParent = new GameObject("Bombs").transform;
+                return bombParent;
+            }
+        }
 
         protected override void RegisterState()
         {
             states.Add(EntityStateType.Spawn, new SpawnState(this));
-            states.Add(EntityStateType.Idle, new EnemyIdleState(this));
-            states.Add(EntityStateType.Attack, new CommonEnemyAttackState(this, Attack));
+            var attackState = new CommonEnemyAttackState(this, Attack, InterruptAttack);
+            states.Add(EntityStateType.Idle, attackState);
+            states.Add(EntityStateType.Attack, attackState);
             states.Add(EntityStateType.Dead, new DeadState(this));
         }
 
         private bool Attack(CommonEnemyAttackState state)
         {
-            for (var i = 0; i < bombCount; i++)
+            if (state.counter == 1)
             {
-                var pos = new Vector3(URandom.Range(0, LevelGrid.Instance.grid.Width), URandom.Range(0, LevelGrid.Instance.grid.Height));
-                var bomb = Instantiate(bombPrefab, pos, Quaternion.identity, BombParent.Value);
-                // bomb.GetComponent<Bomb>().delay = Property.postAttackDuration;
+                for (var i = 0; i < bombCount; i++)
+                {
+                    var pos = LevelGrid.Instance.grid.CellToWorld(new Vector3Int(URandom.Range(0, LevelGrid.Instance.grid.Width), URandom.Range(0, LevelGrid.Instance.grid.Height)));
+                    var bomb = Instantiate(bombPrefab, pos, Quaternion.identity, BombParent).GetComponent<Bomb>();
+                    bombs.Add(bomb);
+                }
             }
+            if (state.counter < explosionDelay)
+                return true;
+
+            foreach (var bomb in bombs)
+                bomb.Explode(Property.attackPoint);
+
+            bombs.Clear();
             return false;
+        }
+
+        private void InterruptAttack(CommonEnemyAttackState state)
+        {
+            foreach (var bomb in bombs)
+                bomb.Interrupt();
+            bombs.Clear();
         }
     }
 }

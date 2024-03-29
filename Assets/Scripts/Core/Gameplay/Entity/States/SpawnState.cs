@@ -12,7 +12,7 @@ namespace Shuile.Gameplay.Entity.States
 
         public override void Judge()
         {
-            entity.transform.GetChild(0).DOScale(Vector3.one, 0.1f);
+            entity.transform.GetChild(0).DOScale(1f, 0.3f).SetEase(Ease.OutBounce);
             entity.GotoState(EntityStateType.Idle);
         }
 

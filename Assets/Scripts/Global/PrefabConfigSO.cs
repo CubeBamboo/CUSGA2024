@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Shuile
@@ -8,12 +6,9 @@ namespace Shuile
     public class PrefabConfigSO : ScriptableObject
     {
         [Header("Enemy")]
-        [Tooltip("错乱的机械体")] public GameObject bakaMachine;
+        [Tooltip("错乱的机械体")] public GameObject zakoRobot;
         [Tooltip("炸猪")] public GameObject creeper;
         [Tooltip("追踪弹发射炮")] public GameObject mahouDefenseTower;
-
-        public GameObject vegetableEnemy;
-        public GameObject normalEnemy;
 
         [Header("Mechanism")]
         public GameObject laser;

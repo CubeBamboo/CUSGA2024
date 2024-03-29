@@ -2,11 +2,13 @@
 
 using Shuile.Gameplay.Entity.States;
 
+using System;
+
 using UnityEngine;
 
 namespace Shuile.Gameplay.Entity.Enemies
 {
-    public class BakaMachine : Enemy
+    public class ZakoMachine : Enemy
     {
         protected override void RegisterState()
         {
@@ -18,12 +20,11 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         private bool Attack(CommonEnemyAttackState state)
         {
-            var playerCollider = Physics2D.OverlapCircle(LevelGrid.Instance.grid.CellToWorld(GridPosition),
-                LevelGrid.Instance.grid.ToWorldSize(Property.attackRange).x,
-                LayerMask.NameToLayer("Player"));
+            var player = GameplayService.Interface.Get<PlayerController>();
+            var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
 
-            if (playerCollider != null)
-                playerCollider.GetComponent<PlayerController>().OnAttack(Property.attackPoint);
+            if (playerPos.y == GridPosition.y && Math.Abs(playerPos.x - GridPosition.x) <= Property.attackRange)
+                player.OnAttack(Property.attackPoint);
             return false;
         }
     }

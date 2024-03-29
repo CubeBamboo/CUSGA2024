@@ -68,29 +68,21 @@ namespace Shuile.Rhythm
             // get pos (random in a line)
             Vector2 offset = levelGrid.grid.OriginPosition;
             Vector2 rectScale = new Vector2(15, 0);
-            levelGrid.GetRandomPosition(out Vector3 randomPos);
+            levelGrid.GetRandomPosition(out Vector3Int randomGridPos);
 
             // random enemy
             var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
             // instantiate
-            var go = EnemyType2Prefab(randomType)
-                    .Instantiate()
-                    .SetPosition(randomPos);
-
-            // enter animation
-            go.transform.DOScale(0f, 0.3f).From().SetEase(Ease.OutBounce);
+            var enemy = EnemyManager.Instance.SpawnEnemy(EnemyType2Prefab(randomType),randomGridPos);
 
             // TODO: [!][FOR TEST]
             // destroy when touch player
-            var evtMono = go.AddComponent<Collider2DEventMono>();
+            var evtMono = enemy.gameObject.AddComponent<Collider2DEventMono>();
             evtMono.TriggerEntered += coll =>
             {
                 if (coll.gameObject.CompareTag("Player"))
                 {
-                    go.transform.DOScale(0f, 0.3f).SetEase(Ease.InBounce).OnComplete(() =>
-                    {
-                        go.Destroy();
-                    });
+                    enemy.GotoState(EntityStateType.Dead);
                 }
             };
         }
@@ -128,8 +120,9 @@ namespace Shuile.Rhythm
             PrefabConfigSO prefabConfig = GameplayService.Interface.Get<PrefabConfigSO>();
             var res = enemyType switch
             {
-                EnemyType.Vegetable => prefabConfig.vegetableEnemy,
-                EnemyType.Normal => prefabConfig.normalEnemy,
+                EnemyType.ZakoRobot => prefabConfig.zakoRobot,
+                EnemyType.Creeper => prefabConfig.creeper,
+                EnemyType.MahouDefenseTower => prefabConfig.mahouDefenseTower,
                 _ => throw new System.Exception("Invalid EnemyType."),
             };
             return res;
@@ -158,8 +151,9 @@ namespace Shuile.Rhythm
 
     public enum EnemyType
     {
-        Vegetable,
-        Normal,
+        ZakoRobot,
+        Creeper,
+        MahouDefenseTower,
         TotalCount // for count, not enemy
     }
 

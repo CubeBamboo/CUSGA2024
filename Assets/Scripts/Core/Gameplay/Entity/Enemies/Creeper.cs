@@ -1,8 +1,6 @@
-﻿using CbUtils;
+﻿using Shuile.Gameplay.Entity.States;
 
-using Shuile.Gameplay.Entity.States;
-
-using UnityEngine;
+using System;
 
 namespace Shuile.Gameplay.Entity.Enemies
 {
@@ -18,15 +16,13 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         private bool Attack(CommonEnemyAttackState state)
         {
-            var playerCollider = Physics2D.OverlapCircle(LevelGrid.Instance.grid.CellToWorld(GridPosition),
-                LevelGrid.Instance.grid.ToWorldSize(Property.attackRange).x,
-                LayerMask.NameToLayer("Player"));
+            var player = GameplayService.Interface.Get<PlayerController>();
+            var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
 
-            if (playerCollider != null)
-            {
-                playerCollider.GetComponent<PlayerController>().OnAttack(Property.attackPoint);
-                GotoState(EntityStateType.Dead);  // Or base.OnAttack(114514?);
-            }
+            if (playerPos.y == GridPosition.y && Math.Abs(playerPos.x - GridPosition.x) <= Property.attackRange)
+                player.OnAttack(Property.attackPoint);
+            GotoState(EntityStateType.Dead);  // Or OnAttack(Health);
+            currentState.Judge();  // die了
             return false;
         }
     }

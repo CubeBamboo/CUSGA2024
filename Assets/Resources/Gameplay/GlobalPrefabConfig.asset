@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54cd308c2a1cfcc419084c04b5424c07, type: 3}
   m_Name: GlobalPrefabConfig
   m_EditorClassIdentifier: 
-  vegetableEnemy: {fileID: 3418564270763865659, guid: 728774616213cbd4e9465f369b371956, type: 3}
-  normalEnemy: {fileID: 3418564270763865659, guid: bed6d8ab2713c794ba1e909b55ab90af, type: 3}
+  zakoRobot: {fileID: 3418564270763865659, guid: 728774616213cbd4e9465f369b371956, type: 3}
+  creeper: {fileID: 3418564270763865659, guid: bed6d8ab2713c794ba1e909b55ab90af, type: 3}
+  mahouDefenseTower: {fileID: 3418564270763865659, guid: 61b32462d49427c4ba2a641895c0b410, type: 3}
   laser: {fileID: 4784529181449652345, guid: 46fca5fda0616594f88291a7c395eaf0, type: 3}
