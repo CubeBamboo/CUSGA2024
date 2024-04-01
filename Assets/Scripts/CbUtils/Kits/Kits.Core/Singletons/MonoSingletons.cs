@@ -9,22 +9,10 @@ namespace CbUtils
         protected static T instance;
         public static T Instance
         {
-            get
-            {
-                //lazy load
-                if (!instance && !isQuit)
-                {
-                    var go = new GameObject("MonoSingleton:" + typeof(T).ToString());
-                    instance = go.AddComponent<T>();
-                }
+            get => instance = instance || isQuit ?
+                instance : new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
 
-                return instance;
-            }
-
-            private set
-            {
-                instance = value;
-            }
+            private set => instance = value;
         }
 
         public static bool IsInstance => instance != null;

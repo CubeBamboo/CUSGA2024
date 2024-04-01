@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace CbUtils
+namespace CbUtils.Collections
 {
     /// <typeparam name="T">content type</typeparam>
     public class ArrayGridContainer<T> : IPositionGrid, IContainerGrid<T>  where T : class // nullable?
@@ -136,7 +136,7 @@ namespace CbUtils
         public bool HasContent(Vector3Int pos)
         {
             if (IsOutOfBound(pos))
-                throw new IndexOutOfRangeException($"Grid IndexOutOfRange: {pos}");
+                return false;
 
             return contents[pos.x, pos.y] != null;
         }

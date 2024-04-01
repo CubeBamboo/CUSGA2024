@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CbUtils
+namespace CbUtils.Collections
 {
     /// <summary>
     /// provide CellToWorld() and WorldToCell(), it's similar to UnityEngine.GridLayout.

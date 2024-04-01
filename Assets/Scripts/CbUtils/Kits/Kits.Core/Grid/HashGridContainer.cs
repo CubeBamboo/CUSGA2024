@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace CbUtils
+namespace CbUtils.Collections
 {
 
     /// <typeparam name="T">content type</typeparam>

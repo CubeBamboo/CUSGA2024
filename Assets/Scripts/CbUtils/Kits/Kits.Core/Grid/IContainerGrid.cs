@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace CbUtils
+namespace CbUtils.Collections
 {
     /// <summary>
     /// store the content position in grid.
