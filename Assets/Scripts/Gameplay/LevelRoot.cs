@@ -5,6 +5,7 @@ using Shuile.UI;
 
 using Cysharp.Threading.Tasks;
 using Shuile.Rhythm;
+using UnityEngine;
 
 namespace Shuile
 {
@@ -14,7 +15,7 @@ namespace Shuile
      * UICtrl's GameplayPart
      */
     //it also contains the level state callback
-    public class LevelRoot : MonoSingletons<LevelRoot>
+    public class LevelRoot : MonoSingletons<LevelRoot>, IGameRoot
     {
         public enum LevelState
         {
@@ -26,6 +27,15 @@ namespace Shuile
 
         private LevelState state;
         private ISceneLoader sceneLoader;
+
+        protected override void OnAwake()
+        {
+            InitResource();
+        }
+        private void OnDestroy()
+        {
+            DeInitResource();
+        }
 
         public LevelState State
         {
@@ -39,22 +49,12 @@ namespace Shuile
             }
         }
 
-        protected override void OnAwake()
-        {
-            GameplayService.Interface.OnInit();
-            UICtrl.Instance.InitGameplay();
-        }
-
         private void Start()
         {
+            UICtrl.Instance.Create<EndLevelPanel>();
             UICtrl.Instance.Get<PlayingPanel>().Show();
+            UICtrl.Instance.Get<DebugPanel>().Show();
             MainGame.Interface.TryGet(out sceneLoader);
-        }
-
-        private void OnDestroy()
-        {
-            GameplayService.Interface.OnDeInit();
-            UICtrl.Instance.DeInitGameplay();
         }
 
         private void TriggerEvent(LevelState state)
@@ -75,12 +75,31 @@ namespace Shuile
 
         private async void LevelEnd()
         {
-            var endPanel = UICtrl.Instance.Get<EndGamePanel>();
+            var endPanel = UICtrl.Instance.Get<EndLevelPanel>();
             endPanel.TimeTextUGUI.text = "SurviveTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.0");
             endPanel.Show();
 
             await UniTask.Delay(System.TimeSpan.FromSeconds(3f));
             sceneLoader.LoadSceneAsync(new SceneInfo() { SceneName = "Level0Test" }, UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
+
+        public void InitResource()
+        {
+            GameplayService.Interface.OnInit();
+            UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
+            UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
+        }
+        public void DeInitResource()
+        {
+            GameplayService.Interface.OnDeInit();
+            UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
+            UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
+        }
+    }
+
+    public interface IGameRoot
+    {
+        void InitResource();
+        void DeInitResource();
     }
 }

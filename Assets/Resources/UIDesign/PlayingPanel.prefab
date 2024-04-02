@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -688.6754, y: 417.21277}
-  m_SizeDelta: {x: 441.6281, y: 122.1278}
+  m_AnchoredPosition: {x: -660, y: 410.021}
+  m_SizeDelta: {x: 441.6281, y: 96.0858}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1640184299423806581
 CanvasRenderer:
@@ -92,8 +92,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.21
-  m_fontSizeBase: 44.21
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: 2876963282125362794}
   - component: {fileID: 3075618640884236990}
   - component: {fileID: 427180932079300570}
+  - component: {fileID: 7445020490551505607}
   m_Layer: 5
   m_Name: PlayingPanel
   m_TagString: Untagged
@@ -210,3 +211,16 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7445020490551505607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8718288767990971098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbfb7be87dc3e9f4e84f15206cdad37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hpTextUGUI: {fileID: 7434649895390272609}
