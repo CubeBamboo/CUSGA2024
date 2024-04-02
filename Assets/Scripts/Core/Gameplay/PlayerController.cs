@@ -1,14 +1,28 @@
-using UnityEngine;
-
 using CbUtils;
+using CbUtils.Collections;
+
+using UnityEngine;
+using UnityEngine.InputSystem;
 using DG.Tweening;
 
 namespace Shuile
 {
-    public class PlayerController : MonoBehaviour, IAttackable
+    public class PlayerController : MonoBehaviour, IHurtable
     {
         [SerializeField] private PlayerPropertySO property;
         [SerializeField] private SpriteRenderer mRenderer;
+        private Vector3Int gridPos;
+
+        public Vector3Int GridPos
+        {
+            get => gridPos;
+            set
+            {
+                gridPos = value;
+                transform.DOMove(gridPos.ToWorld(levelGrid.grid), 0.1f)
+                         .SetEase(Ease.OutSine);
+            }
+        }
 
         private LevelGrid levelGrid => LevelGrid.Instance;
 
@@ -23,7 +37,8 @@ namespace Shuile
 
             // init pos
             transform.position = levelGrid.grid.SnapToGrid(transform.position);
-            if(levelGrid.grid.HasContent(transform.position.ToCell(levelGrid.grid)))
+            gridPos = transform.position.ToCell(levelGrid.grid);
+            if (levelGrid.grid.HasContent(transform.position.ToCell(levelGrid.grid)))
                 Debug.LogWarning("grid has content at player's position.");
             levelGrid.grid.Add(transform.position.ToCell(levelGrid.grid), gameObject);
 
@@ -31,12 +46,34 @@ namespace Shuile
             OnHpChangedEvent?.Invoke(property.currentHealthPoint);
         }
 
-#if UNITY_EDITOR
-        private void OnGUI()
+        private void Update()
         {
-            GUI.skin.label.fontSize = 40;
-            //GUILayout.Label($"Health:{property.currentHealthPoint}");
+            DebugUpdate();
         }
+
+        //TODO: [!] for debug
+        private void DebugUpdate()
+        {
+            if (Keyboard.current.upArrowKey.isPressed && Keyboard.current.downArrowKey.isPressed
+                && DebugProperty.Instance.GetInt("PlayerKaiGua") == 0)
+            {
+                DebugProperty.Instance.SetInt("PlayerKaiGua", 1);
+                Debug.Log("开挂模式");
+                property.currentHealthPoint = 999999;
+            }
+            if (Keyboard.current.bKey.wasPressedThisFrame)
+            {
+                this.OnAttack(20);
+                this.OnAttack((int)(property.currentHealthPoint * 0.25f));
+            }
+        }
+
+#if UNITY_EDITOR
+        //private void OnGUI()
+        //{
+        //    //GUI.skin.label.fontSize = 40;
+        //    //GUILayout.Label($"Health:{property.currentHealthPoint}");
+        //}
 #endif
 
         // default attack, maybe add weapon feature later.
@@ -47,11 +84,11 @@ namespace Shuile
                 () => transform.DOScale(1f, 0.1f));
 
             // 搜索敌人
-            Vector3Int targetPos = transform.position.ToCell(levelGrid.grid) + new Vector3Int(FaceDir, 0, 0);
+            Vector3Int targetPos = GridPos + new Vector3Int(FaceDir, 0, 0);
             if (levelGrid.grid.TryGet(targetPos, out var targetGo))
             {
                 //TODO: 检查是否是敌人
-                targetGo.GetComponent<IAttackable>().OnAttack(property.attackPoint);
+                targetGo.GetComponent<IHurtable>().OnAttack(property.attackPoint);
             }
             /*if (EnemyManager.Instance.TryGetEnemyAtPosition(Mathf.RoundToInt(transform.position.x), out var enemy))
             {
@@ -61,23 +98,15 @@ namespace Shuile
 
         public void Move(float xDirection)
         {
-            var cellPos = transform.position.ToCell(levelGrid.grid);
-            var nextPos = cellPos + new Vector3Int((int)xDirection, 0, 0);
-            if (levelGrid.grid.HasContent(nextPos))
-            {
-                Debug.Log("Player move fail");
-                return;
-            }
-            transform.position += Vector3.right * xDirection;
+            var oldPos = GridPos;
+            var nextPos = oldPos + new Vector3Int((int)xDirection, 0, 0);
             FaceDir = xDirection > 0 ? 1 : -1;
 
-            levelGrid.grid.Move(cellPos, nextPos);
+            if (levelGrid.grid.HasContent(nextPos))
+                return;
 
-            //TODO: dotween interrupt process
-            //transform.DOMoveX(transform.position.x + xDirection, 0.2f)
-            //         .SetEase(Ease.OutSine);
-            //grid.Move(transform.position.ToCell(grid),
-            //    (transform.position + Vector3.right * xDirection).ToCell(grid));
+            GridPos += Vector3Int.right * (int)xDirection;
+            levelGrid.grid.Move(oldPos, nextPos);
         }
 
         public void Jump()

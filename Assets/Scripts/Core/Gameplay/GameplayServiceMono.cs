@@ -28,12 +28,14 @@ namespace Shuile.Gameplay
         {
             this.Register<PrefabConfigSO>(Resources.Load<PrefabConfigSO>("Gameplay/GlobalPrefabConfig")); //TODO: other load
             this.Register<PlayerController>(Object.FindObjectOfType<PlayerController>());
+            this.Register<PlayerModel>(new PlayerModel());
         }
 
         public override void OnDeInit()
         {
             this.UnRegister<PrefabConfigSO>();
             this.UnRegister<PlayerController>();
+            this.UnRegister<PlayerModel>();
         }
     }
 }

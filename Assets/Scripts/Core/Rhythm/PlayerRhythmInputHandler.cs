@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using CbUtils;
 using static Shuile.Gameplay.PlayerRhythmInputHandler;
+using Shuile.Rhythm;
 
 namespace Shuile.Gameplay
 {
@@ -11,7 +12,8 @@ namespace Shuile.Gameplay
         [SerializeField] private PlayerInput playerInput;
         [SerializeField] private PlayerController player;
 
-        private float currentHitOffset = 0f;
+        // dependency
+        private PlayerModel playerModel;
 
         public enum PlayerState
         {
@@ -23,10 +25,11 @@ namespace Shuile.Gameplay
         public Keyboard keyboard;
 
         public PlayerController Player => player;
-        public float CurrentHitOffset => currentHitOffset;
 
         private void Start()
         {
+            playerModel = GameplayService.Interface.Get<PlayerModel>();
+
             keyboard = Keyboard.current; //TODO: refactor after demo complete
             playerInput.onActionTriggered += OnActionTriggered;
 
@@ -49,25 +52,23 @@ namespace Shuile.Gameplay
         private void Update()
         {
             mFSM.Update();
-
-            if (Keyboard.current.bKey.wasPressedThisFrame)
-            {
-                player.OnAttack(1);
-            }
         }
 
 #if UNITY_EDITOR
         private void OnGUI()
         {
-            //GUI.skin.label.fontSize = 40;
-            //GUILayout.Label($"hitOffset:{currentHitOffset}");
+            //var guiStyle = GUI.skin.label;
+            //guiStyle.fontSize = 40;
+            //guiStyle.alignment = TextAnchor.UpperLeft;
+            //guiStyle.contentOffset = new Vector2(0, 400);
+            //GUILayout.Label($"hitOffset:{playerModel.currentHitOffset}");
+            //GUILayout.Label($"CurrentTime:{MusicRhythmManager.Instance.CurrentTime}");
             //GUILayout.Label($"RealGameTime:{Time.fixedTime}");
 
             //if (!MusicRhythmManager.Instance.IsPlaying)
             //    return;
 
             //GUILayout.Label($"RhythmCheckTime:{MusicRhythmManager.Instance.CurrentTime}");
-            //GUILayout.Label($"PlayerNoteCount:{PlayerChartManager.Instance.Count}");
         }
 #endif
 
@@ -77,8 +78,8 @@ namespace Shuile.Gameplay
                 return;
             if (context.phase != InputActionPhase.Started)
                 return;
-            //if (!MusicRhythmManager.Instance.CheckBeatRhythm(MusicRhythmManager.Instance.CurrentTime, out currentHitOffset))
-            //    return;
+            if (!MusicRhythmManager.Instance.CheckBeatRhythm(MusicRhythmManager.Instance.CurrentTime, out playerModel.currentHitOffset))
+                return;
 
             switch (context.action.name)
             {

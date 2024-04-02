@@ -74,13 +74,18 @@ namespace Shuile.Rhythm
                     targetTime = 0 + 0f / 4f,
                     eventType = NoteEventType.MusicOffsetTestLaser,
                 },
+                //new NoteData
+                //{
+                //    targetTime = 4 + 0f / 4f,
+                //    eventType = NoteEventType.SingleEnemySpawn,
+                //},
                 new NoteData
                 {
                     targetTime = 0 + 0f / 4f,
-                    endTime = 15 + 0f / 4f,
+                    endTime = 64 + 0f / 4f,
                     eventType = NoteEventType.MultiEnemySpawn,
                 },
-                new NoteData
+                /*new NoteData
                 {
                     targetTime = 7 + 0f / 4f,
                     eventType = NoteEventType.LaserSpawn,
@@ -94,14 +99,14 @@ namespace Shuile.Rhythm
                 {
                     targetTime = 11 + 0f / 4f,
                     eventType = NoteEventType.LaserSpawn,
-                },
-                new NoteData
-                {
-                    targetTime = 16 + 0f / 4f,
-                    endTime = 47 + 0f / 4f,
-                    eventType = NoteEventType.MultiEnemySpawn,
-                },
-                new NoteData
+                },*/
+                //new NoteData
+                //{
+                //    targetTime = 16 + 0f / 4f,
+                //    endTime = 47 + 0f / 4f,
+                //    eventType = NoteEventType.MultiEnemySpawn,
+                //},
+                /*new NoteData
                 {
                     targetTime = 32 + 0f / 4f,
                     eventType = NoteEventType.LaserSpawn,
@@ -125,7 +130,7 @@ namespace Shuile.Rhythm
                 {
                     targetTime = 44 + 0f / 4f,
                     eventType = NoteEventType.LaserSpawn,
-                },
+                },*/
             };
 
             noteList.Sort((a, b)=> a.targetTime.CompareTo(b.targetTime));

@@ -17,7 +17,7 @@ namespace Shuile.Gameplay.Entity
         {
             var gridPosition = LevelGrid.Instance.grid.WorldToCell(transform.position);
             var grid = LevelGrid.Instance.grid;
-            grid.Get(gridPosition)?.GetComponent<IAttackable>()?.OnAttack(attackPoint);
+            grid.Get(gridPosition)?.GetComponent<IHurtable>()?.OnAttack(attackPoint);
             var player = GameplayService.Interface.Get<PlayerController>();
 
             // play anim

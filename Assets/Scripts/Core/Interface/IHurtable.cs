@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Shuile
 {
-    public interface IAttackable
+    public interface IHurtable
     {
         public void OnAttack(int attackPoint);
     }

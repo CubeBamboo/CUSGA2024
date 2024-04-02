@@ -1,10 +1,10 @@
 using DG.Tweening;
-
+using Shuile.Framework;
 using UnityEngine;
 
 namespace Shuile.Gameplay
 {
-    public abstract class Enemy : BehaviourEntity, IAttackable
+    public abstract class Enemy : BehaviourEntity, IHurtable
     {
         [SerializeField] private EnemyPropertySO property;
         private int health;
@@ -13,10 +13,23 @@ namespace Shuile.Gameplay
         public EnemyPropertySO Property => property;
         public bool IsAlive => health > 0;
 
+        public event System.Action<int> OnHpChangedEvent = _ => { };
+        private HUDHpBarElement hpBarUI;
+
         protected override void Awake()
         {
             base.Awake();
             health = property.healthPoint;
+
+            // author: CubeBamboo
+            hpBarUI = UICtrl.Instance.Create<HUDHpBarElement>();
+            hpBarUI.Link(this).Show();
+            // end
+        }
+
+        private void OnDestroy()
+        {
+            Object.Destroy(hpBarUI.gameObject);
         }
 
         public void OnAttack(int attackPoint)
@@ -24,8 +37,8 @@ namespace Shuile.Gameplay
             if (health <= 0)
                 return;
 
-            // hurt FX
             // author: CubeBamboo
+            // hurt FX
             SpriteRenderer mRenderer = GetComponentInChildren<SpriteRenderer>();
             mRenderer.color = Color.white;
             mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f).OnComplete(() =>
@@ -36,6 +49,10 @@ namespace Shuile.Gameplay
             // end
 
             health = Mathf.Max(0, health - attackPoint);
+            // author: CubeBamboo
+            OnHpChangedEvent(health);
+            // end
+
             if (health == 0)
             {
                 GotoState(EntityStateType.Dead);
