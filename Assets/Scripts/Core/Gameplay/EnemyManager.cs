@@ -15,6 +15,7 @@ namespace Shuile.Gameplay
         private PrefabConfigSO prefabs;
         private bool judging = false;
         private readonly List<Enemy> removeList = new();
+        private int frameCounter = 0;
 
         public PrefabConfigSO EnemyPrefabs
         {
@@ -46,8 +47,9 @@ namespace Shuile.Gameplay
         private void OnRhythmHit()
         {
             judging = true;
+            var version = frameCounter++;
             foreach (var enemy in enemyList)
-                enemy.Judge();
+                enemy.Judge(version, false);
             
             judging = false;
             foreach (var enemy in removeList)

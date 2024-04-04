@@ -23,12 +23,13 @@ namespace Shuile.Gameplay
         Enemy,  // 敌人
     }
 
-    public abstract class BehaviourEntity : MonoBehaviour
+    public abstract class BehaviourEntity : MonoBehaviour, IJudgeable
     {
         protected EntityStateType state = EntityStateType.Idle;
         protected Dictionary<EntityStateType, EntityState> states = new();
         protected EntityState currentState = EmptyState.instance;
         private Vector3Int gridPosition;
+        protected int lastJudgeFrame;
 
         public event OnEntityStateChanged OnStateChanged;
 
@@ -47,6 +48,7 @@ namespace Shuile.Gameplay
                 transform.DOMove(LevelGrid.Instance.grid.CellToWorld(value), 0.1f);
             }
         }
+        internal int LastJudgeFrame => lastJudgeFrame;
 
         protected virtual void Awake()
         {
@@ -82,9 +84,13 @@ namespace Shuile.Gameplay
             }
             OnStateChanged?.Invoke(from, state);
         }
-        
-        public void Judge()
+
+        public void Judge(int frame, bool force)
         {
+            if (lastJudgeFrame == frame && !force)
+                return;
+
+            lastJudgeFrame = frame;
             currentState.Judge();
         }
     }

@@ -36,8 +36,15 @@ namespace Shuile.Gameplay.Entity.States
 
             // TODO: clever to find path
             var moveTo = entity.GridPosition + new Vector3Int(Math.Sign(player.transform.position.x - entity.transform.position.x), 0, 0);
-            if (LevelGrid.Instance.grid.HasContent(moveTo))
-                return;  // TODO: ask another entity to move
+            if (LevelGrid.Instance.grid.TryGet(moveTo, out var destGameObject))
+            {
+                var judgeable = destGameObject.GetComponent<IJudgeable>();
+                if (judgeable == null)  // not judgeable
+                    return;
+                judgeable.Judge(entity.LastJudgeFrame, false);  // try trigger it's judge
+                if (LevelGrid.Instance.grid.HasContent(moveTo))
+                    return;  // still can't move to
+            }
             entity.GridPosition = moveTo;
             moveSleep = ((Enemy)entity).Property.moveInterval;
         }
