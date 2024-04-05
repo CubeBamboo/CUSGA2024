@@ -2,10 +2,11 @@ using CbUtils;
 using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.UI;
+using Shuile.Rhythm;
 
 using Cysharp.Threading.Tasks;
-using Shuile.Rhythm;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Shuile
 {
@@ -31,6 +32,11 @@ namespace Shuile
         protected override void OnAwake()
         {
             InitResource();
+
+            // TODO: [!] debug
+            //var chart = ChartConverter.LoadChart("testchart.json");
+            //FooChart.Do();
+            
         }
         private void OnDestroy()
         {

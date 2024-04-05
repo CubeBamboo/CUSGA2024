@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1728457419730662577}
   - component: {fileID: 7682511776118496296}
   - component: {fileID: -4031018267551204319}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Creeper (Ex.)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

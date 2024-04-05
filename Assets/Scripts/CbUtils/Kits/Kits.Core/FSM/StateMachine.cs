@@ -16,6 +16,7 @@ namespace CbUtils
         // for example you want to switch to A State only when current state is B State
         bool Condition();
 
+        // TODO: add some label
         // use it anywhere you want, maybe can use string for label in the future
         void Custom();
     }
