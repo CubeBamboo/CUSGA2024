@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2889432907084128650}
   - component: {fileID: 1938329587808478526}
   - component: {fileID: 7534726137920101289}
+  - component: {fileID: -5733527779523853008}
   m_Layer: 5
   m_Name: HUDHpBarElement
   m_TagString: Untagged
@@ -35,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 115.3, y: 28.5}
+  m_SizeDelta: {x: 99.61, y: 11.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1938329587808478526
 CanvasRenderer:
@@ -75,3 +76,15 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-5733527779523853008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7917142957684525295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31cc56e125965254e9f95b088faa54db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 using CbUtils;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Shuile.Rhythm
 {
+    //TODO: delete before release
     public static class TestExt
     {
         public static async void DelayDestroy(float time, GameObject obj, System.Action OnDestroy=null)
@@ -19,4 +20,4 @@ namespace Shuile.Rhythm
         }
     }
 }
-#endif
+//#endif

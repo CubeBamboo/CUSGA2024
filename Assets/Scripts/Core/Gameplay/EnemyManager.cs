@@ -77,6 +77,12 @@ namespace Shuile.Gameplay
         {
             // if (LevelGrid.Instance.grid.IsOutOfBound(pos))
             //     return null;
+            // author: cubebamboo //TDOO: only for debug
+            if (DebugProperty.Instance.GetInt("EnemyClamp") == 1 && enemyList.Count > 6)
+            {
+                return null;
+            }
+            // end
 
             var enemyObject = Instantiate(enemyPrefab, LevelGrid.Instance.grid.CellToWorld(pos), Quaternion.identity, enemyParent);
             var enemy = enemyObject.GetComponent<Enemy>();
@@ -84,18 +90,5 @@ namespace Shuile.Gameplay
             enemyList.Add(enemy);
             return enemy;
         }
-
-        // author: CubeBamboo
-        public bool TryGetEnemyAtPosition(Vector3Int pos, out Enemy enemy)
-        {
-            enemy = null;
-            if (LevelGrid.Instance.grid.IsValidCell(pos))
-            {
-                enemy = LevelGrid.instance.grid.contents[pos.x, pos.y].GetComponent<Enemy>();
-                return enemy != null;
-            }
-            return false;
-        }
-        // end
     }
 }

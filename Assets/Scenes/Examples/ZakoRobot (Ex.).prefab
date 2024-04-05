@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1728457419730662577}
   - component: {fileID: 5497192847240891121}
   - component: {fileID: 1281862040857465643}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ZakoRobot (Ex.)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

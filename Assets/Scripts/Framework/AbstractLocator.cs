@@ -3,9 +3,18 @@ using System.Collections.Generic;
 
 namespace Shuile.Framework
 {
+
     // easy ioc container
     public abstract class AbstractLocator<T> where T : new()
     {
+        // [still WIP]
+        // {number high} can call {number low}, {number low} can not call {number high} 
+        public enum Layer
+        {
+            Controller,
+            Model,
+        }
+
         private static T mInterface = new();
         public static T Interface => mInterface;
 
@@ -51,4 +60,12 @@ namespace Shuile.Framework
             mContainer.Clear();
         }
     }
+
+    #region Layer
+
+    public interface IModel
+    {
+    }
+
+    #endregion
 }

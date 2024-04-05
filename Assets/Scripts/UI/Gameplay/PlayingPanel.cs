@@ -1,47 +1,38 @@
 using UnityEngine;
 using TMPro;
 
-using CbUtils;
 using Shuile.Gameplay;
 using Shuile.Framework;
 
 
 namespace Shuile.UI
 {
-    public class PlayingPanel : BasePanelInUnity
+    public class PlayingPanel : BasePanelWithMono
     {
-        private GameObject _panel;
-        private TextMeshProUGUI hpTextUGUI;
+        [SerializeField] private TextMeshProUGUI hpTextUGUI;
 
         public TextMeshProUGUI HpTextUGUI => hpTextUGUI;
+        private void Awake()
+            => this.RegisterUI<PlayingPanel>();
+        private void OnDestroy()
+            => this.UnRegisterUI<PlayingPanel>();
 
-        public override void BeforeInit()
+        private void Start()
         {
-            var assets = Resources.Load<GameObject>("UIDesign/PlayingPanel");
-            _panel = assets.Instantiate();
-            hpTextUGUI = _panel.transform.Find("Text_Hp").GetComponent<TextMeshProUGUI>();
-
-            GameplayService.Interface.Get<PlayerController>().OnHpChangedEvent += (val) =>
+            GameplayService.Interface.Get<Player>().OnHpChangedEvent += (val) =>
             {
                 hpTextUGUI.text = "Player HP: " + (val > 0 ? val : 0).ToString();
             };
         }
 
-        protected override GameObject Panel => _panel;
-        protected override Canvas Canvas => UICtrl.Instance.OverlayCanvas;
-        public override void DeInit()
-        {
-            _panel.Destroy();
-        }
-
         public override void Hide()
         {
-            _panel.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         public override void Show()
         {
-            _panel.SetActive(true);
+            gameObject.SetActive(true);
         }
     }
 }

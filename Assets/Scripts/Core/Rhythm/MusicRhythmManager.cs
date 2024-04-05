@@ -19,6 +19,7 @@ namespace Shuile.Rhythm
 
         public bool playOnAwake = true;
         public float playTimeScale = 1f;
+        public float volume = 0.4f;
 
         public bool IsPlaying => isPlaying;
         public float MissToleranceInSeconds => levelConfig.missTolerance * 0.001f;
@@ -56,7 +57,7 @@ namespace Shuile.Rhythm
         private void InitMusic()
         {
             audioPlayer.LoadClip(currentMusic.clip);
-            audioPlayer.Volume = 0.4f;
+            audioPlayer.Volume = volume;
         }
 
         public async void StartPlay()

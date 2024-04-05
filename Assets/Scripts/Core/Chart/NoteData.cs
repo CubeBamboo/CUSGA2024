@@ -1,8 +1,6 @@
 using CbUtils;
-using CbUtils.Event;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
-using Shuile.Framework;
+
 using Shuile.Gameplay;
 using Shuile.NoteProduct;
 using UnityEngine;
@@ -66,25 +64,18 @@ namespace Shuile.Rhythm
 
             // TODO: store in eventdata
             // get pos (random in a line)
-            Vector2 offset = levelGrid.grid.OriginPosition;
-            Vector2 rectScale = new Vector2(15, 0);
-            levelGrid.GetRandomPosition(out Vector3Int randomGridPos);
-
-            // random enemy
-            var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
-            // instantiate
-            var enemy = EnemyManager.Instance.SpawnEnemy(EnemyType2Prefab(randomType),randomGridPos);
-
-            // TODO: [!][FOR TEST]
-            // destroy when touch player
-            var evtMono = enemy.gameObject.AddComponent<Collider2DEventMono>();
-            evtMono.TriggerEntered += coll =>
+            if (levelGrid.TryGetRandomPosition(out Vector3Int randomGridPos, true))
             {
-                if (coll.gameObject.CompareTag("Player"))
-                {
-                    enemy.GotoState(EntityStateType.Dead);
-                }
-            };
+                // random enemy
+                var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
+                //var randomType = EnemyType.; // TODO: [!]for test
+                // instantiate
+                var enemy = EnemyManager.Instance.SpawnEnemy(EnemyType2Prefab(randomType),randomGridPos);
+            }
+            else
+            {
+                Debug.LogWarning("No enough space to spawn enemy");
+            }
         }
 
         /// <param name="interval">(unit: in seconds)</param>
@@ -110,8 +101,8 @@ namespace Shuile.Rhythm
             var levelGrid = LevelGrid.Instance;
 
             var go = prefabConfig.laser.Instantiate(); // spawn
-            levelGrid.GetRandomPosition(out Vector3 randomPos);
-            go.SetPosition(randomPos); // init position
+            levelGrid.TryGetRandomPosition(out Vector3Int randomPos);
+            go.SetPosition(randomPos.ToWorld(levelGrid.grid)); // init position
             NoteProductController.Laser.Process(go); // laser behavior
         }
 

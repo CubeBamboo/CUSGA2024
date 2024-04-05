@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1728457419730662577}
   - component: {fileID: 7682511776118496296}
   - component: {fileID: -9123963003858132566}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MahouDefenseTower (Ex.)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   property: {fileID: 11400000, guid: fb76b32b86564e449bf4822929a7741b, type: 2}
   explosionDelay: 4
-  bombCount: 6
+  bombCount: 3
   bombPrefab: {fileID: 3418564270763865659, guid: 8762d24ee396a8547a31197ba24b25b4, type: 3}
 --- !u!1 &8123984159501024645
 GameObject:

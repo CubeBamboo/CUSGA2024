@@ -1,65 +1,59 @@
 using CbUtils;
 using Shuile.Framework;
 using Shuile.Gameplay;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+using THIS = Shuile.HUDHpBarElement;
 
 namespace Shuile
 {
     // TODO: maybe panel is not a good idea... esspecially Hide() and Show()
-    public class HUDHpBarElement : BasePanelInUnity
+    public class HUDHpBarElement : BasePanelWithMono
     {
-        private GameObject _panel;
         private Image _image;
 
         public Image Image => _image;
+        private void Awake()
+            => this.RegisterUI<HUDHpBarElement>();
+        private void OnDestroy()
+            => this.UnRegisterUI<HUDHpBarElement>();
 
-        public override void BeforeInit()
+        public static PanelCreateor Creator = () =>
+                Resources.Load<GameObject>("UIDesign/HUDHpBarElement").Instantiate().GetComponent<IPanel>();
+
+        private void Start()
         {
-            var assets = Resources.Load<GameObject>("UIDesign/HUDHpBarElement");
-            _panel = assets.Instantiate();
-            _image = _panel.GetComponent<Image>();
+            this.SetParent(UICtrl.Instance.WorldCanvas.transform);
 
-            PlayerController player = GameplayService.Interface.Get<PlayerController>();
+            _image = gameObject.GetComponent<Image>();
 
-            // TODO: [!] unregister when not use (like Hide() called)
-            // TODO: [!] abstract to object which have hp and transform (not like here only support player)
-            // 监听血量变化
-            player.OnHpChangedEvent += val =>
-            {
-                Image.fillAmount = (float)val / player.MaxHP;
-            };
-            // 跟随玩家
-            player.gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () =>
-            {
-                _panel.transform.position = player.transform.position + new Vector3(0, 1.5f); //Vector3(0, 1.5f): player height
-            };
         }
 
-        //public void Link(Transform follow, float height)
-        //{
-
-        //}
-
-        protected override GameObject Panel => _panel;
-
-        protected override Canvas Canvas => UICtrl.Instance.WorldCanvas;
-
-        public override void DeInit()
+        public THIS Link(Enemy character)
         {
-            _panel.Destroy();
+            // 监听血量变化
+            character.OnHpChangedEvent += val =>
+            {
+                this.Image.fillAmount = (float)val / character.Property.healthPoint;
+            };
+            // 跟随玩家
+            character.gameObject.AddComponent<UpdateEventMono>().OnUpdate += () =>
+            {
+                this.transform.position = character.transform.position + new Vector3(0, 1.5f); //Vector3(0, 1.5f): player height
+            };
+
+            return this;
         }
 
         public override void Hide()
         {
-            _panel.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         public override void Show()
         {
-            _panel.SetActive(true);
+            gameObject.SetActive(true);
         }
     }
 }

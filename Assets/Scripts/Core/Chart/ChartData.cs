@@ -10,9 +10,9 @@ namespace Shuile.Rhythm
     public class ChartData
     {
         /// <summary> (unit: music bar) for loop </summary>
-        public float chartLoopLength;
+        public float length;
         /// <summary> (unit: music bar) </summary>
-        public NoteData[] chartLoopPart;
+        public NoteData[] notes;
     }
 
     public static class ChartDataCreator
@@ -21,8 +21,8 @@ namespace Shuile.Rhythm
         {
             return new ChartData()
             {
-                chartLoopLength = 4f,
-                chartLoopPart = new NoteData[4]
+                length = 4f,
+                notes = new NoteData[4]
                 {
                     NoteData.Create(0 + 0f / 4f),
                     NoteData.Create(1 + 0f / 4f),
@@ -36,19 +36,19 @@ namespace Shuile.Rhythm
         {
             var newChart = new ChartData
             {
-                chartLoopLength = 8f,
-                chartLoopPart = new NoteData[2]
+                length = 8f,
+                notes = new NoteData[2]
             };
 
             // init chart
 
-            newChart.chartLoopPart[0] = new NoteData
+            newChart.notes[0] = new NoteData
             {
                 targetTime = 0 + 0f / 4f,
                 eventType = NoteEventType.SingleEnemySpawn,
             };
 
-            newChart.chartLoopPart[1] = new NoteData
+            newChart.notes[1] = new NoteData
             {
                 targetTime = 4 + 0f / 4f,
                 eventType = NoteEventType.SingleEnemySpawn,
@@ -62,7 +62,7 @@ namespace Shuile.Rhythm
         {
             var newChart = new ChartData
             {
-                chartLoopLength = 1000f, // infinity
+                length = 1000f, // infinity
                 //chartLoopPart = new NoteData[1000] // record every single note // -> use list.ToArray()
             };
 
@@ -74,13 +74,18 @@ namespace Shuile.Rhythm
                     targetTime = 0 + 0f / 4f,
                     eventType = NoteEventType.MusicOffsetTestLaser,
                 },
+                //new NoteData
+                //{
+                //    targetTime = 4 + 0f / 4f,
+                //    eventType = NoteEventType.SingleEnemySpawn,
+                //},
                 new NoteData
                 {
                     targetTime = 0 + 0f / 4f,
-                    endTime = 15 + 0f / 4f,
+                    endTime = 1024 + 0f / 4f,
                     eventType = NoteEventType.MultiEnemySpawn,
                 },
-                new NoteData
+                /*new NoteData
                 {
                     targetTime = 7 + 0f / 4f,
                     eventType = NoteEventType.LaserSpawn,
@@ -94,14 +99,14 @@ namespace Shuile.Rhythm
                 {
                     targetTime = 11 + 0f / 4f,
                     eventType = NoteEventType.LaserSpawn,
-                },
-                new NoteData
-                {
-                    targetTime = 16 + 0f / 4f,
-                    endTime = 47 + 0f / 4f,
-                    eventType = NoteEventType.MultiEnemySpawn,
-                },
-                new NoteData
+                },*/
+                //new NoteData
+                //{
+                //    targetTime = 16 + 0f / 4f,
+                //    endTime = 47 + 0f / 4f,
+                //    eventType = NoteEventType.MultiEnemySpawn,
+                //},
+                /*new NoteData
                 {
                     targetTime = 32 + 0f / 4f,
                     eventType = NoteEventType.LaserSpawn,
@@ -125,11 +130,11 @@ namespace Shuile.Rhythm
                 {
                     targetTime = 44 + 0f / 4f,
                     eventType = NoteEventType.LaserSpawn,
-                },
+                },*/
             };
 
             noteList.Sort((a, b)=> a.targetTime.CompareTo(b.targetTime));
-            newChart.chartLoopPart = noteList.ToArray();
+            newChart.notes = noteList.ToArray();
             return newChart;
         }
     }
@@ -139,10 +144,10 @@ namespace Shuile.Rhythm
         /// <summary>convert chart time from beat time to absolute time</summary>
         public static float[] BeatTime2AbsoluteTimeChart(ChartData chart, float bpmInterval)
         {
-            float[] absoluteTimeChartLoopPart = new float[chart.chartLoopPart.Length];
-            for (int i = 0; i < chart.chartLoopPart.Length; i++)
+            float[] absoluteTimeChartLoopPart = new float[chart.notes.Length];
+            for (int i = 0; i < chart.notes.Length; i++)
             {
-                absoluteTimeChartLoopPart[i] = chart.chartLoopPart[i].targetTime * bpmInterval;
+                absoluteTimeChartLoopPart[i] = chart.notes[i].targetTime * bpmInterval;
                 //absoluteTimeChartLoopPart[i] = BeatTime2AbsoluteTime(chart.chartLoopPart[i].targetTime, bpmInterval);
             }
             return absoluteTimeChartLoopPart;

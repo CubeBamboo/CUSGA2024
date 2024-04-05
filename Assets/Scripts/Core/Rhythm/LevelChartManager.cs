@@ -33,12 +33,12 @@ namespace Shuile
             if (!isPlay) return;
 
             // if next note time is less than current time, add note to noteContainer and trigger some event
-            float singleLoopInterval = chart.chartLoopLength * MusicRhythmManager.Instance.BpmInterval;
+            float singleLoopInterval = chart.length * MusicRhythmManager.Instance.BpmInterval;
             float nextNoteTime = absoluteTimeChartLoopPart[nextNoteIndex] + loopCount * singleLoopInterval;
             if (MusicRhythmManager.Instance.CurrentTime > nextNoteTime)
             {
                 // process note event
-                NoteEventHelper.Process(chart.chartLoopPart[nextNoteIndex]); // TODO: Absolute2BeatTimeTime......?
+                NoteEventHelper.Process(chart.notes[nextNoteIndex]); // TODO: Absolute2BeatTimeTime......?
 
                 // note play logic
                 nextNoteIndex++;

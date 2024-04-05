@@ -1,4 +1,4 @@
-﻿using CbUtils;
+using CbUtils;
 
 using DG.Tweening;
 
@@ -17,8 +17,8 @@ namespace Shuile.Gameplay.Entity
         {
             var gridPosition = LevelGrid.Instance.grid.WorldToCell(transform.position);
             var grid = LevelGrid.Instance.grid;
-            grid.Get(gridPosition)?.GetComponent<IAttackable>()?.OnAttack(attackPoint);
-            var player = GameplayService.Interface.Get<PlayerController>();
+            grid.Get(gridPosition)?.GetComponent<IHurtable>()?.OnAttack(attackPoint);
+            var player = GameplayService.Interface.Get<Player>();
 
             // play anim
             transform.GetChild(0).transform.DOScale(6f, 0.2f).From().OnComplete(() => Destroy(this.gameObject));
