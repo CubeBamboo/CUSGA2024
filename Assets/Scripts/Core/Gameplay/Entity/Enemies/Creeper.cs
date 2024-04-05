@@ -1,6 +1,6 @@
 using Shuile.Gameplay.Entity.States;
 
-using System;
+using UnityEngine;
 
 namespace Shuile.Gameplay.Entity.Enemies
 {
@@ -17,13 +17,12 @@ namespace Shuile.Gameplay.Entity.Enemies
         private bool Attack(CommonEnemyAttackState state)
         {
             var player = GameplayService.Interface.Get<Player>();
-            var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
 
-            if (playerPos.y == GridPosition.y && Math.Abs(playerPos.x - GridPosition.x) <= Property.attackRange)
+            if (Vector3.Distance(player.transform.position, Position) <= Property.attackRange)
                 player.OnAttack(Property.attackPoint);
             GotoState(EntityStateType.Dead);  // Or OnAttack(Health);
-            currentState.Judge();  // die了
-            return false;
+            stateBehaviour.Judge();  // die了
+            return true;
         }
     }
 }

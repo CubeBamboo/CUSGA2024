@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Shuile.Framework
 {
@@ -34,6 +35,7 @@ namespace Shuile.Framework
 
         public void UnRegister<S>() => mContainer.Remove(typeof(S));
 
+        [DebuggerHidden]
         public S Get<S>()
         {
             if (!mContainer.TryGetValue(typeof(S), out var res))

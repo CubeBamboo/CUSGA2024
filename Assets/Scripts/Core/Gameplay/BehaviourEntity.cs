@@ -27,34 +27,22 @@ namespace Shuile.Gameplay
     {
         protected EntityStateType state = EntityStateType.Idle;
         protected Dictionary<EntityStateType, EntityState> states = new();
-        protected EntityState currentState = EmptyState.instance;
-        private Vector3Int gridPosition;
+        protected EntityState stateBehaviour = EmptyState.instance;
         protected int lastJudgeFrame;
 
         public event OnEntityStateChanged OnStateChanged;
 
         public EntityStateType State => state;
 
-        public Vector3Int GridPosition
-        {
-            get => gridPosition;
-            set
-            {
-                if (value == gridPosition)
-                    return;
-
-                LevelGrid.Instance.grid.Move(GridPosition, value);
-                gridPosition = value;
-                transform.DOMove(LevelGrid.Instance.grid.CellToWorld(value), 0.1f);
-            }
-        }
         internal int LastJudgeFrame => lastJudgeFrame;
+        public Vector3 Position
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
 
         protected virtual void Awake()
         {
-            var gridPos = LevelGrid.Instance.grid.WorldToCell(transform.position);
-            LevelGrid.Instance.grid.Add(gridPos, this.gameObject);
-            gridPosition = gridPos;
             RegisterState();
         }
 
@@ -72,15 +60,15 @@ namespace Shuile.Gameplay
                 return;
 
             if (!states.TryGetValue(newState, out var newStateBehaviour))
-                currentState = EmptyState.instance;
+                stateBehaviour = EmptyState.instance;
 
             var from = state;
             state = newState;
-            if (newStateBehaviour != currentState)
+            if (newStateBehaviour != stateBehaviour)
             {
-                currentState.ExitState();
-                currentState = newStateBehaviour;
-                currentState.EnterState();
+                stateBehaviour.ExitState();
+                stateBehaviour = newStateBehaviour;
+                stateBehaviour.EnterState();
             }
             OnStateChanged?.Invoke(from, state);
         }
@@ -91,7 +79,7 @@ namespace Shuile.Gameplay
                 return;
 
             lastJudgeFrame = frame;
-            currentState.Judge();
+            stateBehaviour.Judge();
         }
     }
 }

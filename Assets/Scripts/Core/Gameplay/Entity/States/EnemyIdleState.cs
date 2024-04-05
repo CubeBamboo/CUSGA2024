@@ -1,4 +1,8 @@
+using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Linq;
+
 using System;
+using System.Threading;
 
 using UnityEngine;
 
@@ -9,6 +13,9 @@ namespace Shuile.Gameplay.Entity.States
     public class EnemyIdleState : EntityState
     {
         private int moveSleep;
+        private CancellationTokenSource moveCts;
+        private Player player;
+        private IRouteFinder routeFinder;
 
         public EnemyIdleState(BehaviourEntity entity) : base(entity)
         {
@@ -16,46 +23,49 @@ namespace Shuile.Gameplay.Entity.States
                 throw new ArgumentException($"entity is {entity.GetType()} not {nameof(Enemy)}", nameof(entity));
         }
 
+        public async UniTaskVoid MoveUpdate()
+        {
+            await foreach (var _ in UniTaskAsyncEnumerable.EveryUpdate(PlayerLoopTiming.Update).WithCancellation(moveCts.Token))
+            {
+                var path = routeFinder.FindRoute(entity.transform.position, player.transform.position);
+                if (path.Length == 0)
+                    continue;
+
+                // move to path
+                var dir = (path[0] - entity.transform.position).normalized;
+                entity.Position += dir * ((Enemy)entity).Property.moveSpeed * Time.deltaTime;
+            }
+        }
+
         public override void Judge()
         {
-            var player = GameplayService.Interface.Get<Player>();
-            var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
-            var gridDistance = Vector3.Distance(playerPos, entity.GridPosition);
+            var playerPos = GameplayService.Interface.Get<Player>().transform.position;
+            var dst = Vector3.Distance(playerPos, entity.transform.position);
 
-            if (gridDistance <= ((Enemy)entity).Property.attackRange)
-            {
-                entity.GotoState(EntityStateType.Attack);
+            if (dst > ((Enemy)entity).Property.attackRange)
                 return;
-            }
 
-            if (moveSleep != 0)
-            {
-                moveSleep--;
-                return;
-            }
-
-            // TODO: clever to find path
-            var moveTo = entity.GridPosition + new Vector3Int(Math.Sign(player.transform.position.x - entity.transform.position.x), 0, 0);
-            if (LevelGrid.Instance.grid.TryGet(moveTo, out var destGameObject))
-            {
-                var judgeable = destGameObject.GetComponent<IJudgeable>();
-                if (judgeable == null)  // not judgeable
-                    return;
-                judgeable.Judge(entity.LastJudgeFrame, false);  // try trigger it's judge
-                if (LevelGrid.Instance.grid.HasContent(moveTo))
-                    return;  // still can't move to
-            }
-            entity.GridPosition = moveTo;
-            moveSleep = ((Enemy)entity).Property.moveInterval;
+            entity.GotoState(EntityStateType.Attack);
         }
 
         public override void EnterState()
         {
-            moveSleep = 0;
+            if (moveCts != null)
+                return;
+
+            moveCts = new();
+            player = GameplayService.Interface.Get<Player>();
+            routeFinder = GameplayService.Interface.Get<IRouteFinder>();
+            MoveUpdate().Forget();
         }
 
         public override void ExitState()
         {
+            if (moveCts != null)
+            {
+                moveCts.Cancel();
+                moveCts = null;
+            }
         }
     }
 }

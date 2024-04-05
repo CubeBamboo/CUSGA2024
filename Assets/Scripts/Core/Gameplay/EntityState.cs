@@ -1,11 +1,11 @@
+using System;
 using System.Runtime.CompilerServices;
-
-using UnityEngine.Events;
 
 namespace Shuile.Gameplay
 {
     public delegate void OnEntityStateChanged(EntityStateType from, EntityStateType to);
 
+    [Obsolete("TODO: Use FSM", false)]
     public abstract class EntityState
     {
         protected BehaviourEntity entity;
@@ -19,8 +19,8 @@ namespace Shuile.Gameplay
         /// 该判定了
         /// </summary>
         public abstract void Judge();
-        public abstract void EnterState();
-        public abstract void ExitState();
+        public virtual void EnterState() { }
+        public virtual void ExitState() { }
 
         /// <summary>
         /// A shortcut for BindEnemy.GotoState(State newState);

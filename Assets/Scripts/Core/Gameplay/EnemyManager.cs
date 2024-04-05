@@ -69,11 +69,10 @@ namespace Shuile.Gameplay
 
         private void RemoveEnemyImmediate(Enemy enemy)
         {
-            LevelGrid.Instance.grid.Remove(enemy.GridPosition);
             enemyList.UnorderedRemove(enemy);
         }
 
-        public Enemy SpawnEnemy(GameObject enemyPrefab, Vector3Int pos)
+        public Enemy SpawnEnemy(GameObject enemyPrefab, Vector3 pos)
         {
             // if (LevelGrid.Instance.grid.IsOutOfBound(pos))
             //     return null;
@@ -84,9 +83,8 @@ namespace Shuile.Gameplay
             }
             // end
 
-            var enemyObject = Instantiate(enemyPrefab, LevelGrid.Instance.grid.CellToWorld(pos), Quaternion.identity, enemyParent);
+            var enemyObject = Instantiate(enemyPrefab, pos, Quaternion.identity, enemyParent);
             var enemy = enemyObject.GetComponent<Enemy>();
-            enemy.GridPosition = pos;
             enemyList.Add(enemy);
             return enemy;
         }

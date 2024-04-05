@@ -10,16 +10,13 @@ public class EnemySameWayTest : MonoBehaviour
     private void Start()
     {
         var enemyPrefab = NoteEventHelper.EnemyType2Prefab(EnemyType.ZakoRobot);
-        var playerGridPos = LevelGrid.Instance.grid.WorldToCell(GameplayService.Interface.Get<PlayerController>().transform.position);
+        var playerPos = GameplayService.Interface.Get<Player>().transform.position;
 
-        Debug.Log(playerGridPos);
-        EnemyManager.Instance.SpawnEnemy(enemyPrefab, playerGridPos + new Vector3Int(-3, 0, 0));
-        EnemyManager.Instance.SpawnEnemy(enemyPrefab, playerGridPos + new Vector3Int(-2, 0, 0));
+        EnemyManager.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(-3, 0, 0));
+        EnemyManager.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(-2, 0, 0));
 
-        EnemyManager.Instance.SpawnEnemy(enemyPrefab, playerGridPos + new Vector3Int(2, 0, 0));
-        EnemyManager.Instance.SpawnEnemy(enemyPrefab, playerGridPos + new Vector3Int(3, 0, 0));
-
-        Debug.Log("Created");
+        EnemyManager.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(2, 0, 0));
+        EnemyManager.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(3, 0, 0));
     }
 }
 #endif

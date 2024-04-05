@@ -17,3 +17,6 @@ MonoBehaviour:
   viewRange: 3
   attackRange: 1
   moveInterval: 1
+  moveSpeed: 100
+  preAttackDuration: 1
+  postAttackDuration: 0
