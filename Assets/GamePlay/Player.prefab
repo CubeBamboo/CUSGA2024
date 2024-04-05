@@ -94,10 +94,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7925704730309566073}
   - component: {fileID: 1221454026593854022}
-  - component: {fileID: 2483739567092334475}
-  - component: {fileID: 6205204905689026323}
   - component: {fileID: 2604699217423334537}
   - component: {fileID: 8815016450440461315}
+  - component: {fileID: 1588266375401723789}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -145,40 +144,84 @@ MonoBehaviour:
   m_ControlsChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_ActionEvents: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 78ee6302-3ff9-4f60-ad3b-c402f2088cc7
+    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 944283ea-d5d2-495a-8e02-dadd460571e2
+    m_ActionName: Player/Look[/Mouse/delta]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d30f9aff-38ca-4667-acd1-083a1ca0a5a6
+    m_ActionName: Player/Fire[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Shuile.Gameplay.PlayerRhythmInputHandler, Shuile
+        m_MethodName: OnNormalMoveInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5701db7f-0cb3-4283-b5da-477dd93e1202
+    m_ActionName: Player/HorizontalMove[/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7da77960-a0f5-43b8-9180-b00bde9e9512
+    m_ActionName: Player/Attack[/Keyboard/space,/Keyboard/j]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 575760fe-c164-4414-86c0-b866bebd374a
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8736e17c-c01f-44c3-a9a0-8832fd66ebbb
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8c2a3f7e-3014-4fb6-8b70-3a6ebef78ebd
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e1f7d82a-70cc-4f2b-a783-601a155b8276
+    m_ActionName: UI/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6750b163-968d-480a-b4d5-db3072a96f86
+    m_ActionName: UI/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f40f8b73-9c5a-4151-b3dc-7237c6d95ab3
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0a68d47f-d08e-44d6-b132-d1ea5bb8a482
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4fe5a1ff-0bdd-47ad-aeaf-541eea858abf
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4c38f383-4f46-432b-9298-09f3c21211a6
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 2babe471-5089-4856-8c24-267a914b38b3
+    m_ActionName: UI/TrackedDeviceOrientation
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &2483739567092334475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4313251295653472145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee28b3b4eeb96794999c184ab467e79c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  property: {fileID: 11400000, guid: adde37f7dde7f444b8871f6e8754c0e3, type: 2}
-  mRenderer: {fileID: 4768109855410436775}
---- !u!114 &6205204905689026323
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4313251295653472145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17bf3cc91e2135f41a63e88c2126758a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerInput: {fileID: 1221454026593854022}
-  player: {fileID: 2483739567092334475}
 --- !u!61 &2604699217423334537
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -208,7 +251,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -240,7 +283,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 1af730a36c9aec34aa0892cfa8099e2a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -250,4 +293,17 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
+--- !u!114 &1588266375401723789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4313251295653472145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ebf9592a44d5ea4ba46a00965c00b84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  property: {fileID: 11400000, guid: adde37f7dde7f444b8871f6e8754c0e3, type: 2}
