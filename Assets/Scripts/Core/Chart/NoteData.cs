@@ -43,7 +43,7 @@ namespace Shuile.Rhythm
                 case NoteEventType.MultiEnemySpawn:
                     float bpmInterval = MusicRhythmManager.Instance.BpmInterval;
                     var duration = (noteData.endTime.Value - noteData.targetTime) * bpmInterval;
-                    var interval = 4f * bpmInterval; // TODO: set interval
+                    var interval = 1f * bpmInterval; // TODO: set interval
                     MultiEnemySpawn(duration, interval);
                     break;
                 case NoteEventType.LaserSpawn:

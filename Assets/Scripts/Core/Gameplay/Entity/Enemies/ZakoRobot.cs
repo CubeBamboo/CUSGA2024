@@ -1,4 +1,4 @@
-﻿using CbUtils;
+using CbUtils;
 
 using Shuile.Gameplay.Entity.States;
 
@@ -20,7 +20,7 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         private bool Attack(CommonEnemyAttackState state)
         {
-            var player = GameplayService.Interface.Get<PlayerController>();
+            var player = GameplayService.Interface.Get<Player>();
             var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
 
             if (playerPos.y == GridPosition.y && Math.Abs(playerPos.x - GridPosition.x) <= Property.attackRange)

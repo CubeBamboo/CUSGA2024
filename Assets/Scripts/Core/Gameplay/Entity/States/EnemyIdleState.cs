@@ -18,7 +18,7 @@ namespace Shuile.Gameplay.Entity.States
 
         public override void Judge()
         {
-            var player = GameplayService.Interface.Get<PlayerController>();
+            var player = GameplayService.Interface.Get<Player>();
             var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
             var gridDistance = Vector3.Distance(playerPos, entity.GridPosition);
 

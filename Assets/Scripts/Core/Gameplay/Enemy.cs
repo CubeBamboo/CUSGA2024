@@ -29,7 +29,7 @@ namespace Shuile.Gameplay
 
         private void OnDestroy()
         {
-            Object.Destroy(hpBarUI.gameObject);
+            if(hpBarUI) Object.Destroy(hpBarUI.gameObject);
         }
 
         public void OnAttack(int attackPoint)

@@ -19,7 +19,7 @@ namespace Shuile.UI
 
         private void Start()
         {
-            GameplayService.Interface.Get<PlayerController>().OnHpChangedEvent += (val) =>
+            GameplayService.Interface.Get<Player>().OnHpChangedEvent += (val) =>
             {
                 hpTextUGUI.text = "Player HP: " + (val > 0 ? val : 0).ToString();
             };

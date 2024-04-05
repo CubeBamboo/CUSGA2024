@@ -2,6 +2,7 @@ using CbUtils;
 using CbUtils.Event;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Shuile.Gameplay;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace Shuile.NoteProduct
                 {
                     if (collider.CompareTag("Player"))
                     {
-                        collider.gameObject.GetComponent<PlayerController>().ForceDie();
+                        collider.gameObject.GetComponent<Player>().ForceDie();
                         collider.gameObject.Destroy();
                     }
                 }; //TODO: hahaha you forgot to add collider component hahaha
