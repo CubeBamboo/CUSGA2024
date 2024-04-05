@@ -11,6 +11,7 @@ public class EnemyPropertySO : ScriptableObject
     public int viewRange;
     public int attackRange;
     [Tooltip("0则代表每一拍都会试图移动")] public int moveInterval = 0;
+    public float moveSpeed = 1f;
     [Tooltip("攻击前摇拍数")] public int preAttackDuration = 1;
     [Tooltip("攻击后摇拍数")] public int postAttackDuration = 0;
 }

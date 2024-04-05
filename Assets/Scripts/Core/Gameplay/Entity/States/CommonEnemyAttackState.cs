@@ -47,7 +47,7 @@ namespace Shuile.Gameplay.Entity.States
         {
             attackState = AttackStateType.PreAttack;
             counter = 0;
-            attackState = enemy.Property.preAttackDuration == 0 ? AttackStateType.Attack : AttackStateType.PostAttack;
+            // attackState = enemy.Property.preAttackDuration == 0 ? AttackStateType.Attack : AttackStateType.PostAttack;
         }
 
         public override void ExitState()
@@ -91,8 +91,7 @@ namespace Shuile.Gameplay.Entity.States
             if (attackState == AttackStateType.PostAttack)
             {
                 var player = GameplayService.Interface.Get<Player>();
-                var playerPos = LevelGrid.Instance.grid.WorldToCell(player.transform.position);
-                var gridDistance = Vector3.Distance(playerPos, entity.GridPosition);
+                var gridDistance = Vector3.Distance(player.transform.position, entity.Position);
 
                 if (gridDistance > ((Enemy)entity).Property.attackRange)
                 {

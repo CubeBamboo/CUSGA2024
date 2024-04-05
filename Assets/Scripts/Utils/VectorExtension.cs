@@ -9,5 +9,8 @@ namespace Shuile
 
         public static Vector2 With(this Vector2 vec, float? x = null, float? y = null)
             => new Vector2(x ?? vec.x, y ?? vec.y);
+
+        public static Vector3Int With(this Vector3Int vec, int? x = null, int? y = null, int? z = null)
+            => new(x ?? vec.x, y ?? vec.y, z ?? vec.z);
     }
 }
