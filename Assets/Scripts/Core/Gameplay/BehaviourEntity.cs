@@ -1,4 +1,4 @@
-﻿using DG.Tweening;
+using DG.Tweening;
 
 using Shuile.Gameplay.Entity;
 
@@ -29,6 +29,7 @@ namespace Shuile.Gameplay
         protected Dictionary<EntityStateType, EntityState> states = new();
         protected EntityState stateBehaviour = EmptyState.instance;
         protected int lastJudgeFrame;
+        protected IMoveController moveController;
 
         public event OnEntityStateChanged OnStateChanged;
 
@@ -40,9 +41,11 @@ namespace Shuile.Gameplay
             get => transform.position;
             set => transform.position = value;
         }
+        public IMoveController MoveController => moveController;
 
         protected virtual void Awake()
         {
+            moveController = GetComponent<IMoveController>();
             RegisterState();
         }
 

@@ -18,7 +18,7 @@ namespace Shuile.Gameplay.Entity.Enemies
         {
             var player = GameplayService.Interface.Get<Player>();
 
-            if (Vector3.Distance(player.transform.position, Position) <= Property.attackRange)
+            if (Vector3.Distance(player.transform.position, MoveController.Position) <= Property.attackRange)
                 player.OnAttack(Property.attackPoint);
             return false;
         }

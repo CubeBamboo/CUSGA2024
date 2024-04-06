@@ -77,7 +77,6 @@ namespace Shuile.Gameplay
             {
                 hits[i].GetComponent<IHurtable>().OnAttack(mTarget.Property.attackPoint);
             }
-
         }
     }
 }
