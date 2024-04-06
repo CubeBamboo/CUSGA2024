@@ -32,8 +32,8 @@ namespace Shuile.Gameplay.Entity.States
                     continue;
 
                 // move to path
-                var dir = (path[0] - entity.transform.position).normalized;
-                entity.Position += dir * ((Enemy)entity).Property.moveSpeed * Time.deltaTime;
+                var dir = Mathf.Sign((path[0] - entity.transform.position).x);
+                entity.MoveController.XAddForce(dir * ((Enemy)entity).Property.acceleration);
             }
         }
 
