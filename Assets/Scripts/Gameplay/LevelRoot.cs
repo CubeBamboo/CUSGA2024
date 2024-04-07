@@ -7,6 +7,7 @@ using Shuile.Rhythm;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.AddressableAssets;
 
 namespace Shuile
 {
@@ -25,18 +26,20 @@ namespace Shuile
         }
 
         public event System.Action OnStart, OnEnd;
+        public ChartData CurrentChart { get; private set; }
+
+        [SerializeField] private AssetReference chartAssets;
 
         private LevelState state;
         private ISceneLoader sceneLoader;
 
+        public bool needHitWithRhythm = true;
+
         protected override void OnAwake()
         {
             InitResource();
-
-            // TODO: [!] debug
-            //var chart = ChartConverter.LoadChart("testchart.json");
-            //FooChart.Do();
-            
+            CurrentChart = ChartUtils.LoadChart(chartAssets);
+            LevelChartManager.Instance.enabled = true;
         }
         private void OnDestroy()
         {

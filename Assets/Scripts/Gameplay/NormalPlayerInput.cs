@@ -54,6 +54,7 @@ namespace Shuile.Gameplay
             var keyboard = Keyboard.current;
             var mouse = Mouse.current;
 
+            // NORMAL
             mFsm.NewEventState(State.Normal)
                 .OnUpdate(() =>
                 {
@@ -75,12 +76,13 @@ namespace Shuile.Gameplay
 
                     // attack
                     bool attackInput = keyboard.jKey.wasPressedThisFrame || mouse.leftButton.wasPressedThisFrame;
-                    if (attackInput && CheckRhythm)
+                    if (attackInput && (!LevelRoot.Instance.needHitWithRhythm || CheckRhythm))
                     {
                         playerCtrl.Attack();
                     }
                 });
 
+            // JUMP
             mFsm.NewEventState(State.Jump)
                 .OnUpdate(() =>
                 {
@@ -94,17 +96,20 @@ namespace Shuile.Gameplay
 
                     // attack
                     bool attackInput = keyboard.jKey.wasPressedThisFrame || mouse.leftButton.wasPressedThisFrame;
-                    if (attackInput && CheckRhythm)
+                    if (attackInput && (!LevelRoot.Instance.needHitWithRhythm || CheckRhythm))
                     {
                         playerCtrl.Attack();
                     }
                 })
                 .OnFixedUpdate(() =>
                 {
-                    if (UnityAPIExt.RayCast2DWithDebugLine(transform.position + new Vector3(0, -0.8f, 0), Vector2.zero, 0.1f, LayerMask.GetMask("Ground"))
-                        && playerCtrl.Rb.velocity.y < 0)
+                    var groundCheck = playerCtrl.Rb.velocity.y < 0 &&
+                        UnityAPIExt.RayCast2DWithDebugLine(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
+                    //var groundCheck = true; // ...
+                    if (groundCheck)
                     {
                         mFsm.SwitchState(State.Normal);
+                        playerCtrl.TouchGround();
                     }
                 });
 

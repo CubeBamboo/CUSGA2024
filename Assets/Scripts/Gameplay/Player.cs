@@ -13,11 +13,11 @@ namespace Shuile.Gameplay
         {
             gameObject.AddComponent<NormalPlayerInput>().Target = this;
             gameObject.AddComponent<NormalPlayerCtrl>().Target = this;
-
         }
 
         private void Start()
         {
+            property.currentHealthPoint = property.maxHealthPoint;
             // init event
             OnHpChangedEvent?.Invoke(property.currentHealthPoint);
         }
