@@ -7,46 +7,28 @@ namespace Shuile.Rhythm
     // manage chart of player, convert chart to runtime note object noteContainer
     public class PlayerChartManager : MonoSingletons<PlayerChartManager>
     {
-        private NoteContainer noteContainer = new();
+        private readonly NoteContainer noteContainer = new();
 
         // chart part
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
-        private float[] absoluteTimeChartLoopPart;
-        private int loopCount = 0;
-        int nextNoteIndex = 0;
+        private ChartPlayer chartPlayer;
+
+        [SerializeField] private float notePreShowInterval = 0.4f;
 
         private void Start()
         {
-            // convert current chart to absolute time chart
-            UpdateAbsoluteTimeChart();
+            chartPlayer = new ChartPlayer(chart,
+                note => (note.targetTime * MusicRhythmManager.Instance.BpmInterval - notePreShowInterval));
+            chartPlayer.OnNotePlay += note => noteContainer.AddNote(note.targetTime);
         }
 
         private void FixedUpdate()
         {
-            // if next note time is less than current time, add note to noteContainer and trigger some event
-            float singleLoopInterval = chart.length * MusicRhythmManager.Instance.BpmInterval;
-            float nextNoteTime = absoluteTimeChartLoopPart[nextNoteIndex] + loopCount * singleLoopInterval;
-            if (MusicRhythmManager.Instance.CurrentTime > nextNoteTime)
-            {
-                noteContainer.AddNote(nextNoteTime);
-                nextNoteIndex++;
-                if (nextNoteIndex >= absoluteTimeChartLoopPart.Length) //enter next loop
-                {
-                    loopCount++;
-                    nextNoteIndex %= absoluteTimeChartLoopPart.Length;
-                }
-            }
-
-            noteContainer.UpdateNotePool(MusicRhythmManager.Instance.CurrentTime);
-        }
-
-        private void UpdateAbsoluteTimeChart()
-        {
-            absoluteTimeChartLoopPart = ChartDataUtils.BeatTime2AbsoluteTimeChart(chart, MusicRhythmManager.Instance.BpmInterval);
+            chartPlayer.PlayUpdate(MusicRhythmManager.Instance.CurrentTime);
+            noteContainer.CheckRelese(MusicRhythmManager.Instance.CurrentTime);
         }
 
         public int Count => noteContainer.Count;
-
         public SingleNote TryGetNearestNote() => noteContainer.TryGetNearestNote();
         public void HitNote(SingleNote note) => noteContainer.ReleseNote(note);
     }

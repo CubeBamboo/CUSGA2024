@@ -44,8 +44,11 @@ TagManager:
   - name: BackGround
     uniqueID: 673901121
     locked: 0
-  - name: Block
+  - name: Ground
     uniqueID: 1421087107
+    locked: 0
+  - name: Character
+    uniqueID: 4290363993
     locked: 0
   - name: Foreground
     uniqueID: 1435560655

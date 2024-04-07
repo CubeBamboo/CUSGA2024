@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc27428b8c342184190930cfd52ebc63, type: 3}
-  m_Name: PlayerProperty
+  m_Script: {fileID: 11500000, guid: ce5bd2d80d386f84ea8e86761fa27109, type: 3}
+  m_Name: Music-Ginevra
   m_EditorClassIdentifier: 
-  maxHealthPoint: 3787
-  currentHealthPoint: 0
-  attackPoint: 5
+  clip: {fileID: 8300000, guid: 185c375362255214dbd37f6f57e1315c, type: 3}
+  bpm: 170
+  offset: 0
