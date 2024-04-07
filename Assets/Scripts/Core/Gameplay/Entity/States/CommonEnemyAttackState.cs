@@ -43,14 +43,14 @@ namespace Shuile.Gameplay.Entity.States
             this.attackBehaviour = attackBehaviour;
         }
 
-        public override void EnterState()
+        public override void Enter()
         {
             attackState = AttackStateType.PreAttack;
             counter = 0;
             // attackState = enemy.Property.preAttackDuration == 0 ? AttackStateType.Attack : AttackStateType.PostAttack;
         }
 
-        public override void ExitState()
+        public override void Exit()
         {
             if (attackState == AttackStateType.Attack && counter != 0)
                 interruptBehaviour?.Invoke(this);
@@ -91,11 +91,11 @@ namespace Shuile.Gameplay.Entity.States
             if (attackState == AttackStateType.PostAttack)
             {
                 var player = GameplayService.Interface.Get<Player>();
-                var gridDistance = Vector3.Distance(player.transform.position, entity.MoveController.Position);
+                var gridDistance = Vector3.Distance(player.transform.position, enemy.MoveController.Position);
 
                 if (gridDistance > ((Enemy)entity).Property.attackRange)
                 {
-                    GotoState(EntityStateType.Idle);
+                    enemy.State = EntityStateType.Idle;
                     return;
                 }
                 attackState = AttackStateType.PreAttack;

@@ -1,3 +1,5 @@
+using Shuile.Gameplay;
+
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New EnemyProperty", menuName = "Config/Enemy Property")]
@@ -14,6 +16,7 @@ public class EnemyPropertySO : ScriptableObject
 
     [Header("Move Behaviour")]
     [Tooltip("0则代表每一拍都会试图移动")] public int moveInterval = 0;
+    public MoveAbility moveAbility = MoveAbility.Jumpable;
     public float acceleration = 0.2f;
     public float deceleration = 0.1f;
     public float maxMoveSpeed = 5f;

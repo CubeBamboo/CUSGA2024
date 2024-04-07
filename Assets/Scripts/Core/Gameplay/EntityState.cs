@@ -1,12 +1,8 @@
-using System;
-using System.Runtime.CompilerServices;
+using CbUtils;
 
 namespace Shuile.Gameplay
 {
-    public delegate void OnEntityStateChanged(EntityStateType from, EntityStateType to);
-
-    [Obsolete("TODO: Use FSM", false)]
-    public abstract class EntityState
+    public abstract class EntityState : IState
     {
         protected BehaviourEntity entity;
 
@@ -15,18 +11,30 @@ namespace Shuile.Gameplay
             this.entity = entity;
         }
 
-        /// <summary>
-        /// 该判定了
-        /// </summary>
-        public abstract void Judge();
-        public virtual void EnterState() { }
-        public virtual void ExitState() { }
+        public virtual bool Condition() => true;
 
-        /// <summary>
-        /// A shortcut for BindEnemy.GotoState(State newState);
-        /// </summary>
-        /// <param name="state">new state</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected void GotoState(EntityStateType state) => entity.GotoState(state);
+        public void Custom() => Judge();
+
+        public abstract void Judge();
+
+        public virtual void Enter()
+        {
+        }
+
+        public virtual void Exit()
+        {
+        }
+
+        public virtual void FixedUpdate()
+        {
+        }
+
+        public virtual void OnGUI()
+        {
+        }
+
+        public virtual void Update()
+        {
+        }
     }
 }

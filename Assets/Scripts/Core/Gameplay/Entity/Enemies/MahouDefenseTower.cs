@@ -1,4 +1,6 @@
-﻿using Shuile.Gameplay.Entity.States;
+﻿using CbUtils;
+
+using Shuile.Gameplay.Entity.States;
 
 using System.Collections.Generic;
 
@@ -33,13 +35,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             }
         }
 
-        protected override void RegisterState()
+        protected override void RegisterState(FSM<EntityStateType> fsm)
         {
-            states.Add(EntityStateType.Spawn, new SpawnState(this));
+            fsm.AddState(EntityStateType.Spawn, new SpawnState(this));
             var attackState = new CommonEnemyAttackState(this, Attack, InterruptAttack);
-            states.Add(EntityStateType.Idle, attackState);
-            states.Add(EntityStateType.Attack, attackState);
-            states.Add(EntityStateType.Dead, new DeadState(this));
+            fsm.AddState(EntityStateType.Idle, attackState);
+            fsm.AddState(EntityStateType.Attack, attackState);
+            fsm.AddState(EntityStateType.Dead, new DeadState(this));
         }
 
         private bool Attack(CommonEnemyAttackState state)

@@ -7,8 +7,8 @@ namespace Shuile.Gameplay
     [Flags]
     public enum MoveAbility
     {
-        Flyable,
-        Jumpable,
+        Flyable = 1,
+        Jumpable = 2
     }
 
     public interface IMoveController

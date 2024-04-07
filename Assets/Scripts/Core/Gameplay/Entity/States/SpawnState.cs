@@ -1,26 +1,47 @@
+using CbUtils;
+
 using DG.Tweening;
 
 using UnityEngine;
 
 namespace Shuile.Gameplay.Entity.States
 {
-    public class SpawnState : EntityState
+    public class SpawnState : IState
     {
-        public SpawnState(BehaviourEntity entity) : base(entity)
+        public Enemy enemy;
+
+        public SpawnState(Enemy enemy)
+        {
+            this.enemy = enemy;
+        }
+
+        public void Enter()
+        {
+            enemy.transform.GetChild(0).localScale = Vector3.zero;
+        }
+
+        public void Exit()
         {
         }
 
-        public override void Judge()
+        public void FixedUpdate()
         {
-            entity.transform.GetChild(0).DOScale(1f, 0.3f).SetEase(Ease.OutBounce);
-            entity.GotoState(EntityStateType.Idle);
         }
 
-        public override void EnterState()
+        public void Update()
         {
-            entity.transform.GetChild(0).localScale = Vector3.zero;
         }
 
-        public override void ExitState() { }
+        public void OnGUI()
+        {
+        }
+
+        public bool Condition() => true;
+
+        public void Custom()
+        {
+            enemy.transform.GetChild(0).DOScale(1f, 0.3f).SetEase(Ease.OutBounce);
+            enemy.State = EntityStateType.Idle;
+        }
     }
 }

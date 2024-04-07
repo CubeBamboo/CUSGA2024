@@ -1,8 +1,4 @@
-using DG.Tweening;
-
-using Shuile.Gameplay.Entity;
-
-using System.Collections.Generic;
+using CbUtils;
 
 using UnityEngine;
 
@@ -25,64 +21,60 @@ namespace Shuile.Gameplay
 
     public abstract class BehaviourEntity : MonoBehaviour, IJudgeable
     {
-        protected EntityStateType state = EntityStateType.Idle;
-        protected Dictionary<EntityStateType, EntityState> states = new();
-        protected EntityState stateBehaviour = EmptyState.instance;
+        protected readonly EntityType type;
         protected int lastJudgeFrame;
-        protected IMoveController moveController;
+        protected FSM<EntityStateType> fsm;
 
-        public event OnEntityStateChanged OnStateChanged;
+        protected BehaviourEntity(EntityType type)
+        {
+            this.type = type;
+        }
 
-        public EntityStateType State => state;
+        public EntityStateType State
+        {
+            get => fsm.CurrentStateId;
+            set
+            {
+                if (value == fsm.CurrentStateId)
+                    return;
+
+                fsm.SwitchState(value);
+            }
+        }
+        
+        public EntityType Type => type;
 
         internal int LastJudgeFrame => lastJudgeFrame;
-        public Vector3 Position
-        {
-            get => transform.position;
-            set => transform.position = value;
-        }
-        public IMoveController MoveController => moveController;
 
         protected virtual void Awake()
         {
-            moveController = GetComponent<IMoveController>();
-            RegisterState();
+            fsm = new();
+            RegisterState(fsm);
         }
 
-        protected virtual void Start()
-        {
-            state = (EntityStateType)(-1);
-            GotoState(EntityStateType.Spawn);
-        }
-
-        protected abstract void RegisterState();
-
-        public void GotoState(EntityStateType newState)
-        {
-            if (state == newState)
-                return;
-
-            if (!states.TryGetValue(newState, out var newStateBehaviour))
-                stateBehaviour = EmptyState.instance;
-
-            var from = state;
-            state = newState;
-            if (newStateBehaviour != stateBehaviour)
-            {
-                stateBehaviour.ExitState();
-                stateBehaviour = newStateBehaviour;
-                stateBehaviour.EnterState();
-            }
-            OnStateChanged?.Invoke(from, state);
-        }
+        protected abstract void RegisterState(FSM<EntityStateType> fsm);
 
         public void Judge(int frame, bool force)
         {
-            if (lastJudgeFrame == frame && !force)
+            if (frame == lastJudgeFrame && !force)
                 return;
 
-            lastJudgeFrame = frame;
-            stateBehaviour.Judge();
+            fsm.Custom();
+        }
+
+        protected virtual void Update()
+        {
+            fsm.Update();
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            fsm.FixedUpdate();
+        }
+
+        protected virtual void OnGUI()
+        {
+            fsm.OnGUI();
         }
     }
 }
