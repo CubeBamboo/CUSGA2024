@@ -91,7 +91,7 @@ namespace Shuile.Gameplay.Entity.States
             if (attackState == AttackStateType.PostAttack)
             {
                 var player = GameplayService.Interface.Get<Player>();
-                var gridDistance = Vector3.Distance(player.transform.position, entity.Position);
+                var gridDistance = Vector3.Distance(player.transform.position, entity.MoveController.Position);
 
                 if (gridDistance > ((Enemy)entity).Property.attackRange)
                 {

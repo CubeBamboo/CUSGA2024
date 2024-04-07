@@ -20,6 +20,8 @@ namespace Shuile.Gameplay
         {
             base.Awake();
             health = property.healthPoint;
+            MoveController.MaxSpeed = Property.maxMoveSpeed;
+            MoveController.Deceleration = Property.deceleration;
 
             // author: CubeBamboo
             hpBarUI = UICtrl.Instance.Create<HUDHpBarElement>();

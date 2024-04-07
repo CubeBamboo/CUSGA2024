@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthPoint: 10
   attackPoint: 10
-  viewRange: 3
   attackRange: 114514
-  moveInterval: 0
   preAttackDuration: 0
   postAttackDuration: 4
+  moveInterval: 0
+  acceleration: 0
+  deceleration: 0
+  maxMoveSpeed: 0
+  jumpForce: 0
