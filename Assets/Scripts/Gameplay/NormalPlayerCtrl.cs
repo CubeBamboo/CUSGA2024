@@ -16,15 +16,18 @@ namespace Shuile.Gameplay
     public class NormalPlayerCtrl : MonoBehaviour, IComponent<Player>
     {
         // [normal move]
-        [SerializeField] private float acc = 0.2f;
-        [SerializeField] private float deAcc = 0.1f;
+        [SerializeField] private float acc = 0.4f;
+        [SerializeField] private float deAcc = 0.25f;
         [SerializeField] private float xMaxSpeed = 5f;
 
         // [jump]
         [SerializeField] private float jumpVel = 5f;
 
         // [attack]
-        [SerializeField] private float attackRadius = 2f;
+        [SerializeField] private float attackRadius = 2.8f;
+
+        // [anim manage]
+        private PlayerAnimCtrl animCtrl;
 
         private Rigidbody2D _rb;
         public Rigidbody2D Rb => _rb;
@@ -35,6 +38,7 @@ namespace Shuile.Gameplay
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
+            animCtrl = new(gameObject);
         }
 
         private void Start()
@@ -46,12 +50,15 @@ namespace Shuile.Gameplay
         {
             // [normal move]
             _rb.velocity = new Vector2(Mathf.MoveTowards(_rb.velocity.x, 0, deAcc), _rb.velocity.y);
+
+            // [anim logic]
+            animCtrl.XVelocity = _rb.velocity.x;
         }
 
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, attackRadius);
+            //Gizmos.DrawWireSphere(transform.position, attackRadius);
         }
 
         /// <summary> update velocity </summary>
@@ -60,12 +67,24 @@ namespace Shuile.Gameplay
             // [normal move]
             _rb.velocity += new Vector2(xInput * acc, 0);
             _rb.velocity = new Vector2(Mathf.Clamp(_rb.velocity.x, -xMaxSpeed, xMaxSpeed), _rb.velocity.y);
+
+            // [anim logic]
+            animCtrl.FlipX = xInput < 0;
+        }
+
+        public void TouchGround()
+        {
+            // [anim logic]
+            animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Land);
         }
 
         public void SingleJump()
         {
             // [jump]
             _rb.velocity = new Vector2(_rb.velocity.x, jumpVel);
+
+            // [anim logic]
+            animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Jump);
         }
 
         public void Attack()
@@ -77,6 +96,9 @@ namespace Shuile.Gameplay
             {
                 hits[i].GetComponent<IHurtable>().OnAttack(mTarget.Property.attackPoint);
             }
+
+            // [anim logic]
+            animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Attack);
         }
     }
 }

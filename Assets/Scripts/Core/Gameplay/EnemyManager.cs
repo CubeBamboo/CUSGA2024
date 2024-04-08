@@ -76,12 +76,6 @@ namespace Shuile.Gameplay
         {
             // if (LevelGrid.Instance.grid.IsOutOfBound(pos))
             //     return null;
-            // author: cubebamboo //TDOO: only for debug
-            if (DebugProperty.Instance.GetInt("EnemyClamp") == 1 && enemyList.Count > 6)
-            {
-                return null;
-            }
-            // end
 
             var enemyObject = Instantiate(enemyPrefab, pos, Quaternion.identity, enemyParent);
             var enemy = enemyObject.GetComponent<Enemy>();

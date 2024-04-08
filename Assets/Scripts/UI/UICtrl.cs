@@ -14,8 +14,6 @@ namespace Shuile.Framework
     {
         #region PanelManage
 
-        //protected readonly Dictionary<System.Type, IPanel> _singlePanels = new();
-
         protected readonly Dictionary<System.Type, PanelCreateor> _panelCreator = new();
         protected readonly Dictionary<System.Type, List<IPanel>> _multiPanels = new();
 
@@ -126,7 +124,7 @@ namespace Shuile.Framework
         void DeInit();
     }
 
-    // TODO: seems not good to use...
+    /*
     [System.Obsolete]
     public abstract class BasePanelInUnity : IPanel
     {
@@ -159,7 +157,7 @@ namespace Shuile.Framework
         public abstract void DeInit();
         public abstract void Show();
         public abstract void Hide();
-    }
+    }*/
 
     /// <summary>
     /// derived from monobehaviour, you are recommended to call this.RegisterUI() on Awake(). 

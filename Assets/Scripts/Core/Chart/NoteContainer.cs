@@ -32,11 +32,11 @@ namespace Shuile.Rhythm
 
         public SingleNote TryGetNearestNote()
         {
-            UpdateNotePool(MusicRhythmManager.Instance.CurrentTime);
+            CheckRelese(MusicRhythmManager.Instance.CurrentTime);
             return noteList.Count != 0 ? noteList[0] : null;
         }
 
-        public void UpdateNotePool(float currentTime)
+        public void CheckRelese(float currentTime)
         {
             if(noteList.Count == 0)
                 return;
@@ -50,11 +50,27 @@ namespace Shuile.Rhythm
         }
     }
 
+    // note object spawn in game runtime
+    public class SingleNote
+    {
+        public float targetTime;
+
+        public SingleNote(float targetTime)
+        {
+            this.targetTime = targetTime;
+        }
+
+        public bool NeedRelese(float currentTime, float missTolerance)
+        {
+            return currentTime - targetTime > missTolerance;
+        }
+    }
+
     public interface INoteContainer
     {
         void AddNote(float targetTime);
         void ReleseNote(SingleNote note);
         SingleNote TryGetNearestNote();
-        void UpdateNotePool(float currentTime);
+        void CheckRelese(float currentTime);
     }
 }
