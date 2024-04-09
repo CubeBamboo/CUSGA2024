@@ -1,25 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System;
 
 public abstract class CSharpLazySingletons<T> where T : new()
 {
-    private static readonly object _lock = new object();
-    protected static T instance;
-    public static T Instance
-    {
-        get
-        {
-            if(instance == null)
-                lock (_lock)
-                {
-                    instance ??= new T();
-                }
-
-            return instance;
-        }
-        set { instance = value; }
-    }
+    private static readonly Lazy<T> _instance
+        = new Lazy<T>(() => new T());
+    public static T Instance => _instance.Value;
 }
 
 public abstract class CSharpHungrySingletons<T> where T : new()
