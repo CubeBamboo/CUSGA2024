@@ -26,7 +26,7 @@ namespace Shuile
         public ChartData CurrentChart { get; set; }
 
         private LevelState state;
-        private ISceneLoader sceneLoader;
+        //private ISceneLoader sceneLoader;
 
         public bool needHitWithRhythm { get; private set; }
         public LevelState State
@@ -60,7 +60,7 @@ namespace Shuile
             UICtrl.Instance.Create<EndLevelPanel>().Hide();
             UICtrl.Instance.Get<PlayingPanel>().Show();
             UICtrl.Instance.Get<DebugPanel>().Show();
-            sceneLoader = MainGame.Interface.Get<ISceneLoader>();
+            //sceneLoader = MainGame.Interface.Get<ISceneLoader>();
         }
 
         private void Update()
@@ -99,7 +99,8 @@ namespace Shuile
             endPanel.Show();
 
             await UniTask.Delay(System.TimeSpan.FromSeconds(3f));
-            sceneLoader.LoadSceneAsync(new SceneInfo() { SceneName = "Level0Test" }, UnityEngine.SceneManagement.LoadSceneMode.Single);
+            GameRoot.Instance.LoadLevel();
+            //sceneLoader.LoadSceneAsync(new SceneInfo() { SceneName = "Level0Test" }, UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
     }
 }

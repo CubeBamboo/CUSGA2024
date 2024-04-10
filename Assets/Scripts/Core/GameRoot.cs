@@ -1,24 +1,26 @@
-using UnityEngine;
+using CbUtils;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 
 namespace Shuile
 {
-    public class GameRoot : MonoBehaviour
+    public class GameRoot : MonoSingletons<GameRoot>
     {
+        protected override void OnAwake()
+        {
+            SetDontDestroyOnLoad();
+        }
         private void Start()
         {
             LoadLevel();
         }
 
-        private void LoadLevel()
+        public void LoadLevel()
         {
-            Addressables.LoadSceneAsync("LevelDependency.unity", LoadSceneMode.Single).Completed += op =>
+            var dependcyHandle = Addressables.LoadSceneAsync("LevelDependency.unity", LoadSceneMode.Single).WaitForCompletion();
+            Addressables.LoadSceneAsync("Level0Test.unity", LoadSceneMode.Additive).Completed += op =>
             {
-                Addressables.LoadSceneAsync("Level0Test.unity", LoadSceneMode.Additive).Completed += op =>
-                {
-                    SceneManager.SetActiveScene(op.Result.Scene);
-                };
+                SceneManager.SetActiveScene(op.Result.Scene);
             };
         }
     }
