@@ -1,20 +1,18 @@
-using Shuile;
-using Shuile.Rhythm;
+using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using DG.Tweening;
+using Cysharp.Threading.Tasks;
+using Shuile.Gameplay;
 
-
-public class CbFoo : MonoBehaviour
+namespace CbUtils
 {
-    //private SpriteRenderer spriteRenderer;
-
-    private void Start()
+    public class CbFoo : MonoBehaviour
     {
-        //spriteRenderer = GetComponent<SpriteRenderer>();
+        public GameObject enemy;
 
-        //AutoPlayChartManager.Instance.OnRhythmHit += () =>
-        //{
-        //    spriteRenderer.color = new Color(Random.value, Random.value, Random.value);
-        //};
+        private void Start()
+        {
+            EnemyManager.Instance.SpawnEnemy(enemy, transform.position);
+        }
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace CbUtils
@@ -7,7 +5,9 @@ namespace CbUtils
     public class AudioManager : CbUtils.MonoSingletons<AudioManager>
     {
         private AudioSource bgmSource, sfxSource, voiceSource, otherSource;
+        private AudioSource oneShotSource;
 
+        public AudioSource OneShotSource;
         public AudioSource OtherSource => otherSource;
 
         protected override void Awake()
@@ -27,6 +27,8 @@ namespace CbUtils
             voiceSource.playOnAwake = false;
             otherSource = gameObject.AddComponent<AudioSource>();
             otherSource.playOnAwake = false;
+            oneShotSource = gameObject.AddComponent<AudioSource>();
+            oneShotSource.playOnAwake = false;
         }
 
         #region PlayAudio
@@ -56,6 +58,11 @@ namespace CbUtils
         {
             otherSource.clip = clip;
             otherSource.Play();
+        }
+
+        public void PlayOneShot(AudioClip clip, float volumeScale)
+        {
+            oneShotSource.PlayOneShot(clip, volumeScale);
         }
 
         #endregion

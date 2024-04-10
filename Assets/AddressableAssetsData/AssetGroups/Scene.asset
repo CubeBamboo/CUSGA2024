@@ -10,30 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: LevelChart
+  m_Name: Scene
   m_EditorClassIdentifier: 
-  m_GroupName: LevelChart
+  m_GroupName: Scene
   m_Data:
     m_SerializedData: []
-  m_GUID: 7c23e7b7c5ca51148ba16df279b124e2
+  m_GUID: 283d6f8bc5b76d246a96002e76c51848
   m_SerializeEntries:
-  - m_GUID: f6cb617e8d361be4598813bbba763e45
-    m_Address: Chart/testchart
+  - m_GUID: 0d46c8709ee69fe45ad7cf851f0ce84d
+    m_Address: Level0Test.unity
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fafe4d570834ff0448b095c147eec4a7
-    m_Address: Chart/Ginevra
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 185c375362255214dbd37f6f57e1315c
-    m_Address: Song/Ginevra.mp3
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3ac5709a755c72345a61a50cdc94d1a7
-    m_Address: Song/Ginevra.ogg
+  - m_GUID: c522b5e957e2d694bada630a2b6c4d89
+    m_Address: LevelDependency.unity
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -41,5 +31,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 02c221cfd466b494abfbe696a382b4ee, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 56bac784271ca6741b4392182bb4cdd6, type: 2}
-    - {fileID: 11400000, guid: 295da285500008849abb4eeb0fafa1f5, type: 2}
+    - {fileID: 11400000, guid: 2f6a4eba1f7e2ff429bbee77d451343c, type: 2}
+    - {fileID: 11400000, guid: f07e1d7ca977355429ca4475b6da49fa, type: 2}
