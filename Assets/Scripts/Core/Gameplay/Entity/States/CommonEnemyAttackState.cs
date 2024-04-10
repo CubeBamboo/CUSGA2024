@@ -41,6 +41,7 @@ namespace Shuile.Gameplay.Entity.States
                 throw new InvalidCastException($"entity is {entity.GetType()} not {nameof(Enemy)}");
             enemy = (Enemy)entity;
             this.attackBehaviour = attackBehaviour;
+            this.interruptBehaviour = interruptBehaviour;
         }
 
         public override void Enter()
