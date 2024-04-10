@@ -10,14 +10,6 @@ namespace Shuile.Gameplay.Entity.States
         {
         }
 
-        public override void EnterState()
-        {
-        }
-
-        public override void ExitState()
-        {
-        }
-
         public override void Judge()
         {
             entity.transform.GetChild(0).DOScale(Vector3.zero, 0.1f).OnComplete(() => GameObject.Destroy(entity?.gameObject));

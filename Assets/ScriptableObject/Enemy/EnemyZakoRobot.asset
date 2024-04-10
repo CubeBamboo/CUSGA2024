@@ -18,6 +18,7 @@ MonoBehaviour:
   preAttackDuration: 1
   postAttackDuration: 0
   moveInterval: 1
+  moveAbility: 2
   acceleration: 0.2
   deceleration: 0.1
   maxMoveSpeed: 5

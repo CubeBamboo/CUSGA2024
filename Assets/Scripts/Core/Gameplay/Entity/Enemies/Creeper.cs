@@ -1,3 +1,5 @@
+using CbUtils;
+
 using Shuile.Gameplay.Entity.States;
 
 using UnityEngine;
@@ -6,12 +8,12 @@ namespace Shuile.Gameplay.Entity.Enemies
 {
     public class Creeper : Enemy
     {
-        protected override void RegisterState()
+        protected override void RegisterState(FSM<EntityStateType> fsm)
         {
-            states.Add(EntityStateType.Spawn, new SpawnState(this));
-            states.Add(EntityStateType.Idle, new EnemyIdleState(this));
-            states.Add(EntityStateType.Attack, new CommonEnemyAttackState(this, Attack));
-            states.Add(EntityStateType.Dead, new DeadState(this));
+            fsm.AddState(EntityStateType.Spawn, new SpawnState(this));
+            fsm.AddState(EntityStateType.Idle, new EnemyIdleState(this));
+            fsm.AddState(EntityStateType.Attack, new CommonEnemyAttackState(this, Attack));
+            fsm.AddState(EntityStateType.Dead, new DeadState(this));
         }
 
         private bool Attack(CommonEnemyAttackState state)
@@ -20,8 +22,8 @@ namespace Shuile.Gameplay.Entity.Enemies
 
             if (Vector3.Distance(player.transform.position, MoveController.Position) <= Property.attackRange)
                 player.OnAttack(Property.attackPoint);
-            GotoState(EntityStateType.Dead);  // Or OnAttack(Health);
-            stateBehaviour.Judge();  // die了
+            State = EntityStateType.Dead;  // Or OnAttack(Health);
+            Judge(lastJudgeFrame, true);  // die了
             return true;
         }
     }
