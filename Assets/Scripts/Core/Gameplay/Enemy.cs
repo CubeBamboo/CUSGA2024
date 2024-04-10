@@ -1,38 +1,55 @@
 using DG.Tweening;
+
 using Shuile.Framework;
+
+using System;
+
 using UnityEngine;
+
+using UObject = UnityEngine.Object;
 
 namespace Shuile.Gameplay
 {
     public abstract class Enemy : BehaviourEntity, IHurtable
     {
         [SerializeField] private EnemyPropertySO property;
-        private int health;
+        protected IMoveController moveController;
+        protected int health;
 
-        public int Health => health;
         public EnemyPropertySO Property => property;
+        public int Health => health;
         public bool IsAlive => health > 0;
+        public IMoveController MoveController => moveController;
 
-        public event System.Action<int> OnHpChangedEvent = _ => { };
+        public event Action<int> OnHpChangedEvent = _ => { };
         private HUDHpBarElement hpBarUI;
+
+        public Enemy() : base(EntityType.Enemy)
+        {
+        }
 
         protected override void Awake()
         {
             base.Awake();
             health = property.healthPoint;
-            MoveController.MaxSpeed = Property.maxMoveSpeed;
-            MoveController.Deceleration = Property.deceleration;
+            moveController = GetComponent<IMoveController>();
+            MoveController.Ability = Property.moveAbility;
+            moveController.MaxSpeed = Property.maxMoveSpeed;
+            moveController.Deceleration = Property.deceleration;
 
             // author: CubeBamboo
             //hpBarUI = UICtrl.Instance.Create<HUDHpBarElement>();
             //hpBarUI.Link(this).Show();
             //hpBarUI.Link(this).Hide(); // it has bugs...
             // end
+
+            fsm.StartState(EntityStateType.Spawn);
+            fsm.Custom();
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
-            if(hpBarUI) Object.Destroy(hpBarUI.gameObject);
+            if(hpBarUI) UObject.Destroy(hpBarUI.gameObject);
         }
 
         public void OnAttack(int attackPoint)
@@ -58,7 +75,7 @@ namespace Shuile.Gameplay
 
             if (health == 0)
             {
-                GotoState(EntityStateType.Dead);
+                fsm.SwitchState(EntityStateType.Dead);
             }
         }
     }
