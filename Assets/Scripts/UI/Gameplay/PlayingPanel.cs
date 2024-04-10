@@ -19,10 +19,10 @@ namespace Shuile.UI
 
         private void Start()
         {
-            GameplayService.Interface.Get<Player>().OnHpChangedEvent += (val) =>
+            GameplayService.Interface.Get<Player>().CurrentHp.Register((val) =>
             {
                 hpTextUGUI.text = "Player HP: " + (val > 0 ? val : 0).ToString();
-            };
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
         public override void Hide()

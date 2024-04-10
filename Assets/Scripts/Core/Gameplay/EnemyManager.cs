@@ -1,4 +1,5 @@
 using CbUtils;
+using Shuile.Rhythm.Runtime;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ namespace Shuile.Gameplay
 {
     public class EnemyManager : MonoSingletons<EnemyManager>
     {
-        [SerializeField] private PlayerController playerCtrl;
+        //[SerializeField] private PlayerController playerCtrl;
         private readonly List<Enemy> enemyList = new();
         private Transform enemyParent;
         private PrefabConfigSO prefabs;

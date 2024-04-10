@@ -38,11 +38,15 @@ namespace Shuile.Gameplay
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
-            animCtrl = new(gameObject);
+            animCtrl = new(gameObject);   
         }
 
         private void Start()
         {
+            mTarget.OnDie.Register(() => animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Die))
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+            mTarget.CurrentHp.Register((val) => animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt))
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
             _rb.bodyType = RigidbodyType2D.Dynamic;
         }
 
@@ -85,6 +89,7 @@ namespace Shuile.Gameplay
 
             // [anim logic]
             animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Jump);
+            MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
         }
 
         public void Attack()
@@ -99,6 +104,7 @@ namespace Shuile.Gameplay
 
             // [anim logic]
             animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Attack);
+            MonoAudioCtrl.Instance.PlayOneShot("Player_Attack");
         }
     }
 }

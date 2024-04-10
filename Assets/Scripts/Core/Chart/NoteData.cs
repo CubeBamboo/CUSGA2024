@@ -3,11 +3,13 @@ using Cysharp.Threading.Tasks;
 
 using Shuile.Gameplay;
 using Shuile.NoteProduct;
+using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
-namespace Shuile.Rhythm
+namespace Shuile.Rhythm.Runtime
 {
-    public struct NoteData
+    // TODO: maybe not use in future
+    public class NoteData
     {
         /// <summary>
         /// integer part - beat count, decimal part - where in a beat. 
@@ -19,8 +21,6 @@ namespace Shuile.Rhythm
         /// </summary>
         public float? endTime;
 
-        public float preShowTime;
-
         public NoteEventType eventType;
         public NoteEventData eventData;
 
@@ -28,6 +28,31 @@ namespace Shuile.Rhythm
             => new() { targetTime = targetTime };
     }
 
+    public enum NoteEventType
+    {
+        SingleEnemySpawn,
+        MultiEnemySpawn, // spawn in a certain frequency
+        ObjectTransform,
+        LaserSpawn,
+        MusicOffsetTestLaser,
+    }
+
+    public enum EnemyType
+    {
+        ZakoRobot,
+        Creeper,
+        MahouDefenseTower,
+        TotalCount // for count, not enemy
+    }
+
+    // TODO: support event data // 相当于事件传参了，就是我没想好这个参数怎么写才能适应这么多事件(
+    public struct NoteEventData
+    {
+        //public EnemyType enemyType;
+
+    }
+
+    [System.Obsolete("use BaseNoteData instead")]
     public static class NoteEventHelper
     {
         // type -> process
@@ -70,7 +95,7 @@ namespace Shuile.Rhythm
                 var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
                 //var randomType = EnemyType.; // TODO: [!]for test
                 // instantiate
-                var enemy = EnemyManager.Instance.SpawnEnemy(EnemyType2Prefab(randomType),randomGridPos.ToWorld(levelGrid.grid));
+                var enemy = EnemyManager.Instance.SpawnEnemy(NoteEventUtils.EnemyType2Prefab(randomType),randomGridPos.ToWorld(levelGrid.grid));
             }
             else
             {
@@ -106,18 +131,7 @@ namespace Shuile.Rhythm
             NoteProductController.Laser.Process(go); // laser behavior
         }
 
-        public static UnityEngine.GameObject EnemyType2Prefab(EnemyType enemyType)
-        {
-            PrefabConfigSO prefabConfig = GameplayService.Interface.Get<PrefabConfigSO>();
-            var res = enemyType switch
-            {
-                EnemyType.ZakoRobot => prefabConfig.zakoRobot,
-                EnemyType.Creeper => prefabConfig.creeper,
-                EnemyType.MahouDefenseTower => prefabConfig.mahouDefenseTower,
-                _ => throw new System.Exception("Invalid EnemyType."),
-            };
-            return res;
-        }
+
 
         public static void MusicOffsetTestLaser()
         {
@@ -131,27 +145,28 @@ namespace Shuile.Rhythm
         }
     }
 
-    public enum NoteEventType
+    public static class NoteEventUtils
     {
-        SingleEnemySpawn,
-        MultiEnemySpawn, // spawn in a certain frequency
-        ObjectTransform,
-        LaserSpawn,
-        MusicOffsetTestLaser,
-    }
+        public static float DefaultPlayTimeConvert(NoteData noteData)
+        {
+            float preshowTime = 0f;
+            float preshowRealTime = 0f;
+            //if (noteData.eventType == NoteEventType.LaserSpawn) preshowTime = 2;
+            float res = (noteData.targetTime - preshowTime) * MusicRhythmManager.Instance.BpmInterval - preshowRealTime;
+            return res;
+        }
 
-    public enum EnemyType
-    {
-        ZakoRobot,
-        Creeper,
-        MahouDefenseTower,
-        TotalCount // for count, not enemy
-    }
-
-    // TODO: support event data // 相当于事件传参了，就是我没想好这个参数怎么写才能适应这么多事件(
-    public struct NoteEventData
-    {
-        //public EnemyType enemyType;
-
+        public static UnityEngine.GameObject EnemyType2Prefab(EnemyType enemyType)
+        {
+            PrefabConfigSO prefabConfig = GameplayService.Interface.Get<PrefabConfigSO>();
+            var res = enemyType switch
+            {
+                EnemyType.ZakoRobot => prefabConfig.zakoRobot,
+                EnemyType.Creeper => prefabConfig.creeper,
+                EnemyType.MahouDefenseTower => prefabConfig.mahouDefenseTower,
+                _ => throw new System.Exception("Invalid EnemyType."),
+            };
+            return res;
+        }
     }
 }

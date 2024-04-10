@@ -1,13 +1,10 @@
 using CbUtils;
 using Shuile.Framework;
-using Shuile.Gameplay;
 using Shuile.UI;
-using Shuile.Rhythm;
+using Shuile.Rhythm.Runtime;
 
 using Cysharp.Threading.Tasks;
-using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.AddressableAssets;
+using UnityEngine.InputSystem;
 
 namespace Shuile
 {
@@ -17,7 +14,7 @@ namespace Shuile
      * UICtrl's GameplayPart
      */
     //it also contains the level state callback
-    public class LevelRoot : MonoSingletons<LevelRoot>, IGameRoot
+    public class LevelRoot : MonoSingletons<LevelRoot>
     {
         public enum LevelState
         {
@@ -26,26 +23,12 @@ namespace Shuile
         }
 
         public event System.Action OnStart, OnEnd;
-        public ChartData CurrentChart { get; private set; }
-
-        [SerializeField] private AssetReference chartAssets;
+        public ChartData CurrentChart { get; set; }
 
         private LevelState state;
         private ISceneLoader sceneLoader;
 
         public bool needHitWithRhythm = true;
-
-        protected override void OnAwake()
-        {
-            InitResource();
-            CurrentChart = ChartUtils.LoadChart(chartAssets);
-            LevelChartManager.Instance.enabled = true;
-        }
-        private void OnDestroy()
-        {
-            DeInitResource();
-        }
-
         public LevelState State
         {
             get => state;
@@ -58,12 +41,38 @@ namespace Shuile
             }
         }
 
+        protected override void OnAwake()
+        {
+            CurrentChart = LevelResources.Instance.CurrentChart;
+
+            UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
+            UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
+            LevelChartManager.Instance.enabled = true;
+        }
+        private void OnDestroy()
+        {
+            UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
+            UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
+        }
         private void Start()
         {
-            UICtrl.Instance.Create<EndLevelPanel>();
+            UICtrl.Instance.Create<EndLevelPanel>().Hide();
             UICtrl.Instance.Get<PlayingPanel>().Show();
             UICtrl.Instance.Get<DebugPanel>().Show();
-            MainGame.Interface.TryGet(out sceneLoader);
+            sceneLoader = MainGame.Interface.Get<ISceneLoader>();
+        }
+
+        private void Update()
+        {
+            // TODO: [!] for debug
+            if (Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            }
         }
 
         private void TriggerEvent(LevelState state)
@@ -91,24 +100,5 @@ namespace Shuile
             await UniTask.Delay(System.TimeSpan.FromSeconds(3f));
             sceneLoader.LoadSceneAsync(new SceneInfo() { SceneName = "Level0Test" }, UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
-
-        public void InitResource()
-        {
-            GameplayService.Interface.OnInit();
-            UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
-            UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
-        }
-        public void DeInitResource()
-        {
-            GameplayService.Interface.OnDeInit();
-            UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
-            UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
-        }
-    }
-
-    public interface IGameRoot
-    {
-        void InitResource();
-        void DeInitResource();
     }
 }

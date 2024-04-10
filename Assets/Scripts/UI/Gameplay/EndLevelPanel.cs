@@ -15,14 +15,16 @@ namespace Shuile
             Resources.Load<GameObject>("UIDesign/EndLevelPanel").Instantiate().GetComponent<IPanel>();
 
         private void Awake()
-            => this.RegisterUI<EndLevelPanel>();
+        {
+            this.RegisterUI<EndLevelPanel>();
+            this.SetParent(UICtrl.Instance.OverlayCanvas.transform);
+        }
 
         private void OnDestroy()
             => this.UnRegisterUI<EndLevelPanel>();
 
         private void Start()
         {
-            this.SetParent(UICtrl.Instance.OverlayCanvas.transform);
             Hide();
         }
 

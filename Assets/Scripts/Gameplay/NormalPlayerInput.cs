@@ -1,10 +1,9 @@
 using CbUtils;
 using Shuile.Framework;
-using Shuile.Rhythm;
+using Shuile.Rhythm.Runtime;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static Shuile.Gameplay.PlayerRhythmInputHandler;
 
 namespace Shuile.Gameplay
 {
@@ -35,6 +34,8 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
+            mTarget.OnDie.Register(() => this.enabled = false)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
             playerCtrl = GetComponent<NormalPlayerCtrl>();
             playerModel = GameplayService.Interface.Get<PlayerModel>();
 

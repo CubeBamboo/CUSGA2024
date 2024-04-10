@@ -4,7 +4,7 @@
  */
 
 using Shuile.Framework;
-using CbUtils;
+using Shuile.Rhythm.Runtime;
 
 using UnityEngine;
 using TMPro;

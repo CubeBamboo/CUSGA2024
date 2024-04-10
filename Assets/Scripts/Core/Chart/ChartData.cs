@@ -1,21 +1,44 @@
 using JetBrains.Annotations;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Shuile.Rhythm
+namespace Shuile.Rhythm.Runtime
 {
     /* supported chart type: 
      * 1. fixed bpm timing
      */
     public class ChartData
     {
-        public class Time
+        #region InternalClass
+        public class TimingPoint
         {
-            public int[] beat;
             public float bpm;
+            /// <summary> (unit: millionseconds) </summary>
+            public float offset;
         }
+        #endregion
 
+        public UnityEngine.AudioClip audioClip;
+        public TimingPoint[] time;
         /// <summary> (unit: music bar) </summary>
-        public NoteData[] note;
+        public BaseNoteData[] note;
+
+        public override string ToString()
+        {
+            StringBuilder sb = new();
+            sb.Append("ChartData: ");
+            sb.AppendLine(audioClip.name);
+            sb.AppendLine($"bpm: {time[0].bpm}, offset: {time[0].offset}");
+            sb.AppendLine("NoteData:");
+            foreach (var singleNote in note)
+            {
+                sb.Append("- ");
+                sb.Append(singleNote);
+                sb.Append("\n");
+            }
+            sb.Append("\n");
+            return sb.ToString();
+        }
     }
 
     public static class ChartDataCreator
@@ -25,118 +48,38 @@ namespace Shuile.Rhythm
             const int size = 10000;
             var chart = new ChartData()
             {
-                note = new NoteData[size]
+                note = new BaseNoteData[size]
             };
             for (int i = 0; i < size; i++)
             {
-                chart.note[i] = NoteData.Create(i + 0f / 4f);
+                chart.note[i] = BaseNoteData.Create(i + 0f / 4f);
             }
             return chart;
         }
 
-        public static ChartData CreateLevelDefault()
+        /*public static ChartData CreateLevelDefault()
         {
             var newChart = new ChartData
             {
-                note = new NoteData[2]
+                note = new BaseNoteData[2]
             };
 
             // init chart
 
-            newChart.note[0] = new NoteData
+            newChart.note[0] = new SpawnSingleEnemyNoteData
             {
                 targetTime = 0 + 0f / 4f,
-                eventType = NoteEventType.SingleEnemySpawn,
+                //eventType = NoteEventType.SingleEnemySpawn,
             };
 
-            newChart.note[1] = new NoteData
+            newChart.note[1] = new SpawnSingleEnemyNoteData
             {
                 targetTime = 4 + 0f / 4f,
-                eventType = NoteEventType.SingleEnemySpawn,
+                //eventType = NoteEventType.SingleEnemySpawn,
             };
 
             return newChart;
-        }
-
-        //TODO: try to chart song "Kero Kero Bonito - Break"
-        public static ChartData CreateLevelBreak()
-        {
-            var newChart = new ChartData
-            {
-                //chartLoopPart = new NoteData[1000] // record every single note // -> use list.ToArray()
-            };
-
-            // init chart and add note data
-            List<NoteData> noteList = new List<NoteData>
-            {
-                new NoteData
-                {
-                    targetTime = 0 + 0f / 4f,
-                    eventType = NoteEventType.MusicOffsetTestLaser,
-                },
-                //new NoteData
-                //{
-                //    targetTime = 4 + 0f / 4f,
-                //    eventType = NoteEventType.SingleEnemySpawn,
-                //},
-                new NoteData
-                {
-                    targetTime = 0 + 0f / 4f,
-                    endTime = 1024 + 0f / 4f,
-                    eventType = NoteEventType.MultiEnemySpawn,
-                },
-                /*new NoteData
-                {
-                    targetTime = 7 + 0f / 4f,
-                    eventType = NoteEventType.LaserSpawn,
-                },
-                new NoteData
-                {
-                    targetTime = 8 + 0f / 4f,
-                    eventType = NoteEventType.LaserSpawn,
-                },
-                new NoteData
-                {
-                    targetTime = 11 + 0f / 4f,
-                    eventType = NoteEventType.LaserSpawn,
-                },*/
-                //new NoteData
-                //{
-                //    targetTime = 16 + 0f / 4f,
-                //    endTime = 47 + 0f / 4f,
-                //    eventType = NoteEventType.MultiEnemySpawn,
-                //},
-                /*new NoteData
-                {
-                    targetTime = 32 + 0f / 4f,
-                    eventType = NoteEventType.LaserSpawn,
-                },
-                new NoteData
-                {
-                    targetTime = 33 + 0f / 4f,
-                    eventType = NoteEventType.LaserSpawn,
-                },
-                new NoteData
-                {
-                    targetTime = 34 + 0f / 4f,
-                    eventType = NoteEventType.LaserSpawn,
-                },
-                new NoteData
-                {
-                    targetTime = 40 + 0f / 4f,
-                    eventType = NoteEventType.LaserSpawn,
-                },
-                new NoteData
-                {
-                    targetTime = 44 + 0f / 4f,
-                    eventType = NoteEventType.LaserSpawn,
-                },*/
-            };
-
-            noteList.Sort((a, b)=> a.targetTime.CompareTo(b.targetTime));
-            newChart.note = noteList.ToArray();
-            return newChart;
-        }
+        }*/
     }
 
     public static class ChartDataUtils

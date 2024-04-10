@@ -1,45 +1,59 @@
 // [WIP]
 
 using CbUtils;
+using System.Collections.Generic;
 
-namespace Shuile.Rhythm
+namespace Shuile.Rhythm.Runtime
 {
     /// <summary> provide play interface and then use monobehavior to update its time </summary>
     public class ChartPlayer
     {
+        private struct PlayTimeData
+        {
+            public float playTime;
+            public int originNoteIndex;
+        }
+
         private readonly ChartData chart;
-        private readonly float[] playTimeArray;
+        private readonly List<PlayTimeData> playTimeArray;
+
         private int nextNoteIndex = 0;
 
         /// <summary>
         /// call when it's time to play the note
         /// </summary>
-        public event System.Action<NoteData> OnNotePlay = _ => { };
+        public event System.Action<BaseNoteData> OnNotePlay = _ => { };
 
-        // TODO: add note sort
-        public ChartPlayer(ChartData chart, System.Func<NoteData, float> onPlayTimeConvert = null)
+        public ChartPlayer(ChartData chart, System.Func<BaseNoteData, float> onPlayTimeConvert = null)
         {
-            onPlayTimeConvert ??= note => note.targetTime * MusicRhythmManager.Instance.BpmInterval;
+            onPlayTimeConvert ??= note => note.ToPlayTime();
 
             this.chart = chart;
-            playTimeArray = new float[chart.note.Length];
+            // convert target time (music beat) to play time (show in screen)
+            playTimeArray = new List<PlayTimeData>(chart.note.Length);
+            playTimeArray.Clear();
             for (int i = 0; i < chart.note.Length; i++)
             {
-                playTimeArray[i] = onPlayTimeConvert.Invoke(chart.note[i]);
+                playTimeArray.Add(new PlayTimeData()
+                {
+                    playTime = onPlayTimeConvert.Invoke(chart.note[i]),
+                    originNoteIndex = i
+                });
             }
+            playTimeArray.Sort((a, b) => a.playTime.CompareTo(b.playTime));
         }
 
         /// <summary> call OnNotePlay when a note need to play </summary>
         /// <param name="time">update note state with it</param>
         public void PlayUpdate(float time)
         {
-            if (nextNoteIndex >= playTimeArray.Length) return;
+            if (nextNoteIndex >= playTimeArray.Count) return;
 
             // if next note time is less than current time, add note to noteContainer and trigger some event
-            float nextNoteTime = playTimeArray[nextNoteIndex];
+            float nextNoteTime = playTimeArray[nextNoteIndex].playTime;
             if (time > nextNoteTime)
             {
-                OnNotePlay.Invoke(chart.note[nextNoteIndex]);
+                OnNotePlay.Invoke(chart.note[playTimeArray[nextNoteIndex].originNoteIndex]);
                 nextNoteIndex++;
             }
         }

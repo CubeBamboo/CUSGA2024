@@ -8,7 +8,6 @@ namespace Shuile
     public class PlayerPropertySO : ScriptableObject
     {
         public int maxHealthPoint;
-        public int currentHealthPoint;
         public int attackPoint;
     }
 }

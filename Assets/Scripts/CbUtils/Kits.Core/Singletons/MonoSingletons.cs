@@ -4,13 +4,20 @@ using UnityEngine;
 
 namespace CbUtils
 {
-    public class MonoSingletons<T> : MonoBehaviour where T : MonoBehaviour
+    public class MonoSingletons<T> : MonoBehaviour where T : MonoSingletons<T>
     {
         protected static T instance;
         public static T Instance
         {
-            get => instance = instance || isQuit ?
-                instance : new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
+            get
+            {
+                if (!instance && !isQuit)
+                {
+                    new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
+                }
+                instance.OnInstanceCall();
+                return instance;
+            }
 
             private set => instance = value;
         }
@@ -44,5 +51,6 @@ namespace CbUtils
         }
 
         protected virtual void OnAwake() { }
+        protected virtual void OnInstanceCall() { }
     }
 }

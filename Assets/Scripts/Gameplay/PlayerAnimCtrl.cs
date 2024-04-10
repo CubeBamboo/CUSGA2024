@@ -1,9 +1,11 @@
 using UnityEngine;
+using DG.Tweening;
 
 namespace Shuile
 {
     public class PlayerAnimCtrl
     {
+        private GameObject _target;
         private SpriteRenderer _spriteRenderer;
         private Animator _animator;
 
@@ -28,11 +30,13 @@ namespace Shuile
             Attack,
             Jump,
             Land,
-            Die
+            Die,
+            Hurt
         }
 
         public PlayerAnimCtrl(GameObject go)
         {
+            _target = go;
             _spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
             _animator = go.GetComponentInChildren<Animator>();
         }
@@ -44,6 +48,19 @@ namespace Shuile
 
         public void Trigger(AnimTrigger trigger)
         {
+            // TODO: shit
+            if (trigger == AnimTrigger.Hurt)
+            {
+                // 效果反馈
+                _spriteRenderer.color = Color.white;
+                _spriteRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f).OnComplete(() =>
+                    _spriteRenderer.DOColor(Color.white, 0.2f));
+                var initPos = _target.transform.position;
+                _target.transform.DOShakePosition(0.2f, strength: 0.2f).OnComplete(() =>
+                        _target.transform.position = initPos);
+                return;
+            }
+
             _animator.SetTrigger(trigger.ToString());
         }
     }

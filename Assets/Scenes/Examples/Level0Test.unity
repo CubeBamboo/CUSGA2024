@@ -1774,7 +1774,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelConfig: {fileID: 11400000, guid: 33051b7261f31514783d021c269ff9be, type: 2}
-  currentMusic: {fileID: 11400000, guid: 5d95a24c609477c41a72478804e51673, type: 2}
   playerConfig: {fileID: 11400000, guid: e840ec97e75580341944e4bf37eb34d0, type: 2}
   playOnAwake: 1
   playTimeScale: 1
@@ -1989,7 +1988,8 @@ MonoBehaviour:
     m_AssetGUID: fafe4d570834ff0448b095c147eec4a7
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 0
+    m_EditorAssetChanged: 1
+  chartSO: {fileID: 11400000, guid: 5d95a24c609477c41a72478804e51673, type: 2}
   needHitWithRhythm: 0
 --- !u!1 &1662316962
 GameObject:
@@ -2885,8 +2885,8 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -4603303
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &2031022394
 RectTransform:
@@ -3060,7 +3060,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4568630960602022495, guid: 86fc66b2e3b71a84e8a2ff195098dcb7, type: 3}
       propertyPath: m_Name
-      value: Global Volume
+      value: Level Global Volume
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3124,6 +3124,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71532ae4307c6ab4a9e9fe94b9060aef, type: 3}
+--- !u!1001 &7669749548869493410
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5913989100470406162, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7812466736286890725, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
+      propertyPath: m_Name
+      value: MonoAudioCtrl
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b6c8853549167164a82ecda981d4bc88, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3145,3 +3202,4 @@ SceneRoots:
   - {fileID: 1652370126}
   - {fileID: 1045378068206962077}
   - {fileID: 2189026901126611611}
+  - {fileID: 7669749548869493410}

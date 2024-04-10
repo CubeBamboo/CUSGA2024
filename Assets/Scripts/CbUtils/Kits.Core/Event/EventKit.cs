@@ -4,11 +4,8 @@ using System.Collections.Generic;
 //inspired by qframework
 namespace CbUtils
 {
-    public interface ISimpleEvent
+    public interface ISimepleEvent
     {
-        ICustomUnRegister Register(Action action);
-        void UnRegister(Action action);
-        void Invoke();
     }
 
     public interface ICustomUnRegister
@@ -29,16 +26,51 @@ namespace CbUtils
      * new UnityEvent().AddListenerWithCustomUnRegister(() => { })
      *                 .UnRegisterWhenGameObjectDestroyed(gameObject);
      */
-    public class SimpleEvent : ISimpleEvent
+    public class SimpleEvent
     {
-        private Action _action;
+        private Action _action = ()=> { };
         public ICustomUnRegister Register(Action action)
         {
             _action += action;
             return new CustomUnRegister(() => _action -= action);
         }
         public void UnRegister(Action action) => _action -= action;
-        public void Invoke() => _action?.Invoke();
+        public void Invoke() => _action.Invoke();
+    }
+
+    public class SimpleEvent<T>
+    {
+        private Action<T> _action = _ => { };
+        public ICustomUnRegister Register(Action<T> action)
+        {
+            _action += action;
+            return new CustomUnRegister(() => _action -= action);
+        }
+        public void UnRegister(Action<T> action) => _action -= action;
+        public void Invoke(T para1) => _action.Invoke(para1);
+    }
+
+    public class SimpleEvent<T1, T2>
+    {
+        private Action<T1, T2> _action = (_, _) => { };
+        public ICustomUnRegister Register(Action<T1, T2> action)
+        {
+            _action += action;
+            return new CustomUnRegister(() => _action -= action);
+        }
+        public void UnRegister(Action<T1, T2> action) => _action -= action;
+        public void Invoke(T1 para1, T2 para2) => _action.Invoke(para1, para2);
+    }
+    public class SimpleEvent<T1, T2, T3>
+    {
+        private Action<T1, T2, T3> _action = (_, _, _) => { };
+        public ICustomUnRegister Register(Action<T1, T2, T3> action)
+        {
+            _action += action;
+            return new CustomUnRegister(() => _action -= action);
+        }
+        public void UnRegister(Action<T1, T2, T3> action) => _action -= action;
+        public void Invoke(T1 para1, T2 para2, T3 para3) => _action.Invoke(para1, para2, para3);
     }
 
     public class CustomUnRegister : ICustomUnRegister
