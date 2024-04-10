@@ -1,6 +1,6 @@
 using CbUtils;
 using CbUtils.Collections;
-using Shuile.Rhythm;
+using Shuile.Rhythm.Runtime;
 using Shuile.Gameplay;
 using Shuile.Framework;
 
@@ -9,7 +9,7 @@ using DG.Tweening;
 
 namespace Shuile
 {
-    public class PlayerController : MonoBehaviour, IComponent<Player>, IPlayerCtrl
+    /*public class PlayerController : MonoBehaviour, IComponent<Player>, IPlayerCtrl
     {
         //private PlayerPropertySO property;
         private SpriteRenderer mRenderer;
@@ -43,8 +43,6 @@ namespace Shuile
 
         private void Start()
         {
-            property.currentHealthPoint = property.maxHealthPoint;
-
             // init pos
             transform.position = levelGrid.grid.SnapToGrid(transform.position);
             gridPos = transform.position.ToCell(levelGrid.grid);
@@ -52,12 +50,12 @@ namespace Shuile
                 Debug.LogWarning("grid has content at player's position.");
             levelGrid.grid.Add(transform.position.ToCell(levelGrid.grid), gameObject);
 
-            mTarget.OnHpChangedEvent += OnHurt;
+            mTarget.CurrentHp.Register(OnHurt);
         }
 
         private void OnDestroy()
         {
-            mTarget.OnHpChangedEvent -= OnHurt;
+            mTarget.CurrentHp.UnRegister(OnHurt);
         }
 
         // default attack, maybe add weapon feature later.
@@ -105,5 +103,5 @@ namespace Shuile
                     transform.position = initPos);
         }
     }
-
+    */
 }

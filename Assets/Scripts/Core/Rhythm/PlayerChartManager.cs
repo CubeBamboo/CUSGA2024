@@ -1,7 +1,7 @@
 using CbUtils;
 using UnityEngine;
 
-namespace Shuile.Rhythm
+namespace Shuile.Rhythm.Runtime
 {
 
     // manage chart of player, convert chart to runtime note object noteContainer
@@ -13,7 +13,12 @@ namespace Shuile.Rhythm
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
         private ChartPlayer chartPlayer;
 
-        [SerializeField] private float notePreShowInterval = 0.4f;
+        private float notePreShowInterval = 0.4f;
+
+        protected override void OnAwake()
+        {
+            notePreShowInterval = LevelResources.Instance.levelConfig.playerNotePreShowTime;
+        }
 
         private void Start()
         {

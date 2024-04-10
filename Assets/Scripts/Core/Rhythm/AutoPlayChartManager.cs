@@ -1,8 +1,6 @@
 using CbUtils;
-using Shuile.Rhythm;
-using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Rhythm.Runtime
 {
     // manage auto play chart. (for someone like enemy or game ui animation)
     public class AutoPlayChartManager : MonoSingletons<AutoPlayChartManager>

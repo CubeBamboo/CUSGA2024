@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Shuile.Rhythm
+namespace Shuile.Rhythm.Runtime
 {
     /* just a collection of SingleNote, no logic
      * only one note pool

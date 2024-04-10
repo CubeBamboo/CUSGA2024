@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7812466736286890725
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5913989100470406162}
+  - component: {fileID: 7234593888539645684}
+  m_Layer: 0
+  m_Name: MonoAudioCtrl
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5913989100470406162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812466736286890725}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7234593888539645684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812466736286890725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dd69a3f9affaca4cb0cf985fbe316c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clipList:
+  - id: Player_Attack
+    clip: {fileID: 8300000, guid: 1b2ea937453f55f4b8d432d3a0c8f510, type: 3}
+  - id: Player_Jump
+    clip: {fileID: 8300000, guid: dfc16fc3d0c6e1d43a2d99beb28c1825, type: 3}
+  - id: Player_Death
+    clip: {fileID: 8300000, guid: 7d99fde7d0b653248902a1706851b3bf, type: 3}
+  - id: Enemy_Bomb
+    clip: {fileID: 8300000, guid: 63c73d729df74c54a865da0ece9c1e9c, type: 3}

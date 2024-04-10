@@ -1,15 +1,14 @@
-using UnityEngine;
 using CbUtils;
-using Shuile.Rhythm;
+using Shuile.Rhythm.Runtime;
 using Shuile.Framework;
-using static Shuile.Gameplay.PlayerRhythmInputHandler;
 
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Shuile.Gameplay
 {
     //处理玩家输入，联系playerInput和playercontroller
-    public class PlayerRhythmInputHandler : MonoBehaviour, IComponent<Player>
+    /*public class PlayerRhythmInputHandler : MonoBehaviour, IComponent<Player>
     {
         private IPlayerCtrl player;
 
@@ -72,7 +71,7 @@ namespace Shuile.Gameplay
         }
 #endif
 
-        /*private void OnActionTriggered(InputAction.CallbackContext context)
+        private void OnActionTriggered(InputAction.CallbackContext context)
         {
             if (context.action.name != "Attack" && context.action.name != "HorizontalMove")
                 return;
@@ -90,7 +89,7 @@ namespace Shuile.Gameplay
                     break;
             }
 
-        }*/
+        }
     }
 
     internal class PlayerOnGroundState : BaseState<State, PlayerRhythmInputHandler>
@@ -154,5 +153,5 @@ namespace Shuile.Gameplay
             var hit = UnityAPIExt.RayCast2DWithDebugLine(origin, Vector2.down, 0.1f, LayerMask.GetMask("Ground"));
             if (hit) fsm.SwitchState(State.OnGround); //TODO: check immediately when not jump to air will also get "true" result (it's a bug).
         }
-    }
+    }*/
 }

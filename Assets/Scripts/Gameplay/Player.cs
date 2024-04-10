@@ -1,3 +1,6 @@
+using CbUtils;
+
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,21 +8,33 @@ namespace Shuile.Gameplay
 {
     public class Player : MonoBehaviour, IHurtable
     {
+        private NormalPlayerCtrl mPlayerCtrl;
+        private NormalPlayerInput mPlayerInput;
+
         [SerializeField] private PlayerPropertySO property;
-        public event System.Action<int> OnHpChangedEvent;
+        public EventProperty<int> CurrentHp { get; private set; } = new();
+        public SimpleEvent OnDie = new();
+
+        private bool isDie;
 
         public PlayerPropertySO Property => property;
         private void Awake()
         {
-            gameObject.AddComponent<NormalPlayerInput>().Target = this;
-            gameObject.AddComponent<NormalPlayerCtrl>().Target = this;
-        }
+            mPlayerInput = gameObject.AddComponent<NormalPlayerInput>();
+            mPlayerInput.Target = this;
+            mPlayerCtrl = gameObject.AddComponent<NormalPlayerCtrl>();
+            mPlayerCtrl.Target = this; // TODO: shit
 
+            GameplayService.Interface.Register<Player>(this);
+        }
+        private void OnDestroy()
+        {
+            GameplayService.Interface.UnRegister<Player>();
+        }
         private void Start()
         {
-            property.currentHealthPoint = property.maxHealthPoint;
-            // init event
-            OnHpChangedEvent?.Invoke(property.currentHealthPoint);
+            isDie = false;
+            CurrentHp.Value = property.maxHealthPoint;
         }
 
         private void Update()
@@ -34,36 +49,47 @@ namespace Shuile.Gameplay
             {
                 //DebugProperty.Instance.SetInt("PlayerKaiGua", 1);
                 Debug.Log("开挂模式");
-                property.currentHealthPoint = 999999;
+                CurrentHp.Value = 999999;
             }
             if (Keyboard.current.bKey.wasPressedThisFrame)
             {
                 this.OnAttack(20);
-                this.OnAttack((int)(property.currentHealthPoint * 0.25f));
+                this.OnAttack((int)(CurrentHp.Value * 0.25f));
             }
         }
 
         public void OnAttack(int attackPoint)
         {
-            property.currentHealthPoint -= attackPoint;
-            if (property.currentHealthPoint < 0)
-                property.currentHealthPoint = 0;
+            if (isDie) return;
 
-            OnHpChangedEvent?.Invoke(property.currentHealthPoint);
+            CurrentHp.Value -= attackPoint;
+            if (CurrentHp.Value < 0)
+                CurrentHp.Value = 0;
 
             // 检测死亡
-            if (property.currentHealthPoint <= 0)
+            if (CurrentHp.Value <= 0)
             {
-                property.currentHealthPoint = 0;
-
-                // 触发死亡事件
+                CurrentHp.Value = 0;
+                isDie = true;
+                OnDie.Invoke();
                 LevelRoot.Instance.State = LevelRoot.LevelState.End;
+                OnDieFunc();
             }
         }
 
         public void ForceDie()
         {
             OnAttack(property.maxHealthPoint + 1);
+        }
+
+        private void OnDieFunc()
+        {
+            MonoAudioCtrl.Instance.PlayOneShot("Player_Death");
+            // 当前音乐淡出
+            AudioManager.Instance.OtherSource.DOFade(0, 0.8f).OnComplete(() =>
+            {
+                AudioManager.Instance.OtherSource.Stop();
+            }); // TODO: NOOOOOOOOO IT'S SHITTTTTTTTTTT
         }
     }
 }

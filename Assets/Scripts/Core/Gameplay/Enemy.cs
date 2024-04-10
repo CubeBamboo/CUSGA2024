@@ -38,8 +38,9 @@ namespace Shuile.Gameplay
             moveController.Deceleration = Property.deceleration;
 
             // author: CubeBamboo
-            hpBarUI = UICtrl.Instance.Create<HUDHpBarElement>();
-            hpBarUI.Link(this).Show();
+            //hpBarUI = UICtrl.Instance.Create<HUDHpBarElement>();
+            //hpBarUI.Link(this).Show();
+            //hpBarUI.Link(this).Hide(); // it has bugs...
             // end
 
             fsm.StartState(EntityStateType.Spawn);

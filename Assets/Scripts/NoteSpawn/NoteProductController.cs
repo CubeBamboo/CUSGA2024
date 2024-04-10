@@ -1,10 +1,10 @@
 using CbUtils;
+using Shuile.Gameplay;
 using CbUtils.Event;
+using Shuile.Rhythm.Runtime;
+
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Shuile.Gameplay;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Shuile.NoteProduct
@@ -14,10 +14,7 @@ namespace Shuile.NoteProduct
     {
         public static class Laser
         {
-            /// <summary> unit: bar </summary>
-            private const float inTime = 1.2f;
             private const float attackWaitTime = 0.8f;
-            public static float InTime => inTime;
 
             public static async void Process(GameObject target)
             {
@@ -28,6 +25,7 @@ namespace Shuile.NoteProduct
                 mRenderer.color = mRenderer.color.With(a: 0);
                 mRenderer.DOFade(0.2f, 0.5f);
 
+                float inTime = 2 * MusicRhythmManager.Instance.BpmInterval;
                 await UniTask.Delay(System.TimeSpan.FromSeconds(inTime));
                 // 攻击判定
                 mRenderer.DOFade(1f, 0.2f);

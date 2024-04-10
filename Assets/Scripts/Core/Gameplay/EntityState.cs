@@ -13,7 +13,7 @@ namespace Shuile.Gameplay
 
         public virtual bool Condition() => true;
 
-        public void Custom() => Judge();
+        public void Custom(string label = "") => Judge();
 
         public abstract void Judge();
 

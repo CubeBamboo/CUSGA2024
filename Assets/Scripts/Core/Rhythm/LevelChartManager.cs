@@ -1,7 +1,8 @@
 using CbUtils;
 using Shuile.Rhythm;
+using UDebug = UnityEngine.Debug;
 
-namespace Shuile
+namespace Shuile.Rhythm.Runtime
 {
     // play chart for single level
     // control enemy spawn and other event
@@ -18,7 +19,7 @@ namespace Shuile
         {
             chart = LevelRoot.Instance.CurrentChart;
             chartPlayer = new ChartPlayer(chart);
-            chartPlayer.OnNotePlay += note => NoteEventHelper.Process(note);
+            chartPlayer.OnNotePlay += note => note.Process();
         }
 
         private void FixedUpdate()
