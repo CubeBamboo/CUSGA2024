@@ -30,7 +30,7 @@ namespace Shuile.Gameplay.Entity
                 hurtable.OnAttack(attackPoint);
 
             // play anim
-            transform.GetChild(0).transform.DOScale(6f, 0.2f).From().OnComplete(() => Destroy(this.gameObject));
+            transform.GetChild(0).transform.DOScale(2f, 0.2f).From().OnComplete(() => Destroy(this.gameObject));
         }
 
         public void Interrupt()

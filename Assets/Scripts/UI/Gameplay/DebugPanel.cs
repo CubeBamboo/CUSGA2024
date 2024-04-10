@@ -19,7 +19,7 @@ namespace Shuile
     {
         [SerializeField] private TextMeshProUGUI hitOffsetText;
         [SerializeField] private TextMeshProUGUI playTimeText;
-        [SerializeField] private Toggle enemyClampToggle;
+        //[SerializeField] private Toggle enemyClampToggle;
 
         private void Awake()
             => this.RegisterUI<DebugPanel>();
@@ -34,11 +34,11 @@ namespace Shuile
                 hitOffsetText.text = $"HitOffset: " + playerModel.currentHitOffset.ToString("0.000");
                 playTimeText.text = $"PlayTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.000");
             };
-            enemyClampToggle.isOn = DebugProperty.Instance.GetInt("EnemyClamp") == 1 ? true : false;
-            enemyClampToggle.onValueChanged.AddListener((isOn) =>
-            {
-                DebugProperty.Instance.SetInt("EnemyClamp", isOn ? 1 : 0);
-            });
+            //enemyClampToggle.isOn = DebugProperty.Instance.GetInt("EnemyClamp") == 1 ? true : false;
+            //enemyClampToggle.onValueChanged.AddListener((isOn) =>
+            //{
+            //    DebugProperty.Instance.SetInt("EnemyClamp", isOn ? 1 : 0);
+            //});
         }
 
         public override void Hide()

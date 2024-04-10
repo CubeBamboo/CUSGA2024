@@ -70,7 +70,7 @@ namespace Shuile.Rhythm
                 var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
                 //var randomType = EnemyType.; // TODO: [!]for test
                 // instantiate
-                var enemy = EnemyManager.Instance.SpawnEnemy(EnemyType2Prefab(randomType),randomGridPos);
+                var enemy = EnemyManager.Instance.SpawnEnemy(EnemyType2Prefab(randomType),randomGridPos.ToWorld(levelGrid.grid));
             }
             else
             {
@@ -78,7 +78,7 @@ namespace Shuile.Rhythm
             }
         }
 
-        /// <param name="interval">(unit: in seconds)</param>
+        /// <param name="spawnInterval">(unit: in seconds)</param>
         public static async void MultiEnemySpawn(float duration, float spawnInterval)
         {
             // 以spawnInterval时间间隔生成敌人，持续duration秒

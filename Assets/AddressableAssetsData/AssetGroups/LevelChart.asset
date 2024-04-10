@@ -18,7 +18,12 @@ MonoBehaviour:
   m_GUID: 7c23e7b7c5ca51148ba16df279b124e2
   m_SerializeEntries:
   - m_GUID: f6cb617e8d361be4598813bbba763e45
-    m_Address: Assets/Chart/testchart.json
+    m_Address: Chart/testchart
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fafe4d570834ff0448b095c147eec4a7
+    m_Address: Chart/Ginevra
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
