@@ -13,9 +13,9 @@ namespace Shuile.Gameplay.Entity.States
         public override void Judge()
         {
             entity.transform.GetChild(0).DOScale(Vector3.zero, 0.1f).OnComplete(() => GameObject.Destroy(entity?.gameObject));
-            EnemyManager.Instance.RemoveEnemy((Enemy)entity);
             // Do something
             // e.g 加分
+            EntityManager.Instance.Remove(entity);
         }
     }
 }

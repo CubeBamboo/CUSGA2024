@@ -74,7 +74,7 @@ namespace Shuile.Gameplay
 
             if (health == 0)
             {
-                fsm.SwitchState(EntityStateType.Dead);
+                State = EntityStateType.Dead;
             }
         }
     }

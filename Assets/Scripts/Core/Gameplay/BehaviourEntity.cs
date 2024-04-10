@@ -14,8 +14,8 @@ namespace Shuile.Gameplay
 
     public enum EntityType
     {
-        Trap,  // 机关
-        Gadget,  // 道具
+        Gadget,  // 机关
+        Prop,  // 道具
         Enemy,  // 敌人
     }
 
@@ -44,7 +44,7 @@ namespace Shuile.Gameplay
         
         public EntityType Type => type;
 
-        internal int LastJudgeFrame => lastJudgeFrame;
+        public int LastJudgeFrame => lastJudgeFrame;
 
         protected virtual void Awake()
         {
@@ -54,11 +54,12 @@ namespace Shuile.Gameplay
 
         protected abstract void RegisterState(FSM<EntityStateType> fsm);
 
-        public void Judge(int frame, bool force)
+        public virtual void Judge(int frame, bool force)
         {
             if (frame == lastJudgeFrame && !force)
                 return;
 
+            lastJudgeFrame = frame;
             fsm.Custom();
         }
 
