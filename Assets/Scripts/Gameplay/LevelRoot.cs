@@ -28,7 +28,7 @@ namespace Shuile
         private LevelState state;
         private ISceneLoader sceneLoader;
 
-        public bool needHitWithRhythm = true;
+        public bool needHitWithRhythm { get; private set; }
         public LevelState State
         {
             get => state;
@@ -43,11 +43,12 @@ namespace Shuile
 
         protected override void OnAwake()
         {
-            CurrentChart = LevelResources.Instance.CurrentChart;
+            CurrentChart = LevelResources.Instance.currentChart;
 
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
             UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
             LevelChartManager.Instance.enabled = true;
+            needHitWithRhythm = LevelResources.Instance.debugSettings.needHitWithRhythm;
         }
         private void OnDestroy()
         {

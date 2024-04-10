@@ -172,6 +172,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
+  musicManagerConfig: {fileID: 11400000, guid: 68ed4b2d24e96734093a7000e2cfc360, type: 2}
+  levelConfig: {fileID: 11400000, guid: 33051b7261f31514783d021c269ff9be, type: 2}
+  playerConfig: {fileID: 11400000, guid: e840ec97e75580341944e4bf37eb34d0, type: 2}
+  debugSettings: {fileID: 11400000, guid: 593a565c2ee8f3b4b9b06b5013e40390, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

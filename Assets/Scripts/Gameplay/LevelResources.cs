@@ -2,6 +2,8 @@ using CbUtils;
 using Shuile.Gameplay;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
+
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace Shuile
@@ -9,13 +11,16 @@ namespace Shuile
     public class LevelResources : MonoSingletons<LevelResources>
     {
         public AssetReference chartAssets;
-        //public ChartSO chartSO;
+        public MusicManagerConfigSO musicManagerConfig;
+        public LevelConfigSO levelConfig;
+        public PlayerSettingsConfigSO playerConfig;
+        [Tooltip("for debug")] public LevelDebugSettingsSO debugSettings;
 
-        public ChartData CurrentChart;
+        public ChartData currentChart;
 
         protected override void OnAwake()
         {
-            CurrentChart = ChartUtils.LoadChart(chartAssets);
+            currentChart = ChartUtils.LoadChart(chartAssets);
             GameplayService.Interface.OnInit();
         }
         private void OnDestroy()

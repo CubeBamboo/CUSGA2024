@@ -9,18 +9,17 @@ namespace Shuile.Rhythm.Runtime
     //control the music play and music time progress, manage the rhythm check
     public class MusicRhythmManager : MonoSingletons<MusicRhythmManager>
     {
-        [SerializeField] private LevelConfigSO levelConfig;
-        //[SerializeField] private MusicConfigSO currentMusic;
+        private LevelConfigSO levelConfig;
         private ChartData currentChart;
-        [SerializeField] private PlayerSettingsConfigSO playerConfig;
+        private PlayerSettingsConfigSO playerConfig;
         private float currentTime; // timer for music playing
         private bool isPlaying = false;
 
         private IAudioPlayer audioPlayer; // for music playing
 
-        public bool playOnAwake = true;
-        public float playTimeScale = 1f;
-        public float volume = 0.4f;
+        [HideInInspector] public bool playOnAwake = true;
+        [HideInInspector] public float playTimeScale = 1f;
+        [HideInInspector] public float volume = 0.4f;
 
         public bool IsPlaying => isPlaying;
         public float MissToleranceInSeconds => levelConfig.missTolerance * 0.001f;
@@ -34,8 +33,13 @@ namespace Shuile.Rhythm.Runtime
 
         protected override void OnAwake()
         {
-            MainGame.Interface.TryGet(out audioPlayer);
-            currentChart = LevelRoot.Instance.CurrentChart;
+            audioPlayer = MainGame.Interface.Get<IAudioPlayer>();
+            currentChart = LevelResources.Instance.currentChart;
+            levelConfig = LevelResources.Instance.levelConfig;
+            playerConfig = LevelResources.Instance.playerConfig;
+            playOnAwake = LevelResources.Instance.musicManagerConfig.playOnAwake;
+            playTimeScale = LevelResources.Instance.musicManagerConfig.playTimeScale;
+            volume = LevelResources.Instance.musicManagerConfig.volume;
         }
 
         private void Start()

@@ -13,7 +13,12 @@ namespace Shuile.Rhythm.Runtime
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
         private ChartPlayer chartPlayer;
 
-        [SerializeField] private float notePreShowInterval = 0.4f;
+        private float notePreShowInterval = 0.4f;
+
+        protected override void OnAwake()
+        {
+            notePreShowInterval = LevelResources.Instance.levelConfig.playerNotePreShowTime;
+        }
 
         private void Start()
         {
