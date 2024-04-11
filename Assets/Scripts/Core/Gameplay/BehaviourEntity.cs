@@ -50,6 +50,9 @@ namespace Shuile.Gameplay
         {
             fsm = new();
             RegisterState(fsm);
+
+            fsm.StartState(EntityStateType.Spawn);
+            fsm.Custom();
         }
 
         protected abstract void RegisterState(FSM<EntityStateType> fsm);

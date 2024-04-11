@@ -1,6 +1,5 @@
 using CbUtils;
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -10,7 +9,7 @@ namespace Shuile.Gameplay
 {
     public class EntityManager : MonoSingletons<EntityManager>
     {
-        [SerializeField] private List<BehaviourEntity> preset;
+        [SerializeField] private List<BehaviourEntity> preset = new();
 
         private readonly List<Enemy> enemyList = new();
         private readonly List<Gadget> gadgetList = new();
@@ -109,7 +108,7 @@ namespace Shuile.Gameplay
 
             var enemyObject = Instantiate(enemyPrefab, pos, Quaternion.identity, enemyParent);
             var enemy = enemyObject.GetComponent<Enemy>();
-            enemyList.Add(enemy);
+            MarkEnemy(enemy);
             return enemy;
         }
         public Gadget SpawnGadget(GameObject gadgetPrefab, float destroyTime, Vector3 pos, Vector3 rotation)
@@ -118,7 +117,7 @@ namespace Shuile.Gameplay
             var gadget = gadgetObject.GetComponent<Gadget>();
 
             gadget.destroyTime = destroyTime;
-            gadgetList.Add(gadget);
+            MarkGadget(gadget);
             return gadget;
         }
     

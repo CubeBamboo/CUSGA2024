@@ -11,7 +11,8 @@ namespace Shuile.Gameplay.Entity.Gadgets
     public class Pusher : Gadget
     {
         public float pushForce = 10f;
-        private List<Rigidbody2D> bodies = new(2);
+        [SerializeField] private List<Rigidbody2D> bodies = new(2);
+
 
         protected override void RegisterState(FSM<EntityStateType> fsm)
         {
@@ -28,13 +29,12 @@ namespace Shuile.Gameplay.Entity.Gadgets
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            Debug.Log(other.name);
             if (!other.CompareTag("Player"))
                 return;
 
             State = EntityStateType.Attack;
-            var rb = other.GetComponent<Rigidbody2D>();
-            if (rb != null)
-                bodies.Add(rb);
+            bodies.Add(other.attachedRigidbody);
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -42,10 +42,8 @@ namespace Shuile.Gameplay.Entity.Gadgets
             if (!other.CompareTag("Player"))
                 return;
 
-            State = EntityStateType.Idle;
-            var rb = other.GetComponent<Rigidbody2D>();
-            if (rb != null)
-                bodies.UnorderedRemove(rb);
+            bodies.UnorderedRemove(other.attachedRigidbody);
+            State = bodies.Count == 0 ? EntityStateType.Idle : EntityStateType.Attack;
         }
     }
 }

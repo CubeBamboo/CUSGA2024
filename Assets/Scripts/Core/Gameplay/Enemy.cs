@@ -41,9 +41,6 @@ namespace Shuile.Gameplay
             hpBarUI = UICtrl.Instance.Create<HUDHpBarElement>();
             hpBarUI.Link(this).Show();
             // end
-
-            fsm.StartState(EntityStateType.Spawn);
-            fsm.Custom();
         }
 
         protected virtual void OnDestroy()
