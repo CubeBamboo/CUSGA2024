@@ -42,9 +42,6 @@ namespace Shuile.Gameplay
             //hpBarUI.Link(this).Show();
             //hpBarUI.Link(this).Hide(); // it has bugs...
             // end
-
-            fsm.StartState(EntityStateType.Spawn);
-            fsm.Custom();
         }
 
         protected virtual void OnDestroy()
@@ -75,7 +72,7 @@ namespace Shuile.Gameplay
 
             if (health == 0)
             {
-                fsm.SwitchState(EntityStateType.Dead);
+                State = EntityStateType.Dead;
             }
         }
     }

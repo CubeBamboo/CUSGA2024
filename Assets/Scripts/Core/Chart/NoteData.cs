@@ -95,7 +95,7 @@ namespace Shuile.Rhythm.Runtime
                 var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
                 //var randomType = EnemyType.; // TODO: [!]for test
                 // instantiate
-                var enemy = EnemyManager.Instance.SpawnEnemy(NoteEventUtils.EnemyType2Prefab(randomType),randomGridPos.ToWorld(levelGrid.grid));
+                var enemy = EntityManager.Instance.SpawnEnemy(NoteEventUtils.EnemyType2Prefab(randomType),randomGridPos.ToWorld(levelGrid.grid));
             }
             else
             {
