@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security;
 using UnityEngine;
 
 namespace CbUtils
 {
-    public class MonoSingletons<T> : MonoBehaviour where T : MonoSingletons<T>
+    public class MonoCreateOnceSingletons<T> : MonoBehaviour where T : MonoCreateOnceSingletons<T>
     {
         protected static T instance;
         public static T Instance
@@ -13,7 +10,7 @@ namespace CbUtils
             get
             {
                 bool isNew = !instance;
-                if (!instance)
+                if (!instance && !isDestroy)
                     new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
                 instance.OnInstanceCall(isNew);
                 return instance;
@@ -23,6 +20,7 @@ namespace CbUtils
         }
 
         public static bool IsInstance => instance != null;
+        private static bool isDestroy = false;
 
         protected void SetDontDestroyOnLoad()
         {
@@ -32,14 +30,20 @@ namespace CbUtils
 
         protected virtual void Awake()
         {
-            if(IsInstance)
+            if (IsInstance)
             {
                 Destroy(gameObject);
                 return;
             }
 
+            isDestroy = false;
             Instance = this as T;
+
             OnAwake();
+        }
+        private void OnDestroy()
+        {
+            isDestroy = true;
         }
 
         protected virtual void OnAwake() { }
