@@ -12,5 +12,8 @@ namespace Shuile
 
         [Header("Mechanism")]
         public GameObject laser;
+
+        [Header("RhythmIndicator")]
+        public GameObject noteIndicator;
     }
 }
