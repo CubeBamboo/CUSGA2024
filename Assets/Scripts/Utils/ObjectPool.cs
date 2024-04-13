@@ -47,8 +47,9 @@ public class ObjectPool<T> where T : class
         }
         else  // 用之前剩下的
         {
-            obj = objects[CountActive++];
+            obj = objects[CountActive];
         }
+        CountActive++;
 
         getFunc?.Invoke(obj);
         return obj;
@@ -69,8 +70,7 @@ public class ObjectPool<T> where T : class
             return;
 
         // 把最后一个活跃的元素移动到前面，防止空洞
-        var lastActiveElement = objects[CountActive];
-        objects[index] = lastActiveElement;
+        objects[index] = objects[CountActive];
         objects[CountActive] = element;
     }
 
@@ -88,7 +88,7 @@ public class ObjectPool<T> where T : class
     /// </summary>
     public void DestroyUnused()
     {
-        for (int i = Count - 1; i >= CountActive; i++)
+        for (int i = Count - 1; i >= CountActive; i--)
         {
             destroyFunc(objects[i]);
             objects[i] = null;
@@ -100,7 +100,7 @@ public class ObjectPool<T> where T : class
     /// </summary>
     public void DestroyAll()
     {
-        for (int i = Count - 1; i >= 0; i++)
+        for (int i = Count - 1; i >= 0; i--)
         {
             destroyFunc(objects[i]);
             objects[i] = null;
