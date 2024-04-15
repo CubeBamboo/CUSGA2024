@@ -169,6 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   notDestroyOnLoadList:
   - {fileID: 786542733079060244, guid: 142032fee91aa224a834807c8fe72e39, type: 3}
+  - {fileID: 5958638769696446895, guid: 7b24d0f4aa6467f449e783417dd76213, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

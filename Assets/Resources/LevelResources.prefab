@@ -44,12 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81596a707118405409c745ea329c789c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chartAssets:
-    m_AssetGUID: fafe4d570834ff0448b095c147eec4a7
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 1
   musicManagerConfig: {fileID: 11400000, guid: 68ed4b2d24e96734093a7000e2cfc360, type: 2}
   levelConfig: {fileID: 11400000, guid: 33051b7261f31514783d021c269ff9be, type: 2}
   playerConfig: {fileID: 11400000, guid: e840ec97e75580341944e4bf37eb34d0, type: 2}
   debugSettings: {fileID: 11400000, guid: 593a565c2ee8f3b4b9b06b5013e40390, type: 2}
+  globalPrefabs: {fileID: 11400000, guid: 952ea785214116b4eae37f9383ae9234, type: 2}
