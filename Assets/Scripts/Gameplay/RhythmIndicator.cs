@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Shuile.Gameplay
 {
@@ -13,13 +14,13 @@ namespace Shuile.Gameplay
         private struct Note
         {
             public RectTransform transform;
-            public CanvasGroup alphaGroup;
+            public Graphic graphic;
             public float hitTime;
 
-            public Note(RectTransform transform, CanvasGroup alphaGroup, float hitTime)
+            public Note(RectTransform transform, Graphic graphic, float hitTime)
             {
                 this.transform = transform;
-                this.alphaGroup = alphaGroup;
+                this.graphic = graphic;
                 this.hitTime = hitTime;
             }
         }
@@ -90,9 +91,9 @@ namespace Shuile.Gameplay
         private void OnNote(BaseNoteData noteData)
         {
             var obj = notePool.Get();
-            var canvasGroup = obj.GetComponent<CanvasGroup>();
-            canvasGroup.alpha = 1f;
-            notes.Add(new ((RectTransform)obj.transform, canvasGroup, noteData.ToPlayTime()));
+            var graphic = obj.GetComponent<Graphic>();
+            graphic.color = graphic.color.With(a: 0f);
+            notes.Add(new ((RectTransform)obj.transform, graphic, noteData.ToPlayTime()));
         }
 
         private float GetPlayTime(BaseNoteData note) => note.ToPlayTime() - preDisplayTime;
@@ -102,7 +103,8 @@ namespace Shuile.Gameplay
         {
             var delta = note.hitTime - lerpTime;
             note.transform.localPosition = note.transform.localPosition.With(x: distanceUnit * delta);
-            note.alphaGroup.alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
+            float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
+            note.graphic.color = (delta < 0f ? Color.red : Color.white).With(a: alpha);
         }
     }
 }

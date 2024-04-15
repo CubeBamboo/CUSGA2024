@@ -17,5 +17,9 @@ namespace Shuile
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3Int With(this Vector3Int vec, int? x = null, int? y = null, int? z = null)
             => new(x ?? vec.x, y ?? vec.y, z ?? vec.z);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color With(this Color color, float? r = null, float? g = null, float? b = null, float? a = null)
+            => new(r ?? color.r, g ?? color.g, b ?? color.b, a ?? color.a);
     }
 }
