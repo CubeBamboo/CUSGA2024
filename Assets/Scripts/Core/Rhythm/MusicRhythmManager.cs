@@ -71,9 +71,6 @@ namespace Shuile.Rhythm.Runtime
             Time.timeScale = playTimeScale;
             audioPlayer.Pitch = playTimeScale;
 
-            // play clip
-            audioPlayer.Play();
-
             var playAt = AudioSettings.dspTime + 1f;
             var audioDelta = await audioPlayer.WaitPlayScheduled(playAt);
 
