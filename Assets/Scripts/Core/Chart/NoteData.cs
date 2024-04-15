@@ -22,7 +22,7 @@ namespace Shuile.Rhythm.Runtime
         public float? endTime;
 
         public NoteEventType eventType;
-        public NoteEventData eventData;
+        //public NoteEventData eventData;
 
         public static NoteData Create(float targetTime)
             => new() { targetTime = targetTime };
@@ -37,19 +37,11 @@ namespace Shuile.Rhythm.Runtime
         MusicOffsetTestLaser,
     }
 
-    public enum EnemyType
-    {
-        ZakoRobot,
-        Creeper,
-        MahouDefenseTower,
-        TotalCount // for count, not enemy
-    }
-
+    [System.Obsolete("...")]
     // TODO: support event data // 相当于事件传参了，就是我没想好这个参数怎么写才能适应这么多事件(
     public struct NoteEventData
     {
         //public EnemyType enemyType;
-
     }
 
     [System.Obsolete("use BaseNoteData instead")]
@@ -61,7 +53,7 @@ namespace Shuile.Rhythm.Runtime
             switch (noteData.eventType)
             {
                 case NoteEventType.SingleEnemySpawn:
-                    SingleEnemySpawn(noteData.eventData);
+                    SingleEnemySpawn();
                     break;
                 case NoteEventType.ObjectTransform:
                     throw new System.NotImplementedException();
@@ -83,7 +75,7 @@ namespace Shuile.Rhythm.Runtime
         }
 
         // spawn random enemy in random position, destroy when touch player
-        public static void SingleEnemySpawn(NoteEventData noteData)
+        public static void SingleEnemySpawn()
         {
             var levelGrid = LevelGrid.Instance;
 
@@ -95,7 +87,7 @@ namespace Shuile.Rhythm.Runtime
                 var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
                 //var randomType = EnemyType.; // TODO: [!]for test
                 // instantiate
-                var enemy = EntityManager.Instance.SpawnEnemy(NoteEventUtils.EnemyType2Prefab(randomType),randomGridPos.ToWorld(levelGrid.grid));
+                var enemy = EntityFactory.Instance.SpawnEnemy(randomType,randomGridPos.ToWorld(levelGrid.grid));
             }
             else
             {
@@ -111,14 +103,13 @@ namespace Shuile.Rhythm.Runtime
             float timer = spawnInterval;
             while (timer < duration)
             {
-                SingleEnemySpawn(new NoteEventData());
+                SingleEnemySpawn();
                 await UniTask.Delay(System.TimeSpan.FromSeconds(spawnInterval));
                 timer += spawnInterval;
             }
             //UnityEngine.Debug.Log("MultiEnemySpawn End");
         }
 
-        // TODO: [!]add pre show time
         // TODO: belongs to mechanism event
         public static void LaserSpawn()
         {
@@ -130,8 +121,6 @@ namespace Shuile.Rhythm.Runtime
             go.SetPosition(randomPos.ToWorld(levelGrid.grid)); // init position
             NoteProductController.Laser.Process(go); // laser behavior
         }
-
-
 
         public static void MusicOffsetTestLaser()
         {
@@ -153,19 +142,6 @@ namespace Shuile.Rhythm.Runtime
             float preshowRealTime = 0f;
             //if (noteData.eventType == NoteEventType.LaserSpawn) preshowTime = 2;
             float res = (noteData.targetTime - preshowTime) * MusicRhythmManager.Instance.BpmInterval - preshowRealTime;
-            return res;
-        }
-
-        public static UnityEngine.GameObject EnemyType2Prefab(EnemyType enemyType)
-        {
-            PrefabConfigSO prefabConfig = GameplayService.Interface.Get<PrefabConfigSO>();
-            var res = enemyType switch
-            {
-                EnemyType.ZakoRobot => prefabConfig.zakoRobot,
-                EnemyType.Creeper => prefabConfig.creeper,
-                EnemyType.MahouDefenseTower => prefabConfig.mahouDefenseTower,
-                _ => throw new System.Exception("Invalid EnemyType."),
-            };
             return res;
         }
     }

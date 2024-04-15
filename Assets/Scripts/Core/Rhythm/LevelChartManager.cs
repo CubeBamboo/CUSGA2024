@@ -17,14 +17,16 @@ namespace Shuile.Rhythm.Runtime
 
         private void Start()
         {
-            chart = LevelRoot.Instance.CurrentChart;
+            chart = LevelDataBinder.Instance.chartData;
             chartPlayer = new ChartPlayer(chart);
             chartPlayer.OnNotePlay += note => note.Process();
         }
 
         private void FixedUpdate()
         {
+#if UNITY_EDITOR
             if (!isPlay) return;
+#endif
             chartPlayer.PlayUpdate(MusicRhythmManager.Instance.CurrentTime);
         }
     }

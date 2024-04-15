@@ -26,7 +26,7 @@ namespace Shuile.Rhythm.Runtime
     {
         public override void Process()
         {
-            PrefabConfigSO prefabConfig = GameplayService.Interface.Get<PrefabConfigSO>();
+            PrefabConfigSO prefabConfig = LevelResources.Instance.globalPrefabs;
             var levelGrid = LevelGrid.Instance;
 
             var go = prefabConfig.laser.Instantiate(); // spawn
@@ -55,7 +55,7 @@ namespace Shuile.Rhythm.Runtime
                 var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
                 //var randomType = EnemyType.; // TODO: [!]for test
                 // instantiate
-                var enemy = EntityManager.Instance.SpawnEnemy(NoteEventUtils.EnemyType2Prefab(randomType), randomGridPos.ToWorld(levelGrid.grid));
+                var enemy = EntityFactory.Instance.SpawnEnemy(randomType, randomGridPos.ToWorld(levelGrid.grid));
             }
             else
             {

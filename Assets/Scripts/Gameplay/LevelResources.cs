@@ -5,27 +5,37 @@ using Shuile.Rhythm.Runtime;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UDebug = UnityEngine.Debug;
 
 namespace Shuile
 {
+    // TODO: load from assets
     public class LevelResources : MonoSingletons<LevelResources>
     {
-        public AssetReference chartAssets;
+        //public AssetReference chartAssets;
         public MusicManagerConfigSO musicManagerConfig;
         public LevelConfigSO levelConfig;
         public PlayerSettingsConfigSO playerConfig;
         [Tooltip("for debug")] public LevelDebugSettingsSO debugSettings;
 
+        public PrefabConfigSO globalPrefabs;
         public ChartData currentChart;
 
         protected override void OnAwake()
         {
-            currentChart = ChartUtils.LoadChart(chartAssets);
             GameplayService.Interface.OnInit();
         }
         private void OnDestroy()
         {
             GameplayService.Interface.OnDeInit();
+        }
+
+        protected override void OnInstanceCall(bool isNewObject)
+        {
+            if (isNewObject)
+            {
+                UDebug.LogWarning("[For tester] LevelResources is not init by scene, load \"Root\" scene first");
+            }
         }
     }
 }

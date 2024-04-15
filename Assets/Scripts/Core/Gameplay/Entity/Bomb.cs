@@ -31,7 +31,7 @@ namespace Shuile.Gameplay.Entity
 
             // play anim
             transform.GetChild(0).transform.DOScale(2f, 0.2f).From().OnComplete(() => Destroy(this.gameObject));
-            MonoAudioCtrl.Instance.PlayOneShot("Enemy_Bomb", 0.6f);
+            //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Bomb", 0.6f);
         }
 
         public void Interrupt()

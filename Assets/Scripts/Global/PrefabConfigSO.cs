@@ -2,6 +2,13 @@ using UnityEngine;
 
 namespace Shuile
 {
+    [System.Serializable]
+    public struct SpawnEffect
+    {
+        public GameObject effect;
+        public float duration;
+    }
+
     [CreateAssetMenu(fileName = "New PrefabConfig", menuName = "Config/Prefab Config")]
     public class PrefabConfigSO : ScriptableObject
     {
@@ -15,5 +22,8 @@ namespace Shuile
 
         [Header("RhythmIndicator")]
         public GameObject noteIndicator;
+
+        [Header("Effect")]
+        public SpawnEffect enemySpawnEffect;
     }
 }

@@ -5,6 +5,7 @@ using Shuile.Rhythm.Runtime;
 
 using Cysharp.Threading.Tasks;
 using UnityEngine.InputSystem;
+using UDebug = UnityEngine.Debug;
 
 namespace Shuile
 {
@@ -60,7 +61,6 @@ namespace Shuile
             UICtrl.Instance.Create<EndLevelPanel>().Hide();
             UICtrl.Instance.Get<PlayingPanel>().Show();
             UICtrl.Instance.Get<DebugPanel>().Show();
-            //sceneLoader = MainGame.Interface.Get<ISceneLoader>();
         }
 
         private void Update()

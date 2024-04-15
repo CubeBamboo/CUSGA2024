@@ -15,10 +15,10 @@ namespace Shuile.Rhythm
          * - single note (not support long note)
          * - get resource directly from scriptable obejct
          */
-        public static ChartData LoadChart(string chartName)
+        public static ChartData LoadChartSync(string chartName)
         {
             var op1 = Addressables.LoadAssetAsync<TextAsset>($"Chart/{chartName}");
-            var res = op1.WaitForCompletion(); // TODO: async
+            var res = op1.WaitForCompletion();
 
             ChartData chartData = InternalLoadChartWithoutResourceLoad(res.text, out var songKey);
             var op2 = Addressables.LoadAssetAsync<AudioClip>(songKey);
@@ -26,18 +26,18 @@ namespace Shuile.Rhythm
             return chartData;
         }
 
-        public static ChartData LoadChart(AssetReference assetReference)
+        public static ChartData LoadChartSync(AssetReference assetReference)
         {
             var op1 = Addressables.LoadAssetAsync<TextAsset>(assetReference);
-            var res = op1.WaitForCompletion(); // TODO: async
+            var res = op1.WaitForCompletion();
 
             ChartData chartData = InternalLoadChartWithoutResourceLoad(res.text, out var songKey);
             var op2 = Addressables.LoadAssetAsync<AudioClip>(songKey);
-            chartData.audioClip = op2.WaitForCompletion(); // TODO: async
+            chartData.audioClip = op2.WaitForCompletion();
             return chartData;
         }
 
-        public static ChartData LoadChart(ChartSO chartSO)
+        public static ChartData LoadChartSync(ChartSO chartSO)
         {
             ChartData chartData = InternalLoadChartWithoutResourceLoad(chartSO.chartFile.text, out var songKey);
             chartData.audioClip = chartSO.clip;
@@ -78,11 +78,11 @@ namespace Shuile.Rhythm
                 int column = note["column"].ToObject<int>();
 
                 BaseNoteData noteData;
-                if (column != 1 && column != 2) continue;
+                if (column != 0) continue;
                 noteData = column switch
                 {
-                    1 => new SpawnSingleEnemyNoteData(),
-                    2 => new SpawnLaserNoteData(),
+                    //1 => new SpawnSingleEnemyNoteData(),
+                    0 => new SpawnLaserNoteData(),
                     _ => throw new System.Exception("invalid column data"),
                 };
 
