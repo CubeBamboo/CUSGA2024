@@ -74,7 +74,10 @@ namespace Shuile.Rhythm.Runtime
             // play clip
             audioPlayer.Play();
 
-            currentTime = -offsetInSeconds;
+            var playAt = AudioSettings.dspTime + 1f;
+            var audioDelta = await audioPlayer.WaitPlayScheduled(playAt);
+
+            currentTime = -offsetInSeconds + (float)audioDelta;
             isPlaying = true; // -> start timing
         }
     }
