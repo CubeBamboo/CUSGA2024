@@ -22,7 +22,7 @@ namespace Shuile
         private void Start()
         {
             nextRoundIndex = 0;
-            UDebug.Log("Rounds Start");
+            //UDebug.Log("Rounds Start");
             if (currentEnemyRoundsData.rounds.Length == 0)
             {
                 isEnd = true;
@@ -64,7 +64,7 @@ namespace Shuile
                 return;
             }
 
-            UDebug.Log("Process Current Round");
+            //UDebug.Log("Process Current Round");
             await QueueSpawnEnemies(nextRoundIndex);
         }
 
