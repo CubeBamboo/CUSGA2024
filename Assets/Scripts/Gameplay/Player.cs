@@ -23,7 +23,7 @@ namespace Shuile.Gameplay
             mPlayerInput = gameObject.AddComponent<NormalPlayerInput>();
             mPlayerInput.Target = this;
             mPlayerCtrl = gameObject.AddComponent<NormalPlayerCtrl>();
-            mPlayerCtrl.Target = this; // TODO: shit
+            mPlayerCtrl.Target = this;
 
             GameplayService.Interface.Register<Player>(this);
         }
@@ -45,7 +45,7 @@ namespace Shuile.Gameplay
         //TODO: [!] for debug
         private void DebugUpdate()
         {
-            if (Keyboard.current.upArrowKey.wasPressedThisFrame && Keyboard.current.downArrowKey.wasPressedThisFrame)
+            if (Keyboard.current.upArrowKey.isPressed && Keyboard.current.downArrowKey.wasPressedThisFrame)
             {
                 //DebugProperty.Instance.SetInt("PlayerKaiGua", 1);
                 Debug.Log("开挂模式");

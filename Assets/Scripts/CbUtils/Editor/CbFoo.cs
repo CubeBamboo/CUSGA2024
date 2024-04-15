@@ -12,7 +12,7 @@ namespace CbUtils
 
         private void Start()
         {
-            EntityManager.Instance.SpawnEnemy(enemy, transform.position);
+            //EntityManager.Instance.SpawnEnemy(enemy, transform.position);
         }
     }
 }

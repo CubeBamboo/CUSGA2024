@@ -34,7 +34,7 @@ namespace Shuile.Rhythm.Runtime
         protected override void OnAwake()
         {
             audioPlayer = MainGame.Interface.Get<IAudioPlayer>();
-            currentChart = LevelResources.Instance.currentChart;
+            currentChart = LevelDataBinder.Instance.chartData;
             levelConfig = LevelResources.Instance.levelConfig;
             playerConfig = LevelResources.Instance.playerConfig;
             playOnAwake = LevelResources.Instance.musicManagerConfig.playOnAwake;

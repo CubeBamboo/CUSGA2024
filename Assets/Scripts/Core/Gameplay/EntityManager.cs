@@ -1,7 +1,7 @@
 using CbUtils;
 
 using Shuile.Rhythm.Runtime;
-
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -24,6 +24,8 @@ namespace Shuile.Gameplay
         private Transform enemyParent;
         private Transform gadgetParent;
         private Transform propParent;
+
+        public Transform EnemyParent => enemyParent;
 
         public PrefabConfigSO Prefabs
         {
@@ -103,6 +105,7 @@ namespace Shuile.Gameplay
                 enemyList.UnorderedRemove(enemy);
         }
 
+        [System.Obsolete("Use EnityFactory.SpawnEnemy instead")]
         public Enemy SpawnEnemy(GameObject enemyPrefab, Vector3 pos)
         {
             // if (LevelGrid.Instance.grid.IsOutOfBound(pos))

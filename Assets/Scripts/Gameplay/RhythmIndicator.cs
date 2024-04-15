@@ -49,7 +49,7 @@ namespace Shuile.Gameplay
 
         private void Awake()
         {
-            notePrefab = GameplayService.Interface.Get<PrefabConfigSO>().noteIndicator;
+            notePrefab = LevelResources.Instance.globalPrefabs.noteIndicator;
             rhythmManager = MusicRhythmManager.Instance;
             chartPlayer = new ChartPlayer(ChartDataCreator.CreatePlayerDefault(), GetPlayTime);
             chartPlayer.OnNotePlay += OnNote;

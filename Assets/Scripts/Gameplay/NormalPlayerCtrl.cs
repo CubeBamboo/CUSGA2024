@@ -89,7 +89,7 @@ namespace Shuile.Gameplay
 
             // [anim logic]
             animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Jump);
-            MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
+            //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
         }
 
         public void Attack()
@@ -104,7 +104,7 @@ namespace Shuile.Gameplay
 
             // [anim logic]
             animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Attack);
-            MonoAudioCtrl.Instance.PlayOneShot("Player_Attack");
+            //MonoAudioCtrl.Instance.PlayOneShot("Player_Attack");
         }
     }
 }
