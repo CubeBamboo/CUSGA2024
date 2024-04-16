@@ -6,6 +6,9 @@ using Shuile.Rhythm.Runtime;
 using Cysharp.Threading.Tasks;
 using UnityEngine.InputSystem;
 using UDebug = UnityEngine.Debug;
+using UnityEngine.SceneManagement;
+using CbUtils.ActionKit;
+using DG.Tweening;
 
 namespace Shuile
 {
@@ -20,14 +23,13 @@ namespace Shuile
         public enum LevelState
         {
             Playing,
-            End
+            Fail,
+            Win
         }
 
-        public event System.Action OnStart, OnEnd;
-        public ChartData CurrentChart { get; set; }
+        public event System.Action OnStart, OnFail, OnWin;
 
         private LevelState state;
-        //private ISceneLoader sceneLoader;
 
         public bool needHitWithRhythm { get; private set; }
         public LevelState State
@@ -35,7 +37,7 @@ namespace Shuile
             get => state;
             set
             {
-                if (state == LevelState.End) return;
+                if (state == LevelState.Fail) return;
 
                 state = value;
                 TriggerEvent(state);
@@ -44,12 +46,11 @@ namespace Shuile
 
         protected override void OnAwake()
         {
-            CurrentChart = LevelResources.Instance.currentChart;
-
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
             UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
-            LevelChartManager.Instance.enabled = true;
             needHitWithRhythm = LevelResources.Instance.debugSettings.needHitWithRhythm;
+
+            InitSingletons();
         }
         private void OnDestroy()
         {
@@ -68,12 +69,17 @@ namespace Shuile
             // TODO: [!] for debug
             if (Keyboard.current.escapeKey.wasPressedThisFrame)
             {
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#else
-                Application.Quit();
-#endif
+                SceneManager.LoadScene("MainMenu");
             }
+        }
+
+        private void InitSingletons()
+        {
+            MusicRhythmManager.Instance.enabled = true;
+            PlayerChartManager.Instance.enabled = true;
+            AutoPlayChartManager.Instance.enabled = true;
+            LevelChartManager.Instance.enabled = true;
+            EnemyRoundManager.Instance.enabled = true;
         }
 
         private void TriggerEvent(LevelState state)
@@ -82,25 +88,43 @@ namespace Shuile
             {
                 case LevelState.Playing:
                     OnStart?.Invoke();
-
                     break;
-                case LevelState.End:
-                    OnEnd?.Invoke();
-                    LevelEnd();
-
+                case LevelState.Fail:
+                    OnFail?.Invoke();
+                    LevelFail();
+                    break;
+                case LevelState.Win:
+                    OnWin?.Invoke();
+                    LevelWin();
                     break;
             }
         }
 
-        private async void LevelEnd()
+        private void LevelFail()
         {
             var endPanel = UICtrl.Instance.Get<EndLevelPanel>();
             endPanel.TimeTextUGUI.text = "SurviveTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.0");
             endPanel.Show();
+            ActionCtrl.Instance.Delay(3f)
+                .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(0))
+                .Start();
+        }
+        private void LevelWin()
+        {
+            var endPanel = UICtrl.Instance.Get<EndLevelPanel>();
+            endPanel.TimeTextUGUI.text = "UseTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.0");
+            endPanel.TitleUGUI.text = "Stage Clear";
+            endPanel.Show();
 
-            await UniTask.Delay(System.TimeSpan.FromSeconds(3f));
-            GameRoot.Instance.LoadLevel();
-            //sceneLoader.LoadSceneAsync(new SceneInfo() { SceneName = "Level0Test" }, UnityEngine.SceneManagement.LoadSceneMode.Single);
+            // 当前音乐淡出
+            AudioManager.Instance.OtherSource.DOFade(0, 0.8f).OnComplete(() =>
+            {
+                AudioManager.Instance.OtherSource.Stop();
+            }); // TODO: [!!] NOOOOOOOOO IT'S SHITTTTTTTTTTT FengZhuang YIxia zhe ge musicPlayer!!!!
+
+            ActionCtrl.Instance.Delay(3f)
+                .OnComplete(() => MonoGameRouter.Instance.ToMenu())
+                .Start();
         }
     }
 }

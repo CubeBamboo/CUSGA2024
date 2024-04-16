@@ -1,4 +1,4 @@
-﻿using CbUtils;
+using CbUtils;
 
 using Shuile.Gameplay.Entity.States;
 
@@ -50,7 +50,7 @@ namespace Shuile.Gameplay.Entity.Enemies
             {
                 for (var i = 0; i < bombCount; i++)
                 {
-                    var pos = LevelGrid.Instance.grid.CellToWorld(new Vector3Int(URandom.Range(0, LevelGrid.Instance.grid.Width), URandom.Range(0, LevelGrid.Instance.grid.Height)));
+                    var pos = LevelZoneManager.Instance.RandomValidPosition();
                     var bomb = Instantiate(bombPrefab, pos, Quaternion.identity, BombParent).GetComponent<Bomb>();
                     bombs.Add(bomb);
                 }

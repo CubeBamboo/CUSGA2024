@@ -27,11 +27,9 @@ namespace Shuile.Rhythm.Runtime
         public override void Process()
         {
             PrefabConfigSO prefabConfig = LevelResources.Instance.globalPrefabs;
-            var levelGrid = LevelGrid.Instance;
 
             var go = prefabConfig.laser.Instantiate(); // spawn
-            levelGrid.TryGetRandomPosition(out Vector3Int randomPos);
-            go.SetPosition(randomPos.ToWorld(levelGrid.grid)); // init position
+            go.SetPosition(LevelZoneManager.Instance.RandomValidPosition()); // init position
             NoteProductController.Laser.Process(go); // laser behavior
         }
 
@@ -45,22 +43,8 @@ namespace Shuile.Rhythm.Runtime
     {
         public override void Process()
         {
-            var levelGrid = LevelGrid.Instance;
-
-            // TODO: store in eventdata
-            // get pos (random in a line)
-            if (levelGrid.TryGetRandomPosition(out Vector3Int randomGridPos, true))
-            {
-                // random enemy
-                var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
-                //var randomType = EnemyType.; // TODO: [!]for test
-                // instantiate
-                var enemy = EntityFactory.Instance.SpawnEnemy(randomType, randomGridPos.ToWorld(levelGrid.grid));
-            }
-            else
-            {
-                Debug.LogWarning("No enough space to spawn enemy");
-            }
+            var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
+            EntityFactory.Instance.SpawnEnemy(randomType, LevelZoneManager.Instance.RandomValidPosition());
         }
     }
 }
