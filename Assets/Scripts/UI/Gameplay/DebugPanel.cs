@@ -19,6 +19,8 @@ namespace Shuile
     {
         [SerializeField] private TextMeshProUGUI hitOffsetText;
         [SerializeField] private TextMeshProUGUI playTimeText;
+        [SerializeField] private TextMeshProUGUI enemyRoundIndexText;
+        [SerializeField] private TextMeshProUGUI enemyCountText;
         //[SerializeField] private Toggle enemyClampToggle;
 
         private void Awake()
@@ -31,8 +33,10 @@ namespace Shuile
             var playerModel = GameplayService.Interface.Get<PlayerModel>();
             gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
             {
-                hitOffsetText.text = $"HitOffset: " + playerModel.currentHitOffset.ToString("0.000");
-                playTimeText.text = $"PlayTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.000");
+                hitOffsetText.text = $"HitOffset: {playerModel.currentHitOffset.ToString("0.000")}";
+                playTimeText.text = $"PlayTime: {MusicRhythmManager.Instance.CurrentTime.ToString("0.000")}";
+                enemyRoundIndexText.text = $"EnemyRoundIndex: {EnemyRoundManager.Instance.CurrentRoundIndex}";
+                enemyCountText.text = $"EnemyCount: {EntityManager.Instance.Enemies.Count}";
             };
             //enemyClampToggle.isOn = DebugProperty.Instance.GetInt("EnemyClamp") == 1 ? true : false;
             //enemyClampToggle.onValueChanged.AddListener((isOn) =>

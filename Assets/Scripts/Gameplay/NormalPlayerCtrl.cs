@@ -21,7 +21,7 @@ namespace Shuile.Gameplay
         [SerializeField] private float xMaxSpeed = 5f;
 
         // [jump]
-        [SerializeField] private float jumpVel = 5f;
+        [SerializeField] private float jumpVel = 9f;
 
         // [attack]
         [SerializeField] private float attackRadius = 2.8f;

@@ -1,3 +1,6 @@
+/* Tips: it's no use.
+ */
+
 using CbUtils;
 using CbUtils.Collections;
 using Shuile.Rhythm.Runtime;

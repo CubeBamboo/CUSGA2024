@@ -14,8 +14,10 @@ namespace CbUtils
             {
                 bool isNew = !instance;
                 if (!instance)
+                {
                     new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
-                instance.OnInstanceCall(isNew);
+                    instance.OnInstanceCall(isNew);
+                }
                 return instance;
             }
 

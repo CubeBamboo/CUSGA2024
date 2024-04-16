@@ -72,7 +72,7 @@ namespace Shuile.Gameplay
                 CurrentHp.Value = 0;
                 isDie = true;
                 OnDie.Invoke();
-                LevelRoot.Instance.State = LevelRoot.LevelState.End;
+                LevelRoot.Instance.State = LevelRoot.LevelState.Fail;
                 OnDieFunc();
             }
         }
@@ -89,7 +89,7 @@ namespace Shuile.Gameplay
             AudioManager.Instance.OtherSource.DOFade(0, 0.8f).OnComplete(() =>
             {
                 AudioManager.Instance.OtherSource.Stop();
-            }); // TODO: NOOOOOOOOO IT'S SHITTTTTTTTTTT
+            }); // TODO: [!!] NOOOOOOOOO IT'S SHITTTTTTTTTTT FengZhuang YIxia zhe ge musicPlayer!!!!
         }
     }
 }

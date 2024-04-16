@@ -3,7 +3,7 @@ using CbUtils;
 namespace Shuile.Rhythm.Runtime
 {
     // manage auto play chart. (for someone like enemy or game ui animation)
-    public class AutoPlayChartManager : MonoCreateOnceSingletons<AutoPlayChartManager>
+    public class AutoPlayChartManager : MonoSingletons<AutoPlayChartManager>
     {
         // chart part
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();

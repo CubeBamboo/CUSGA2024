@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6179797432148822438}
   - component: {fileID: 731887477966917713}
   m_Layer: 0
-  m_Name: EnemySpawnEffect
+  m_Name: EnemySpawnEffect_Particle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
