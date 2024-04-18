@@ -12,18 +12,17 @@ namespace Shuile.Gameplay
         private NormalPlayerInput mPlayerInput;
 
         [SerializeField] private PlayerPropertySO property;
-        public EventProperty<int> CurrentHp { get; private set; } = new();
-        public SimpleEvent OnDie = new();
+        public HearableProperty<int> CurrentHp { get; private set; } = new();
+        public EasyEvent OnDie = new();
 
         private bool isDie;
 
         public PlayerPropertySO Property => property;
         private void Awake()
         {
-            mPlayerInput = gameObject.AddComponent<NormalPlayerInput>();
-            mPlayerInput.Target = this;
-            mPlayerCtrl = gameObject.AddComponent<NormalPlayerCtrl>();
-            mPlayerCtrl.Target = this;
+            gameObject.AddComponent<NormalPlayerInput>();
+            gameObject.AddComponent<NormalPlayerCtrl>();
+            gameObject.AddComponent<NormalPlayerFeel>();
 
             GameplayService.Interface.Register<Player>(this);
         }

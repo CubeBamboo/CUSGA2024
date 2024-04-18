@@ -1,8 +1,8 @@
-using Shuile.Framework;
-
-using DG.Tweening;
-using UnityEngine;
 using CbUtils;
+using Shuile.Framework;
+using Shuile.Rhythm.Runtime;
+
+using UnityEngine;
 
 namespace Shuile.Gameplay
 {
@@ -13,8 +13,19 @@ namespace Shuile.Gameplay
         void Attack();
     }
 
-    public class NormalPlayerCtrl : MonoBehaviour, IComponent<Player>
+    public class NormalPlayerCtrl : MonoBehaviour
     {
+        public enum State
+        {
+            Normal,
+            Jump
+        }
+        private FSM<State> mFsm = new();
+
+        private Player player;
+        private NormalPlayerInput mPlayerInput;
+        private Rigidbody2D _rb;
+
         // [normal move]
         [SerializeField] private float acc = 0.4f;
         [SerializeField] private float deAcc = 0.25f;
@@ -26,85 +37,165 @@ namespace Shuile.Gameplay
         // [attack]
         [SerializeField] private float attackRadius = 2.8f;
 
-        // [anim manage]
-        private PlayerAnimCtrl animCtrl;
+        private readonly PlayerModel playerModel = GameplayService.Interface.Get<PlayerModel>();
 
-        private Rigidbody2D _rb;
+        public EasyEvent OnTouchGround { get; } = new();
+        public PlayerAttackCommand attackCommand { get; } = new();
+        public PlayerJumpCommand jumpCommand { get; } = new();
+        public PlayerMoveCommand moveCommand { get; } = new();
+
+        public bool CheckRhythm =>
+            MusicRhythmManager.Instance.CheckBeatRhythm(
+                MusicRhythmManager.Instance.CurrentTime, out playerModel.currentHitOffset);
+
         public Rigidbody2D Rb => _rb;
-
-        private Player mTarget;
-        public Player Target { set => mTarget = value; }
 
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
-            animCtrl = new(gameObject);   
+            player = GetComponent<Player>();
+
+            mPlayerInput = GetComponent<NormalPlayerInput>();
+            ConfigureInputEvent();
+            InitFSM();
+        }
+
+        private void OnDestroy()
+        {
+            ClearInputEvent();
         }
 
         private void Start()
         {
-            mTarget.OnDie.Register(() => animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Die))
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
-            mTarget.CurrentHp.Register((val) => animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt))
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
             _rb.bodyType = RigidbodyType2D.Dynamic;
         }
 
         private void FixedUpdate()
         {
-            // [normal move]
+            mFsm.FixedUpdate();
+
+            // [normal move update]
             _rb.velocity = new Vector2(Mathf.MoveTowards(_rb.velocity.x, 0, deAcc), _rb.velocity.y);
-
-            // [anim logic]
-            animCtrl.XVelocity = _rb.velocity.x;
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.yellow;
-            //Gizmos.DrawWireSphere(transform.position, attackRadius);
         }
 
         /// <summary> update velocity </summary>
         public void NormalMove(float xInput)
         {
-            // [normal move]
-            _rb.velocity += new Vector2(xInput * acc, 0);
-            _rb.velocity = new Vector2(Mathf.Clamp(_rb.velocity.x, -xMaxSpeed, xMaxSpeed), _rb.velocity.y);
-
-            // [anim logic]
-            animCtrl.FlipX = xInput < 0;
-        }
-
-        public void TouchGround()
-        {
-            // [anim logic]
-            animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Land);
+            moveCommand
+                .Bind(new()
+                {
+                    xInput = xInput,
+                    rb = _rb,
+                    acc = acc,
+                    xMaxSpeed = xMaxSpeed
+                })
+                .Execute();
         }
 
         public void SingleJump()
         {
-            // [jump]
-            _rb.velocity = new Vector2(_rb.velocity.x, jumpVel);
+            if (mFsm.CurrentStateId == State.Jump) return;
 
-            // [anim logic]
-            animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Jump);
-            //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
+            jumpCommand
+                .Bind(new()
+                {
+                    rb = _rb,
+                    jumpVel = jumpVel
+                })
+                .Execute();
+            mFsm.SwitchState(State.Jump);
         }
 
         public void Attack()
         {
-            //var grid = LevelGrid.Instance.grid;
-            var hits = Physics2D.OverlapCircleAll(transform.position, attackRadius, LayerMask.GetMask("Enemy")); // TODO: static you hua 
-            //var (objects, size) = LevelGrid.Instance.GetObjectsIn(transform.position.ToCell(grid), LayerMask.GetMask("Enemy")); //TODO: GCCCCCCCCC
+            if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm) return;
+
+            attackCommand
+                .Bind(new()
+                {
+                    position = transform.position,
+                    attackRadius = attackRadius,
+                    attackPoint = player.Property.attackPoint
+                })
+                .Execute();
+        }
+
+        private void ConfigureInputEvent()
+        {
+            mPlayerInput.OnJump += SingleJump;
+            mPlayerInput.OnAttack += Attack;
+            mPlayerInput.OnMove += NormalMove;
+        }
+
+        private void ClearInputEvent()
+        {
+            mPlayerInput.OnJump -= SingleJump;
+            mPlayerInput.OnAttack -= Attack;
+            mPlayerInput.OnMove -= NormalMove;
+        }
+
+        private void InitFSM()
+        {
+            mFsm.NewEventState(State.Normal);
+            mFsm.NewEventState(State.Jump)
+                .OnFixedUpdate(() =>
+                {
+                    var groundCheck = Rb.velocity.y < 0 &&
+                                      UnityAPIExt.RayCast2DWithDebugLine(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
+                    if (groundCheck)
+                    {
+                        mFsm.SwitchState(State.Normal);
+                        OnTouchGround.Invoke();
+                    }
+                });
+            mFsm.StartState(State.Normal);
+        }
+    }
+
+    public struct PlayerAttackCommandData
+    {
+        public Vector2 position;
+        public float attackRadius;
+        public int attackPoint;
+    }
+    public class PlayerAttackCommand : BaseCommand<PlayerAttackCommandData>
+    {
+        public override void OnExecute()
+        {
+            var hits = Physics2D.OverlapCircleAll(state.position, state.attackRadius, LayerMask.GetMask("Enemy")); // TODO: static you hua 
             for (int i = 0; i < hits.Length; i++)
             {
-                hits[i].GetComponent<IHurtable>().OnAttack(mTarget.Property.attackPoint);
+                hits[i].GetComponent<IHurtable>().OnAttack(state.attackPoint);
             }
+        }
+    }
 
-            // [anim logic]
-            animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Attack);
-            //MonoAudioCtrl.Instance.PlayOneShot("Player_Attack");
+    public struct PlayerJumpCommandData
+    {
+        public Rigidbody2D rb;
+        public float jumpVel;
+    }
+    public class PlayerJumpCommand : BaseCommand<PlayerJumpCommandData>
+    {
+        public override void OnExecute()
+        {
+            state.rb.velocity = new Vector2(state.rb.velocity.x, state.jumpVel);
+        }
+    }
+
+    public struct PlayerMoveCommandData
+    {
+        public float xInput;
+        public Rigidbody2D rb;
+        public float acc;
+        public float xMaxSpeed;
+    }
+    public class PlayerMoveCommand : BaseCommand<PlayerMoveCommandData>
+    {
+        public override void OnExecute()
+        {
+            state.rb.velocity += new Vector2(state.xInput * state.acc, 0);
+            state.rb.velocity = new Vector2(Mathf.Clamp(state.rb.velocity.x, -state.xMaxSpeed, state.xMaxSpeed), state.rb.velocity.y);
         }
     }
 }

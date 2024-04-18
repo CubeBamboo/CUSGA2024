@@ -19,7 +19,6 @@ namespace Shuile
         [Tooltip("for debug")] public LevelDebugSettingsSO debugSettings;
 
         public PrefabConfigSO globalPrefabs;
-        public ChartData currentChart;
 
         protected override void OnAwake()
         {

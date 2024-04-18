@@ -26,16 +26,12 @@ namespace Shuile.Gameplay
 
         public override void OnInit()
         {
-            //this.Register<PrefabConfigSO>(Resources.Load<PrefabConfigSO>("Gameplay/GlobalPrefabConfig")); //TODO: other load
-            //this.Register<Player>(Object.FindObjectOfType<Player>());
             this.Register<PlayerModel>(new PlayerModel());
             this.Register<IRouteFinder>(new SimpleRouteFinder());
         }
 
         public override void OnDeInit()
         {
-            //this.UnRegister<PrefabConfigSO>();
-            //this.UnRegister<Player>();
             this.UnRegister<PlayerModel>();
             this.UnRegister<IRouteFinder>();
         }

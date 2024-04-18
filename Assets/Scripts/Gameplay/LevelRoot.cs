@@ -9,6 +9,8 @@ using UDebug = UnityEngine.Debug;
 using UnityEngine.SceneManagement;
 using CbUtils.ActionKit;
 using DG.Tweening;
+using System.Linq;
+using CbUtils.Extension;
 
 namespace Shuile
 {
