@@ -28,19 +28,7 @@ namespace Shuile
 
         private void Start()
         {
-            LoadLevel();
-        }
-
-        public void RestartGame()
-        {
-            SceneManager.LoadScene("Root");
-        }
-        public void LoadLevel()
-        {
-            Addressables.LoadSceneAsync("Level0Test.unity").Completed += op =>
-            {
-                SceneManager.SetActiveScene(op.Result.Scene);
-            };
+            MonoGameRouter.Instance.LoadMenu();
         }
     }
 }

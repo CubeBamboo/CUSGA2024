@@ -11,8 +11,6 @@ namespace Shuile.Framework
 
         public override void OnInit()
         {
-            // global application
-            //this.Register<ISceneLoader>(new SceneLoaderManager());
             this.Register<IAudioPlayer>(new SimpleAudioPlayer());
 
             var localConfigAccessor = new PlayerPrefsAccessor<Config>("Config");
@@ -24,7 +22,6 @@ namespace Shuile.Framework
 
         public override void OnDeInit()
         {
-            //this.UnRegister<ISceneLoader>();
             this.UnRegister<IAudioPlayer>();
             this.UnRegister<IAccessor<Config>>();
             this.UnRegister<PlayerPrefsAccessor<Config>>();

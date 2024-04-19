@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-namespace CbUtils
+namespace CbUtils.ActionKit
 {
     public interface IAction
     {
         void Start();
     }
 
-    public class DelayAction
+    public class DelayAction : IAction
     {
         public float delayDuration;
         public System.Action onComplete;
@@ -19,7 +19,7 @@ namespace CbUtils
         }
         public void Start()
         {
-            ActionCtrl.Instance.StartCoroutine(DelayCoroutine());
+            MonoActionCtrlExecutor.Instance.ExecuteCoroutine(DelayCoroutine());
         }
 
         private IEnumerator DelayCoroutine()
@@ -29,15 +29,29 @@ namespace CbUtils
         }
     }
 
+    /*public class Sequence
+    {
+        public void Append()
+        {
+
+        }
+        public void AppendInterval()
+        {
+
+        }
+    }*/
+
     /// <summary>
     /// control timing sequence logic
     /// </summary>
-    public class ActionCtrl: MonoSingletons<ActionCtrl>
+    public class ActionCtrl: CSharpLazySingletons<ActionCtrl>
     {
-        public DelayAction Delay(float duration)
+        public DelayAction Delay(float durationInSeconds)
         {
-            var delay = new DelayAction();
-            delay.delayDuration = duration;
+            var delay = new DelayAction
+            {
+                delayDuration = durationInSeconds
+            };
             return delay;
         }
     }

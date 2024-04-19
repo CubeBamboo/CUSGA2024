@@ -1,4 +1,5 @@
 using UnityEngine;
+using UDebug = UnityEngine.Debug;
 
 namespace CbUtils
 {
@@ -10,7 +11,7 @@ namespace CbUtils
             get
             {
                 bool isNew = !instance;
-                if (!instance && !isDestroy)
+                if (!instance && CreateCount <= 0)
                     new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
                 instance.OnInstanceCall(isNew);
                 return instance;
@@ -20,7 +21,12 @@ namespace CbUtils
         }
 
         public static bool IsInstance => instance != null;
-        private static bool isDestroy = false;
+        public static int CreateCount { get; protected set; } = 0;
+
+#if UNITY_EDITOR
+        public static void ResetCreateCount() => CreateCount = 0;
+#endif
+
 
         protected void SetDontDestroyOnLoad()
         {
@@ -36,14 +42,10 @@ namespace CbUtils
                 return;
             }
 
-            isDestroy = false;
+            CreateCount++;
             Instance = this as T;
 
             OnAwake();
-        }
-        private void OnDestroy()
-        {
-            isDestroy = true;
         }
 
         protected virtual void OnAwake() { }

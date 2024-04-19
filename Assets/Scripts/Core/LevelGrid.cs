@@ -8,6 +8,7 @@ using CbUtils.Collections;
 
 namespace Shuile
 {
+    [System.Obsolete("use LevelZoneManager instead")]
     public class LevelGrid : MonoSingletons<LevelGrid>
     {
         public ArrayGridContainer<GameObject> grid { get; private set; }
@@ -22,7 +23,7 @@ namespace Shuile
         protected override void OnAwake()
         {
             grid = new ArrayGridContainer<GameObject>(startPosition, cellSize, cellGap, width, height);
-            MainGame.Interface.Register<LevelGrid>(this);
+            //MainGame.Interface.Register<LevelGrid>(this);
 
             InitHashSet();
         }
@@ -41,7 +42,7 @@ namespace Shuile
 
         private void OnDestroy()
         {
-            MainGame.Interface.UnRegister<LevelGrid>();
+            //MainGame.Interface.UnRegister<LevelGrid>();
         }
 
         private void InitHashSet()

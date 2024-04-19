@@ -9,7 +9,10 @@ namespace Shuile
     public class EndLevelPanel : BasePanelWithMono
     {
         [SerializeField] private TextMeshProUGUI timeTextUGUI;
+        [SerializeField] private TextMeshProUGUI titleUGUI;
+
         public TextMeshProUGUI TimeTextUGUI => timeTextUGUI;
+        public TextMeshProUGUI TitleUGUI => titleUGUI;
 
         public static PanelCreateor Creator = () =>
             Resources.Load<GameObject>("UIDesign/EndLevelPanel").Instantiate().GetComponent<IPanel>();
@@ -22,11 +25,6 @@ namespace Shuile
 
         private void OnDestroy()
             => this.UnRegisterUI<EndLevelPanel>();
-
-        private void Start()
-        {
-            Hide();
-        }
 
         public override void Show()
         {

@@ -19,9 +19,10 @@ namespace Shuile.Gameplay.Entity
 
         public void Explode(int attackPoint, float radius)
         {
-            var gridPosition = LevelGrid.Instance.grid.WorldToCell(transform.position);
-            var grid = LevelGrid.Instance.grid;
-            grid.Get(gridPosition)?.GetComponent<IHurtable>()?.OnAttack(attackPoint);
+            //var gridPosition = LevelGrid.Instance.grid.WorldToCell(transform.position);
+            //var grid = LevelGrid.Instance.grid;
+            //grid.Get(gridPosition)?.GetComponent<IHurtable>()?.OnAttack(attackPoint);
+
             var hurtables = Physics2D.OverlapCircleAll(transform.position, radius, hurtMask)
                 .Select(collider => collider.GetComponent<IHurtable>())
                 .Where(hurtable => hurtable != null);
