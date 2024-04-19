@@ -1,14 +1,7 @@
 using UnityEngine;
 
-namespace CbUtils.LinkedValue
+namespace CbUtils
 {
-    public enum UpdateType
-    {
-        Update,
-        LateUpdate,
-        FixedUpdate,
-    }
-
     public interface ILinkedValue
     {
         void OnUpdate();
