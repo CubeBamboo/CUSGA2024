@@ -7,6 +7,8 @@ namespace Shuile.Audio
 {
     public class SimpleAudioPlayer : IAudioPlayer
     {
+        private bool isPaused = false;
+
         public float Time
         {
             get => AudioManager.Instance.OtherSource.time;
@@ -23,6 +25,9 @@ namespace Shuile.Audio
             set => AudioManager.Instance.OtherSource.pitch = value;
         }
 
+        // custom
+        public AudioSource Source => AudioManager.Instance.OtherSource;
+
         public void LoadClip(AudioClip clip)
         {
             AudioManager.Instance.OtherSource.clip = clip;
@@ -30,7 +35,12 @@ namespace Shuile.Audio
 
         public void Pause()
         {
-            AudioManager.Instance.OtherSource.Pause();
+            if (isPaused)
+                AudioManager.Instance.OtherSource.UnPause();
+            else
+                AudioManager.Instance.OtherSource.Pause();
+
+            isPaused = !isPaused;
         }
 
         public void Play()
@@ -41,6 +51,20 @@ namespace Shuile.Audio
         public void PlayScheduled(double time)
         {
             AudioManager.Instance.OtherSource.PlayScheduled(time);
+        }
+
+        public void Reset()
+        {
+            var targetSource = AudioManager.Instance.OtherSource;
+            AudioManager.Instance.OtherSource.Stop();
+            targetSource.clip = null;
+            targetSource.volume = 1f;
+            isPaused = false;
+        }
+
+        public void Stop()
+        {
+            AudioManager.Instance.OtherSource.Stop();
         }
     }
 }

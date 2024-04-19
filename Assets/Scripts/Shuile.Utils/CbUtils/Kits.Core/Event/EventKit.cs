@@ -26,7 +26,7 @@ namespace CbUtils
      * new UnityEvent().AddListenerWithCustomUnRegister(() => { })
      *                 .UnRegisterWhenGameObjectDestroyed(gameObject);
      */
-    public class SimpleEvent
+    public class EasyEvent
     {
         private Action _action = ()=> { };
         public ICustomUnRegister Register(Action action)

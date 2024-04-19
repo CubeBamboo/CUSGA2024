@@ -22,6 +22,14 @@ namespace Shuile.Audio
         /// </summary>
         void Pause();
         /// <summary>
+        /// 停止
+        /// </summary>
+        void Stop();
+        /// <summary>
+        /// 重置状态
+        /// </summary>
+        void Reset();
+        /// <summary>
         /// 音乐时间（更新不一定及时）
         /// </summary>
         float Time { get; set; }

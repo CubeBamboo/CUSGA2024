@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace Shuile
 {
-    public class EventProperty<T>
+    public class HearableProperty<T>
     {
-        public EventProperty(T value = default) => _value = value;
+        public HearableProperty(T value = default) => _value = value;
         public static Func<T, T, bool> Comparer = (a, b) => a.Equals(b);
         private T _value;
         public T Value
