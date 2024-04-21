@@ -25,6 +25,8 @@ namespace Shuile.Gameplay
         private Transform gadgetParent;
         private Transform propParent;
 
+        private LevelModel levelModel;
+
         public Transform EnemyParent => enemyParent;
 
         public PrefabConfigSO Prefabs
@@ -46,6 +48,8 @@ namespace Shuile.Gameplay
             gadgetParent = new GameObject("Gadgets").transform;
             propParent = new GameObject("Props").transform;
 
+            levelModel = GameplayService.Interface.Get<LevelModel>();
+
             foreach (var entity in preset)
             {
                 if (entity.Type == EntityType.Enemy)
@@ -57,12 +61,12 @@ namespace Shuile.Gameplay
 
         private void OnEnable()
         {
-            AutoPlayChartManager.Instance.OnRhythmHit += OnRhythmHit;
+            levelModel.onRhythmHit += OnRhythmHit;
         }
 
         private void OnDisable()
         {
-            AutoPlayChartManager.Instance.OnRhythmHit -= OnRhythmHit;
+            levelModel.onRhythmHit -= OnRhythmHit;
         }
 
         private void OnRhythmHit()

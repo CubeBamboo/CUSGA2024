@@ -1,7 +1,7 @@
 using CbUtils;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
-
+using Shuile.Root;
 using UnityEngine;
 
 namespace Shuile.Gameplay

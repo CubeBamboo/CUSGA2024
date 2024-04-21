@@ -2,11 +2,13 @@ using CbUtils;
 using UnityEngine;
 using Shuile.Audio;
 using Shuile.Utils;
+using Shuile.Gameplay;
+using DG.Tweening;
 
 namespace Shuile.Rhythm.Runtime
 {
     //control the music play and music time progress, manage the rhythm check
-    public class MusicRhythmManager : MonoSingletons<MusicRhythmManager>
+    public class MusicRhythmManager : MonoNonAutoSpawnSingletons<MusicRhythmManager>
     {
         private LevelConfigSO levelConfig;
         private ChartData currentChart;
@@ -19,21 +21,21 @@ namespace Shuile.Rhythm.Runtime
         [HideInInspector] public float playTimeScale = 1f;
         [HideInInspector] public float volume = 0.4f;
 
-        public IAudioPlayer AudioPlayer => preciseMusicPlayer.AudioPlayer;
+        private LevelModel levelModel;
+        public AudioPlayerInUnity AudioPlayer => preciseMusicPlayer.AudioPlayer;
         public bool IsPlaying => isPlaying;
-        public float MissToleranceInSeconds => levelConfig.missTolerance * 0.001f;
         public float CurrentTime => preciseMusicPlayer.CurrentTime;
-        /// <summary>
-        /// unit: second
-        /// </summary>
-        public float BpmInterval => 60f / currentChart.time[0].bpm;
-        public float MusicBpm => currentChart.time[0].bpm;
-        public float MusicOffsetInSeconds => currentChart.time[0].offset * 0.001f;
 
         protected override void OnAwake()
         {
-            preciseMusicPlayer = new(new SimpleAudioPlayer());
+            levelModel = GameplayService.Interface.Get<LevelModel>();
+
             currentChart = LevelDataBinder.Instance.chartData;
+
+            levelModel.musicBpm = currentChart.time[0].bpm;
+            levelModel.musicOffset = currentChart.time[0].offset;
+
+            preciseMusicPlayer = new(new SimpleAudioPlayer());
 
             var resources = LevelResources.Instance;
             levelConfig = resources.levelConfig;
@@ -83,6 +85,15 @@ namespace Shuile.Rhythm.Runtime
             preciseMusicPlayer.Reset();
             preciseMusicPlayer.LoadClip(currentChart.audioClip);
             StartPlay();
+        }
+
+        public void FadeOutAndStop(float duration = 0.8f)
+        {
+            var targetAudioPlayer = AudioPlayer;
+            targetAudioPlayer.TargetSource.DOFade(0, duration).OnComplete(() =>
+            {
+                targetAudioPlayer.Stop();
+            });
         }
     }
 }

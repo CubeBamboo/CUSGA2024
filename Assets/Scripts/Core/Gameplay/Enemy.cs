@@ -1,3 +1,5 @@
+using CbUtils.Event;
+using CbUtils.Extension;
 using DG.Tweening;
 
 using Shuile.Framework;
@@ -23,6 +25,7 @@ namespace Shuile.Gameplay
 
         public event Action<int> OnHpChangedEvent = _ => { };
         private HUDHpBarElement hpBarUI;
+        private SpriteRenderer mRenderer;
 
         public Enemy() : base(EntityType.Enemy)
         {
@@ -37,6 +40,7 @@ namespace Shuile.Gameplay
             moveController.MaxSpeed = Property.maxMoveSpeed;
             moveController.Deceleration = Property.deceleration;
 
+            mRenderer = GetComponentInChildren<SpriteRenderer>();
             // author: CubeBamboo
             //hpBarUI = UICtrl.Instance.Create<HUDHpBarElement>();
             //hpBarUI.Link(this).Show();
@@ -56,13 +60,14 @@ namespace Shuile.Gameplay
 
             // author: CubeBamboo
             // hurt FX
-            SpriteRenderer mRenderer = GetComponentInChildren<SpriteRenderer>();
             mRenderer.color = Color.white;
             mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f).OnComplete(() =>
                 mRenderer.DOColor(Color.white, 0.2f));
             var initPos = transform.position;
             transform.DOShakePosition(0.2f, strength: 0.2f).OnComplete(() =>
                     transform.position = initPos);
+            gameObject.SetOnDestroy(() => mRenderer.DOKill(), "mRenderer");
+            gameObject.SetOnDestroy(() => transform.DOKill(), "transform");
             // end
 
             health = Mathf.Max(0, health - attackPoint);

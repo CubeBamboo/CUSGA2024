@@ -1,11 +1,10 @@
 using CbUtils;
 using Shuile.Gameplay;
-using CbUtils.Event;
-using Shuile.Rhythm.Runtime;
 
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
+using CbUtils.Event;
 
 namespace Shuile.NoteProduct
 {
@@ -16,27 +15,29 @@ namespace Shuile.NoteProduct
         {
             private const float attackWaitTime = 0.8f;
 
-            public static async void Process(GameObject target)
+            public static async UniTaskVoid Process(GameObject target)
             {
                 SpriteRenderer mRenderer = target.GetComponent<SpriteRenderer>();
-                var evtMono = target.AddComponent<Collider2DEventMono>();
+                target.SetOnDestroy(() => mRenderer.DOKill(), "renderer");
 
                 // 淡入
                 mRenderer.color = mRenderer.color.With(a: 0);
                 mRenderer.DOFade(0.2f, 0.5f);
 
-                float inTime = 2 * MusicRhythmManager.Instance.BpmInterval;
-                await UniTask.Delay(System.TimeSpan.FromSeconds(inTime));
+                float inTime = 2 * GameplayService.LevelModel.Value.BpmIntervalInSeconds;
+                await UniTask.Delay(System.TimeSpan.FromSeconds(inTime),
+                    cancellationToken: target.GetCancellationTokenOnDestroy());
                 // 攻击判定
                 mRenderer.DOFade(1f, 0.2f);
-                evtMono.TriggerEntered += (collider) =>
-                {
-                    if (collider.CompareTag("Player"))
-                    {
-                        collider.gameObject.GetComponent<Player>().ForceDie();
-                        collider.gameObject.Destroy();
-                    }
-                }; //TODO: hahaha you forgot to add collider component hahaha
+                //var evtMono = target.AddComponent<Collider2DEventMono>();
+                //evtMono.TriggerEntered += (collider) =>
+                //{
+                //    if (collider.CompareTag("Player"))
+                //    {
+                //        collider.gameObject.GetComponent<Player>().ForceDie();
+                //        collider.gameObject.Destroy();
+                //    }
+                //}; //TODO: hahaha you forgot to add collider component hahaha
 
                 await UniTask.Delay(System.TimeSpan.FromSeconds(attackWaitTime));
                 // 淡出

@@ -27,7 +27,7 @@ namespace Shuile
             if (useDefaultPlayerManager)
             {
                 var audioPlayer = MusicRhythmManager.Instance.AudioPlayer as SimpleAudioPlayer;
-                audioSource = audioPlayer.Source;
+                audioSource = audioPlayer.TargetSource;
             }
             else
             {

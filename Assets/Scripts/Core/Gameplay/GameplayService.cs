@@ -38,6 +38,6 @@ namespace Shuile.Gameplay
             this.UnRegister<IRouteFinder>();
         }
 
-        public static System.Lazy<LevelModel> levelModel = new(() => Interface.Get<LevelModel>());
+        public static System.Lazy<LevelModel> LevelModel { get; } = new(() => Interface.Get<LevelModel>());
     }
 }

@@ -5,66 +5,15 @@ using UnityEngine;
 
 namespace Shuile.Audio
 {
-    public class SimpleAudioPlayer : IAudioPlayer
+    public class SimpleAudioPlayer : AudioPlayerInUnity
     {
-        private bool isPaused = false;
+        public override AudioSource TargetSource => AudioManager.Instance.OtherSource;
 
-        public float Time
+        public new void Reset()
         {
-            get => AudioManager.Instance.OtherSource.time;
-            set => AudioManager.Instance.OtherSource.time = value;
-        }
-        public float Volume
-        {
-            get => AudioManager.Instance.OtherSource.volume;
-            set => AudioManager.Instance.OtherSource.volume = value;
-        }
-        public float Pitch
-        {
-            get => AudioManager.Instance.OtherSource.pitch;
-            set => AudioManager.Instance.OtherSource.pitch = value;
-        }
-
-        // custom
-        public AudioSource Source => AudioManager.Instance.OtherSource;
-
-        public void LoadClip(AudioClip clip)
-        {
-            AudioManager.Instance.OtherSource.clip = clip;
-        }
-
-        public void Pause()
-        {
-            if (isPaused)
-                AudioManager.Instance.OtherSource.UnPause();
-            else
-                AudioManager.Instance.OtherSource.Pause();
-
-            isPaused = !isPaused;
-        }
-
-        public void Play()
-        {
-            AudioManager.Instance.OtherSource.Play();
-        }
-
-        public void PlayScheduled(double time)
-        {
-            AudioManager.Instance.OtherSource.PlayScheduled(time);
-        }
-
-        public void Reset()
-        {
-            var targetSource = AudioManager.Instance.OtherSource;
-            AudioManager.Instance.OtherSource.Stop();
-            targetSource.clip = null;
-            targetSource.volume = 1f;
-            isPaused = false;
-        }
-
-        public void Stop()
-        {
-            AudioManager.Instance.OtherSource.Stop();
+            TargetSource.Stop();
+            TargetSource.clip = null;
+            TargetSource.volume = 1f;
         }
     }
 }

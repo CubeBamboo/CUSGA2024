@@ -31,12 +31,11 @@ namespace Shuile.Gameplay
         private GameObject notePrefab;
         private ObjectPool<GameObject> notePool;
         private List<Note> notes;
-        private MusicRhythmManager rhythmManager;
         private float lastRealTime = 0f;
         private float lerpTime;
         private ChartPlayer chartPlayer;
 
-        private float MissTolerance => rhythmManager.MissToleranceInSeconds;
+        private float MissTolerance => GameplayService.LevelModel.Value.MissToleranceInSeconds;
 
         public RhythmIndicator()
         {
@@ -51,7 +50,6 @@ namespace Shuile.Gameplay
         private void Awake()
         {
             notePrefab = LevelResources.Instance.globalPrefabs.noteIndicator;
-            rhythmManager = MusicRhythmManager.Instance;
             chartPlayer = new ChartPlayer(ChartDataCreator.CreatePlayerDefault(), GetPlayTime);
             chartPlayer.OnNotePlay += OnNote;
             // TODO: listen player attack event
@@ -60,11 +58,11 @@ namespace Shuile.Gameplay
         private void Update()
         {
             // TODO: if (gameState is not playing) return;
-            if (rhythmManager.CurrentTime == 0f)
+            if (MusicRhythmManager.Instance.CurrentTime == 0f)
                 return;
 
-            if (lastRealTime != rhythmManager.CurrentTime)
-                lerpTime = lastRealTime = rhythmManager.CurrentTime;
+            if (lastRealTime != MusicRhythmManager.Instance.CurrentTime)
+                lerpTime = lastRealTime = MusicRhythmManager.Instance.CurrentTime;
             else
                 lerpTime += Time.deltaTime;
 

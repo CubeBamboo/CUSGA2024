@@ -1,9 +1,10 @@
 using CbUtils;
-using CbUtils.ActionKit;
 using Cysharp.Threading.Tasks;
 using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Rhythm.Runtime;
+using Shuile.Root;
+using UnityEngine;
 
 namespace Shuile
 {
@@ -11,9 +12,9 @@ namespace Shuile
      * 当场上敌人少于1个 或 等待时间过长时进入下一波
      * 生成敌人时，每个敌人间隔2个节拍依次生成
      */
-    public class EnemyRoundManager : MonoSingletons<EnemyRoundManager>
+    public class EnemyRoundManager : MonoNonAutoSpawnSingletons<EnemyRoundManager>
     {
-        public EnemyRoundsSO currentEnemyRoundsData;
+        [HideInInspector] public EnemyRoundsSO currentEnemyRoundsData;
 
         private int currentRoundIndex = 0;
         private bool isEnd;
@@ -50,7 +51,14 @@ namespace Shuile
                 AutoPlayChartManager.Instance.OnNextRhythm(async () =>
                 {
                     currentRoundIndex++;
-                    await ProcessCurrentRound();
+                    try
+                    {
+                        await QueueSpawnEnemies(currentRoundIndex);
+                    }
+                    catch (System.Exception e)
+                    {
+                        CbLogger.LogWarning(e.Message, "EnemyRoundManager.cs");
+                    }
                     isWaitingProcess = false;
                 });
             }
@@ -62,29 +70,19 @@ namespace Shuile
                 isEnd = true;
                 LevelRoot.Instance.State = LevelRoot.LevelState.Win;
             }
-
-            //CbLogger.Log($"IsInLastRound: {IsInLastRound}, EntityManager.Instance.Enemies.Count: {EntityManager.Instance.Enemies.Count}");
-        }
-
-        private async UniTask ProcessCurrentRound()
-        {
-            CbLogger.Log("Process Current Round", "EnemyRoundManager.cs");
-            await QueueSpawnEnemies(currentRoundIndex);
         }
 
         private async UniTask QueueSpawnEnemies(int index)
         {
             if (index >= currentEnemyRoundsData.rounds.Length)
-            {
-                CbLogger.Log($"IndexOutOfRange:{index}");
                 return;
-            }
 
             var enemies = currentEnemyRoundsData.rounds[index].enemyList;
             foreach (var enemy in enemies)
             {
                 EntityFactory.Instance.SpawnEnemyWithEffectDelay(enemy, LevelZoneManager.Instance.RandomValidPosition());
-                await UniTask.Delay(2 * (int)(MusicRhythmManager.Instance.BpmInterval*1000)); // TODO: feng zhuang
+                await UniTask.Delay(2 * (int)(GameplayService.LevelModel.Value.BpmIntervalInSeconds * 1000)
+                    , cancellationToken: this.destroyCancellationToken);
             }
         }
     }
