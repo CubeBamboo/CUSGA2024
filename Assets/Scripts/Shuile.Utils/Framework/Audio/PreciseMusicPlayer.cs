@@ -11,12 +11,12 @@ namespace Shuile.Utils
     /// </summary>
     public class PreciseMusicPlayer
     {
-        private readonly IAudioPlayer audioPlayer;
+        private readonly AudioPlayerInUnity audioPlayer;
         private System.Action tickAction;
 
-        public IAudioPlayer AudioPlayer => audioPlayer;
+        public AudioPlayerInUnity AudioPlayer => audioPlayer;
 
-        public PreciseMusicPlayer(IAudioPlayer audioPlayer)
+        public PreciseMusicPlayer(AudioPlayerInUnity audioPlayer)
         {
             this.audioPlayer = audioPlayer;
 

@@ -90,7 +90,7 @@ namespace CbUtils
         private HashSet<ICustomUnRegister> unRegisters = new HashSet<ICustomUnRegister>();
 
         public void Add(ICustomUnRegister add) => unRegisters.Add(add);
-        public void Remove(ICustomUnRegister add) => unRegisters.Remove(add);
+        public void Remove(ICustomUnRegister remove) => unRegisters.Remove(remove);
 
         private void OnDestroy()
         {

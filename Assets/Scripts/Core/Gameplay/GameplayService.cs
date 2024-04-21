@@ -27,13 +27,17 @@ namespace Shuile.Gameplay
         public override void OnInit()
         {
             this.Register<PlayerModel>(new PlayerModel());
+            this.Register<LevelModel>(new LevelModel());
             this.Register<IRouteFinder>(new SimpleRouteFinder());
         }
 
         public override void OnDeInit()
         {
             this.UnRegister<PlayerModel>();
+            this.UnRegister<LevelModel>();
             this.UnRegister<IRouteFinder>();
         }
+
+        public static System.Lazy<LevelModel> levelModel = new(() => Interface.Get<LevelModel>());
     }
 }

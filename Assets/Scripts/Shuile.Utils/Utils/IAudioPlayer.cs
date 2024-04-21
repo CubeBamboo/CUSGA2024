@@ -39,4 +39,49 @@ namespace Shuile.Audio
         float Volume { get; set; }
         float Pitch { get; set; }
     }
+
+    public abstract class AudioPlayerInUnity : IAudioPlayer
+    {
+        public abstract AudioSource TargetSource { get;}
+        public float Time
+        {
+            get => TargetSource.time;
+            set => TargetSource.time = value;
+        }
+        public float Volume
+        {
+            get => TargetSource.volume;
+            set => TargetSource.volume = value;
+        }
+        public float Pitch
+        {
+            get => TargetSource.pitch;
+            set => TargetSource.pitch = value;
+        }
+        public void LoadClip(AudioClip clip)
+        {
+            TargetSource.clip = clip;
+        }
+        public void Play()
+        {
+            TargetSource.Play();
+        }
+        public void PlayScheduled(double time)
+        {
+            TargetSource.PlayScheduled(time);
+        }
+        public void Pause()
+        {
+            TargetSource.Pause();
+        }
+        public void Stop()
+        {
+            TargetSource.Stop();
+        }
+        public void Reset()
+        {
+            TargetSource.Stop();
+            TargetSource.time = 0;
+        }
+    }
 }

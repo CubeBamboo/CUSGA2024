@@ -1,4 +1,7 @@
+using DG.Tweening;
+using DG.Tweening.Core;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CbUtils.ActionKit
@@ -12,32 +15,81 @@ namespace CbUtils.ActionKit
     {
         public float delayDuration;
         public System.Action onComplete;
+
+        private TweenerCore<int, int, DG.Tweening.Plugins.Options.NoOptions> delayTween;
+
         public DelayAction OnComplete(System.Action action)
         {
             onComplete += action;
             return this;
         }
+
+        /// <summary> life time will be linked to gameObject </summary>
+        public void Start(GameObject gameObject)
+        {
+            delayTween = DOTween.To(() => 0, x => { }, 1, delayDuration)
+                .OnComplete(HandleOnComplete);
+            if(gameObject != null)
+                delayTween.SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+        }
         public void Start()
         {
-            MonoActionCtrlExecutor.Instance.ExecuteCoroutine(DelayCoroutine());
+            this.Start(null);
         }
-
-        private IEnumerator DelayCoroutine()
+        public void Kill()
         {
-            yield return new WaitForSeconds(delayDuration);
-            onComplete?.Invoke();
+            delayTween.Kill();
+        }
+        public void HandleOnComplete()
+        {
+            try
+            {
+                onComplete?.Invoke();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"DelayAction capture Exception: {e}");
+            }
         }
     }
 
-    /*public class Sequence
+    public class NormalAction : IAction
     {
-        public void Append()
-        {
+        public System.Action action;
 
+        public NormalAction(System.Action action)
+        {
+            this.action = action;
         }
-        public void AppendInterval()
-        {
 
+        public void Start()
+        {
+            action?.Invoke();
+        }
+    }
+
+    /*public class Sequence : IAction
+    {
+        private DG.Tweening.Sequence sequence;
+        private List<IAction> actions = new List<IAction>();
+
+        public void AppendCallback(System.Action action)
+        {
+            sequence.AppendCallback(() => action());
+        }
+        public void AppendInterval(float seconds)
+        {
+            sequence.AppendInterval(seconds);
+        }
+
+        public void Start(GameObject gameObject)
+        {
+            sequence = DOTween.Sequence();
+        }
+
+        public void Start()
+        {
+            throw new System.NotImplementedException();
         }
     }*/
 
