@@ -17,7 +17,7 @@ namespace Shuile.Rhythm.Runtime
 
         private void Start()
         {
-            chart = LevelDataBinder.Instance.chartData;
+            chart = LevelDataBinder.Instance.ChartData;
             chartPlayer = new ChartPlayer(chart);
             chartPlayer.OnNotePlay += note => note.Process();
         }

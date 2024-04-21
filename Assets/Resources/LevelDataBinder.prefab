@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelLabel: test_break
-  enemyRoundsData: {fileID: 11400000, guid: 43a75f67a7fb2bf4d875e860fcaf08d1, type: 2}
-  chartFiles: {fileID: 11400000, guid: f82fd0bfe2efded47a50b3d5542fd39a, type: 2}
+  enemyRoundsData: {fileID: 11400000, guid: e796dabe98d866c49b2c8348759c738c, type: 2}
+  chartFiles: {fileID: 11400000, guid: efdf489e4c63b03479cfe1baa97f63a1, type: 2}

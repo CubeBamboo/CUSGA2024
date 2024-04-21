@@ -168,6 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   notDestroyOnLoadList:
+  - {fileID: 8788106654651735183, guid: b424135bea93e314babdd5e86ad65f7f, type: 3}
   - {fileID: 786542733079060244, guid: 142032fee91aa224a834807c8fe72e39, type: 3}
   - {fileID: 5958638769696446895, guid: 7b24d0f4aa6467f449e783417dd76213, type: 3}
   - {fileID: 7812466736286890725, guid: b6c8853549167164a82ecda981d4bc88, type: 3}

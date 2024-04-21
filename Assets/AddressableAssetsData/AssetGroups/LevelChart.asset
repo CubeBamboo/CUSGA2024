@@ -22,16 +22,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fafe4d570834ff0448b095c147eec4a7
-    m_Address: Chart/Ginevra
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 185c375362255214dbd37f6f57e1315c
-    m_Address: Song/Ginevra.mp3
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3ac5709a755c72345a61a50cdc94d1a7
     m_Address: Song/Ginevra.ogg
     m_ReadOnly: 0

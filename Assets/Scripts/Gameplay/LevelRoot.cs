@@ -44,6 +44,8 @@ namespace Shuile.Root
 
         protected override void OnAwake()
         {
+            LevelDataBinder.Instance.Initialize();
+
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
             UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
             needHitWithRhythm = LevelResources.Instance.debugSettings.needHitWithRhythm;
@@ -52,6 +54,8 @@ namespace Shuile.Root
         {
             UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
             UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
+
+            LevelDataBinder.Instance.DeInitialize();
         }
         private void Start()
         {
@@ -93,7 +97,7 @@ namespace Shuile.Root
             endPanel.TimeTextUGUI.text = "SurviveTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.0");
             endPanel.Show();
             ActionCtrl.Instance.Delay(3f)
-                .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(0))
+                .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
                 .Start(gameObject);
         }
         private void LevelWin()
