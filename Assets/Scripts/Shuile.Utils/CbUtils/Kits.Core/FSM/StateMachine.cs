@@ -29,6 +29,9 @@ namespace CbUtils
         private TStateId _currentStateId;
 
         private TStateId _previousStateId;
+        /// <summary>
+        /// (old state, new state)
+        /// </summary>
         public event System.Action<TStateId, TStateId> OnStateChanged = (_, _) => { }; // maybe for debug
 
         public TStateId CurrentStateId => _currentStateId;
@@ -172,6 +175,11 @@ namespace CbUtils
             onGUI = action;
             return this;
         }
+        public EventState OnCondition(System.Func<bool> action)
+        {
+            onCondition = action;
+            return this;
+        }
         public EventState OnCustom(System.Action action, string label = "")
         {
             if(onCustomDict.ContainsKey(label)) onCustomDict[label] = action;
@@ -180,8 +188,8 @@ namespace CbUtils
         }
 
         // IState Part
-        public void Enter() => onExit?.Invoke();
-        public void Exit() => onEnter?.Invoke();
+        public void Enter() => onEnter?.Invoke();
+        public void Exit() => onExit?.Invoke();
         public void FixedUpdate() => onFixedUpdate?.Invoke();
         public void Update() => onUpdate?.Invoke();
         public void OnGUI() => onGUI?.Invoke();

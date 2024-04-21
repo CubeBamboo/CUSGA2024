@@ -15,7 +15,7 @@ namespace Shuile.Gameplay
         private Player player;
         public float XInput { get; private set; }
 
-        public event System.Action OnJump, OnAttack;
+        public event System.Action OnJump, OnJumpPressed, OnAttack;
         public event System.Action<float> OnMove;
 
         private void Awake()
@@ -34,6 +34,11 @@ namespace Shuile.Gameplay
             Keyboard keyboard = Keyboard.current;
 
             // jump
+            bool jumpPressing = keyboard.spaceKey.isPressed;
+            if (jumpPressing)
+            {
+                OnJumpPressed?.Invoke();
+            }
             bool jumpInput = keyboard.spaceKey.wasPressedThisFrame;
             if (jumpInput)
             {

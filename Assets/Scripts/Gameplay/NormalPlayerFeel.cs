@@ -32,8 +32,14 @@ namespace Shuile.Gameplay
         {
             player.OnDie.Register(() => animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Die))
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
-            player.CurrentHp.Register((val) => animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt))
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
+            player.CurrentHp.Register((oldV, newV) =>
+            {
+                if (oldV > newV)
+                {
+                    animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt);
+                    LevelFeelManager.Instance.CameraShake();
+                }
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             playerCtrl.attackCommand.OnCommandAfter(() =>
             {

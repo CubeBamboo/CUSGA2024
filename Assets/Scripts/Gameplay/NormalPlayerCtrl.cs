@@ -18,7 +18,8 @@ namespace Shuile.Gameplay
         public enum State
         {
             Normal,
-            Jump
+            JumpUp,
+            Drop
         }
         private FSM<State> mFsm = new();
 
@@ -32,8 +33,10 @@ namespace Shuile.Gameplay
         [SerializeField] private float xMaxSpeed = 5f;
 
         // [jump]
-        [SerializeField] private float jumpVel = 9f;
-
+        [SerializeField] private float jumpVel = 18f;
+        [SerializeField] private float normalGravity = 3f;
+        [SerializeField] private float dropGravity = 4f;
+        
         // [attack]
         [SerializeField] private float attackRadius = 2.8f;
 
@@ -94,7 +97,7 @@ namespace Shuile.Gameplay
 
         public void SingleJump()
         {
-            if (mFsm.CurrentStateId == State.Jump) return;
+            if (mFsm.CurrentStateId == State.JumpUp || mFsm.CurrentStateId == State.Drop) return;
 
             jumpCommand
                 .Bind(new()
@@ -103,7 +106,7 @@ namespace Shuile.Gameplay
                     jumpVel = jumpVel
                 })
                 .Execute();
-            mFsm.SwitchState(State.Jump);
+            mFsm.SwitchState(State.JumpUp);
         }
 
         public void Attack()
@@ -118,6 +121,18 @@ namespace Shuile.Gameplay
                     attackPoint = player.Property.attackPoint
                 })
                 .Execute();
+        }
+
+        private void CheckGround()
+        {
+            // easy way to fix groundcheck is true on jumping first frame, but it maybe lead to other bug
+            var groundCheck = Rb.velocity.y < 0 &&
+                  UnityAPIExt.RayCast2DWithDebugLine(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
+            if (groundCheck)
+            {
+                mFsm.SwitchState(State.Normal);
+                OnTouchGround.Invoke();
+            }
         }
 
         private void ConfigureInputEvent()
@@ -136,17 +151,29 @@ namespace Shuile.Gameplay
 
         private void InitFSM()
         {
-            mFsm.NewEventState(State.Normal);
-            mFsm.NewEventState(State.Jump)
+            mFsm.NewEventState(State.Normal)
+                .OnEnter(() =>
+                {
+                    _rb.gravityScale = normalGravity;
+                });
+            mFsm.NewEventState(State.JumpUp)
                 .OnFixedUpdate(() =>
                 {
-                    var groundCheck = Rb.velocity.y < 0 &&
-                                      UnityAPIExt.RayCast2DWithDebugLine(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
-                    if (groundCheck)
+                    CheckGround();
+
+                    if (_rb.velocity.y < 0)
                     {
-                        mFsm.SwitchState(State.Normal);
-                        OnTouchGround.Invoke();
+                        mFsm.SwitchState(State.Drop);
                     }
+                });
+            mFsm.NewEventState(State.Drop)
+                .OnEnter(() =>
+                {
+                    _rb.gravityScale = dropGravity;
+                })
+                .OnFixedUpdate(() =>
+                {
+                    CheckGround();
                 });
             mFsm.StartState(State.Normal);
         }

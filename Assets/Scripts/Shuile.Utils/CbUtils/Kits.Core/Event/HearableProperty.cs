@@ -17,13 +17,15 @@ namespace Shuile
             set
             {
                 if(!Comparer(_value, value))
-                    onValueChanged.Invoke(value);
+                    onValueChanged.Invoke(_value, value);
                 _value = value;
             }
         }
-        public SimpleEvent<T> onValueChanged = new();
-        public ICustomUnRegister Register(Action<T> _onValueChanged) => onValueChanged.Register(_onValueChanged);
-        public void UnRegister(Action<T> _onValueChanged) => onValueChanged.UnRegister(_onValueChanged);
+
+        /// <summary> "T - old value, T - new value" </summary>
+        public SimpleEvent<T, T> onValueChanged = new();
+        public ICustomUnRegister Register(Action<T, T> _onValueChanged) => onValueChanged.Register(_onValueChanged);
+        public void UnRegister(Action<T, T> _onValueChanged) => onValueChanged.UnRegister(_onValueChanged);
         public override string ToString() => _value.ToString();
     }
 }

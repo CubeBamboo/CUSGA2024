@@ -19,9 +19,9 @@ namespace Shuile.UI
 
         private void Start()
         {
-            GameplayService.Interface.Get<Player>().CurrentHp.Register((val) =>
+            GameplayService.Interface.Get<Player>().CurrentHp.Register((oldV, newV) =>
             {
-                hpTextUGUI.text = "Player HP: " + (val > 0 ? val : 0).ToString();
+                hpTextUGUI.text = "Player HP: " + (newV > 0 ? newV : 0).ToString();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
