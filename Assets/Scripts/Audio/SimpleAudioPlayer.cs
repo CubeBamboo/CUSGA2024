@@ -5,42 +5,15 @@ using UnityEngine;
 
 namespace Shuile.Audio
 {
-    public class SimpleAudioPlayer : IAudioPlayer
+    public class SimpleAudioPlayer : AudioPlayerInUnity
     {
-        public float Time
-        {
-            get => AudioManager.Instance.OtherSource.time;
-            set => AudioManager.Instance.OtherSource.time = value;
-        }
-        public float Volume
-        {
-            get => AudioManager.Instance.OtherSource.volume;
-            set => AudioManager.Instance.OtherSource.volume = value;
-        }
-        public float Pitch
-        {
-            get => AudioManager.Instance.OtherSource.pitch;
-            set => AudioManager.Instance.OtherSource.pitch = value;
-        }
+        public override AudioSource TargetSource => AudioManager.Instance.OtherSource;
 
-        public void LoadClip(AudioClip clip)
+        public new void Reset()
         {
-            AudioManager.Instance.OtherSource.clip = clip;
-        }
-
-        public void Pause()
-        {
-            AudioManager.Instance.OtherSource.Pause();
-        }
-
-        public void Play()
-        {
-            AudioManager.Instance.OtherSource.Play();
-        }
-
-        public void PlayScheduled(double time)
-        {
-            AudioManager.Instance.OtherSource.PlayScheduled(time);
+            TargetSource.Stop();
+            TargetSource.clip = null;
+            TargetSource.volume = 1f;
         }
     }
 }

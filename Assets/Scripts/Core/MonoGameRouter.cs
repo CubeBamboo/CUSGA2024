@@ -8,11 +8,12 @@ namespace Shuile
 {
     public class MonoGameRouter : MonoSingletons<MonoGameRouter>, IGameRouter
     {
-        private IRouterLoadingViewer defaultLoadingViewer = GlobalTransitionViewer.Instance;
+        private IRouterLoadingViewer defaultLoadingViewer;
 
         protected override void OnAwake()
         {
             SetDontDestroyOnLoad();
+            defaultLoadingViewer = GlobalTransitionViewer.Instance;
         }
 
         private async UniTask InternalLoadScene(string sceneName)

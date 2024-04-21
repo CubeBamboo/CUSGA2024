@@ -7,7 +7,7 @@ namespace Shuile.Rhythm.Runtime
     // play chart for single level
     // control enemy spawn and other event
     // it will auto play.
-    public class LevelChartManager : MonoSingletons<LevelChartManager>
+    public class LevelChartManager : MonoNonAutoSpawnSingletons<LevelChartManager>
     {
         public bool isPlay = true;
 

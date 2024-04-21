@@ -1,5 +1,6 @@
 using CbUtils;
 using CbUtils.ActionKit;
+using Shuile.Root;
 using Shuile.Gameplay;
 
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace Shuile
             enemy.gameObject.SetActive(false);
             ActionCtrl.Instance.Delay(effect.duration)
                       .OnComplete(() => enemy.gameObject.SetActive(true))
-                      .Start();
+                      .Start(LevelRoot.Instance.gameObject);
             return enemy;
         }
 

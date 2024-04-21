@@ -11,7 +11,8 @@ namespace Shuile.Rhythm.Runtime
     {
         public float targetTime;
         public virtual void Process() { }
-        public virtual float ToPlayTime() => targetTime * MusicRhythmManager.Instance.BpmInterval; // TODO: get rid of musicrhythmmanager
+        public virtual float ToPlayTime()
+            => targetTime * GameplayService.LevelModel.Value.BpmIntervalInSeconds;
 
         public static BaseNoteData Create(float time)
             => new() { targetTime = time };
@@ -30,12 +31,19 @@ namespace Shuile.Rhythm.Runtime
 
             var go = prefabConfig.laser.Instantiate(); // spawn
             go.SetPosition(LevelZoneManager.Instance.RandomValidPosition()); // init position
-            NoteProductController.Laser.Process(go); // laser behavior
+            try
+            {
+                NoteProductController.Laser.Process(go).Forget(); // laser behavior
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning(e);
+            }
         }
 
         public override float ToPlayTime()
         {
-            return (targetTime - 2) * MusicRhythmManager.Instance.BpmInterval;
+            return (targetTime - 2) * GameplayService.LevelModel.Value.BpmIntervalInSeconds;
         }
     }
 

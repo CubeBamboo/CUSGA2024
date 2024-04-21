@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CbUtils.LinkedValue
+namespace CbUtils
 {
     public class GlobalTweeningUpdater : MonoSingletons<GlobalTweeningUpdater>
     {
@@ -42,6 +42,21 @@ namespace CbUtils.LinkedValue
                     break;
                 case UpdateType.LateUpdate:
                     mTweeningOnLateUpdate.Add(tweeningValue);
+                    break;
+            }
+        }
+        public void Remove(ILinkedValue tweeningValue, UpdateType updateType)
+        {
+            switch (updateType)
+            {
+                case UpdateType.Update:
+                    mTweeningOnUpdate.Remove(tweeningValue);
+                    break;
+                case UpdateType.FixedUpdate:
+                    mTweeningOnFixedUpdate.Remove(tweeningValue);
+                    break;
+                case UpdateType.LateUpdate:
+                    mTweeningOnLateUpdate.Remove(tweeningValue);
                     break;
             }
         }

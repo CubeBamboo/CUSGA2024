@@ -2,15 +2,13 @@ using CbUtils;
 using Shuile.Framework;
 using Shuile.UI;
 using Shuile.Rhythm.Runtime;
-
-using Cysharp.Threading.Tasks;
-using UnityEngine.InputSystem;
-using UDebug = UnityEngine.Debug;
-using UnityEngine.SceneManagement;
 using CbUtils.ActionKit;
-using DG.Tweening;
 
-namespace Shuile
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UDebug = UnityEngine.Debug;
+
+namespace Shuile.Root
 {
     /* link to all objects which want to depend on unity level scene (like lifeTime control)
      * Contain:
@@ -18,7 +16,7 @@ namespace Shuile
      * UICtrl's GameplayPart
      */
     //it also contains the level state callback
-    public class LevelRoot : MonoSingletons<LevelRoot>
+    public class LevelRoot : MonoNonAutoSpawnSingletons<LevelRoot>
     {
         public enum LevelState
         {
@@ -49,8 +47,6 @@ namespace Shuile
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
             UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
             needHitWithRhythm = LevelResources.Instance.debugSettings.needHitWithRhythm;
-
-            InitSingletons();
         }
         private void OnDestroy()
         {
@@ -71,15 +67,6 @@ namespace Shuile
             {
                 SceneManager.LoadScene("MainMenu");
             }
-        }
-
-        private void InitSingletons()
-        {
-            MusicRhythmManager.Instance.enabled = true;
-            PlayerChartManager.Instance.enabled = true;
-            AutoPlayChartManager.Instance.enabled = true;
-            LevelChartManager.Instance.enabled = true;
-            EnemyRoundManager.Instance.enabled = true;
         }
 
         private void TriggerEvent(LevelState state)
@@ -107,7 +94,7 @@ namespace Shuile
             endPanel.Show();
             ActionCtrl.Instance.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(0))
-                .Start();
+                .Start(gameObject);
         }
         private void LevelWin()
         {
@@ -116,15 +103,11 @@ namespace Shuile
             endPanel.TitleUGUI.text = "Stage Clear";
             endPanel.Show();
 
-            // 当前音乐淡出
-            AudioManager.Instance.OtherSource.DOFade(0, 0.8f).OnComplete(() =>
-            {
-                AudioManager.Instance.OtherSource.Stop();
-            }); // TODO: [!!] NOOOOOOOOO IT'S SHITTTTTTTTTTT FengZhuang YIxia zhe ge musicPlayer!!!!
+            MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
 
             ActionCtrl.Instance.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToMenu())
-                .Start();
+                .Start(gameObject);
         }
     }
 }

@@ -124,41 +124,6 @@ namespace Shuile.Framework
         void DeInit();
     }
 
-    /*
-    [System.Obsolete]
-    public abstract class BasePanelInUnity : IPanel
-    {
-        // TODO: maybe add a method to auto load assets with assets path
-
-        /// <summary> automatically call in uiCtrl, to generate dependengcy </summary>
-        public void Init()
-        {
-            GenerateGameObject();
-            InitProperty();
-            Panel.transform.SetParent(Canvas.transform, false);
-            Hide();
-        }
-        private void GenerateGameObject()
-        {
-            if (PanelAssetsPath == "")
-                return;
-            
-            var panelAssets = Resources.Load<GameObject>(PanelAssetsPath); //TODO: load service
-            _genePanel = panelAssets.Instantiate();
-        }
-        /// <summary>
-        /// if you override PanelAssetsPath.Get, you will get the gameObject it generated here.
-        /// </summary>
-        protected GameObject _genePanel;
-        protected virtual string PanelAssetsPath => "";
-        protected abstract GameObject Panel { get; }
-        protected abstract Canvas Canvas { get; }
-        public abstract void InitProperty();
-        public abstract void DeInit();
-        public abstract void Show();
-        public abstract void Hide();
-    }*/
-
     /// <summary>
     /// derived from monobehaviour, you are recommended to call this.RegisterUI() on Awake(). 
     /// if it need a runtime load, recommeded to implement a "public static PanelCreateor Creator" and register it to UICtrl.creator otherwhere.

@@ -1,6 +1,6 @@
 using CbUtils;
 using CbUtils.ActionKit;
-
+using CbUtils.Event;
 using DG.Tweening;
 using UnityEngine;
 
@@ -35,7 +35,7 @@ namespace Shuile
                 duration : ((int)(duration / unit) + 1) * unit;
             ActionCtrl.Instance.Delay(waitTime)
                 .OnComplete(HandleEnd)
-                .Start();
+                .Start(gameObject);
         }
 
         protected override void StopAnimation()

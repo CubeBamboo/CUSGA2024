@@ -1,6 +1,10 @@
 using CbUtils;
-
+using CbUtils.Event;
+using CbUtils.Extension;
+using Codice.Client.BaseCommands;
 using DG.Tweening;
+using Shuile.Rhythm.Runtime;
+using Shuile.Root;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,18 +16,17 @@ namespace Shuile.Gameplay
         private NormalPlayerInput mPlayerInput;
 
         [SerializeField] private PlayerPropertySO property;
-        public EventProperty<int> CurrentHp { get; private set; } = new();
-        public SimpleEvent OnDie = new();
+        public HearableProperty<int> CurrentHp { get; private set; } = new();
+        public EasyEvent OnDie = new();
 
         private bool isDie;
 
         public PlayerPropertySO Property => property;
         private void Awake()
         {
-            mPlayerInput = gameObject.AddComponent<NormalPlayerInput>();
-            mPlayerInput.Target = this;
-            mPlayerCtrl = gameObject.AddComponent<NormalPlayerCtrl>();
-            mPlayerCtrl.Target = this;
+            gameObject.AddComponent<NormalPlayerInput>();
+            gameObject.AddComponent<NormalPlayerCtrl>();
+            gameObject.AddComponent<NormalPlayerFeel>();
 
             GameplayService.Interface.Register<Player>(this);
         }
@@ -56,6 +59,15 @@ namespace Shuile.Gameplay
                 this.OnAttack(20);
                 this.OnAttack((int)(CurrentHp.Value * 0.25f));
             }
+
+            if (Keyboard.current.xKey.wasPressedThisFrame)
+            {
+                transform.DOScale(1.5f, 0.5f).OnComplete(() =>
+                {
+                    transform.DOScale(1f, 0.5f);
+                });
+                gameObject.SetOnDestroy(() => transform.DOKill());
+            }
         }
 
         public void OnAttack(int attackPoint)
@@ -85,11 +97,7 @@ namespace Shuile.Gameplay
         private void OnDieFunc()
         {
             MonoAudioCtrl.Instance.PlayOneShot("Player_Death");
-            // 当前音乐淡出
-            AudioManager.Instance.OtherSource.DOFade(0, 0.8f).OnComplete(() =>
-            {
-                AudioManager.Instance.OtherSource.Stop();
-            }); // TODO: [!!] NOOOOOOOOO IT'S SHITTTTTTTTTTT FengZhuang YIxia zhe ge musicPlayer!!!!
+            MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
         }
     }
 }

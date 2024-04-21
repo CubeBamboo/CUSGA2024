@@ -10,6 +10,7 @@ namespace CbUtils.Config
             {
                 { "GamePlay", true },
                 { "EnemyRoundManager.cs", false },
+                { "AudioOffsetDebugger", true }
             };
         }
 

@@ -44,7 +44,7 @@ namespace Shuile.Rhythm.Runtime
             float preshowTime = 0f;
             float preshowRealTime = 0f;
             //if (noteData.eventType == NoteEventType.LaserSpawn) preshowTime = 2;
-            float res = (noteData.targetTime - preshowTime) * MusicRhythmManager.Instance.BpmInterval - preshowRealTime;
+            float res = (noteData.targetTime - preshowTime) * GameplayService.LevelModel.Value.BpmIntervalInSeconds - preshowRealTime;
             return res;
         }
     }

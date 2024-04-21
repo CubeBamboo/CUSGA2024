@@ -1,81 +1,99 @@
 using CbUtils;
 using UnityEngine;
 using Shuile.Audio;
-using Shuile.Framework;
-using Cysharp.Threading.Tasks;
+using Shuile.Utils;
+using Shuile.Gameplay;
+using DG.Tweening;
 
 namespace Shuile.Rhythm.Runtime
 {
     //control the music play and music time progress, manage the rhythm check
-    public class MusicRhythmManager : MonoSingletons<MusicRhythmManager>
+    public class MusicRhythmManager : MonoNonAutoSpawnSingletons<MusicRhythmManager>
     {
         private LevelConfigSO levelConfig;
         private ChartData currentChart;
         private PlayerSettingsConfigSO playerConfig;
-        private float currentTime; // timer for music playing
         private bool isPlaying = false;
 
-        private IAudioPlayer audioPlayer; // for music playing
+        private PreciseMusicPlayer preciseMusicPlayer;
 
         [HideInInspector] public bool playOnAwake = true;
         [HideInInspector] public float playTimeScale = 1f;
         [HideInInspector] public float volume = 0.4f;
 
+        private LevelModel levelModel;
+        public AudioPlayerInUnity AudioPlayer => preciseMusicPlayer.AudioPlayer;
         public bool IsPlaying => isPlaying;
-        public float MissToleranceInSeconds => levelConfig.missTolerance * 0.001f;
-        public float CurrentTime => currentTime;
-        /// <summary>
-        /// unit: second
-        /// </summary>
-        public float BpmInterval => 60f / currentChart.time[0].bpm;
-        public float MusicBpm => currentChart.time[0].bpm;
-        public float MusicOffsetInSeconds => currentChart.time[0].offset * 0.001f;
+        public float CurrentTime => preciseMusicPlayer.CurrentTime;
 
         protected override void OnAwake()
         {
-            audioPlayer = MainGame.Interface.Get<IAudioPlayer>();
+            levelModel = GameplayService.Interface.Get<LevelModel>();
+
             currentChart = LevelDataBinder.Instance.chartData;
-            levelConfig = LevelResources.Instance.levelConfig;
-            playerConfig = LevelResources.Instance.playerConfig;
-            playOnAwake = LevelResources.Instance.musicManagerConfig.playOnAwake;
-            playTimeScale = LevelResources.Instance.musicManagerConfig.playTimeScale;
-            volume = LevelResources.Instance.musicManagerConfig.volume;
+
+            levelModel.musicBpm = currentChart.time[0].bpm;
+            levelModel.musicOffset = currentChart.time[0].offset;
+
+            preciseMusicPlayer = new(new SimpleAudioPlayer());
+
+            var resources = LevelResources.Instance;
+            levelConfig = resources.levelConfig;
+            playerConfig = resources.playerConfig;
+            playOnAwake = resources.musicManagerConfig.playOnAwake;
+            playTimeScale = resources.musicManagerConfig.playTimeScale;
+            volume = resources.musicManagerConfig.volume;
         }
 
         private void Start()
         {
-            InitMusic();
-            currentTime = 0;
+            preciseMusicPlayer.Reset();
+            preciseMusicPlayer.LoadClip(currentChart.audioClip);
+
             if(playOnAwake)
                 StartPlay();
         }
 
         private void FixedUpdate()
         {
-            if (!isPlaying)
-                return;
-
-            currentTime += Time.fixedDeltaTime;
+            preciseMusicPlayer.CallTickAction();
         }
 
-        private void InitMusic()
+        private void OnDestroy()
         {
-            audioPlayer.LoadClip(currentChart.audioClip);
-            audioPlayer.Volume = volume;
+            preciseMusicPlayer.Reset();
         }
 
-        public async void StartPlay()
+        public void StartPlay()
         {
-            await UniTask.Delay(System.TimeSpan.FromSeconds(0.5f)); // delay to waiting for unity editor' play init
             float offsetInSeconds = (currentChart.time[0].offset + playerConfig.globalOffset) * 0.001f;
             Time.timeScale = playTimeScale;
-            audioPlayer.Pitch = playTimeScale;
+            preciseMusicPlayer.Volume = volume;
 
-            var playAt = AudioSettings.dspTime + 1f;
-            var audioDelta = await audioPlayer.WaitPlayScheduled(playAt);
+#pragma warning disable CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
+            preciseMusicPlayer.Play(offsetInSeconds);
+#pragma warning restore CS4014
+        }
 
-            currentTime = -offsetInSeconds + (float)audioDelta;
-            isPlaying = true; // -> start timing
+        public void StopPlay()
+        {
+            preciseMusicPlayer.Stop();
+        }
+
+        public void RestartPlay()
+        {
+            preciseMusicPlayer.Reset();
+            preciseMusicPlayer.LoadClip(currentChart.audioClip);
+            StartPlay();
+        }
+
+        public void FadeOutAndStop(float duration = 0.8f)
+        {
+            var targetAudioPlayer = AudioPlayer;
+            targetAudioPlayer.TargetSource.DOFade(0, duration).OnComplete(() =>
+            {
+                targetAudioPlayer.Stop();
+            });
         }
     }
 }

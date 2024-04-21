@@ -1,8 +1,11 @@
+using CbUtils.Event;
+using CbUtils.Extension;
 using DG.Tweening;
 
 using System;
 
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Shuile.Gameplay.Entity.States
 {
@@ -74,6 +77,7 @@ namespace Shuile.Gameplay.Entity.States
             s.Append(spriteRenderer.DOColor(Color.yellow, 0.1f));
             s.Append(spriteRenderer.DOColor(Color.white, 0.1f));
             s.Play();
+            enemy.gameObject.SetOnDestroy(() => spriteRenderer.DOKill());
 
             var endCount = attackState == AttackStateType.PreAttack ? enemy.Property.preAttackDuration : enemy.Property.postAttackDuration;
             if (++counter >= endCount)

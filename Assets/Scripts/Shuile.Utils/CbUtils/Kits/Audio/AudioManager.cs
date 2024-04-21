@@ -1,13 +1,14 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace CbUtils
 {
-    public class AudioManager : CbUtils.MonoSingletons<AudioManager>
+    public class AudioManager : MonoSingletons<AudioManager>
     {
         private AudioSource bgmSource, sfxSource, voiceSource, otherSource;
         private AudioSource oneShotSource;
 
-        public AudioSource OneShotSource;
+        public AudioSource OneShotSource => oneShotSource;
         public AudioSource OtherSource => otherSource;
 
         protected override void Awake()
@@ -29,6 +30,11 @@ namespace CbUtils
             otherSource.playOnAwake = false;
             oneShotSource = gameObject.AddComponent<AudioSource>();
             oneShotSource.playOnAwake = false;
+        }
+
+        public void SetAudioMixer(AudioMixerGroup mixer)
+        {
+            otherSource.outputAudioMixerGroup = mixer;
         }
 
         #region PlayAudio

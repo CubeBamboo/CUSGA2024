@@ -2,8 +2,6 @@ using CbUtils;
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.SceneManagement;
 
 namespace Shuile
 {
