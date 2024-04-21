@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c66222c245eed644f8ec42d39c09d80b, type: 3}
+  m_Name: LevelDataMap
+  m_EditorClassIdentifier: 
+  levelDataList:
+  - label: Break
+    sceneName: Level0Test
+    enemyData: {fileID: 11400000, guid: 43a75f67a7fb2bf4d875e860fcaf08d1, type: 2}
+    chartFiles: {fileID: 11400000, guid: f82fd0bfe2efded47a50b3d5542fd39a, type: 2}
+  - label: Forever_loved
+    sceneName: Level1
+    enemyData: {fileID: 11400000, guid: e796dabe98d866c49b2c8348759c738c, type: 2}
+    chartFiles: {fileID: 11400000, guid: efdf489e4c63b03479cfe1baa97f63a1, type: 2}
+  - label: Ginevra
+    sceneName: Level2
+    enemyData: {fileID: 11400000, guid: b4e96d053fd89064ea3442e5be3ad37d, type: 2}
+    chartFiles: {fileID: 11400000, guid: a224ad59e4b47ac4c9c7c5290d0cfece, type: 2}

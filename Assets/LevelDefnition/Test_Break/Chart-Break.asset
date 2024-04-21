@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Chart-Break
   m_EditorClassIdentifier: 
   chartFile: {fileID: 4900000, guid: fddef001eb4709743a75030a4cd22b43, type: 3}
-  clip: {fileID: 8300000, guid: 45e513ade84753a4298f86821aaaa08f, type: 3}
+  clip: {fileID: 8300000, guid: ff32e7bd1bd246b498a94c893182da9f, type: 3}

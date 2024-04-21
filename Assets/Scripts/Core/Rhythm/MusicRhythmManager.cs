@@ -30,7 +30,7 @@ namespace Shuile.Rhythm.Runtime
         {
             levelModel = GameplayService.Interface.Get<LevelModel>();
 
-            currentChart = LevelDataBinder.Instance.chartData;
+            currentChart = LevelDataBinder.Instance.ChartData;
 
             levelModel.musicBpm = currentChart.time[0].bpm;
             levelModel.musicOffset = currentChart.time[0].offset;

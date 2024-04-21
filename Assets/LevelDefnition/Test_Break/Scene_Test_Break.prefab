@@ -2985,12 +2985,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1167882878645605336}
   - component: {fileID: 5370605080448007806}
+  - component: {fileID: 1028150826022432126}
   - component: {fileID: 591256208726860526}
   - component: {fileID: 3435446545979986667}
   - component: {fileID: 2693711400814986671}
   - component: {fileID: 168879515804965933}
   - component: {fileID: 8597252641973822145}
-  - component: {fileID: 1028150826022432126}
   m_Layer: 0
   m_Name: ZoneCanUseMarker
   m_TagString: Untagged
@@ -3026,6 +3026,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoSetToTrigger: 1
+--- !u!114 &1028150826022432126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2546280141513281244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fe39b4ca1fd6ee4d904eabf23c63c9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &591256208726860526
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3251,18 +3263,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.9533186, y: 0.8132725}
   m_EdgeRadius: 0
---- !u!114 &1028150826022432126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2546280141513281244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fe39b4ca1fd6ee4d904eabf23c63c9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4604183918546398137
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,19 +22,24 @@ namespace Shuile
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
         }
 
-        private UniTask InternalLoadLevel(int index)// TODO: map index to loadkey
-            => InternalLoadScene("Level0Test");
-        
+        private UniTask InternalLoadLevel(string sceneName)
+            => InternalLoadScene(sceneName);
+            //=> InternalLoadScene("Level0Test");
 
-        public void ToLevelScene(int index)
+
+        public void ToLevelScene(string sceneName)
         {
-            this.DoTransition(async () => await InternalLoadLevel(index), defaultLoadingViewer);
+            this.DoTransition(async () => await InternalLoadLevel(sceneName), defaultLoadingViewer);
         }
 
         public void ToMenu()
         {
             this.DoTransition(async () => await InternalLoadScene("MainMenu"), defaultLoadingViewer);
         }
+
+        public Scene GetCurrentScene()
+            => SceneManager.GetActiveScene();
+        
 
         public void RestartGame()
         {

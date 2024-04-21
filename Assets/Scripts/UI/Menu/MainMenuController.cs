@@ -9,6 +9,7 @@ namespace Shuile
         [SerializeField] private Button btn_Exit;
         [SerializeField] private Button btn_level1;
         [SerializeField] private Button btn_level2;
+        [SerializeField] private Button btn_level3;
 
         private void Awake()
         {
@@ -18,13 +19,18 @@ namespace Shuile
         private void ConfigureButtonEvent()
         {
             btn_Exit.onClick.AddListener(ExitGame);
-            btn_level1.onClick.AddListener(() => StartLevel(1));
-            //btn_level2.onClick.AddListener(() => StartLevel(2));
+
+            // seealso: GameResources.Instance.levelDataMap.levelDataList
+            btn_level1.onClick.AddListener(() => StartLevel("Break"));
+            btn_level2.onClick.AddListener(() => StartLevel("Forever_loved"));
+            btn_level3.onClick.AddListener(() => StartLevel("Ginevra"));
         }
 
-        private void StartLevel(int index)
+        private void StartLevel(string label)
         {
-            MonoGameRouter.Instance.ToLevelScene(index);
+            var level = GameResources.Instance.levelDataMap.GetLevelData(label);
+            LevelDataBinder.Instance.SetLevelData(level);
+            MonoGameRouter.Instance.ToLevelScene(level.sceneName);
         }
 
         private void ExitGame()
