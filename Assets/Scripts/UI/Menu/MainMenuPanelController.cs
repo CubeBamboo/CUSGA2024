@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Shuile
 {
-    public class MainMenuController : MonoBehaviour
+    public class MainMenuPanelController : MonoBehaviour
     {
         [SerializeField] private Button btn_Exit;
         [SerializeField] private Button btn_level1;
@@ -26,14 +26,14 @@ namespace Shuile
             btn_level3.onClick.AddListener(() => StartLevel("Ginevra"));
         }
 
-        private void StartLevel(string label)
+        public void StartLevel(string label)
         {
             var level = GameResources.Instance.levelDataMap.GetLevelData(label);
             LevelDataBinder.Instance.SetLevelData(level);
             MonoGameRouter.Instance.ToLevelScene(level.sceneName);
         }
 
-        private void ExitGame()
+        public void ExitGame()
         {
 #if !UNITY_EDITOR
             Application.Quit();
