@@ -21,7 +21,8 @@ namespace Shuile.Gameplay.Entity.Enemies
             var player = GameplayService.Interface.Get<Player>();
 
             if (Vector3.Distance(player.transform.position, MoveController.Position) <= Property.attackRange)
-                player.OnAttack(Property.attackPoint);
+                player.OnHurt((int)(player.Property.maxHealthPoint * 0.6f));
+                //player.OnHurt(Property.attackPoint);
             State = EntityStateType.Dead;  // Or OnAttack(Health);
             Judge(lastJudgeFrame, true);  // die了
             return true;

@@ -6,6 +6,6 @@ namespace Shuile
 {
     public interface IHurtable
     {
-        public void OnAttack(int attackPoint);
+        public void OnHurt(int attackPoint);
     }
 }

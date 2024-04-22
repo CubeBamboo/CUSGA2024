@@ -14,7 +14,7 @@ namespace Shuile.Gameplay.Entity.Enemies
     {
         [SerializeField] private int explosionDelay = 1;
         [SerializeField] private int bombCount;
-        [SerializeField] private float explodeRadius = 1f;
+        [SerializeField] private float explodeRadius = 2f;
         [SerializeField] private GameObject bombPrefab;
         private static Transform bombParent;
         private List<Bomb> bombs = new();

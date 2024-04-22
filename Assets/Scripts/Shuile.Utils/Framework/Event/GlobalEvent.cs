@@ -1,3 +1,5 @@
+using CbUtils;
+
 namespace Shuile.Framework
 {
     /*public class GlobalEventCtrl
@@ -17,7 +19,7 @@ namespace Shuile.Framework
         }
     }*/
 
-    public class GlobalEvent
+    public abstract class GlobalEvent<T> where T : GlobalEvent<T>
     {
         static System.Action _onAction;
 

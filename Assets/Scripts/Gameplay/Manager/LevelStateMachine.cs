@@ -3,7 +3,7 @@ using CbUtils.ActionKit;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
 
-namespace Shuile.Root
+namespace Shuile.Gameplay
 {
     public class LevelStateMachine : MonoSingletons<LevelStateMachine>
     {
@@ -23,7 +23,7 @@ namespace Shuile.Root
             get => state;
             set
             {
-                if (state == LevelState.Fail) return;
+                if (state == LevelState.Fail || state == LevelState.Win) return;
 
                 state = value;
                 TriggerEvent(state);
@@ -69,6 +69,11 @@ namespace Shuile.Root
             ActionCtrl.Instance.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToMenu())
                 .Start(gameObject);
+        }
+
+        public void Init()
+        {
+            state = LevelState.Playing;
         }
     }
 }

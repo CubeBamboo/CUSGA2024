@@ -127,7 +127,7 @@ namespace Shuile.Gameplay
         {
             // easy way to fix groundcheck is true on jumping first frame, but it maybe lead to other bug
             var groundCheck = Rb.velocity.y < 0 &&
-                  UnityAPIExt.RayCast2DWithDebugLine(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
+                  Physics2D.Raycast(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
             if (groundCheck)
             {
                 mFsm.SwitchState(State.Normal);
@@ -192,7 +192,7 @@ namespace Shuile.Gameplay
             var hits = Physics2D.OverlapCircleAll(state.position, state.attackRadius, LayerMask.GetMask("Enemy")); // TODO: static you hua 
             for (int i = 0; i < hits.Length; i++)
             {
-                hits[i].GetComponent<IHurtable>().OnAttack(state.attackPoint);
+                hits[i].GetComponent<IHurtable>().OnHurt(state.attackPoint);
             }
         }
     }

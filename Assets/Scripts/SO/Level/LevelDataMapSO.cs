@@ -1,4 +1,5 @@
-using System.Collections;
+using Shuile.Rhythm;
+
 using UnityEngine;
 
 namespace Shuile
@@ -8,7 +9,7 @@ namespace Shuile
     {
         public string label;
         public string sceneName;
-        public EnemyRoundsSO enemyData;
+        public LevelEnemySO enemyData;
         public ChartSO chartFiles;
     }
 

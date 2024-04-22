@@ -29,7 +29,7 @@ namespace Shuile.Gameplay.Entity
                 .Where(hurtable => hurtable != null);
 
             foreach (var hurtable in hurtables)
-                hurtable.OnAttack(attackPoint);
+                hurtable.OnHurt(attackPoint);
 
             // play anim
             transform.GetChild(0).transform.DOScale(2f, 0.2f).From()

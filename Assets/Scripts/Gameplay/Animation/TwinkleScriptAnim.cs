@@ -1,6 +1,6 @@
-using CbUtils;
+using CbUtils.Extension;
 using CbUtils.ActionKit;
-using CbUtils.Event;
+
 using DG.Tweening;
 using UnityEngine;
 

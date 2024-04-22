@@ -1,7 +1,7 @@
 using UnityEngine;
 using CbUtils.Collections;
 
-namespace CbUtils
+namespace CbUtils.Extension
 {
     public static class UnityAPIExt
     {
@@ -72,11 +72,17 @@ namespace CbUtils
 
         #region Physics
 
-        /// <summary> warpper for Physics2D.Raycast() </summary>
-        public static RaycastHit2D RayCast2DWithDebugLine(Vector2 origin, Vector2 direction, float distance = Mathf.Infinity, int layerMask = Physics2D.DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity)
+        public static RaycastHit2D DebugLineForRayCast2D(Vector2 origin, Vector2 direction, float distance = Mathf.Infinity, int layerMask = Physics2D.DefaultRaycastLayers)
         {
-            var hit = Physics2D.Raycast(origin, direction, distance, layerMask, minDepth, maxDepth);
+            var hit = Physics2D.Raycast(origin, direction, distance, layerMask);
             Debug.DrawLine(origin, origin + direction * distance, hit ? Color.red : Color.green, 0.1f);
+            return hit;
+        }
+        public static Collider2D GizmosSphereForOverlapCircle2D(Vector2 origin, float radius, int layerMask = Physics2D.DefaultRaycastLayers)
+        {
+            var hit = Physics2D.OverlapCircle(origin, radius, layerMask);
+            Gizmos.color = hit ? Color.red : Color.yellow;
+            Gizmos.DrawWireSphere(origin, radius);
             return hit;
         }
 

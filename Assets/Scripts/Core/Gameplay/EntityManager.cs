@@ -1,7 +1,6 @@
 using CbUtils;
+using Shuile.Event;
 
-using Shuile.Rhythm.Runtime;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -61,12 +60,19 @@ namespace Shuile.Gameplay
 
         private void OnEnable()
         {
+            EnemyDieEvent.Register(OnEnemyDie);
             levelModel.onRhythmHit += OnRhythmHit;
         }
 
         private void OnDisable()
         {
+            EnemyDieEvent.UnRegister(OnEnemyDie);
             levelModel.onRhythmHit -= OnRhythmHit;
+        }
+
+        private void OnEnemyDie()
+        {
+            levelModel.DangerScore += DangerLevelUtils.GetEnemyKillAddition();
         }
 
         private void OnRhythmHit()

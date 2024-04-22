@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: EnemyZakoRobot
   m_EditorClassIdentifier: 
   healthPoint: 10
-  attackPoint: 20
-  attackRange: 1
-  preAttackDuration: 1
+  attackPoint: 60
+  attackRange: 2
+  preAttackDuration: 0
   postAttackDuration: 0
   moveInterval: 1
   moveAbility: 2

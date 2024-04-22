@@ -26,6 +26,8 @@ namespace Shuile.Root
             GameplayService.Interface.OnInit();
             LevelDataBinder.Instance.Initialize();
 
+            LevelStateMachine.Instance.enabled = true;
+
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
             UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
             needHitWithRhythm = LevelResources.Instance.debugSettings.needHitWithRhythm;

@@ -85,6 +85,7 @@ namespace CbUtils
         }
     }
 
+    [UnityEngine.DisallowMultipleComponent]
     public class UnRegisterOnDestroyTrigger : UnityEngine.MonoBehaviour
     {
         private HashSet<ICustomUnRegister> unRegisters = new HashSet<ICustomUnRegister>();

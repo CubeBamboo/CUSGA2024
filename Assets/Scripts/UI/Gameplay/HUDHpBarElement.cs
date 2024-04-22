@@ -1,4 +1,4 @@
-using CbUtils;
+using CbUtils.Extension;
 using CbUtils.Event;
 using Shuile.Framework;
 using Shuile.Gameplay;

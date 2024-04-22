@@ -14,6 +14,7 @@ namespace Shuile.Rhythm
          * - eventdata from .mc -> .json["column"]
          * - single note (not support long note)
          * - get resource directly from scriptable obejct
+         * - only can get music length from ChartSO
          */
         public static ChartData LoadChartSync(string chartName)
         {
@@ -41,6 +42,7 @@ namespace Shuile.Rhythm
         {
             ChartData chartData = InternalLoadChartWithoutResourceLoad(chartSO.chartFile.text, out var songKey);
             chartData.audioClip = chartSO.clip;
+            chartData.musicLength = chartSO.musicLength;
             return chartData;
         }
 

@@ -1,5 +1,3 @@
-using CbUtils;
-using CbUtils.LinkedValue;
 using Cysharp.Threading.Tasks;
 using Shuile.Audio;
 using UnityEngine;
@@ -89,6 +87,14 @@ namespace Shuile.Utils
             CurrentTime = 0;
             IsPlaying = false;
             audioPlayer.Reset();
+        }
+
+        public void SetCurrentTime(float time)
+        {
+            time = Mathf.Clamp(time, 0f, audioPlayer.TargetSource.clip.length);
+
+            CurrentTime = time;
+            audioPlayer.TargetSource.time = time;
         }
     }
 }

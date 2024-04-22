@@ -1,6 +1,6 @@
 // [WIP]
 
-using CbUtils;
+using CbUtils.Extension;
 using Shuile.Gameplay;
 using Shuile.NoteProduct;
 using UnityEngine;

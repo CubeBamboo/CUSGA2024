@@ -19,19 +19,19 @@ namespace CbUtils
 
         private Dictionary<string, System.Action> eventDict = new Dictionary<string, System.Action>();
 
-        public void AddEvent(string eventName, System.Action handler)
+        public void Register(string eventName, System.Action handler)
         {
             if (eventDict.ContainsKey(eventName))
                 eventDict[eventName] += handler;
             else
                 eventDict.Add(eventName, handler);
         }
-        public void RemoveEvent(string eventName, System.Action handler)
+        public void UnRegister(string eventName, System.Action handler)
         {
             if (eventDict.ContainsKey(eventName))
                 eventDict[eventName] -= handler;
         }
-        public void TriggerEvent(string eventName)
+        public void Trigger(string eventName)
         {
             if (eventDict.ContainsKey(eventName))
                 eventDict[eventName]?.Invoke();

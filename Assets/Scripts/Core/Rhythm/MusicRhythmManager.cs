@@ -1,8 +1,8 @@
 using CbUtils;
-using UnityEngine;
 using Shuile.Audio;
 using Shuile.Utils;
-using Shuile.Gameplay;
+
+using UnityEngine;
 using DG.Tweening;
 
 namespace Shuile.Rhythm.Runtime
@@ -23,6 +23,8 @@ namespace Shuile.Rhythm.Runtime
         public AudioPlayerInUnity AudioPlayer => preciseMusicPlayer.AudioPlayer;
         public bool IsPlaying => isPlaying;
         public float CurrentTime => preciseMusicPlayer.CurrentTime;
+        public float MusicLength => currentChart.musicLength;
+        public bool IsMusicEnd => CurrentTime >= MusicLength;
 
         protected override void OnAwake()
         {
@@ -87,5 +89,8 @@ namespace Shuile.Rhythm.Runtime
                 targetAudioPlayer.Stop();
             });
         }
+
+        public void SetCurrentTime(float time)
+            => preciseMusicPlayer.SetCurrentTime(time);
     }
 }

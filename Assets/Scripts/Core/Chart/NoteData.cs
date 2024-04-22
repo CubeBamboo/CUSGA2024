@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
 {
-    // TODO: maybe not use in future
+    [System.Obsolete("use Base Note Data instead")]
     public class NoteData
     {
         /// <summary>
@@ -28,6 +28,7 @@ namespace Shuile.Rhythm.Runtime
             => new() { targetTime = targetTime };
     }
 
+    [System.Obsolete("use Base Note Data instead")]
     public enum NoteEventType
     {
         SingleEnemySpawn,
@@ -37,6 +38,7 @@ namespace Shuile.Rhythm.Runtime
         MusicOffsetTestLaser,
     }
 
+    [System.Obsolete("use Base Note Data instead")]
     public static class NoteEventUtils
     {
         public static float DefaultPlayTimeConvert(NoteData noteData)
