@@ -1,10 +1,11 @@
-using CbUtils;
+using CbUtils.Extension;
 using Shuile.Gameplay;
 
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using CbUtils.Event;
+using System.Runtime.CompilerServices;
 
 namespace Shuile.NoteProduct
 {
@@ -24,22 +25,26 @@ namespace Shuile.NoteProduct
                 mRenderer.color = mRenderer.color.With(a: 0);
                 mRenderer.DOFade(0.2f, 0.5f);
 
-                float inTime = 2 * GameplayService.LevelModel.Value.BpmIntervalInSeconds;
+                float inTime = 2 * GameplayService.Interface.LevelModel.BpmIntervalInSeconds;
                 await UniTask.Delay(System.TimeSpan.FromSeconds(inTime),
                     cancellationToken: target.GetCancellationTokenOnDestroy());
                 // 攻击判定
                 mRenderer.DOFade(1f, 0.2f);
-                //var evtMono = target.AddComponent<Collider2DEventMono>();
-                //evtMono.TriggerEntered += (collider) =>
-                //{
-                //    if (collider.CompareTag("Player"))
-                //    {
-                //        collider.gameObject.GetComponent<Player>().ForceDie();
-                //        collider.gameObject.Destroy();
-                //    }
-                //}; //TODO: hahaha you forgot to add collider component hahaha
+                var evtMono = target.AddComponent<Collider2DEventMono>();
+                evtMono.TriggerStayed += (collider) =>
+                {
+                    if (collider.CompareTag("Player"))
+                    {
+                        collider.GetComponent<Player>().OnHurt(200); // TODO: config
+                        if(evtMono) evtMono.Destroy(); //销毁组件
+                    }
+                };
+                await UniTask.DelayFrame(2,
+                        cancellationToken: target.GetCancellationTokenOnDestroy());
+                if (evtMono) evtMono.Destroy(); //销毁组件
 
-                await UniTask.Delay(System.TimeSpan.FromSeconds(attackWaitTime));
+                await UniTask.Delay(System.TimeSpan.FromSeconds(attackWaitTime),
+                    cancellationToken: target.GetCancellationTokenOnDestroy());
                 // 淡出
                 mRenderer.DOFade(0, 0.5f).OnComplete(()=>
                     target.Destroy()

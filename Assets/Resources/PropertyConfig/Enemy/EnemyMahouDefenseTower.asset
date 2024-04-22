@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: EnemyMahouDefenseTower
   m_EditorClassIdentifier: 
   healthPoint: 10
-  attackPoint: 10
+  attackPoint: 100
   attackRange: 114514
   preAttackDuration: 0
   postAttackDuration: 4
   moveInterval: 0
+  moveAbility: 2
   acceleration: 0
   deceleration: 0
   maxMoveSpeed: 0

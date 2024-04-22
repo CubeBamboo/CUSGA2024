@@ -12,9 +12,10 @@ namespace Shuile
      * 当场上敌人少于1个 或 等待时间过长时进入下一波
      * 生成敌人时，每个敌人间隔2个节拍依次生成
      */
+    /*[System.Obsolete("use EnemySpawnManager instead")]
     public class EnemyRoundManager : MonoNonAutoSpawnSingletons<EnemyRoundManager>
     {
-        [HideInInspector] public EnemyRoundsSO currentEnemyRoundsData;
+        [HideInInspector] public LevelEnemySO currentEnemyRoundsData;
 
         private int currentRoundIndex = 0;
         private bool isEnd;
@@ -42,8 +43,9 @@ namespace Shuile
             if (isEnd || isWaitingProcess) return;
 
             // process 已有enemy
-            bool IsNextTimeOut = IsInLastRound
-                || MusicRhythmManager.Instance.CurrentTime > currentEnemyRoundsData.rounds[currentRoundIndex].latestSpawnTime;
+            bool IsNextTimeOut = true;
+            //bool IsNextTimeOut = IsInLastRound
+            //    || MusicRhythmManager.Instance.CurrentTime > currentEnemyRoundsData.rounds[currentRoundIndex].latestSpawnTime;
             bool CurrentEnemyCountIsTooLow = EntityManager.Instance.Enemies.Count <= 1;
             if (!IsInLastRound && (IsNextTimeOut || CurrentEnemyCountIsTooLow)) // process this round's enemy
             {
@@ -68,7 +70,7 @@ namespace Shuile
             {
                 CbLogger.Log("[EnemyManager] it's end", "EnemyRoundManager.cs");
                 isEnd = true;
-                LevelRoot.Instance.State = LevelRoot.LevelState.Win;
+                LevelStateMachine.Instance.State = LevelStateMachine.LevelState.Win;
             }
         }
 
@@ -81,9 +83,9 @@ namespace Shuile
             foreach (var enemy in enemies)
             {
                 EntityFactory.Instance.SpawnEnemyWithEffectDelay(enemy, LevelZoneManager.Instance.RandomValidPosition());
-                await UniTask.Delay(2 * (int)(GameplayService.LevelModel.Value.BpmIntervalInSeconds * 1000)
+                await UniTask.Delay(2 * (int)(GameplayService.Interface.LevelModel.BpmIntervalInSeconds * 1000)
                     , cancellationToken: this.destroyCancellationToken);
             }
         }
-    }
+    }*/
 }

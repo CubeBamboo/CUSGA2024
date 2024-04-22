@@ -11,14 +11,28 @@ namespace Shuile
 
         private float missTolerance;
 
+        private float dangerScore = 0f;
+
         public LevelModel()
         {
             var resources = LevelResources.Instance;
             missTolerance = resources.levelConfig.missTolerance;
+
+            var currentChart = LevelDataBinder.Instance.ChartData;
+            musicBpm = currentChart.time[0].bpm;
+            musicOffset = currentChart.time[0].offset;
+
+            DangerScore = 0f;
         }
 
         public float BpmIntervalInSeconds => 60f / musicBpm;
         public float OffsetInSeconds => musicOffset * 0.001f;
         public float MissToleranceInSeconds => missTolerance * 0.001f;
+        public int DangerLevel => DangerLevelUtils.GetDangerLevelUnClamped(DangerScore);
+        public float DangerScore
+        {
+            get => dangerScore;
+            set => dangerScore = value < 0 ? 0 : value;
+        }
     }
 }

@@ -1,4 +1,4 @@
-using CbUtils;
+using CbUtils.Extension;
 using CbUtils.ActionKit;
 using Shuile.Root;
 using Shuile.Gameplay;

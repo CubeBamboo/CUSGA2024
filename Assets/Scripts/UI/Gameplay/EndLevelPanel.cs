@@ -1,5 +1,5 @@
 using Shuile.Framework;
-using CbUtils;
+using CbUtils.Extension;
 
 using UnityEngine;
 using TMPro;

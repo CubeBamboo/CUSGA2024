@@ -14,7 +14,7 @@ namespace Shuile
         private LevelData levelData;
 
         // scene will pre set-up in unity's scene file
-        public EnemyRoundsSO enemyRoundsData => levelData.enemyData;
+        public LevelEnemySO levelEnemyData => levelData.enemyData;
         public ChartSO chartFiles => levelData.chartFiles;
 
         public ChartData chartData;

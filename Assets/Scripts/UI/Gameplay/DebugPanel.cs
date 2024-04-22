@@ -5,12 +5,11 @@
 
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
+using Shuile.Gameplay;
+using CbUtils.Event;
 
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
-using Shuile.Rhythm;
-using Shuile.Gameplay;
 
 namespace Shuile
 {
@@ -19,9 +18,12 @@ namespace Shuile
     {
         [SerializeField] private TextMeshProUGUI hitOffsetText;
         [SerializeField] private TextMeshProUGUI playTimeText;
-        [SerializeField] private TextMeshProUGUI enemyRoundIndexText;
+        [SerializeField] private TextMeshProUGUI dangerScoreText;
+        [SerializeField] private TextMeshProUGUI dangerLevelText;
         [SerializeField] private TextMeshProUGUI enemyCountText;
-        //[SerializeField] private Toggle enemyClampToggle;
+
+        private PlayerModel playerModel;
+        private LevelModel levelModel;
 
         private void Awake()
             => this.RegisterUI<DebugPanel>();
@@ -30,19 +32,17 @@ namespace Shuile
 
         private void Start()
         {
-            var playerModel = GameplayService.Interface.Get<PlayerModel>();
+            playerModel = GameplayService.Interface.Get<PlayerModel>();
+            levelModel = GameplayService.Interface.Get<LevelModel>();
+
             gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
             {
-                hitOffsetText.text = $"HitOffset: {playerModel.currentHitOffset.ToString("0.000")}";
-                playTimeText.text = $"PlayTime: {MusicRhythmManager.Instance.CurrentTime.ToString("0.000")}";
-                enemyRoundIndexText.text = $"EnemyRoundIndex: {EnemyRoundManager.Instance.CurrentRoundIndex}";
+                hitOffsetText.text = $"HitOffset: {playerModel.currentHitOffset:0.000}";
+                playTimeText.text = $"PlayTime: {MusicRhythmManager.Instance.CurrentTime:0.000}";
+                dangerScoreText.text = $"DangerScore: {levelModel.DangerScore:0.000}";
+                dangerLevelText.text = $"DangerLevel: {levelModel.DangerLevel}";
                 enemyCountText.text = $"EnemyCount: {EntityManager.Instance.Enemies.Count}";
             };
-            //enemyClampToggle.isOn = DebugProperty.Instance.GetInt("EnemyClamp") == 1 ? true : false;
-            //enemyClampToggle.onValueChanged.AddListener((isOn) =>
-            //{
-            //    DebugProperty.Instance.SetInt("EnemyClamp", isOn ? 1 : 0);
-            //});
         }
 
         public override void Hide()

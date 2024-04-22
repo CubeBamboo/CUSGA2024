@@ -18,6 +18,7 @@ namespace Shuile.Rhythm.Runtime
         }
         #endregion
 
+        public float musicLength;
         public UnityEngine.AudioClip audioClip;
         public TimingPoint[] time;
         /// <summary> (unit: music bar) </summary>
@@ -28,6 +29,7 @@ namespace Shuile.Rhythm.Runtime
             StringBuilder sb = new();
             sb.Append("ChartData: ");
             sb.AppendLine(audioClip.name);
+            sb.AppendLine($"length: {musicLength}");
             sb.AppendLine($"bpm: {time[0].bpm}, offset: {time[0].offset}");
             sb.AppendLine("NoteData:");
             foreach (var singleNote in note)

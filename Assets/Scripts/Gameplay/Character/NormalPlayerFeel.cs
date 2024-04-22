@@ -1,9 +1,10 @@
 using Shuile.Framework;
+using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
 namespace Shuile.Gameplay
 {
-    // player feedback
+    // player feedback and other event
     public class NormalPlayerFeel : MonoBehaviour
     {
         private Player player;
@@ -12,8 +13,11 @@ namespace Shuile.Gameplay
         private PlayerAnimCtrl animCtrl;
         private Rigidbody2D _rb;
 
+        private LevelModel levelModel;
+
         private void Awake()
         {
+            levelModel = GameplayService.Interface.Get<LevelModel>();
             player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();
             playerInput = GetComponent<NormalPlayerInput>();
@@ -30,31 +34,39 @@ namespace Shuile.Gameplay
 
         private void ConfigureFeelEvent()
         {
-            player.OnDie.Register(() => animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Die))
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
-            player.CurrentHp.Register((oldV, newV) =>
+            player.OnDie.Register(() =>
             {
-                if (oldV > newV)
-                {
-                    animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt);
-                    LevelFeelManager.Instance.CameraShake();
-                }
+                animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Die);
+                MonoAudioCtrl.Instance.PlayOneShot("Player_Death");
+                MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            player.OnHurted.Register(() =>
+            {
+                animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt);
+                LevelFeelManager.Instance.CameraShake();
+                levelModel.DangerScore -= DangerLevelConfigClass.PlayerHurtReduction;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             playerCtrl.attackCommand.OnCommandAfter(() =>
             {
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Attack);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Attack");
+
+                levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
             playerCtrl.jumpCommand.OnCommandAfter(() =>
             {
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Jump);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
             playerCtrl.moveCommand.OnCommandAfter(() =>
             {
                 animCtrl.FlipX = playerInput.XInput < 0;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
             playerCtrl.OnTouchGround.Register(() =>
             {
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Land);

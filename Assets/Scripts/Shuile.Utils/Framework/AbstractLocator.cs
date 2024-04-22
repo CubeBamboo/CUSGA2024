@@ -69,5 +69,9 @@ namespace Shuile.Framework
     {
     }
 
+    public interface ISystem
+    {
+    }
+
     #endregion
 }

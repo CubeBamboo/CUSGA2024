@@ -35,7 +35,7 @@ namespace Shuile.Gameplay
         private float lerpTime;
         private ChartPlayer chartPlayer;
 
-        private float MissTolerance => GameplayService.LevelModel.Value.MissToleranceInSeconds;
+        private float MissTolerance => GameplayService.Interface.LevelModel.MissToleranceInSeconds;
 
         public RhythmIndicator()
         {

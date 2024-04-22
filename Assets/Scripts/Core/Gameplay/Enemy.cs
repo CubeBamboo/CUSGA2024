@@ -1,11 +1,9 @@
 using CbUtils.Event;
-using CbUtils.Extension;
-using DG.Tweening;
-
-using Shuile.Framework;
+using Shuile.Event;
 
 using System;
 
+using DG.Tweening;
 using UnityEngine;
 
 using UObject = UnityEngine.Object;
@@ -53,7 +51,7 @@ namespace Shuile.Gameplay
             if(hpBarUI) UObject.Destroy(hpBarUI.gameObject);
         }
 
-        public void OnAttack(int attackPoint)
+        public void OnHurt(int attackPoint)
         {
             if (health <= 0)
                 return;
@@ -78,6 +76,7 @@ namespace Shuile.Gameplay
             if (health == 0)
             {
                 State = EntityStateType.Dead;
+                EnemyDieEvent.Trigger();
             }
         }
     }

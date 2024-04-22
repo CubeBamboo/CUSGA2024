@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc27428b8c342184190930cfd52ebc63, type: 3}
   m_Name: PlayerProperty
   m_EditorClassIdentifier: 
-  maxHealthPoint: 3787
-  currentHealthPoint: 0
+  maxHealthPoint: 800
   attackPoint: 5
