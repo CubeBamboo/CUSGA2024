@@ -24,7 +24,7 @@ namespace Shuile.NoteProduct
                 mRenderer.color = mRenderer.color.With(a: 0);
                 mRenderer.DOFade(0.2f, 0.5f);
 
-                float inTime = 2 * GameplayService.LevelModel.Value.BpmIntervalInSeconds;
+                float inTime = 2 * GameplayService.Interface.LevelModel.BpmIntervalInSeconds;
                 await UniTask.Delay(System.TimeSpan.FromSeconds(inTime),
                     cancellationToken: target.GetCancellationTokenOnDestroy());
                 // 攻击判定

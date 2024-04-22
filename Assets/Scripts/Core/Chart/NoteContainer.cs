@@ -43,7 +43,7 @@ namespace Shuile.Rhythm.Runtime
                 return;
             noteList.Sort((a, b) => a.targetTime.CompareTo(b.targetTime)); //降序排序
             // 检查所有需要销毁的note
-            while (noteList.Count > 0 && noteList[0].NeedRelese(currentTime, GameplayService.LevelModel.Value.MissToleranceInSeconds))
+            while (noteList.Count > 0 && noteList[0].NeedRelese(currentTime, GameplayService.Interface.LevelModel.MissToleranceInSeconds))
             {
                 notePool.Release(noteList[0]);
                 noteList.RemoveAt(0);

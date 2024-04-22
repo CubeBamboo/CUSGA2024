@@ -5,6 +5,8 @@ namespace CbUtils.Event
 {
     public class DestroyEventMono : MonoBehaviour
     {
+        public event System.Action OnDestroyed;
+
         private Dictionary<string, System.Action> actions = new();
         public bool Contains(string label) => actions.ContainsKey(label);
         public bool TryAdd(string label, System.Action action)
@@ -19,6 +21,7 @@ namespace CbUtils.Event
             {
                 action.Value();
             }
+            OnDestroyed?.Invoke();
         }
     }
 

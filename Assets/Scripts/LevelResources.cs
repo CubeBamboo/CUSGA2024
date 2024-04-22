@@ -19,15 +19,6 @@ namespace Shuile
 
         public PrefabConfigSO globalPrefabs;
 
-        protected override void OnAwake()
-        {
-            GameplayService.Interface.OnInit();
-        }
-        private void OnDestroy()
-        {
-            GameplayService.Interface.OnDeInit();
-        }
-
         protected override void OnInstanceCall(bool isNewObject)
         {
             if (isNewObject)

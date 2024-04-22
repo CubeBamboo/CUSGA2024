@@ -2,13 +2,14 @@
 
 using CbUtils;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Shuile.Rhythm.Runtime
 {
     /// <summary> provide play interface and then use monobehavior to update its time </summary>
     public class ChartPlayer
     {
-        private struct PlayTimeData
+        public struct PlayTimeData
         {
             public float playTime;
             public int originNoteIndex;
@@ -23,6 +24,8 @@ namespace Shuile.Rhythm.Runtime
         /// call when it's time to play the note
         /// </summary>
         public event System.Action<BaseNoteData> OnNotePlay = _ => { };
+
+        public ReadOnlyCollection<PlayTimeData> PlayTimeArray => playTimeArray.AsReadOnly();
 
         public ChartPlayer(ChartData chart, System.Func<BaseNoteData, float> onPlayTimeConvert = null)
         {

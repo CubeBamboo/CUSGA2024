@@ -23,7 +23,7 @@ namespace Shuile
         }
 
         /// <summary> "T - old value, T - new value" </summary>
-        public SimpleEvent<T, T> onValueChanged = new();
+        public EasyEvent<T, T> onValueChanged = new();
         public ICustomUnRegister Register(Action<T, T> _onValueChanged) => onValueChanged.Register(_onValueChanged);
         public void UnRegister(Action<T, T> _onValueChanged) => onValueChanged.UnRegister(_onValueChanged);
         public override string ToString() => _value.ToString();

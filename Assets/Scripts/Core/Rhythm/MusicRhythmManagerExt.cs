@@ -11,7 +11,7 @@ namespace Shuile.Rhythm.Runtime
         /// <param name="hitOffset">return float.NaN if not hit on</param>
         public static bool CheckBeatRhythm(this MusicRhythmManager rhythmManager, float inputTime, out float hitOffset)
         {
-            float missTolerance = GameplayService.LevelModel.Value.MissToleranceInSeconds;
+            float missTolerance = GameplayService.Interface.LevelModel.MissToleranceInSeconds;
 
             // get the nearest note's time and judge
             hitOffset = float.NaN;

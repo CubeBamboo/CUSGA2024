@@ -82,7 +82,7 @@ namespace Shuile.Gameplay
                 CurrentHp.Value = 0;
                 isDie = true;
                 OnDie.Invoke();
-                LevelRoot.Instance.State = LevelRoot.LevelState.Fail;
+                LevelStateMachine.Instance.State = LevelStateMachine.LevelState.Fail;
                 OnDieFunc();
             }
         }

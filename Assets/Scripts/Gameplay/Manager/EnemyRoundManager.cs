@@ -68,7 +68,7 @@ namespace Shuile
             {
                 CbLogger.Log("[EnemyManager] it's end", "EnemyRoundManager.cs");
                 isEnd = true;
-                LevelRoot.Instance.State = LevelRoot.LevelState.Win;
+                LevelStateMachine.Instance.State = LevelStateMachine.LevelState.Win;
             }
         }
 
@@ -81,7 +81,7 @@ namespace Shuile
             foreach (var enemy in enemies)
             {
                 EntityFactory.Instance.SpawnEnemyWithEffectDelay(enemy, LevelZoneManager.Instance.RandomValidPosition());
-                await UniTask.Delay(2 * (int)(GameplayService.LevelModel.Value.BpmIntervalInSeconds * 1000)
+                await UniTask.Delay(2 * (int)(GameplayService.Interface.LevelModel.BpmIntervalInSeconds * 1000)
                     , cancellationToken: this.destroyCancellationToken);
             }
         }

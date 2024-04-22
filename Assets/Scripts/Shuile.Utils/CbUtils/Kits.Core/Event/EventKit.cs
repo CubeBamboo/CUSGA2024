@@ -38,7 +38,7 @@ namespace CbUtils
         public void Invoke() => _action.Invoke();
     }
 
-    public class SimpleEvent<T>
+    public class EasyEvent<T>
     {
         private Action<T> _action = _ => { };
         public ICustomUnRegister Register(Action<T> action)
@@ -50,7 +50,7 @@ namespace CbUtils
         public void Invoke(T para1) => _action.Invoke(para1);
     }
 
-    public class SimpleEvent<T1, T2>
+    public class EasyEvent<T1, T2>
     {
         private Action<T1, T2> _action = (_, _) => { };
         public ICustomUnRegister Register(Action<T1, T2> action)
@@ -61,7 +61,7 @@ namespace CbUtils
         public void UnRegister(Action<T1, T2> action) => _action -= action;
         public void Invoke(T1 para1, T2 para2) => _action.Invoke(para1, para2);
     }
-    public class SimpleEvent<T1, T2, T3>
+    public class EasyEvent<T1, T2, T3>
     {
         private Action<T1, T2, T3> _action = (_, _, _) => { };
         public ICustomUnRegister Register(Action<T1, T2, T3> action)

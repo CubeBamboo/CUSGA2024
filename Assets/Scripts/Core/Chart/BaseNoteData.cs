@@ -12,7 +12,7 @@ namespace Shuile.Rhythm.Runtime
         public float targetTime;
         public virtual void Process() { }
         public virtual float ToPlayTime()
-            => targetTime * GameplayService.LevelModel.Value.BpmIntervalInSeconds;
+            => targetTime * GameplayService.Interface.LevelModel.BpmIntervalInSeconds;
 
         public static BaseNoteData Create(float time)
             => new() { targetTime = time };
@@ -43,7 +43,7 @@ namespace Shuile.Rhythm.Runtime
 
         public override float ToPlayTime()
         {
-            return (targetTime - 2) * GameplayService.LevelModel.Value.BpmIntervalInSeconds;
+            return (targetTime - 2) * GameplayService.Interface.LevelModel.BpmIntervalInSeconds;
         }
     }
 

@@ -5,12 +5,11 @@
 
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
+using Shuile.Gameplay;
+using CbUtils.Event;
 
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
-using Shuile.Rhythm;
-using Shuile.Gameplay;
 
 namespace Shuile
 {

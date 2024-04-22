@@ -15,6 +15,10 @@ namespace Shuile
         {
             var resources = LevelResources.Instance;
             missTolerance = resources.levelConfig.missTolerance;
+
+            var currentChart = LevelDataBinder.Instance.ChartData;
+            musicBpm = currentChart.time[0].bpm;
+            musicOffset = currentChart.time[0].offset;
         }
 
         public float BpmIntervalInSeconds => 60f / musicBpm;
