@@ -2,8 +2,6 @@ using Cysharp.Threading.Tasks;
 
 using Shuile.Audio;
 
-using System.Collections.Generic;
-
 using UnityEngine;
 
 namespace Shuile
@@ -18,7 +16,7 @@ namespace Shuile
         public static async UniTask<double> WaitPlayScheduled(this IAudioPlayer player, double playAt)
         {
             player.PlayScheduled(playAt);
-            await UniTask.WaitUntil(() => AudioSettings.dspTime >= playAt);
+            await UniTask.WaitUntil(() => player.AudioSystemTime >= playAt);
             return AudioSettings.dspTime - playAt;
         }
     }

@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Shuile.Rhythm.Runtime
@@ -57,6 +58,15 @@ namespace Shuile.Rhythm.Runtime
                 chart.note[i] = BaseNoteData.Create(i + 0f / 4f);
             }
             return chart;
+        }
+
+        public static ChartData CreateLatencyTestDefault()
+        {
+            const int size = 8;
+            return new ChartData()
+            {
+                note = Enumerable.Range(1, size).Select(i => BaseNoteData.Create(i * 2 + 0f / 4f)).ToArray()
+            };
         }
 
         /*public static ChartData CreateLevelDefault()
