@@ -38,6 +38,7 @@ namespace Shuile.Audio
         /// </summary>
         float Volume { get; set; }
         float Pitch { get; set; }
+        double AudioSystemTime { get; }
     }
 
     public abstract class AudioPlayerInUnity : IAudioPlayer
@@ -58,6 +59,8 @@ namespace Shuile.Audio
             get => TargetSource.pitch;
             set => TargetSource.pitch = value;
         }
+        public double AudioSystemTime => AudioSettings.dspTime;
+
         public void LoadClip(AudioClip clip)
         {
             TargetSource.clip = clip;

@@ -41,6 +41,12 @@ namespace CbUtils.Extension
             Object.Destroy(go);
         }
 
+        public static void DestroySafe(this Object go)
+        {
+            if (go)
+                Object.Destroy(go);
+        }
+
         #endregion
 
         #region UnityEngine.Events

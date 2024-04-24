@@ -4,6 +4,9 @@ using Shuile.Utils;
 
 using UnityEngine;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
+using Shuile.Framework;
+using Shuile.Persistent;
 
 namespace Shuile.Rhythm.Runtime
 {
@@ -60,13 +63,11 @@ namespace Shuile.Rhythm.Runtime
 
         public void StartPlay()
         {
-            float offsetInSeconds = (currentChart.time[0].offset + playerConfig.globalOffset) * 0.001f;
+            float offsetInSeconds = (currentChart.time[0].offset + MainGame.Interface.Get<Config>().Audio.GlobalDelay) * 0.001f;
             Time.timeScale = playTimeScale;
             preciseMusicPlayer.Volume = volume;
 
-#pragma warning disable CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
-            preciseMusicPlayer.Play(offsetInSeconds);
-#pragma warning restore CS4014
+            preciseMusicPlayer.Play(offsetInSeconds).Forget();
         }
 
         public void StopPlay()
