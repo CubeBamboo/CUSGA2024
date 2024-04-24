@@ -12,9 +12,9 @@ namespace Shuile
             loadingViewer.OnStart();
             loadingViewer.In();
 
-            var exitDelay = ActionCtrl.Instance.Delay(loadingViewer.ExitDuration)
+            var exitDelay = ActionCtrl.Delay(loadingViewer.ExitDuration)
                 .OnComplete(() => loadingViewer.OnEnd());
-            var enterDelay = ActionCtrl.Instance.Delay(loadingViewer.InDuration)
+            var enterDelay = ActionCtrl.Delay(loadingViewer.InDuration)
                 .OnComplete(() => { action?.Invoke(); loadingViewer.Out(); exitDelay.Start(); });
             enterDelay.Start(); // 没有使用序列导致的抽象写法 not using sequence leads to such a fuuuuuuckkking code :((((
         }
@@ -25,9 +25,9 @@ namespace Shuile
             loadingViewer.OnStart();
             loadingViewer.In();
 
-            var exitDelay = ActionCtrl.Instance.Delay(loadingViewer.ExitDuration)
+            var exitDelay = ActionCtrl.Delay(loadingViewer.ExitDuration)
                 .OnComplete(() => loadingViewer.OnEnd());
-            var enterDelay = ActionCtrl.Instance.Delay(loadingViewer.InDuration)
+            var enterDelay = ActionCtrl.Delay(loadingViewer.InDuration)
                 .OnComplete(async () => {
                     if (asyncAction != null)
                         await asyncAction.Invoke();

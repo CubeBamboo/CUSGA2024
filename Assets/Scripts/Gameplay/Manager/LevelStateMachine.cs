@@ -53,7 +53,7 @@ namespace Shuile.Gameplay
             var endPanel = UICtrl.Instance.Get<EndLevelPanel>();
             endPanel.TimeTextUGUI.text = "SurviveTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.0");
             endPanel.Show();
-            ActionCtrl.Instance.Delay(3f)
+            ActionCtrl.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
                 .Start(gameObject);
         }
@@ -66,7 +66,7 @@ namespace Shuile.Gameplay
 
             MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
 
-            ActionCtrl.Instance.Delay(3f)
+            ActionCtrl.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToMenu())
                 .Start(gameObject);
         }
