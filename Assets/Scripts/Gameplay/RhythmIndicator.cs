@@ -1,3 +1,4 @@
+using Shuile.MonoGadget;
 using Shuile.Rhythm.Runtime;
 
 using System;
@@ -31,11 +32,19 @@ namespace Shuile.Gameplay
         private GameObject notePrefab;
         private ObjectPool<GameObject> notePool;
         private List<Note> notes;
-        private float lastRealTime = 0f;
-        private float lerpTime;
         private ChartPlayer chartPlayer;
+        private MusicTimeTweener musicTimeTweener;
 
         private float MissTolerance => GameplayService.Interface.LevelModel.MissToleranceInSeconds;
+        private MusicTimeTweener TimeTweener
+        {
+            get
+            {
+                if (musicTimeTweener == null)
+                    musicTimeTweener = MusicRhythmManager.Instance.gameObject.GetOrAddComponent<MusicTimeTweener>();
+                return musicTimeTweener;
+            }
+        }
 
         public RhythmIndicator()
         {
@@ -57,19 +66,10 @@ namespace Shuile.Gameplay
 
         private void Update()
         {
-            // TODO: if (gameState is not playing) return;
-            if (MusicRhythmManager.Instance.CurrentTime == 0f)
-                return;
-
-            if (lastRealTime != MusicRhythmManager.Instance.CurrentTime)
-                lerpTime = lastRealTime = MusicRhythmManager.Instance.CurrentTime;
-            else
-                lerpTime += Time.deltaTime;
-
-            chartPlayer.PlayUpdate(lerpTime);
+            chartPlayer.PlayUpdate(TimeTweener.TweenTime);
             for (int i = 0; i < notes.Count; )
             {
-                if (lerpTime - MissTolerance >= notes[i].hitTime)
+                if (TimeTweener.TweenTime - MissTolerance >= notes[i].hitTime)
                 {
                     notePool.Release(notes[i].transform.gameObject);
                     notes.UnorderedRemoveAt(i);
@@ -99,7 +99,7 @@ namespace Shuile.Gameplay
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateNoteGraphic(Note note)
         {
-            var delta = note.hitTime - lerpTime;
+            var delta = note.hitTime - TimeTweener.TweenTime;
             note.transform.localPosition = note.transform.localPosition.With(x: distanceUnit * delta);
             float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
             note.graphic.color = (delta < 0f ? Color.red : Color.white).With(a: alpha);

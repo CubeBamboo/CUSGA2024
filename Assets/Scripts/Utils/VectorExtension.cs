@@ -21,5 +21,9 @@ namespace Shuile
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Color With(this Color color, float? r = null, float? g = null, float? b = null, float? a = null)
             => new(r ?? color.r, g ?? color.g, b ?? color.b, a ?? color.a);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Color WithAlpha(this Color color, float a)
+            => new(color.r, color.g, color.b, a);
     }
 }
