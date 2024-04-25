@@ -20,7 +20,7 @@ namespace Shuile.Gameplay
             }
         }
 
-        public float MaxSpeed { get; set; }
+        public float XMaxSpeed { get; set; }
 
         public Vector3 Position
         {
@@ -33,7 +33,7 @@ namespace Shuile.Gameplay
             get => rb.velocity;
             set
             {
-                var vel = value.With(x: Mathf.Clamp(value.x, -MaxSpeed, MaxSpeed));
+                var vel = value.With(x: Mathf.Clamp(value.x, -XMaxSpeed, XMaxSpeed));
                 rb.velocity = vel;
             }
         }
@@ -41,6 +41,12 @@ namespace Shuile.Gameplay
         public bool IsOnGround => Mathf.Approximately(Velocity.y, 0f) && rb.attachedColliderCount > 0;
 
         public float Deceleration { get; set; }
+        public float Acceleration { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+        public void XMove(float dir)
+        {
+            throw new System.NotImplementedException();
+        }
 
         private void Awake()
         {

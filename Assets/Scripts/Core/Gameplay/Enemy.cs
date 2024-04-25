@@ -1,5 +1,5 @@
 using CbUtils.Event;
-using Shuile.Event;
+using Shuile.Gameplay.Event;
 
 using System;
 
@@ -10,7 +10,59 @@ using UObject = UnityEngine.Object;
 
 namespace Shuile.Gameplay
 {
-    public abstract class Enemy : BehaviourEntity, IHurtable
+    /// <summary> base class for enemy </summary>
+    public abstract class Enemy : MonoBehaviour, IHurtable, IJudgeable
+    {
+        [SerializeField] protected int MaxHealth = 100;
+        protected SmoothMoveCtrl moveController;
+        protected int health;
+
+        public int Health => health;
+        public bool IsAlive => health > 0;
+        public SmoothMoveCtrl MoveController => moveController;
+
+        public event Action<int> OnHpChangedEvent = _ => { };
+        private HUDHpBarElement hpBarUI;
+
+        protected void Awake()
+        {
+            health = MaxHealth;
+            moveController = GetComponent<SmoothMoveCtrl>();
+            //MoveController.Ability = Property.moveAbility;
+            //moveController.XMaxSpeed = Property.maxMoveSpeed;
+            //moveController.Deceleration = Property.deceleration;
+
+            OnAwake();
+        }
+
+
+        protected virtual void OnDestroy()
+        {
+            if (hpBarUI) UObject.Destroy(hpBarUI.gameObject);
+        }
+
+        protected virtual void OnAwake() { }
+        public virtual void OnHurt(int attackPoint)
+        {
+            if (Health <= 0)
+                return;
+
+            var oldVal = health;
+            health = Mathf.Max(0, health - attackPoint);
+            OnSelfHurt(oldVal, health);
+
+            if (Health == 0)
+            {
+                OnSelfDie();
+                EnemyDieEvent.Trigger(gameObject);
+            }
+        }
+        protected abstract void OnSelfHurt(int oldVal, int newVal);
+        protected abstract void OnSelfDie();
+        public abstract void Judge(int frame, bool force);
+    }
+
+    /*public abstract class Enemy : BehaviourEntity, IHurtable
     {
         [SerializeField] private EnemyPropertySO property;
         protected IMoveController moveController;
@@ -34,21 +86,16 @@ namespace Shuile.Gameplay
             base.Awake();
             health = property.healthPoint;
             moveController = GetComponent<IMoveController>();
-            MoveController.Ability = Property.moveAbility;
-            moveController.MaxSpeed = Property.maxMoveSpeed;
+            //MoveController.Ability = Property.moveAbility;
+            moveController.XMaxSpeed = Property.maxMoveSpeed;
             moveController.Deceleration = Property.deceleration;
 
             mRenderer = GetComponentInChildren<SpriteRenderer>();
-            // author: CubeBamboo
-            //hpBarUI = UICtrl.Instance.Create<HUDHpBarElement>();
-            //hpBarUI.Link(this).Show();
-            //hpBarUI.Link(this).Hide(); // it has bugs...
-            // end
         }
 
         protected virtual void OnDestroy()
         {
-            if(hpBarUI) UObject.Destroy(hpBarUI.gameObject);
+            if (hpBarUI) UObject.Destroy(hpBarUI.gameObject);
         }
 
         public void OnHurt(int attackPoint)
@@ -79,5 +126,5 @@ namespace Shuile.Gameplay
                 EnemyDieEvent.Trigger();
             }
         }
-    }
+    }*/
 }

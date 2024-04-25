@@ -1,3 +1,4 @@
+using CbUtils;
 using CbUtils.Extension;
 using CbUtils.ActionKit;
 using Shuile.Root;
@@ -5,6 +6,8 @@ using Shuile.Gameplay;
 
 using UnityEngine;
 using UObject = UnityEngine.Object;
+using Shuile.Gameplay.Event;
+using Shuile.Gameplay.Entity;
 
 namespace Shuile
 {
@@ -12,23 +15,21 @@ namespace Shuile
     {
         #region Enemy
 
-        // TODO: support generic
-        private Enemy InternalSpawnEnemy(GameObject enemyPrefab, Vector3 pos)
+        private GameObject InternalSpawnEnemy(GameObject enemyPrefab, Vector3 pos)
         {
             var enemyObject = UObject.Instantiate(enemyPrefab, pos, Quaternion.identity, EntityManager.Instance.EnemyParent);
-            var enemy = enemyObject.GetComponent<Enemy>();
-            EntityManager.Instance.MarkEnemy(enemy);
-            return enemy;
+            EnemySpawnEvent.Trigger(enemyObject);
+            return enemyObject;
         }
 
-        public Enemy SpawnEnemy(GameObject enemyPrefab, Vector3 pos)
+        public GameObject SpawnEnemy(GameObject enemyPrefab, Vector3 pos)
             => InternalSpawnEnemy(enemyPrefab, pos);
-        public Enemy SpawnEnemy(EnemyType enemyType, Vector3 pos)
+        public GameObject SpawnEnemy(EnemyType enemyType, Vector3 pos)
             => InternalSpawnEnemy(EntityUtils.EnemyType2Prefab(enemyType), pos);
-        public Enemy SpawnEnemy(EnemyType enemyType)
+        public GameObject SpawnEnemy(EnemyType enemyType)
             => InternalSpawnEnemy(EntityUtils.EnemyType2Prefab(enemyType), Vector3.zero);
 
-        public Enemy SpawnEnemyWithEffectDelay(EnemyType enemyType, Vector3 pos)
+        public GameObject SpawnEnemyWithEffectDelay(EnemyType enemyType, Vector3 pos)
         {
             var effect = LevelResources.Instance.globalPrefabs.enemySpawnEffect;
             effect.effect.Instantiate()
@@ -36,7 +37,7 @@ namespace Shuile
 
             var enemy = InternalSpawnEnemy(EntityUtils.EnemyType2Prefab(enemyType), pos);
             enemy.gameObject.SetActive(false);
-            ActionCtrl.Instance.Delay(effect.duration)
+            ActionCtrl.Delay(effect.duration)
                       .OnComplete(() => enemy.gameObject.SetActive(true))
                       .Start(LevelRoot.Instance.gameObject);
             return enemy;

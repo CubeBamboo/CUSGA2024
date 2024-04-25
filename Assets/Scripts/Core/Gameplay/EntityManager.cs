@@ -1,6 +1,6 @@
 using CbUtils;
-using Shuile.Event;
-
+using Shuile.Gameplay.Entity;
+using Shuile.Gameplay.Event;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -10,7 +10,7 @@ namespace Shuile.Gameplay
 {
     public class EntityManager : MonoSingletons<EntityManager>
     {
-        [SerializeField] private List<BehaviourEntity> preset = new();
+        //[SerializeField] private List<BehaviourEntity> preset = new();
 
         private readonly List<Enemy> enemyList = new();
         private readonly List<Gadget> gadgetList = new();
@@ -37,6 +37,8 @@ namespace Shuile.Gameplay
                 return prefabs;
             }
         }
+
+        public int EnemyCount { get; set; }
         public ReadOnlyCollection<Enemy> Enemies => enemyList.AsReadOnly();
         public ReadOnlyCollection<Gadget> Gadgets => gadgetList.AsReadOnly();
 
@@ -49,30 +51,41 @@ namespace Shuile.Gameplay
 
             levelModel = GameplayService.Interface.Get<LevelModel>();
 
-            foreach (var entity in preset)
-            {
-                if (entity.Type == EntityType.Enemy)
-                    MarkEnemy((Enemy)entity);
-                else if (entity.Type == EntityType.Gadget)
-                    MarkGadget((Gadget)entity);
-            }
+            //foreach (var entity in preset)
+            //{
+            //    if (entity.Type == EntityType.Enemy)
+            //        MarkEnemy((Enemy)entity);
+            //    else if (entity.Type == EntityType.Gadget)
+            //        MarkGadget((Gadget)entity);
+            //}
         }
 
         private void OnEnable()
         {
+            EnemySpawnEvent.Register(OnEnemySpawn);
             EnemyDieEvent.Register(OnEnemyDie);
             levelModel.onRhythmHit += OnRhythmHit;
         }
 
         private void OnDisable()
         {
+            EnemySpawnEvent.UnRegister(OnEnemySpawn);
             EnemyDieEvent.UnRegister(OnEnemyDie);
             levelModel.onRhythmHit -= OnRhythmHit;
         }
 
-        private void OnEnemyDie()
+        private void OnEnemySpawn(GameObject go)
+        {
+            if (go.TryGetComponent<Enemy>(out var enemy))
+                MarkEnemy(enemy);
+            EnemyCount++;
+        }
+        private void OnEnemyDie(GameObject go)
         {
             levelModel.DangerScore += DangerLevelUtils.GetEnemyKillAddition();
+            if (go.TryGetComponent<Enemy>(out var enemy))
+                enemyList.UnorderedRemove(enemy);
+            EnemyCount--;
         }
 
         private void OnRhythmHit()
@@ -83,8 +96,8 @@ namespace Shuile.Gameplay
             // Judge enemy first
             foreach (var enemy in enemyList)
                 enemy.Judge(version, false);
-            foreach (Enemy enemy in removeList)
-                RemoveImmediate(enemy);
+            //foreach (Enemy enemy in removeList)
+            //    RemoveImmediate(enemy);
             removeList.Clear();
 
             // Then is gadget
@@ -114,28 +127,11 @@ namespace Shuile.Gameplay
             else if (behaviourEntity is Enemy enemy)
                 enemyList.UnorderedRemove(enemy);
         }
-
-        [System.Obsolete("Use EnityFactory.SpawnEnemy instead")]
-        public Enemy SpawnEnemy(GameObject enemyPrefab, Vector3 pos)
+        public void RemoveImmediate(Enemy enemy)
         {
-            // if (LevelGrid.Instance.grid.IsOutOfBound(pos))
-            //     return null;
-
-            var enemyObject = Instantiate(enemyPrefab, pos, Quaternion.identity, enemyParent);
-            var enemy = enemyObject.GetComponent<Enemy>();
-            MarkEnemy(enemy);
-            return enemy;
+            enemyList.UnorderedRemove(enemy);
         }
-        public Gadget SpawnGadget(GameObject gadgetPrefab, float destroyTime, Vector3 pos, Vector3 rotation)
-        {
-            var gadgetObject = Instantiate(gadgetPrefab, pos, Quaternion.Euler(rotation));
-            var gadget = gadgetObject.GetComponent<Gadget>();
 
-            gadget.destroyTime = destroyTime;
-            MarkGadget(gadget);
-            return gadget;
-        }
-    
         public void MarkEnemy(Enemy enemy)
         {
             enemyList.Add(enemy);

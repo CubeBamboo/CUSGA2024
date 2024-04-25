@@ -30,7 +30,7 @@ namespace Shuile
             {
                 mCamera.transform.position = initPos;
             });
-            ActionCtrl.Instance.Delay(0.2f)
+            ActionCtrl.Delay(0.2f)
                 .OnComplete(() => isCameraShake = false)
                 .Start(mCamera.gameObject);
         }

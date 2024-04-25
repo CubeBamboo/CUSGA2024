@@ -41,7 +41,7 @@ namespace Shuile
                 playTimeText.text = $"PlayTime: {MusicRhythmManager.Instance.CurrentTime:0.000}";
                 dangerScoreText.text = $"DangerScore: {levelModel.DangerScore:0.000}";
                 dangerLevelText.text = $"DangerLevel: {levelModel.DangerLevel}";
-                enemyCountText.text = $"EnemyCount: {EntityManager.Instance.Enemies.Count}";
+                enemyCountText.text = $"EnemyCount: {EntityManager.Instance.EnemyCount}";
             };
         }
 

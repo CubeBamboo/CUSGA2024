@@ -9,7 +9,7 @@ using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Shuile.Gameplay.Entity.States
 {
-    public enum AttackStateType
+    /*public enum AttackStateType
     {
         PreAttack,
         Attack,
@@ -109,5 +109,5 @@ namespace Shuile.Gameplay.Entity.States
             }
             attackState = AttackStateType.Attack;
         }
-    }
+    }*/
 }

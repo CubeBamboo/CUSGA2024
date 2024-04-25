@@ -37,7 +37,7 @@ namespace Shuile
             // 监听血量变化
             character.OnHpChangedEvent += val =>
             {
-                this.Image.fillAmount = (float)val / character.Property.healthPoint;
+                this.Image.fillAmount = (float)val / character.Health;
             };
             // 跟随玩家
             character.gameObject.AddComponent<UpdateEventMono>().OnUpdate += () =>

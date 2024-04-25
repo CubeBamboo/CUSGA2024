@@ -3254,7 +3254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8238dfd048441742b0939ef4caee50a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoSetToTrigger: 1
+  autoDisable: 1
 --- !u!114 &1028150826022432126
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3521,7 +3521,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 2.012712, y: 0.6709043}

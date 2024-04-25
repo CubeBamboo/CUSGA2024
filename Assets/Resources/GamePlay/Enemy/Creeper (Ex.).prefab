@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7682511776118496296}
   - component: {fileID: -4031018267551204319}
   - component: {fileID: -8252572558612312455}
-  - component: {fileID: -2310423482885217500}
+  - component: {fileID: 8807684116662394676}
   m_Layer: 6
   m_Name: Creeper (Ex.)
   m_TagString: Untagged
@@ -94,6 +94,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   property: {fileID: 11400000, guid: c8937a635c923ad43a5465259637f62f, type: 2}
+  jumpVel: 10
+  xMaxSpeed: 5
+  checkPlayerRange: 5
+  attackRange: 1.5
 --- !u!50 &-8252572558612312455
 Rigidbody2D:
   serializedVersion: 4
@@ -121,7 +125,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &-2310423482885217500
+--- !u!114 &8807684116662394676
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,7 +134,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3418564270763865659}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c8e56d47aef2734cbaa506b2d496cf3, type: 3}
+  m_Script: {fileID: 11500000, guid: 64861b9b386381040b4aa95b3506e3c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8123984159501024645

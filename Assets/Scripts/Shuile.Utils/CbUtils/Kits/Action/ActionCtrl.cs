@@ -30,11 +30,15 @@ namespace CbUtils.ActionKit
             delayTween = DOTween.To(() => 0, x => { }, 1, delayDuration)
                 .OnComplete(HandleOnComplete);
             if(gameObject != null)
-                delayTween.SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+                SetLink(gameObject);
         }
         public void Start()
         {
             this.Start(null);
+        }
+        public void SetLink(GameObject gameObject)
+        {
+            delayTween.SetLink(gameObject, LinkBehaviour.KillOnDestroy);
         }
         public void Kill()
         {
@@ -98,7 +102,7 @@ namespace CbUtils.ActionKit
     /// </summary>
     public class ActionCtrl: CSharpLazySingletons<ActionCtrl>
     {
-        public DelayAction Delay(float durationInSeconds)
+        public static DelayAction Delay(float durationInSeconds)
         {
             var delay = new DelayAction
             {

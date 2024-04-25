@@ -33,7 +33,7 @@ namespace Shuile
             var unit = 2 * fadeOutDuration;
             var waitTime = !waitUtilFadeOut ?
                 duration : ((int)(duration / unit) + 1) * unit;
-            ActionCtrl.Instance.Delay(waitTime)
+            ActionCtrl.Delay(waitTime)
                 .OnComplete(HandleEnd)
                 .Start(gameObject);
         }

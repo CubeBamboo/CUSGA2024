@@ -10,7 +10,7 @@ namespace Shuile.Gameplay
             set { }
         }
 
-        public float MaxSpeed
+        public float XMaxSpeed
         {
             get => 0f;
             set { }
@@ -34,6 +34,13 @@ namespace Shuile.Gameplay
         {
             get => float.PositiveInfinity;
             set { }
+        }
+
+        public float Acceleration { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+        public void XMove(float dir)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

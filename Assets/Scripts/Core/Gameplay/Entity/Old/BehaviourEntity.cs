@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Shuile.Gameplay
 {
+    public enum DefaultEnemyState
+    {
+        Idle, Patrol, Chase, Attack, Dead
+    }
+
     public enum EntityStateType
     {
         Spawn,  // 出生

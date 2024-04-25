@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: PlayerProperty
   m_EditorClassIdentifier: 
   maxHealthPoint: 800
-  attackPoint: 5
+  attackPoint: 20

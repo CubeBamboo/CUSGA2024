@@ -2,6 +2,7 @@ using CbUtils;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
+using System.Linq;
 using UnityEngine;
 
 namespace Shuile.Gameplay
@@ -25,7 +26,7 @@ namespace Shuile.Gameplay
 
         private Player player;
         private NormalPlayerInput mPlayerInput;
-        private Rigidbody2D _rb;
+        private SmoothMoveCtrl _moveController;
 
         // [normal move]
         [SerializeField] private float acc = 0.4f;
@@ -40,7 +41,7 @@ namespace Shuile.Gameplay
         // [attack]
         [SerializeField] private float attackRadius = 2.8f;
 
-        private readonly PlayerModel playerModel = GameplayService.Interface.Get<PlayerModel>();
+        private PlayerModel playerModel;
 
         public EasyEvent OnTouchGround { get; } = new();
         public PlayerAttackCommand attackCommand { get; } = new();
@@ -51,14 +52,13 @@ namespace Shuile.Gameplay
             MusicRhythmManager.Instance.CheckBeatRhythm(
                 MusicRhythmManager.Instance.CurrentTime, out playerModel.currentHitOffset);
 
-        public Rigidbody2D Rb => _rb;
-
         private void Awake()
         {
-            _rb = GetComponent<Rigidbody2D>();
             player = GetComponent<Player>();
-
+            _moveController = GetComponent<SmoothMoveCtrl>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
+
+            ConfigureDependency();
             ConfigureInputEvent();
             InitFSM();
         }
@@ -70,15 +70,12 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            _rb.bodyType = RigidbodyType2D.Dynamic;
+            _moveController.IsFrozen = false;
         }
 
         private void FixedUpdate()
         {
             mFsm.FixedUpdate();
-
-            // [normal move update]
-            _rb.velocity = new Vector2(Mathf.MoveTowards(_rb.velocity.x, 0, deAcc), _rb.velocity.y);
         }
 
         /// <summary> update velocity </summary>
@@ -88,7 +85,8 @@ namespace Shuile.Gameplay
                 .Bind(new()
                 {
                     xInput = xInput,
-                    rb = _rb,
+                    moveController = _moveController,
+                    deAcc = deAcc,
                     acc = acc,
                     xMaxSpeed = xMaxSpeed
                 })
@@ -102,7 +100,7 @@ namespace Shuile.Gameplay
             jumpCommand
                 .Bind(new()
                 {
-                    rb = _rb,
+                    moveController = _moveController,
                     jumpVel = jumpVel
                 })
                 .Execute();
@@ -126,13 +124,18 @@ namespace Shuile.Gameplay
         private void CheckGround()
         {
             // easy way to fix groundcheck is true on jumping first frame, but it maybe lead to other bug
-            var groundCheck = Rb.velocity.y < 0 &&
-                  Physics2D.Raycast(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
-            if (groundCheck)
+            //var groundCheck = Rb.velocity.y < 0 &&
+            //      Physics2D.Raycast(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
+            if (_moveController.IsOnGround)
             {
                 mFsm.SwitchState(State.Normal);
                 OnTouchGround.Invoke();
             }
+        }
+
+        private void ConfigureDependency()
+        {
+            playerModel = GameplayService.Interface.Get<PlayerModel>();
         }
 
         private void ConfigureInputEvent()
@@ -154,14 +157,14 @@ namespace Shuile.Gameplay
             mFsm.NewEventState(State.Normal)
                 .OnEnter(() =>
                 {
-                    _rb.gravityScale = normalGravity;
+                    _moveController.Gravity = normalGravity;
                 });
             mFsm.NewEventState(State.JumpUp)
                 .OnFixedUpdate(() =>
                 {
                     CheckGround();
 
-                    if (_rb.velocity.y < 0)
+                    if (_moveController.Velocity.y < 0)
                     {
                         mFsm.SwitchState(State.Drop);
                     }
@@ -169,7 +172,7 @@ namespace Shuile.Gameplay
             mFsm.NewEventState(State.Drop)
                 .OnEnter(() =>
                 {
-                    _rb.gravityScale = dropGravity;
+                    _moveController.Gravity = dropGravity;
                 })
                 .OnFixedUpdate(() =>
                 {
@@ -189,40 +192,43 @@ namespace Shuile.Gameplay
     {
         public override void OnExecute()
         {
-            var hits = Physics2D.OverlapCircleAll(state.position, state.attackRadius, LayerMask.GetMask("Enemy")); // TODO: static you hua 
-            for (int i = 0; i < hits.Length; i++)
-            {
-                hits[i].GetComponent<IHurtable>().OnHurt(state.attackPoint);
-            }
+            var hits = Physics2D.OverlapCircleAll(state.position, state.attackRadius, LayerMask.GetMask("Enemy"));
+            var hurts = hits.Select(hit => hit.GetComponent<IHurtable>());
+            foreach (var hurt in hurts)
+                hurt.OnHurt(state.attackPoint);
         }
     }
 
     public struct PlayerJumpCommandData
     {
-        public Rigidbody2D rb;
+        public SmoothMoveCtrl moveController;
         public float jumpVel;
     }
     public class PlayerJumpCommand : BaseCommand<PlayerJumpCommandData>
     {
         public override void OnExecute()
         {
-            state.rb.velocity = new Vector2(state.rb.velocity.x, state.jumpVel);
+            state.moveController.JumpVelocity = state.jumpVel;
+            state.moveController.SimpleJump(1f);
         }
     }
 
     public struct PlayerMoveCommandData
     {
         public float xInput;
-        public Rigidbody2D rb;
         public float acc;
+        public float deAcc;
         public float xMaxSpeed;
+        public IMoveController moveController;
     }
     public class PlayerMoveCommand : BaseCommand<PlayerMoveCommandData>
     {
         public override void OnExecute()
         {
-            state.rb.velocity += new Vector2(state.xInput * state.acc, 0);
-            state.rb.velocity = new Vector2(Mathf.Clamp(state.rb.velocity.x, -state.xMaxSpeed, state.xMaxSpeed), state.rb.velocity.y);
+            state.moveController.Acceleration = state.acc;
+            state.moveController.Deceleration = state.deAcc;
+            state.moveController.XMaxSpeed = state.xMaxSpeed;
+            state.moveController.XMove(state.xInput);
         }
     }
 }

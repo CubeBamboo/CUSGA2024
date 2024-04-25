@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Entity.States
 {
-    public class EnemyIdleState : EntityState
+    /*public class EnemyIdleState : EntityState
     {
         private int moveSleep;
         private Player player;
@@ -51,5 +51,5 @@ namespace Shuile.Gameplay.Entity.States
             player = GameplayService.Interface.Get<Player>();
             routeFinder = GameplayService.Interface.Get<IRouteFinder>();
         }
-    }
+    }*/
 }
