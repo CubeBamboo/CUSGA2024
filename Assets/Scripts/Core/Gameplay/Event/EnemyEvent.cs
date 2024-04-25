@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Event
 {
-    public class EnemyDieEvent : GlobalEvent<EnemyDieEvent>
+    public class EnemyDieEvent : GlobalEvent<EnemyDieEvent, GameObject>
     {
     }
 

@@ -17,7 +17,7 @@ namespace Shuile.Utils
 
             foreach (var coll in colliders)
             {
-                if(!autoDestroyCollider) coll.Destroy();
+                if(autoDestroyCollider) coll.Destroy();
             }
         }
 

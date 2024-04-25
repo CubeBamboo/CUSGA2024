@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Break_EnemyData
   m_EditorClassIdentifier: 
   enemies:
-  - enemyList: 000000000000000000000000
-  - enemyList: 0000000001000000000000000200000000000000
+  - enemyList: 0000000000000000
+  - enemyList: 0000000001000000
   - enemyList: 0000000002000000010000000100000000000000

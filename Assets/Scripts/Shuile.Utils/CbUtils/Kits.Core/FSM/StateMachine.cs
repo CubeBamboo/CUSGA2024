@@ -1,4 +1,6 @@
+using CbUtils.Extension;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CbUtils
 {
@@ -15,7 +17,7 @@ namespace CbUtils
         // judge whether to change state,
         // for example you want to switch to A State only when current state is B State
         bool Condition();
-
+        void Custom(); // simple
         // use it anywhere you want, maybe can use string for label in the future
         void Custom(string label);
     }
@@ -96,7 +98,15 @@ namespace CbUtils
         public void FixedUpdate() => _currentState.FixedUpdate();
         public void Exit() => _currentState.Exit();
         public void OnGUI() => _currentState.OnGUI();
+        public void Custom() => _currentState.Custom();
         public void Custom(string label = "") => _currentState.Custom(label);
+
+        // TODO: extension methods
+        public string StatesDataToString()
+            => _states.ToArray()
+                      .Select(val => val.Key)
+                      .ToArray()
+                      .ArrayToString();
     }
 
     public abstract class BaseState<TState, TTarget> : IState
@@ -120,6 +130,8 @@ namespace CbUtils
         public virtual void FixedUpdate() { }
         public virtual void Update() { }
         public virtual void OnGUI() { }
+        public virtual void Custom() { }
+
         /// <summary>
         /// use <seealso cref="AddCustom(string, System.Action)"/> in this method"/>
         /// </summary>
@@ -148,6 +160,7 @@ namespace CbUtils
         private System.Action onUpdate;
         private System.Action onGUI;
         private System.Func<bool> onCondition;
+        private System.Action onCustom;
         private Dictionary<string, System.Action> onCustomDict = new();
 
         public EventState OnEnter(System.Action action)
@@ -180,7 +193,12 @@ namespace CbUtils
             onCondition = action;
             return this;
         }
-        public EventState OnCustom(System.Action action, string label = "")
+        public EventState OnCustom(System.Action action)
+        {
+            onCustom = action;
+            return this;
+        }
+        public EventState OnCustom(System.Action action, string label)
         {
             if(onCustomDict.ContainsKey(label)) onCustomDict[label] = action;
             else onCustomDict.Add(label, action);
@@ -194,6 +212,7 @@ namespace CbUtils
         public void Update() => onUpdate?.Invoke();
         public void OnGUI() => onGUI?.Invoke();
         public bool Condition() => onCondition == null || onCondition.Invoke();
+        public void Custom() => onCustom?.Invoke();
         public void Custom(string label = "")
         {
             onCustomDict.TryGetValue(label, out var action);

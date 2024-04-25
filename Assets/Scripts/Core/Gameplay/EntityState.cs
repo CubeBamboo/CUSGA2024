@@ -4,9 +4,9 @@ namespace Shuile.Gameplay
 {
     public abstract class EntityState : IState
     {
-        protected BehaviourEntity entity;
+        protected object entity;
 
-        public EntityState(BehaviourEntity entity)
+        public EntityState(object entity)
         {
             this.entity = entity;
         }
@@ -36,5 +36,7 @@ namespace Shuile.Gameplay
         public virtual void Update()
         {
         }
+
+        public void Custom() => Judge();
     }
 }

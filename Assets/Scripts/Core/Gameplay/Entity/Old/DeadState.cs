@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Entity.States
 {
-    public class DeadState : EntityState
+    /*public class DeadState : EntityState
     {
         public DeadState(BehaviourEntity entity) : base(entity)
         {
@@ -19,5 +19,5 @@ namespace Shuile.Gameplay.Entity.States
             // e.g 加分
             EntityManager.Instance.Remove(entity);
         }
-    }
+    }*/
 }
