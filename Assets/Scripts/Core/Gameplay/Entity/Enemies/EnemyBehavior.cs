@@ -91,10 +91,10 @@ namespace Shuile.Gameplay.Entity
         }
 
         public float FaceDir => faceDir;
-        public bool CloseEnoughToTarget(float thresold)
-            => (toChase.transform.position - moveCtrl.Position).sqrMagnitude < thresold * thresold;
-        public bool XCloseEnoughToTarget(float thresold)
-            => Mathf.Abs(toChase.transform.position.x - moveCtrl.Position.x) < thresold;
+        public bool CloseEnoughToTarget(float threshold)
+            => (toChase.transform.position - moveCtrl.Position).sqrMagnitude < threshold * threshold;
+        public bool XCloseEnoughToTarget(float threshold)
+            => Mathf.Abs(toChase.transform.position.x - moveCtrl.Position.x) < threshold;
     }
 
     public static class EnemyBehaviorAction

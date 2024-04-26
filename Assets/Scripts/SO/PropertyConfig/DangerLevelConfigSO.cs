@@ -14,10 +14,10 @@ namespace Shuile
         public static Range[] levelRanges = new Range[5]
         {
             new() {min = 0f, max = 50f},
-            new() {min = 51f, max = 150f},
-            new() {min = 151f, max = 500f},
-            new() {min = 501f, max = 1000f},
-            new() {min = 1001f, max = 3000f}
+            new() {min = 50f, max = 150f},
+            new() {min = 150f, max = 500f},
+            new() {min = 500f, max = 1000f},
+            new() {min = 1000f, max = 3000f}
         };
         public const float PlayerAttackAddition = 10;
         public const float EnemyDieBaseAddition = 50;
@@ -49,7 +49,7 @@ namespace Shuile
         {
             return DangerLevelConfigClass.EnemyDieBaseAddition;
         }
-        public static int GetEnemySpawnCount(int dangerLevel)
+        public static int GetEnemySpawnThreshold(int dangerLevel)
             => (int)((dangerLevel + 1) * 1.5f);
     }
 }
