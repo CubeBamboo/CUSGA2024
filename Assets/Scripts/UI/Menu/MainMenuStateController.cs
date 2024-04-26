@@ -20,14 +20,16 @@ namespace Shuile
 
         private void Update()
         {
-            if (keyboard.escapeKey.wasPressedThisFrame)
+            if (stateMachine.CurrentState == MainMenuUIStateMachine.State.Menu &&
+                keyboard.escapeKey.wasPressedThisFrame)
             {
                 stateMachine.SwitchState(MainMenuUIStateMachine.State.Title);
             }
 
-            if (!keyboard.escapeKey.wasPressedThisFrame && (mouse.leftButton.wasPressedThisFrame || keyboard.anyKey.wasPressedThisFrame))
+            if (stateMachine.CurrentState == MainMenuUIStateMachine.State.Title &&
+                !keyboard.escapeKey.wasPressedThisFrame && (mouse.leftButton.wasPressedThisFrame || keyboard.anyKey.wasPressedThisFrame))
             {
-                stateMachine.SwitchState(MainMenuUIStateMachine.State.Select);
+                stateMachine.SwitchState(MainMenuUIStateMachine.State.Menu);
             }
         }
 

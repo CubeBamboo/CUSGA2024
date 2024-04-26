@@ -12,14 +12,23 @@ namespace Shuile
         [SerializeField] private RectTransform title;
         [SerializeField] private TextMeshProUGUI tips;
 
-        [Header("Select")]
-        [SerializeField] private RectTransform selectLevelParent;
-        [SerializeField] private RectTransform exitButton;
+        private readonly Vector2 titleGameStartPos = new Vector2(0f, 640f);
+        private readonly Vector2 titleInTitlePos = new Vector2(0f, 16f);
+        private readonly Vector2 titleInMenuPos = new Vector2(0f, 170f);
 
+        [Header("Menu")]
+        [SerializeField] private RectTransform menuPanel;
+
+        private readonly float MenuInitPosY = -740f;
+        private readonly float MenuEnterPosY = -218f;
+
+        [Header("Select")]
+        [SerializeField] private RectTransform selectPanel;
 
         public enum State
         {
             Title,
+            Menu,
             Select
         }
 
@@ -32,11 +41,14 @@ namespace Shuile
 
         private void InitUIState()
         {
-            title.anchoredPosition3D = new Vector3(0, 1000, 0);
             tips.alpha = 0;
+            title.anchoredPosition = titleGameStartPos;
 
-            selectLevelParent.anchoredPosition3D = new Vector3(0, -800, 0);
-            exitButton.anchoredPosition3D = new Vector3(773, -1000, 0);
+            menuPanel.gameObject.SetActive(true);
+            menuPanel.anchoredPosition3D = menuPanel.anchoredPosition3D.With(y: MenuInitPosY);
+
+            selectPanel.gameObject.SetActive(true);
+            selectPanel.anchoredPosition3D = selectPanel.anchoredPosition3D.With(y: MenuInitPosY);
         }
 
         private void InitFSM()
@@ -45,7 +57,7 @@ namespace Shuile
             fsm.NewEventState(State.Title)
                .OnEnter(() =>
                {
-                   title.DOAnchorPos3DY(16, 0.6f);
+                   title.DOAnchorPos(titleInTitlePos, 0.3f).SetEase(Ease.InOutSine);
                    tips.color = tips.color.With(a: 0);
                    tips.DOFade(0.4f, 0.8f)
                        .SetLoops(-1, LoopType.Yoyo)
@@ -53,20 +65,27 @@ namespace Shuile
                })
                .OnExit(() =>
                {
-                   title.DOAnchorPos3DY(1000, 0.6f);
+                   title.DOAnchorPos(titleInMenuPos, 0.3f).SetEase(Ease.InOutSine);
                    tips.DOKill();
                    tips.DOFade(0, 0.3f);
+               });
+            fsm.NewEventState(State.Menu)
+               .OnEnter(() =>
+               {
+                   menuPanel.DOAnchorPos3DY(MenuEnterPosY, 0.3f).SetEase(Ease.InOutSine);
+               })
+               .OnExit(() =>
+               {
+                   menuPanel.DOAnchorPos3DY(MenuInitPosY, 0.3f).SetEase(Ease.InOutSine);
                });
             fsm.NewEventState(State.Select)
                .OnEnter(() =>
                {
-                   selectLevelParent.DOAnchorPos3DY(0, 0.6f);
-                   exitButton.DOAnchorPos3DY(-400, 0.6f);
+                   selectPanel.DOAnchorPos3DY(MenuEnterPosY, 0.3f).SetEase(Ease.InOutSine);
                })
                .OnExit(() =>
                {
-                   selectLevelParent.DOAnchorPos3DY(-800, 0.6f);
-                   exitButton.DOAnchorPos3DY(-1000, 0.6f);
+                   selectPanel.DOAnchorPos3DY(MenuInitPosY, 0.3f).SetEase(Ease.InOutSine);
                });
 
             fsm.StartState(State.Title);
@@ -76,5 +95,7 @@ namespace Shuile
         {
             fsm.SwitchState(state);
         }
+
+        public State CurrentState => fsm.CurrentStateId;
     }
 }
