@@ -32,7 +32,7 @@ namespace Shuile
         private void OnRhythmHit()
         {
             var dangerLevel = levelModel.DangerLevel;
-            var currentEnemyCountIsTooLow = EnemyCount <= DangerLevelUtils.GetEnemySpawnThresold(dangerLevel);
+            var currentEnemyCountIsTooLow = EnemyCount <= DangerLevelUtils.GetEnemySpawnThreshold(dangerLevel);
             //var currentEnemyCountIsTooLow = EnemyCount <= 0;
             if (currentEnemyCountIsTooLow)
             {

@@ -49,7 +49,7 @@ namespace Shuile
         {
             return DangerLevelConfigClass.EnemyDieBaseAddition;
         }
-        public static int GetEnemySpawnThresold(int dangerLevel)
+        public static int GetEnemySpawnThreshold(int dangerLevel)
             => (int)((dangerLevel + 1) * 1.5f);
     }
 }
