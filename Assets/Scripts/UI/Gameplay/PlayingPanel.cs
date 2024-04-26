@@ -3,6 +3,7 @@ using TMPro;
 
 using Shuile.Gameplay;
 using Shuile.Framework;
+using Shuile.Gameplay.Event;
 
 
 namespace Shuile.UI
@@ -19,10 +20,13 @@ namespace Shuile.UI
 
         private void Start()
         {
-            var player = GameplayService.Interface.Get<Player>();
-            UpdateHpText(int.MinValue, player.CurrentHp.Value);
-            player.CurrentHp.Register(UpdateHpText)
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
+            LevelLoadEndEvent.Register(() =>
+            {
+                var player = GameplayService.Interface.Get<Player>();
+                UpdateHpText(int.MinValue, player.CurrentHp.Value);
+                player.CurrentHp.Register(UpdateHpText)
+                    .UnRegisterWhenGameObjectDestroyed(gameObject);
+            });
         }
 
         private void UpdateHpText(int oldHp, int newHp)

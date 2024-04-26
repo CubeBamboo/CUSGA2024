@@ -1,6 +1,7 @@
 using CbUtils;
 
 using Cysharp.Threading.Tasks;
+using Shuile.Gameplay.Event;
 using UnityEngine.SceneManagement;
 
 namespace Shuile
@@ -15,16 +16,19 @@ namespace Shuile
             defaultLoadingViewer = GlobalTransitionViewer.Instance;
         }
 
-        private async UniTask InternalLoadScene(string sceneName)
+        private async UniTask InternalLoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
-            await SceneManager.LoadSceneAsync(sceneName);
+            await SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
         }
 
-        private UniTask InternalLoadLevel(string sceneName)
-            => InternalLoadScene(sceneName);
-            //=> InternalLoadScene("Level0Test");
-
+        private async UniTask InternalLoadLevel(string sceneName)
+        {
+            await InternalLoadScene("LevelDependency", LoadSceneMode.Single);
+            await InternalLoadScene(sceneName, LoadSceneMode.Additive);
+            LevelLoadEndEvent.Trigger();
+            LevelLoadEndEvent.Clear();
+        }
 
         public void ToLevelScene(string sceneName)
         {
