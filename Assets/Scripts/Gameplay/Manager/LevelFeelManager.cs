@@ -14,6 +14,7 @@ namespace Shuile
     {
         private Camera mCamera;
         private bool isCameraShake;
+        private LevelResources levelResources => LevelResources.Instance;
 
         protected override void OnAwake()
         {
@@ -34,5 +35,9 @@ namespace Shuile
                 .OnComplete(() => isCameraShake = false)
                 .Start(mCamera.gameObject);
         }
+
+        /// <param name="name"> see in LevelResources.particles </param>
+        public void PlayParticle(string name, Vector3 position, Vector3 direction)
+            => LevelFeelFactory.CreateParticle(name, position, direction);
     }
 }

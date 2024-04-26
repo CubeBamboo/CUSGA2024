@@ -9,6 +9,13 @@ namespace Shuile
         public float duration;
     }
 
+    [System.Serializable]
+    public struct PrefabData
+    {
+        public string name;
+        public GameObject prefab;
+    }
+
     [CreateAssetMenu(fileName = "New PrefabConfig", menuName = "Config/Prefab Config")]
     public class PrefabConfigSO : ScriptableObject
     {
@@ -25,5 +32,8 @@ namespace Shuile
 
         [Header("Effect")]
         public SpawnEffect enemySpawnEffect;
+
+        [Header("Particles")]
+        public PrefabData[] particles;
     }
 }

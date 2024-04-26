@@ -20,3 +20,6 @@ MonoBehaviour:
   enemySpawnEffect:
     effect: {fileID: 8667138374800062963, guid: 46ac3f50a82793b41af8ad1ff3a828de, type: 3}
     duration: 3
+  particles:
+  - name: SwordSlash
+    prefab: {fileID: 643784060084013806, guid: fda336efd6d72f14a868120b42872c4a, type: 3}

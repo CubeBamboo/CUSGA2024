@@ -91,6 +91,7 @@ namespace Shuile.Gameplay
                     xMaxSpeed = xMaxSpeed
                 })
                 .Execute();
+            playerModel.faceDir = xInput;
         }
 
         public void SingleJump()

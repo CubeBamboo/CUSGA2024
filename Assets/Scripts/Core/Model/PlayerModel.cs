@@ -6,5 +6,8 @@ namespace Shuile
     public class PlayerModel : IModel
     {
         public float currentHitOffset;
+
+        public float faceDir;
+
     }
 }
