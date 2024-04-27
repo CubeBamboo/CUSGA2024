@@ -144,6 +144,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playOnAwake: 1
-  inTime: 2
-  attackWaitTime: 0.8
+  attackStayTime: 0.8
   useRhythmTime: 1

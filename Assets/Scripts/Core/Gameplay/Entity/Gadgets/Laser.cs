@@ -11,16 +11,15 @@ namespace Shuile
     // attach to laser GameObject
     public class Laser : MonoBehaviour, IRhythmable
     {
-        private static float inTime = 2f;
-
         [SerializeField] private bool playOnAwake = true;
         [SerializeField] private float attackStayTime = 0.8f;
 
         [Tooltip("time calculate will based on MusicRhythmManager.cs if is true")]
         [SerializeField] private bool useRhythmTime = true;
 
-        public static float InTime => inTime;
+        public static readonly float InTime = 2f;
 
+        float usingInTime;
         float targetScaleX;
         SpriteRenderer mRenderer;
 
@@ -54,7 +53,7 @@ namespace Shuile
         {
             FadeInBehave();
 
-            await UniTask.Delay(System.TimeSpan.FromSeconds(inTime),
+            await UniTask.Delay(System.TimeSpan.FromSeconds(usingInTime),
                 cancellationToken: gameObject.GetCancellationTokenOnDestroy());
 
             await AttackBehave();
@@ -71,7 +70,7 @@ namespace Shuile
             mRenderer.DOFade(0.2f, 0.8f);
 
             transform.localScale = transform.localScale.With(x: targetScaleX);
-            transform.DOScaleX(targetScaleX * 0.1f, inTime);
+            transform.DOScaleX(targetScaleX * 0.1f, usingInTime);
         }
 
         private async UniTask AttackBehave()
@@ -102,9 +101,11 @@ namespace Shuile
 
         private void InitParameters()
         {
+            usingInTime = InTime;
+
             if (useRhythmTime)
             {
-                inTime = this.GetRhythmTime(inTime);
+                usingInTime = this.GetRhythmTime(InTime);
                 attackStayTime = this.GetRhythmTime(attackStayTime);
             }
         }
