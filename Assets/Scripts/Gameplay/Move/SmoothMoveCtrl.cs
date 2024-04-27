@@ -30,8 +30,9 @@ namespace Shuile.Gameplay
         /// <summary> move next frame </summary>
         public void XMove(float dir)
         {
-            _rb.velocity += new Vector2(dir * xAcc, 0);
-            _rb.velocity = new Vector2(Mathf.Clamp(_rb.velocity.x, -xMaxSpeed, xMaxSpeed), _rb.velocity.y);
+            // only accelerate when not reach max speed
+            if(Mathf.Abs(_rb.velocity.x) < xMaxSpeed)
+                _rb.velocity += new Vector2(dir * xAcc, 0);
         }
 
         public void SimpleJump(float jumpScale)

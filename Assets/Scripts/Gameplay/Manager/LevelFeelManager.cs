@@ -1,5 +1,6 @@
 using CbUtils;
 using CbUtils.ActionKit;
+using CbUtils.Extension;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace Shuile
         }
 
         /// <param name="name"> see in LevelResources.particles </param>
-        public void PlayParticle(string name, Vector3 position, Vector3 direction)
-            => LevelFeelFactory.CreateParticle(name, position, direction);
+        public void PlayParticle(string name, Vector3 position, Vector3 direction, Transform parent = null)
+            => LevelFeelFactory.CreateParticle(name, position, direction).SetParent(parent);
     }
 }

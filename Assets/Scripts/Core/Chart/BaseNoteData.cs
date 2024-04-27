@@ -7,12 +7,12 @@ using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
 {
-    public class BaseNoteData
+    public class BaseNoteData : IRhythmable
     {
         public float targetTime;
         public virtual void Process() { }
         public virtual float ToPlayTime()
-            => targetTime * GameplayService.Interface.LevelModel.BpmIntervalInSeconds;
+            => this.GetRhythmTime(targetTime);
 
         public static BaseNoteData Create(float time)
             => new() { targetTime = time };
@@ -27,24 +27,12 @@ namespace Shuile.Rhythm.Runtime
     {
         public override void Process()
         {
-            PrefabConfigSO prefabConfig = LevelResources.Instance.globalPrefabs;
-
-            var go = prefabConfig.laser.Instantiate(); // spawn
-            go.SetPosition(LevelZoneManager.Instance.RandomValidPosition()); // init position
-            try
-            {
-                NoteProductController.Laser.Process(go).Forget(); // laser behavior
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning(e);
-            }
+            EntityFactory.Instance.SpawnLaser()
+                .SetPosition(LevelZoneManager.Instance.RandomValidPosition());
         }
 
         public override float ToPlayTime()
-        {
-            return (targetTime - 2) * GameplayService.Interface.LevelModel.BpmIntervalInSeconds;
-        }
+            => this.GetRhythmTime(targetTime - Laser.InTime);
     }
 
     public class SpawnSingleEnemyNoteData : BaseNoteData

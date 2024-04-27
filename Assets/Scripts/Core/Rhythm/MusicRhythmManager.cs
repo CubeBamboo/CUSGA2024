@@ -7,6 +7,7 @@ using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Shuile.Framework;
 using Shuile.Persistent;
+using Shuile.Gameplay;
 
 namespace Shuile.Rhythm.Runtime
 {
@@ -16,6 +17,8 @@ namespace Shuile.Rhythm.Runtime
         private ChartData currentChart;
         private PlayerSettingsConfigSO playerConfig;
         private bool isPlaying = false;
+
+        public LevelModel levelModel => GameplayService.Interface.LevelModel;
 
         private PreciseMusicPlayer preciseMusicPlayer;
 

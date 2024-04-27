@@ -27,7 +27,7 @@ namespace Shuile.Rhythm.Runtime
         private void Start()
         {
             chartPlayer = new ChartPlayer(chart,
-                note => (note.targetTime * levelModel.BpmIntervalInSeconds - notePreShowInterval));
+                note => MusicRhythmManager.Instance.GetRhythmTime(note.targetTime) - notePreShowInterval);
             chartPlayer.OnNotePlay += note => noteContainer.AddNote(note.targetTime);
         }
 

@@ -54,5 +54,16 @@ namespace Shuile
             EntityManager.Instance.MarkGadget(gadget);
             return gadget;
         }
+
+        #region Mechanism
+
+        public GameObject SpawnLaser()
+        {
+            PrefabConfigSO prefabConfig = LevelResources.Instance.globalPrefabs;
+            var go = prefabConfig.laser.Instantiate(); // spawn
+            return go;
+        }
+
+        #endregion
     }
 }

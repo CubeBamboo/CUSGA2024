@@ -37,17 +37,4 @@ namespace Shuile.Rhythm.Runtime
         LaserSpawn,
         MusicOffsetTestLaser,
     }
-
-    [System.Obsolete("use Base Note Data instead")]
-    public static class NoteEventUtils
-    {
-        public static float DefaultPlayTimeConvert(NoteData noteData)
-        {
-            float preshowTime = 0f;
-            float preshowRealTime = 0f;
-            //if (noteData.eventType == NoteEventType.LaserSpawn) preshowTime = 2;
-            float res = (noteData.targetTime - preshowTime) * GameplayService.Interface.LevelModel.BpmIntervalInSeconds - preshowRealTime;
-            return res;
-        }
-    }
 }

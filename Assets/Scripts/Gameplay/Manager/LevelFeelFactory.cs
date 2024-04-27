@@ -6,10 +6,10 @@ namespace Shuile
 {
     public class LevelFeelFactory
     {
-        public static void CreateParticle(string name, Vector3 position, Vector3 direction)
+        public static GameObject CreateParticle(string name, Vector3 position, Vector3 direction)
         {
             var particle = LevelResources.Instance.GetParticle(name);
-            if (particle == null) return;
+            if (particle == null) return null;
 
             var instance = Object.Instantiate(particle, position, Quaternion.identity);
             instance.transform.SetParent(LevelFeelManager.Instance.transform);
@@ -26,6 +26,8 @@ namespace Shuile
                 default:
                     break;
             }
+
+            return instance;
         }
     }
 }

@@ -18,15 +18,17 @@ namespace Shuile.UI
         private void OnDestroy()
             => this.UnRegisterUI<PlayingPanel>();
 
-        private void Start()
+        private void OnEnable()
+            => LevelLoadEndEvent.Register(OnStart);
+        private void OnDisable()
+            => LevelLoadEndEvent.UnRegister(OnStart);
+
+        private void OnStart()
         {
-            LevelLoadEndEvent.Register(() =>
-            {
-                var player = GameplayService.Interface.Get<Player>();
-                UpdateHpText(int.MinValue, player.CurrentHp.Value);
-                player.CurrentHp.Register(UpdateHpText)
-                    .UnRegisterWhenGameObjectDestroyed(gameObject);
-            });
+            var player = GameplayService.Interface.Get<Player>();
+            UpdateHpText(int.MinValue, player.CurrentHp.Value);
+            player.CurrentHp.Register(UpdateHpText)
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
         private void UpdateHpText(int oldHp, int newHp)

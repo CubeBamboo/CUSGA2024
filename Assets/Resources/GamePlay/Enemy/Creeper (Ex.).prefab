@@ -93,10 +93,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b6be874a906e1f40a7d29c8d4ec12b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  property: {fileID: 11400000, guid: c8937a635c923ad43a5465259637f62f, type: 2}
+  MaxHealth: 1
   jumpVel: 10
   xMaxSpeed: 5
   checkPlayerRange: 5
+  checkAttackRange: 1.2
   attackRange: 1.5
 --- !u!50 &-8252572558612312455
 Rigidbody2D:

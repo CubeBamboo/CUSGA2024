@@ -80,7 +80,8 @@ namespace Shuile
         private void TriggerAttack()
         {
             _animator.SetTrigger("Attack");
-            LevelFeelManager.Instance.PlayParticle("SwordSlash", _target.transform.position, new Vector2(_playerModel.faceDir, 0));
+            LevelFeelManager.Instance.PlayParticle(
+                "SwordSlash", _target.transform.position, new Vector2(_playerModel.faceDir, 0), _target.transform);
         }
     }
 }

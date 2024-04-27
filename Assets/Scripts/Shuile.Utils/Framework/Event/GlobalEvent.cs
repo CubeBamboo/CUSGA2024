@@ -2,23 +2,6 @@ using CbUtils;
 
 namespace Shuile.Framework
 {
-    /*public class GlobalEventCtrl
-    {
-        public static void Register<T>(System.Action<T> action)
-        {
-            //GlobalEventSystem.Instance.Register(action);
-        }
-        public static void UnRegister<T>(System.Action<T> action)
-        {
-            //GlobalEventSystem.Instance.UnRegister(action);
-        }
-        public static void Trigger<T>(T arg)
-        {
-            //GlobalEventSystem.Instance.Trigger(arg);
-            
-        }
-    }*/
-
     public abstract class GlobalEvent<TTarget> where TTarget : GlobalEvent<TTarget>
     {
         static System.Action _onAction;

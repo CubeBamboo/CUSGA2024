@@ -1,6 +1,7 @@
 using CbUtils;
 
 using Cysharp.Threading.Tasks;
+using Shuile.Framework;
 using Shuile.Gameplay.Event;
 using UnityEngine.SceneManagement;
 
@@ -26,6 +27,7 @@ namespace Shuile
         {
             await InternalLoadScene("LevelDependency", LoadSceneMode.Single);
             await InternalLoadScene(sceneName, LoadSceneMode.Additive);
+            //GlobalEventUtils.SafeTrigger(() => LevelLoadEndEvent.Trigger());
             LevelLoadEndEvent.Trigger();
             LevelLoadEndEvent.Clear();
         }

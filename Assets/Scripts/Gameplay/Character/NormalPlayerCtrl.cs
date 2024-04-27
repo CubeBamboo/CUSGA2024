@@ -1,4 +1,5 @@
 using CbUtils;
+using CbUtils.ActionKit;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
@@ -52,11 +53,24 @@ namespace Shuile.Gameplay
             MusicRhythmManager.Instance.CheckBeatRhythm(
                 MusicRhythmManager.Instance.CurrentTime, out playerModel.currentHitOffset);
 
+        private SimpleTimer attackSpeedDownTimer = new();
+
+        public bool AttackSpeedDown
+        {
+            set
+            {
+                _moveController.XMaxSpeed = value ? xMaxSpeed * 0.3f : xMaxSpeed;
+                if (value && Mathf.Abs(_moveController.Velocity.x) > _moveController.XMaxSpeed)
+                    _moveController.Velocity = _moveController.Velocity.With(x: Mathf.Sign(_moveController.Velocity.x) * _moveController.XMaxSpeed);
+            }
+        }
+
         private void Awake()
         {
             player = GetComponent<Player>();
             _moveController = GetComponent<SmoothMoveCtrl>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
+            attackSpeedDownTimer.Add(() => AttackSpeedDown = false);
 
             ConfigureDependency();
             ConfigureInputEvent();
@@ -71,11 +85,16 @@ namespace Shuile.Gameplay
         private void Start()
         {
             _moveController.IsFrozen = false;
+            _moveController.Acceleration = acc;
+            _moveController.Deceleration = deAcc;
+            _moveController.XMaxSpeed = xMaxSpeed;
         }
 
         private void FixedUpdate()
         {
             mFsm.FixedUpdate();
+            attackSpeedDownTimer.Tick(Time.fixedDeltaTime);
+
         }
 
         /// <summary> update velocity </summary>
@@ -86,9 +105,6 @@ namespace Shuile.Gameplay
                 {
                     xInput = xInput,
                     moveController = _moveController,
-                    deAcc = deAcc,
-                    acc = acc,
-                    xMaxSpeed = xMaxSpeed
                 })
                 .Execute();
             playerModel.faceDir = xInput;
@@ -120,6 +136,10 @@ namespace Shuile.Gameplay
                     attackPoint = player.Property.attackPoint
                 })
                 .Execute();
+
+            AttackSpeedDown = true;
+            attackSpeedDownTimer.RestartTick();
+            attackSpeedDownTimer.Duration = 0.2f;
         }
 
         private void CheckGround()
@@ -217,18 +237,12 @@ namespace Shuile.Gameplay
     public struct PlayerMoveCommandData
     {
         public float xInput;
-        public float acc;
-        public float deAcc;
-        public float xMaxSpeed;
         public IMoveController moveController;
     }
     public class PlayerMoveCommand : BaseCommand<PlayerMoveCommandData>
     {
         public override void OnExecute()
         {
-            state.moveController.Acceleration = state.acc;
-            state.moveController.Deceleration = state.deAcc;
-            state.moveController.XMaxSpeed = state.xMaxSpeed;
             state.moveController.XMove(state.xInput);
         }
     }

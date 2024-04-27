@@ -6,6 +6,16 @@ namespace Shuile.Rhythm.Runtime
     public static class MusicRhythmManagerExt
     {
         /// <summary>
+        /// beatTime = barTime + timeInSingleBar, {barTime}th beat and {timeInSingleBar} position in this bar,
+        /// {timeInSingleBar} should be in [0, 1)
+        /// </summary>
+        /// <returns> time in seconds </returns>
+        public static float GetRhythmTime(this MusicRhythmManager rhythmManager, float beatTime)
+        {
+            return rhythmManager.levelModel.BpmIntervalInSeconds * beatTime;
+        }
+
+        /// <summary>
         /// check if input in current time is in beat (quarter step).
         /// </summary>
         /// <param name="hitOffset">return float.NaN if not hit on</param>

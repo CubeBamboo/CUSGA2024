@@ -10,9 +10,10 @@ using System.Runtime.CompilerServices;
 namespace Shuile.NoteProduct
 {
     // 起因：方竹懒得写monobehavior
+    [System.Obsolete("use monobehavior")]
     public static class NoteProductController
     {
-        public static class Laser
+        /*public static class Laser
         {
             private const float attackWaitTime = 0.8f;
 
@@ -50,6 +51,6 @@ namespace Shuile.NoteProduct
                     target.Destroy()
                 );
             }
-        }
+        }*/
     }
 }
