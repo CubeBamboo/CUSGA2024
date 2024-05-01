@@ -1,5 +1,6 @@
 using UnityEngine;
 using CbUtils.Collections;
+using CbUtils.Event;
 
 namespace CbUtils.Extension
 {
@@ -94,5 +95,21 @@ namespace CbUtils.Extension
 
         #endregion
 
+    }
+
+    public static class GameObjectExtension
+    {
+        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+        {
+            var component = gameObject.GetComponent<T>();
+            if (component == null)  // cannot use ??=
+                component = gameObject.AddComponent<T>();
+            return component;
+        }
+
+        public static void SetOnUpdate(this GameObject gameObject, System.Action action)
+        {
+            gameObject.GetOrAddComponent<UpdateEventMono>().OnUpdate += action;
+        }
     }
 }

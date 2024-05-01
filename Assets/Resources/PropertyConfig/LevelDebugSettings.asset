@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39b05e6ebc9df8e439ef76349726b90e, type: 3}
   m_Name: LevelDebugSettings
   m_EditorClassIdentifier: 
-  needHitWithRhythm: 0
+  needHitWithRhythm: 1

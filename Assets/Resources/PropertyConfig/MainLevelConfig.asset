@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e444df6dae6dc94b84d9ce27a71d4a5, type: 3}
   m_Name: MainLevelConfig
   m_EditorClassIdentifier: 
-  missTolerance: 881.9
+  missTolerance: 260.4
+  playerNotePreShowTime: 2

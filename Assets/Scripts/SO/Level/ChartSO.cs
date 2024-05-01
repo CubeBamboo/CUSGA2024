@@ -10,6 +10,6 @@ namespace Shuile.Rhythm
     {
         public TextAsset chartFile;
         public AudioClip clip;
-        public float musicLength;
+        [Tooltip("in seconds")] public float musicLength;
     }
 }

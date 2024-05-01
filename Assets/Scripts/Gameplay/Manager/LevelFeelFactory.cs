@@ -1,6 +1,4 @@
 using UnityEngine;
-using static Codice.Client.Commands.WkTree.WorkspaceTreeNode;
-using static UnityEngine.GraphicsBuffer;
 
 namespace Shuile
 {
