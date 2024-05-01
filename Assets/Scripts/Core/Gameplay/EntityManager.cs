@@ -1,6 +1,7 @@
 using CbUtils;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Event;
+using Shuile.Rhythm.Runtime;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -50,28 +51,20 @@ namespace Shuile.Gameplay
             propParent = new GameObject("Props").transform;
 
             levelModel = GameplayService.Interface.Get<LevelModel>();
-
-            //foreach (var entity in preset)
-            //{
-            //    if (entity.Type == EntityType.Enemy)
-            //        MarkEnemy((Enemy)entity);
-            //    else if (entity.Type == EntityType.Gadget)
-            //        MarkGadget((Gadget)entity);
-            //}
         }
 
-        private void OnEnable()
+        private void Start()
         {
             EnemySpawnEvent.Register(OnEnemySpawn);
             EnemyDieEvent.Register(OnEnemyDie);
-            levelModel.onRhythmHit += OnRhythmHit;
+            AutoPlayChartManager.Instance.OnRhythmHit += OnRhythmHit;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             EnemySpawnEvent.UnRegister(OnEnemySpawn);
             EnemyDieEvent.UnRegister(OnEnemyDie);
-            levelModel.onRhythmHit -= OnRhythmHit;
+            AutoPlayChartManager.Instance.OnRhythmHit -= OnRhythmHit;
         }
 
         private void OnEnemySpawn(GameObject go)
@@ -92,6 +85,12 @@ namespace Shuile.Gameplay
         {
             judging = true;
             var version = frameCounter++;
+
+            // common judeable
+            foreach (var judge in levelModel.JudgeObjects)
+            {
+                judge.Judge(version, false);
+            }
 
             // Judge enemy first
             foreach (var enemy in enemyList)

@@ -23,7 +23,7 @@ namespace Shuile.Rhythm.Runtime
         /// <summary>
         /// call when it's time to play the note
         /// </summary>
-        public event System.Action<BaseNoteData> OnNotePlay = _ => { };
+        public event System.Action<BaseNoteData, float> OnNotePlay = (_, _) => { };
 
         public ReadOnlyCollection<PlayTimeData> PlayTimeArray => playTimeArray.AsReadOnly();
 
@@ -56,7 +56,7 @@ namespace Shuile.Rhythm.Runtime
             float nextNoteTime = playTimeArray[nextNoteIndex].playTime;
             if (time > nextNoteTime)
             {
-                OnNotePlay.Invoke(chart.note[playTimeArray[nextNoteIndex].originNoteIndex]);
+                OnNotePlay.Invoke(chart.note[playTimeArray[nextNoteIndex].originNoteIndex], time);
                 nextNoteIndex++;
             }
         }

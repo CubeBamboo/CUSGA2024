@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Shuile.Audio;
+using System.Threading;
 using UnityEngine;
 
 namespace Shuile.Utils
@@ -39,6 +40,8 @@ namespace Shuile.Utils
             set => audioPlayer.Volume = value;
         }
 
+        private CancellationTokenSource asyncPlayTokenSource;
+
         public void LoadClip(AudioClip clip)
         {
             audioPlayer.LoadClip(clip);
@@ -46,11 +49,13 @@ namespace Shuile.Utils
 
         public async UniTask Play(float offsetInSeconds, float startDelay = 0.5f)
         {
-            await UniTask.Delay(System.TimeSpan.FromSeconds(startDelay));
+            asyncPlayTokenSource = new();
+            
+            await UniTask.Delay(System.TimeSpan.FromSeconds(startDelay), cancellationToken: asyncPlayTokenSource.Token);
             audioPlayer.Pitch = PlayTimeScale;
 
             var playAt = AudioSettings.dspTime + 1f;
-            var audioDelta = await audioPlayer.WaitPlayScheduled(playAt);
+            var audioDelta = await audioPlayer.WaitPlayScheduled(playAt, asyncPlayTokenSource.Token);
 
             CurrentTime = -offsetInSeconds + (float)audioDelta;
             IsPlaying = true; // -> start timing
@@ -67,6 +72,7 @@ namespace Shuile.Utils
         {
             IsPlaying = false;
             audioPlayer.Stop();
+            asyncPlayTokenSource?.Cancel();
         }
 
         public void CustomTicker(System.Action action)

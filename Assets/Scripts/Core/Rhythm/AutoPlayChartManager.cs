@@ -12,7 +12,7 @@ namespace Shuile.Rhythm.Runtime
         private LevelModel levelModel;
 
         /// <summary> call when a beat is hit </summary>
-        //public event System.Action OnRhythmHit;
+        public event System.Action OnRhythmHit;
 
         private System.Action onNextRhythm;
         /// <summary> will be called once when next beat is hit, and then it will be set to null </summary>
@@ -26,10 +26,9 @@ namespace Shuile.Rhythm.Runtime
             levelModel = GameplayService.Interface.Get<LevelModel>();
 
             chartPlayer = new ChartPlayer(chart);
-            chartPlayer.OnNotePlay += _ =>
+            chartPlayer.OnNotePlay += (_, _) =>
             {
-                levelModel.onRhythmHit?.Invoke();
-                //OnRhythmHit?.Invoke();
+                OnRhythmHit?.Invoke();
 
                 onNextRhythm?.Invoke();
                 onNextRhythm = null;

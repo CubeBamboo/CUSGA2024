@@ -10,6 +10,10 @@ namespace Shuile.Gameplay
 {
     public class Player : MonoBehaviour, IHurtable
     {
+        private NormalPlayerInput _PlayerInput;
+        private NormalPlayerCtrl _PlayerCtrl;
+        private NormalPlayerFeel _PlayerFeel;
+
         [SerializeField] private PlayerPropertySO property;
         public HearableProperty<int> CurrentHp { get; private set; } = new();
         public EasyEvent OnDie = new();
@@ -20,9 +24,9 @@ namespace Shuile.Gameplay
         public PlayerPropertySO Property => property;
         private void Awake()
         {
-            gameObject.AddComponent<NormalPlayerInput>();
-            gameObject.AddComponent<NormalPlayerCtrl>();
-            gameObject.AddComponent<NormalPlayerFeel>();
+            _PlayerInput = gameObject.AddComponent<NormalPlayerInput>();
+            _PlayerCtrl = gameObject.AddComponent<NormalPlayerCtrl>();
+            _PlayerFeel = gameObject.AddComponent<NormalPlayerFeel>();
 
             GameplayService.Interface.Register<Player>(this);
         }

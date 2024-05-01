@@ -35,22 +35,12 @@ namespace Shuile.Rhythm.Runtime
         protected override void OnAwake()
         {
             preciseMusicPlayer = new(new SimpleAudioPlayer());
-
-            currentChart = LevelDataBinder.Instance.ChartData;
-
-            var resources = LevelResources.Instance;
-            playerConfig = resources.playerConfig;
-            playOnAwake = resources.musicManagerConfig.playOnAwake;
-            playTimeScale = resources.musicManagerConfig.playTimeScale;
-            volume = resources.musicManagerConfig.volume;
         }
 
         private void Start()
         {
-            preciseMusicPlayer.Reset();
-            preciseMusicPlayer.LoadClip(currentChart.audioClip);
-
-            if(playOnAwake)
+            RefreshData();
+            if (playOnAwake)
                 StartPlay();
         }
 
@@ -62,6 +52,20 @@ namespace Shuile.Rhythm.Runtime
         private void OnDestroy()
         {
             preciseMusicPlayer.Reset();
+        }
+
+        public void RefreshData()
+        {
+            currentChart = LevelDataBinder.Instance.ChartData;
+            
+            var resources = LevelResources.Instance;
+            playerConfig = resources.playerConfig;
+            playOnAwake = resources.musicManagerConfig.playOnAwake;
+            playTimeScale = resources.musicManagerConfig.playTimeScale;
+            volume = resources.musicManagerConfig.volume;
+
+            preciseMusicPlayer.Reset();
+            preciseMusicPlayer.LoadClip(currentChart.audioClip);
         }
 
         public void StartPlay()

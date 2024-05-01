@@ -102,7 +102,7 @@ namespace Shuile.Rhythm.Runtime
             float[] absoluteTimeChartLoopPart = new float[chart.note.Length];
             for (int i = 0; i < chart.note.Length; i++)
             {
-                absoluteTimeChartLoopPart[i] = chart.note[i].targetTime * bpmInterval;
+                absoluteTimeChartLoopPart[i] = chart.note[i].rhythmTime * bpmInterval;
                 //absoluteTimeChartLoopPart[i] = BeatTime2AbsoluteTime(chart.chartLoopPart[i].targetTime, bpmInterval);
             }
             return absoluteTimeChartLoopPart;

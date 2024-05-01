@@ -1,5 +1,6 @@
 using CbUtils;
 using Shuile.Gameplay;
+using Shuile.Rhythm.Runtime;
 using UnityEngine;
 using URandom = UnityEngine.Random;
 
@@ -23,11 +24,11 @@ namespace Shuile
         private void Start()
         {
             levelModel = GameplayService.Interface.Get<LevelModel>();
-            levelModel.onRhythmHit += OnRhythmHit;
+            AutoPlayChartManager.Instance.OnRhythmHit += OnRhythmHit;
         }
         private void OnDestroy()
         {
-            levelModel.onRhythmHit -= OnRhythmHit;
+            AutoPlayChartManager.Instance.OnRhythmHit -= OnRhythmHit;
         }
         private void OnRhythmHit()
         {

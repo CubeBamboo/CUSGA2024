@@ -1,5 +1,8 @@
 using CbUtils;
+using Shuile.Framework;
 using Shuile.Gameplay;
+using System.Collections.ObjectModel;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
@@ -12,33 +15,60 @@ namespace Shuile.Rhythm.Runtime
 
         // chart part
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
-        private ChartPlayer chartPlayer;
+        private CustomLoadObject<ChartPlayer> chartPlayer;
 
         private LevelModel levelModel;
 
         private float notePreShowInterval = 0.4f;
+        public System.Action OnPlayerHitOn;
+
+        public NoteContainer NoteContainer => noteContainer;
+        public ChartPlayer ChartPlayer => chartPlayer.Value;
+        public ReadOnlyCollection<SingleNote> OrderedNoteList => noteContainer.OrderedNoteList;
 
         protected override void OnAwake()
         {
             levelModel = GameplayService.Interface.Get<LevelModel>();
             notePreShowInterval = LevelResources.Instance.levelConfig.playerNotePreShowTime;
+            chartPlayer = new(() => new ChartPlayer(chart,
+                note => note.GetRealTime() - notePreShowInterval));
         }
-
         private void Start()
         {
-            chartPlayer = new ChartPlayer(chart,
-                note => MusicRhythmManager.Instance.GetRhythmTime(note.targetTime) - notePreShowInterval);
-            chartPlayer.OnNotePlay += note => noteContainer.AddNote(note.targetTime);
+            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetRealTime());
         }
 
         private void FixedUpdate()
         {
-            chartPlayer.PlayUpdate(MusicRhythmManager.Instance.CurrentTime);
+            ChartPlayer.PlayUpdate(MusicRhythmManager.Instance.CurrentTime);
             noteContainer.CheckRelese(MusicRhythmManager.Instance.CurrentTime);
         }
 
         public int Count => noteContainer.Count;
         public SingleNote TryGetNearestNote() => noteContainer.TryGetNearestNote();
         public void HitNote(SingleNote note) => noteContainer.ReleseNote(note);
+    }
+
+    public static class PlayerChartManagerExtension
+    {
+        public static bool TryHit(this PlayerChartManager self, float inputTime, out float hitOffset)
+        {
+            float missTolerance = GameplayService.Interface.LevelModel.MissToleranceInSeconds;
+
+            // get the nearest note's time and judge
+            hitOffset = float.NaN;
+            SingleNote targetNote = self.TryGetNearestNote();
+            if (targetNote == null)
+                return false;
+
+            bool ret = Mathf.Abs(inputTime - targetNote.realTime) < missTolerance;
+            if (ret)
+            {
+                self.HitNote(targetNote);
+                hitOffset = inputTime - targetNote.realTime;
+                self.OnPlayerHitOn?.Invoke();
+            }
+            return ret;
+        }
     }
 }

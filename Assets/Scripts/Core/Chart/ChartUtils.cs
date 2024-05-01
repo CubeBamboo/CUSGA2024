@@ -88,7 +88,7 @@ namespace Shuile.Rhythm
                     _ => throw new System.Exception("invalid column data"),
                 };
 
-                noteData.targetTime = beat[0] + (float)beat[1] / beat[2];
+                noteData.rhythmTime = beat[0] + (float)beat[1] / beat[2];
                 tempList.Add(noteData);
             }
             chartData.note = tempList.ToArray();

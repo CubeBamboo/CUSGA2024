@@ -48,7 +48,7 @@ namespace Shuile.Gameplay
                 levelModel.DangerScore -= DangerLevelConfigClass.PlayerHurtReduction;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            playerCtrl.attackCommand.OnCommandAfter(() =>
+            playerCtrl.attackCommand.RegisterCommandAfter(() =>
             {
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Attack);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Attack");
@@ -56,13 +56,13 @@ namespace Shuile.Gameplay
                 levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            playerCtrl.jumpCommand.OnCommandAfter(() =>
+            playerCtrl.jumpCommand.RegisterCommandAfter(() =>
             {
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Jump);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            playerCtrl.moveCommand.OnCommandAfter(() =>
+            playerCtrl.moveCommand.RegisterCommandAfter(() =>
             {
                 animCtrl.FlipX = playerInput.XInput < 0;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);

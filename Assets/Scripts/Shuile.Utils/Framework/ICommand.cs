@@ -66,10 +66,14 @@ namespace Shuile.Framework
         }
 
         public abstract void OnExecute();
-        public ICustomUnRegister OnCommandBefore(System.Action action)
+        public ICustomUnRegister RegisterCommandBefore(System.Action action)
             => _beforeCommand.Register(action);
-        public ICustomUnRegister OnCommandAfter(System.Action action)
+        public void UnRegisterBefore(System.Action action)
+            => _beforeCommand.UnRegister(action);
+        public ICustomUnRegister RegisterCommandAfter(System.Action action)
             => _afterCommand.Register(action);
+        public void UnRegisterAfter(System.Action action)
+            => _afterCommand.UnRegister(action);
     }
 
     // TODO: interceptable command (provide a async call before execute)

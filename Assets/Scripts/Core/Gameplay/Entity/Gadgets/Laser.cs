@@ -1,10 +1,11 @@
 using CbUtils.Event;
 using CbUtils.Extension;
-using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using Shuile.Gameplay;
 using Shuile.Rhythm.Runtime;
+
 using UnityEngine;
+using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
 namespace Shuile
 {
@@ -43,6 +44,11 @@ namespace Shuile
             try
             {
                 InternalPlay();
+            }
+            catch (System.OperationCanceledException)
+            {
+                // do nothing
+                Debug.Log("Laser play canceled");
             }
             catch (System.Exception e)
             {
@@ -105,8 +111,8 @@ namespace Shuile
 
             if (useRhythmTime)
             {
-                usingInTime = this.GetRhythmTime(InTime);
-                attackStayTime = this.GetRhythmTime(attackStayTime);
+                usingInTime = this.GetRealTime(InTime);
+                attackStayTime = this.GetRealTime(attackStayTime);
             }
         }
     }

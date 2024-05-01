@@ -1,4 +1,8 @@
+using CbUtils;
 using Shuile.Framework;
+using Shuile.Gameplay;
+
+using System.Collections.Generic;
 
 namespace Shuile
 {
@@ -7,7 +11,8 @@ namespace Shuile
     {
         public float musicBpm;
         public float musicOffset;
-        public System.Action onRhythmHit;
+        public List<IJudgeable> JudgeObjects { get; set; } = new();
+        //public EasyEvent OnPlayerHit { get; set; } = new(); // rhythm hit
 
         private float missTolerance;
 

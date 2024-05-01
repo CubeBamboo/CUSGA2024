@@ -1,8 +1,11 @@
+using DG.Tweening;
+using Shuile.Framework;
 using Shuile.MonoGadget;
 using Shuile.Rhythm.Runtime;
-
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 using UnityEngine;
@@ -12,39 +15,55 @@ namespace Shuile.Gameplay
 {
     public class RhythmIndicator : MonoBehaviour
     {
-        private struct Note
+        private class UINote : SingleNote
         {
+            public bool isHit;
+
             public RectTransform transform;
             public Graphic graphic;
-            public float hitTime;
 
-            public Note(RectTransform transform, Graphic graphic, float hitTime)
+            public UINote(RectTransform transform, Graphic graphic, float targetTime) : base(targetTime)
             {
                 this.transform = transform;
                 this.graphic = graphic;
-                this.hitTime = hitTime;
+                this.isHit = false;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void UpdateView(float time, float distanceUnit, float preDisplayTime, float MissTolerance)
+            {
+                if (isHit) return;
+
+                var delta = this.realTime - time;
+                this.transform.localPosition = this.transform.localPosition.With(x: distanceUnit * delta);
+                float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
+                this.graphic.color = (delta < 0f ? Color.red : Color.white).With(a: alpha);
+            }
+
+            public void DoHitView()
+            {
+                isHit = true;
+                this.graphic.DOFade(0, 0.2f);
             }
         }
+
+        private ReadOnlyCollection<SingleNote> renderNoteList;
 
         [SerializeField] private float distanceUnit;
         [SerializeField] private float preDisplayTime;
 
         private GameObject notePrefab;
-        private ObjectPool<GameObject> notePool;
-        private List<Note> notes;
-        private ChartPlayer chartPlayer;
-        private MusicTimeTweener musicTimeTweener;
 
+        private ObjectPool<GameObject> notePool;
+        private List<UINote> uiNoteList;
+        //private ChartPlayer chartPlayer;
+
+        private readonly CustomLoadObject<MusicTimeTweener> timeTweener
+            = new(() => MusicRhythmManager.Instance.gameObject.GetOrAddComponent<MusicTimeTweener>());
+        public MusicTimeTweener TimeTweener => timeTweener.Value;
+
+        private float CurrentTime => TimeTweener.TweenTime;
         private float MissTolerance => GameplayService.Interface.LevelModel.MissToleranceInSeconds;
-        private MusicTimeTweener TimeTweener
-        {
-            get
-            {
-                if (musicTimeTweener == null)
-                    musicTimeTweener = MusicRhythmManager.Instance.gameObject.GetOrAddComponent<MusicTimeTweener>();
-                return musicTimeTweener;
-            }
-        }
 
         public RhythmIndicator()
         {
@@ -53,56 +72,75 @@ namespace Shuile.Gameplay
                 ObjectPoolFuncStore.GameObjectRelease,
                 ObjectPoolFuncStore.GameObjectDestroy,
                 8);
-            notes = new(8);
+            uiNoteList = new(8);
         }
 
-        private void Awake()
+        private void Start()
         {
             notePrefab = LevelResources.Instance.globalPrefabs.noteIndicator;
-            chartPlayer = new ChartPlayer(ChartDataCreator.CreatePlayerDefault(), GetPlayTime);
-            chartPlayer.OnNotePlay += OnNote;
-            // TODO: listen player attack event
-        }
-
-        private void Update()
-        {
-            chartPlayer.PlayUpdate(TimeTweener.TweenTime);
-            for (int i = 0; i < notes.Count; )
-            {
-                if (TimeTweener.TweenTime - MissTolerance >= notes[i].hitTime)
-                {
-                    notePool.Release(notes[i].transform.gameObject);
-                    notes.UnorderedRemoveAt(i);
-                    continue;
-                }
-
-                UpdateNoteGraphic(notes[i++]);
-            }
+            PlayerChartManager.Instance.ChartPlayer.OnNotePlay += OnNote;
+            PlayerChartManager.Instance.OnPlayerHitOn += OnPlayerHit;
+            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese += OnNoteRelese;
         }
 
         private void OnDestroy()
         {
-            notes.Clear();
+            PlayerChartManager.Instance.ChartPlayer.OnNotePlay -= OnNote;
+            PlayerChartManager.Instance.OnPlayerHitOn -= OnPlayerHit;
+            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese -= OnNoteRelese;
+
+            uiNoteList.Clear();
             notePool.DestroyAll();
         }
 
-        private void OnNote(BaseNoteData noteData)
+        private void Update()
+        {
+            for (int i = 0; i < uiNoteList.Count;)
+            {
+                uiNoteList[i++].UpdateView(TimeTweener.TweenTime, distanceUnit, preDisplayTime, MissTolerance);
+            }
+        }
+
+        private void OnNoteRelese(float time)
+        {
+            var uiNote = TryGetNearestNote();
+            if (uiNote == null) return;
+            ReleseNote(uiNote); // ... maybe time not match
+        }
+
+        private void OnPlayerHit()
+        {
+            if (uiNoteList.Count == 0) return;
+
+            var uiNote = TryGetNearestNote();
+            if (uiNote == null) return;
+
+            uiNote.isHit = true;
+            uiNote.DoHitView();
+
+            ReleseNote(uiNote);
+        }
+
+        private void OnNote(BaseNoteData noteData, float time)
         {
             var obj = notePool.Get();
             var graphic = obj.GetComponent<Graphic>();
             graphic.color = graphic.color.With(a: 0f);
-            notes.Add(new ((RectTransform)obj.transform, graphic, noteData.ToPlayTime()));
+            uiNoteList.Add(new ((RectTransform)obj.transform, graphic, noteData.ToPlayTime()));
         }
 
-        private float GetPlayTime(BaseNoteData note) => note.ToPlayTime() - preDisplayTime;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void UpdateNoteGraphic(Note note)
+        private void ReleseNote(UINote note)
         {
-            var delta = note.hitTime - TimeTweener.TweenTime;
-            note.transform.localPosition = note.transform.localPosition.With(x: distanceUnit * delta);
-            float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
-            note.graphic.color = (delta < 0f ? Color.red : Color.white).With(a: alpha);
+            notePool.Release(note.transform.gameObject);
+            uiNoteList.UnorderedRemove(note);
+        }
+
+        //private float GetPlayTime(BaseNoteData note) => note.ToPlayTime() - preDisplayTime;
+
+        private UINote TryGetNearestNote()
+        {
+            if (uiNoteList.Count == 0) return null;
+            return uiNoteList.Min();
         }
     }
 }

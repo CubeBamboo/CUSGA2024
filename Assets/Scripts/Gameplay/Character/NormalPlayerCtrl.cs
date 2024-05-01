@@ -50,7 +50,7 @@ namespace Shuile.Gameplay
         public PlayerMoveCommand moveCommand { get; } = new();
 
         public bool CheckRhythm =>
-            MusicRhythmManager.Instance.CheckBeatRhythm(
+            PlayerChartManager.Instance.TryHit(
                 MusicRhythmManager.Instance.CurrentTime, out playerModel.currentHitOffset);
 
         private SimpleTimer attackSpeedDownTimer = new();

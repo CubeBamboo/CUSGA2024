@@ -1,25 +1,25 @@
 // [WIP]
 
-using CbUtils.Extension;
-using Shuile.Gameplay;
-using Shuile.NoteProduct;
 using UnityEngine;
+
+using CbUtils.Extension;
 
 namespace Shuile.Rhythm.Runtime
 {
     public class BaseNoteData : IRhythmable
     {
-        public float targetTime;
+        /// <summary> unit: in chart time </summary>
+        public float rhythmTime;
         public virtual void Process() { }
         public virtual float ToPlayTime()
-            => this.GetRhythmTime(targetTime);
+            => this.GetRealTime(rhythmTime);
 
         public static BaseNoteData Create(float time)
-            => new() { targetTime = time };
+            => new() { rhythmTime = time };
 
         public override string ToString()
         {
-            return $"{GetType().Name} targetTime: {targetTime}";
+            return $"{GetType().Name} targetTime: {rhythmTime}";
         }
     }
 
@@ -32,7 +32,7 @@ namespace Shuile.Rhythm.Runtime
         }
 
         public override float ToPlayTime()
-            => this.GetRhythmTime(targetTime - Laser.InTime);
+            => this.GetRealTime(rhythmTime - Laser.InTime);
     }
 
     public class SpawnSingleEnemyNoteData : BaseNoteData
