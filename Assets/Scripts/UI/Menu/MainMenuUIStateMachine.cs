@@ -22,8 +22,11 @@ namespace Shuile
         private readonly float MenuInitPosY = -740f;
         private readonly float MenuEnterPosY = -218f;
 
-        [Header("Select")]
+        //[Header("Select")]
+        [SerializeField] private GameObject startPanel;
         [SerializeField] private RectTransform selectPanel;
+        [SerializeField] private GameObject settingPanel;
+
 
         public enum State
         {
@@ -41,7 +44,12 @@ namespace Shuile
 
         private void InitUIState()
         {
+            startPanel.SetActive(true);
+
+            tips.gameObject.SetActive(true);
             tips.alpha = 0;
+
+            title.gameObject.SetActive(true);
             title.anchoredPosition = titleGameStartPos;
 
             menuPanel.gameObject.SetActive(true);
@@ -49,6 +57,8 @@ namespace Shuile
 
             selectPanel.gameObject.SetActive(true);
             selectPanel.anchoredPosition3D = selectPanel.anchoredPosition3D.With(y: MenuInitPosY);
+
+            settingPanel.SetActive(false);
         }
 
         private void InitFSM()

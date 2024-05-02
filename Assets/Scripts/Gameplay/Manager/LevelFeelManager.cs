@@ -2,8 +2,6 @@ using CbUtils;
 using CbUtils.ActionKit;
 using CbUtils.Extension;
 using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Shuile
@@ -36,7 +34,7 @@ namespace Shuile
                 .OnComplete(() => isCameraShake = false)
                 .Start(mCamera.gameObject);
         }
-
+        
         /// <param name="name"> see in LevelResources.particles </param>
         public void PlayParticle(string name, Vector3 position, Vector3 direction, Transform parent = null)
             => LevelFeelFactory.CreateParticle(name, position, direction).SetParent(parent);

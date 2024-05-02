@@ -83,54 +83,52 @@ namespace Shuile.UI
         private void Awake()
         {
             this.RegisterUI<LatencyTestPlane>();
-            gameObject.SetActive(false);
         }
         private void OnDestroy()
             => this.UnRegisterUI<LatencyTestPlane>();
 
         private void Update()
         {
-            if (isPlaying)
+            if (!isPlaying) return;
+
+            if (detectingNoteIndex < notes.Length)
             {
-                if (detectingNoteIndex < notes.Length)
+                var currTime = timeTweener.TweenTime;
+                var delta = currTime - notes[detectingNoteIndex].judgeTime;
+                notes[detectingNoteIndex].ApplyPositionX(delta * distanceUnit);
+
+                if (delta > maxLatency / 1000f)
                 {
-                    var currTime = timeTweener.TweenTime;
-                    var delta = currTime - notes[detectingNoteIndex].judgeTime;
-                    notes[detectingNoteIndex].ApplyPositionX(delta * distanceUnit);
-
-                    if (delta > maxLatency / 1000f)
-                    {
-                        // Miss
-                        notes[detectingNoteIndex].graphic.CrossFadeAlpha(0f, 0.1f, false);
-                        notes[detectingNoteIndex++].clickTime = null;
-                        return;
-                    }
-
-                    if (Input.GetMouseButtonDown(0) && Mathf.Abs(delta) <= maxLatency / 1000f)
-                    {
-                        notes[detectingNoteIndex].graphic.CrossFadeAlpha(0.5f, 0.2f, false);
-                        notes[detectingNoteIndex++].clickTime = currTime;
-                        return;
-                    }
+                    // Miss
+                    notes[detectingNoteIndex].graphic.CrossFadeAlpha(0f, 0.1f, false);
+                    notes[detectingNoteIndex++].clickTime = null;
+                    return;
                 }
-                else
+
+                if (Input.GetMouseButtonDown(0) && Mathf.Abs(delta) <= maxLatency / 1000f)
                 {
-                    isPlaying = false;
-                    musicRhythmManager.StopPlay();
-                    // ½áËã
-                    if (!TryCalcTestDelay(out var delay))
-                    {
-                        testResultText.gameObject.SetActive(false);
-                        return;
-                    }
-                    testResultText.gameObject.SetActive(true);
-
-                    testResultLatency = (int)(delay * 1000);
-                    testResultIndicator.ApplyPositionX(delay * distanceUnit);
-                    testResultIndicator.graphic.CrossFadeAlpha(1f, 0.2f, false);
-                    testResultText.rectTransform.localPosition = testResultText.rectTransform.localPosition.With(x: delay * distanceUnit);
-                    testResultText.text = "Result: " + testResultLatency.ToString() + "ms";
+                    notes[detectingNoteIndex].graphic.CrossFadeAlpha(0.5f, 0.2f, false);
+                    notes[detectingNoteIndex++].clickTime = currTime;
+                    return;
                 }
+            }
+            else
+            {
+                isPlaying = false;
+                musicRhythmManager.StopPlay();
+                // ç»“ç®—
+                if (!TryCalcTestDelay(out var delay))
+                {
+                    testResultText.gameObject.SetActive(false);
+                    return;
+                }
+                testResultText.gameObject.SetActive(true);
+
+                testResultLatency = (int)(delay * 1000);
+                testResultIndicator.ApplyPositionX(delay * distanceUnit);
+                testResultIndicator.graphic.CrossFadeAlpha(1f, 0.2f, false);
+                testResultText.rectTransform.localPosition = testResultText.rectTransform.localPosition.With(x: delay * distanceUnit);
+                testResultText.text = "Result: " + testResultLatency.ToString() + "ms";
             }
         }
 
@@ -155,15 +153,17 @@ namespace Shuile.UI
             LevelDataBinder.Instance.SetLevelData(level);
             GameplayService.Interface.OnInit();
 
+            musicRhythmManager = this.gameObject.GetOrAddComponent<MusicRhythmManager>();
+            musicRhythmManager.RefreshData();
+            musicRhythmManager.playOnAwake = false;
+            musicRhythmManager.StopPlay();
+            timeTweener = musicRhythmManager.gameObject.GetOrAddComponent<MusicTimeTweener>();
+
             if (notes == null)
             {
                 var chart = ChartDataCreator.CreateLatencyTestDefault();
                 notes = chart.note.Select(note => note.ToPlayTime()).Select(time => new Note(time)).ToArray();
             }
-
-            musicRhythmManager = this.gameObject.GetOrAddComponent<MusicRhythmManager>();
-            timeTweener = musicRhythmManager.gameObject.GetOrAddComponent<MusicTimeTweener>();
-            musicRhythmManager.playOnAwake = false;
 
             latencyIndicator.localPosition = latencyIndicator.localPosition.With(x: configViewer.Data.Audio.GlobalDelay / 1000f * distanceUnit);
             latencyText.text = configViewer.Data.Audio.GlobalDelay.ToString() + "ms";
