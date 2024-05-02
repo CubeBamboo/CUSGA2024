@@ -68,9 +68,9 @@ namespace Shuile.Gameplay
         private void Awake()
         {
             player = GetComponent<Player>();
-            _moveController = GetComponent<SmoothMoveCtrl>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
-            attackSpeedDownTimer.Add(() => AttackSpeedDown = false);
+            _moveController = GameplayService.Interface.Get<PlayerModel>().moveCtrl;
+            attackSpeedDownTimer.RegisterComplete(() => AttackSpeedDown = false);
 
             ConfigureDependency();
             ConfigureInputEvent();

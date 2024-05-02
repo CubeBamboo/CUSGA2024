@@ -35,6 +35,11 @@ namespace Shuile.Gameplay
                 _rb.velocity += new Vector2(dir * xAcc, 0);
         }
 
+        public void AddForce(Vector2 force, ForceMode2D forceMode = ForceMode2D.Force)
+        {
+            _rb.AddForce(force, forceMode);
+        }
+
         public void SimpleJump(float jumpScale)
         {
             _rb.velocity = new Vector2(_rb.velocity.x, jumpVel * jumpScale);

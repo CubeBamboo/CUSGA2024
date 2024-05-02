@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UDebug = UnityEngine.Debug;
 using Shuile.Gameplay;
+using Shuile.Audio;
 
 namespace Shuile.Root
 {

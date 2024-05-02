@@ -16,7 +16,7 @@ namespace Shuile
         public GameObject prefab;
     }
 
-    [CreateAssetMenu(fileName = "New PrefabConfig", menuName = "Config/Prefab Config")]
+    [CreateAssetMenu(fileName = "New PrefabConfig", menuName = "Resources/Prefab Config")]
     public class PrefabConfigSO : ScriptableObject
     {
         [Header("Enemy")]

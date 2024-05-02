@@ -50,7 +50,7 @@ namespace Shuile.Gameplay
             var oldVal = health;
             health = Mathf.Max(0, health - attackPoint);
             OnSelfHurt(oldVal, health);
-            LevelFeelManager.Instance.CameraShake();
+            EnemyHurtEvent.Trigger(gameObject);
 
             if (Health == 0)
             {

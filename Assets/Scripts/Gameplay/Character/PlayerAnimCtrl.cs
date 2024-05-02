@@ -68,13 +68,9 @@ namespace Shuile
 
         private void TriggerHurt()
         {
-            // 效果反馈
             _spriteRenderer.color = Color.white;
             _spriteRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f).OnComplete(() =>
                 _spriteRenderer.DOColor(Color.white, 0.2f));
-            var initPos = _target.transform.position;
-            _target.transform.DOShakePosition(0.2f, strength: 0.2f).OnComplete(() =>
-                    _target.transform.position = initPos);
         }
         private void TriggerAttack()
         {

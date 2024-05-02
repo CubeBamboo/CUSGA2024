@@ -7,7 +7,7 @@ namespace Shuile.Audio
 {
     public class SimpleAudioPlayer : AudioPlayerInUnity
     {
-        public override AudioSource TargetSource => AudioManager.Instance.OtherSource;
+        public override AudioSource TargetSource => GamingAudioManager.Instance.MusicSource;
 
         public new void Reset()
         {

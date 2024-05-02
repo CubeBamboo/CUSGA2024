@@ -32,13 +32,9 @@ namespace Shuile.Rhythm.Runtime
         public float MusicLength => currentChart.musicLength;
         public bool IsMusicEnd => CurrentTime >= MusicLength;
 
-        protected override void OnAwake()
-        {
-            preciseMusicPlayer = new(new SimpleAudioPlayer());
-        }
-
         private void Start()
         {
+            preciseMusicPlayer = new(new SimpleAudioPlayer());
             RefreshData();
             if (playOnAwake)
                 StartPlay();

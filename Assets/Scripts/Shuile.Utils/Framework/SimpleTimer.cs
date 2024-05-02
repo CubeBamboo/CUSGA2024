@@ -29,12 +29,12 @@ namespace Shuile.Framework
             Duration = duration;
             return this;
         }
-        public SimpleTimer Add(System.Action onComplete)
+        public SimpleTimer RegisterComplete(System.Action onComplete)
         {
             this.onComplete += onComplete;
             return this;
         }
-        public SimpleTimer Remove(System.Action onComplete)
+        public SimpleTimer UnRegisterComplete(System.Action onComplete)
         {
             this.onComplete -= onComplete;
             return this;

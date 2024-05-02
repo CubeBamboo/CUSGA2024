@@ -19,11 +19,15 @@ namespace Shuile.Gameplay
         public EasyEvent OnDie = new();
         public EasyEvent OnHurted = new();
 
+        private PlayerModel playerModel;
         private bool isDie;
 
         public PlayerPropertySO Property => property;
         private void Awake()
         {
+            playerModel = GameplayService.Interface.Get<PlayerModel>();
+            playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
+
             _PlayerInput = gameObject.AddComponent<NormalPlayerInput>();
             _PlayerCtrl = gameObject.AddComponent<NormalPlayerCtrl>();
             _PlayerFeel = gameObject.AddComponent<NormalPlayerFeel>();
@@ -44,7 +48,7 @@ namespace Shuile.Gameplay
 
         public void OnHurt(int attackPoint)
         {
-            if (isDie) return;
+            if (isDie || playerModel.isInviciable) return;
 
             OnHurted.Invoke();
             CurrentHp.Value -= attackPoint;

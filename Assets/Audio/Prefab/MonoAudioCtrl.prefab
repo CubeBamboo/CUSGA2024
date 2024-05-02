@@ -45,11 +45,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clipList:
-  - id: Player_Attack
-    clip: {fileID: 8300000, guid: 1b2ea937453f55f4b8d432d3a0c8f510, type: 3}
   - id: Player_Jump
-    clip: {fileID: 8300000, guid: dfc16fc3d0c6e1d43a2d99beb28c1825, type: 3}
-  - id: Player_Death
-    clip: {fileID: 8300000, guid: 7d99fde7d0b653248902a1706851b3bf, type: 3}
-  - id: Enemy_Bomb
-    clip: {fileID: 8300000, guid: 63c73d729df74c54a865da0ece9c1e9c, type: 3}
+    clip: {fileID: 8300000, guid: db5fc595e8698e841a2697ccb9d6c745, type: 3}
+  - id: Enemy_Hurt
+    clip: {fileID: 8300000, guid: 1683dbcb5dad2a942846b4d576955ca5, type: 3}
+  - id: Player_Hurt
+    clip: {fileID: 8300000, guid: d285d383955127047bbef04365384b79, type: 3}
+  - id: Enemy_Die
+    clip: {fileID: 8300000, guid: b7d1e20be4efff04db5bd8247f152559, type: 3}

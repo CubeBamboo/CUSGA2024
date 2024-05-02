@@ -11,4 +11,8 @@ namespace Shuile.Gameplay.Event
     public class EnemySpawnEvent : GlobalEvent<EnemySpawnEvent, GameObject>
     {
     }
+
+    public class EnemyHurtEvent : GlobalEvent<EnemyHurtEvent, GameObject>
+    {
+    }
 }

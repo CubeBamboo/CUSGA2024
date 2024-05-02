@@ -1,4 +1,5 @@
 using Shuile.Framework;
+using Shuile.Gameplay;
 
 namespace Shuile
 {
@@ -7,7 +8,10 @@ namespace Shuile
     {
         public float currentHitOffset;
 
-        public float faceDir;
+        public float faceDir = 1;
 
+        public SmoothMoveCtrl moveCtrl;
+
+        public bool isInviciable = false;
     }
 }

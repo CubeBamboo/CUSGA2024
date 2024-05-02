@@ -42,13 +42,13 @@ namespace Shuile
                 switch (channel)
                 {
                     case AudioChannel.Bgm:
-                        AudioManager.Instance.PlayBgm(clip);
+                        EasyAudioManager.Instance.PlayBgm(clip);
                         break;
                     case AudioChannel.SFX:
-                        AudioManager.Instance.PlaySFX(clip);
+                        EasyAudioManager.Instance.PlaySFX(clip);
                         break;
                     case AudioChannel.Voice:
-                        AudioManager.Instance.PlayVoice(clip);
+                        EasyAudioManager.Instance.PlayVoice(clip);
                         break;
                 }
                 return;
@@ -60,7 +60,7 @@ namespace Shuile
         {
             if (clipDictionary.TryGetValue(id, out var clip))
             {
-                AudioManager.Instance.PlayOneShot(clip, volumeScale);
+                EasyAudioManager.Instance.PlayOneShot(clip, volumeScale);
                 return;
             }
             Debug.LogError($"audio with id \"{id}\" was not found");

@@ -3,7 +3,7 @@ using UnityEngine.Audio;
 
 namespace CbUtils
 {
-    public class AudioManager : MonoSingletons<AudioManager>
+    public class EasyAudioManager : MonoSingletons<EasyAudioManager>
     {
         private AudioSource bgmSource, sfxSource, voiceSource, otherSource;
         private AudioSource oneShotSource;
@@ -38,7 +38,6 @@ namespace CbUtils
         }
 
         #region PlayAudio
-
 
         public void PlayBgm(AudioClip clip)
         {
