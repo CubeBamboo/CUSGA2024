@@ -25,6 +25,12 @@ namespace CbUtils.Extension
             return go;
         }
 
+        public static GameObject SetScale(this GameObject go, Vector3 localScale)
+        {
+            go.transform.localScale = localScale;
+            return go;
+        }
+
         public static GameObject SetParent(this GameObject go, Transform parent, bool worldPositionStays = true)
         {
             go.transform.SetParent(parent, worldPositionStays);
