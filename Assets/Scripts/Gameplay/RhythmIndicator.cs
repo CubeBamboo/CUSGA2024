@@ -33,24 +33,29 @@ namespace Shuile.Gameplay
             public void UpdateView(float time, float distanceUnit, float preDisplayTime, float MissTolerance)
             {
                 if (isHit) return;
-
                 var delta = this.realTime - time;
+                var waitForHit = delta > 0;
+
                 this.transform.localPosition = this.transform.localPosition.With(x: distanceUnit * delta);
-                float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
-                this.graphic.color = (delta < 0f ? Color.red : Color.white).With(a: alpha);
+                if (!waitForHit) return;
+
+                float alpha = 1f - Mathf.Clamp01((delta - preDisplayTime + MissTolerance) / MissTolerance);
+                this.graphic.color = Color.white.With(a: alpha);
+                
+                //float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
             }
 
-            public void DoHitView()
+            public void DoHitView(System.Action<UINote> onComplete)
             {
                 isHit = true;
-                this.graphic.DOFade(0, 0.2f);
+                this.graphic.DOFade(0, 0.2f).OnComplete(() => onComplete?.Invoke(this));
             }
         }
 
         private ReadOnlyCollection<SingleNote> renderNoteList;
 
         [SerializeField] private float distanceUnit;
-        [SerializeField] private float preDisplayTime;
+        private float preDisplayTime;
 
         private GameObject notePrefab;
 
@@ -78,16 +83,17 @@ namespace Shuile.Gameplay
         private void Start()
         {
             notePrefab = LevelResources.Instance.globalPrefabs.noteIndicator;
+            preDisplayTime = PlayerChartManager.Instance.NotePreShowInterval;
             PlayerChartManager.Instance.ChartPlayer.OnNotePlay += OnNote;
             PlayerChartManager.Instance.OnPlayerHitOn += OnPlayerHit;
-            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese += OnNoteRelese;
+            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese += OnNoteNeedRelese;
         }
 
         private void OnDestroy()
         {
             PlayerChartManager.Instance.ChartPlayer.OnNotePlay -= OnNote;
             PlayerChartManager.Instance.OnPlayerHitOn -= OnPlayerHit;
-            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese -= OnNoteRelese;
+            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelese;
 
             uiNoteList.Clear();
             notePool.DestroyAll();
@@ -101,11 +107,13 @@ namespace Shuile.Gameplay
             }
         }
 
-        private void OnNoteRelese(float time)
+        private void OnNoteNeedRelese(float time)
         {
             var uiNote = TryGetNearestNote();
             if (uiNote == null) return;
-            ReleseNote(uiNote); // ... maybe time not match
+            ReleseNote(uiNote);
+            //uiNote.graphic.color = Color.red;
+            //uiNote.graphic.DOFade(0f, 0.2f).OnComplete(() => ReleseNote(uiNote));
         }
 
         private void OnPlayerHit()
@@ -116,9 +124,7 @@ namespace Shuile.Gameplay
             if (uiNote == null) return;
 
             uiNote.isHit = true;
-            uiNote.DoHitView();
-
-            ReleseNote(uiNote);
+            uiNote.DoHitView(n => ReleseNote(n));
         }
 
         private void OnNote(BaseNoteData noteData, float time)

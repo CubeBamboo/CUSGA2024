@@ -2,7 +2,6 @@ using CbUtils;
 using Shuile.Framework;
 using Shuile.Gameplay;
 using System.Collections.ObjectModel;
-using System.Net.NetworkInformation;
 using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
@@ -22,6 +21,7 @@ namespace Shuile.Rhythm.Runtime
         private float notePreShowInterval = 0.4f;
         public System.Action OnPlayerHitOn;
 
+        public float NotePreShowInterval => notePreShowInterval;
         public NoteContainer NoteContainer => noteContainer;
         public ChartPlayer ChartPlayer => chartPlayer.Value;
         public ReadOnlyCollection<SingleNote> OrderedNoteList => noteContainer.OrderedNoteList;
