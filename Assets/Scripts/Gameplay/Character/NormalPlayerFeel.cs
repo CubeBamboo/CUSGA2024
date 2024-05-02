@@ -61,7 +61,7 @@ namespace Shuile.Gameplay
                 playerModel.isInviciable = true;
                 ActionCtrl.Delay(0.5f).OnComplete(() => playerModel.isInviciable = false).Start(gameObject);
 
-                
+                LevelFeelManager.Instance.VignettePulse();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             playerCtrl.attackCommand.RegisterCommandAfter(() =>
