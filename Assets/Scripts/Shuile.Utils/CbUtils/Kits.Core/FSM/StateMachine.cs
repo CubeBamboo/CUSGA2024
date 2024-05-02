@@ -47,10 +47,16 @@ namespace CbUtils
             _states.Add(id, state);
         }
 
+        private IState InnerCreateState() => new EmptyState();
+        
+
         public void SwitchState(TStateId id, bool callLifeTimeEvent = true)
         {
             if (_currentStateId.Equals(id)) return;
-            if (!_states.ContainsKey(id)) return;
+            if (!_states.ContainsKey(id))
+            {
+                _states[id] = InnerCreateState();
+            }
             if (_currentState == null) throw new System.Exception("FSM: Current State is null, maybe you forgot to call function FSM.StartState()");
             if (!_currentState.Condition()) return;
 
@@ -149,6 +155,18 @@ namespace CbUtils
         }
     }
 
+    public class EmptyState : IState
+    {
+        public void Enter() { }
+        public void Exit() { }
+        public void FixedUpdate() { }
+        public void Update() { }
+        public void OnGUI() { }
+        public bool Condition() => true;
+        public void Custom() { }
+        public void Custom(string label) { }
+    }
+    
     /// <summary>
     /// state based on event
     /// </summary>

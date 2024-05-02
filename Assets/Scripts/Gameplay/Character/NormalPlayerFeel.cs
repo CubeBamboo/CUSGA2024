@@ -72,7 +72,7 @@ namespace Shuile.Gameplay
                 levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            playerCtrl.jumpCommand.RegisterCommandAfter(() =>
+            playerCtrl.OnJumpStart.Register(() =>
             {
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Jump);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");

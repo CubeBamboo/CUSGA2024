@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Rendering.VirtualTexturing;
 
 namespace Shuile.Gameplay
 {
@@ -65,7 +64,7 @@ namespace Shuile.Gameplay
         public float XMaxSpeed { get => xMaxSpeed; set => xMaxSpeed = value; }
         public float Deceleration { get => xDeAcc; set => xDeAcc = value; }
         public Vector3 Position { get => transform.position; set => transform.position = value; }
-        public bool IsOnGround => Mathf.Approximately(Velocity.y, 0f) && _rb.attachedColliderCount > 0;
+        public bool IsOnGround => Mathf.Abs(Velocity.y) < 1e-4 && _rb.attachedColliderCount > 0;
         public float JumpVelocity { get => jumpVel; set => jumpVel = value; }
         public float Gravity { get => _rb.gravityScale; set => _rb.gravityScale = value; }
 

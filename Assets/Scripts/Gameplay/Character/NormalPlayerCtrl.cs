@@ -1,8 +1,9 @@
 using CbUtils;
-using CbUtils.ActionKit;
+using CbUtils.Editor;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
+
 using System.Linq;
 using UnityEngine;
 
@@ -17,27 +18,38 @@ namespace Shuile.Gameplay
 
     public class NormalPlayerCtrl : MonoBehaviour
     {
-        public enum State
+        public enum MainState
         {
             Normal,
-            JumpUp,
+            JumpUpAndInputHoldOn,
+            JumpUpAndInputHoldOff,
             Drop
         }
-        private FSM<State> mFsm = new();
+
+        // [behave state?]
+        private bool isMoving, isJumping;
+        private float moveParam;
+
+        private FSM<MainState> mainFsm = new();
 
         private Player player;
         private NormalPlayerInput mPlayerInput;
         private SmoothMoveCtrl _moveController;
 
         // [normal move]
-        [SerializeField] private float acc = 0.4f;
-        [SerializeField] private float deAcc = 0.25f;
-        [SerializeField] private float xMaxSpeed = 5f;
+        [SerializeField] private float acc = 1.7f;
+        [SerializeField] private float deAcc = 0.7f;
+        [SerializeField] private float xMaxSpeed = 6.5f;
 
         // [jump]
-        [SerializeField] private float jumpVel = 18f;
+
+        // [hold jump]
+        [SerializeField] private float jumpStartVel = 14f;
+        [SerializeField] private float jumpMaxDuration = 0.27f;
+        [SerializeField] private float holdJumpVelAdd = 0.65f;
         [SerializeField] private float normalGravity = 3f;
-        [SerializeField] private float dropGravity = 4f;
+        [SerializeField] private float dropGravity = 6f;
+        [SerializeField] private float holdOffYDamping = 0.4f;
         
         // [attack]
         [SerializeField] private float attackRadius = 2.8f;
@@ -46,14 +58,16 @@ namespace Shuile.Gameplay
 
         public EasyEvent OnTouchGround { get; } = new();
         public PlayerAttackCommand attackCommand { get; } = new();
-        public PlayerJumpCommand jumpCommand { get; } = new();
         public PlayerMoveCommand moveCommand { get; } = new();
+
+        public EasyEvent OnJumpStart = new();
 
         public bool CheckRhythm =>
             PlayerChartManager.Instance.TryHit(
                 MusicRhythmManager.Instance.CurrentTime, out playerModel.currentHitOffset);
 
-        private SimpleTimer attackSpeedDownTimer = new();
+        private SimpleDeltaTimer attackSpeedDownTimer = new();
+        private SimpleDurationTimer holdJumpTimer = new();
 
         public bool AttackSpeedDown
         {
@@ -65,16 +79,17 @@ namespace Shuile.Gameplay
             }
         }
 
+        //private StateCheckDebugProperty _checkDebugProperty;
         private void Awake()
         {
             player = GetComponent<Player>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GameplayService.Interface.Get<PlayerModel>().moveCtrl;
             attackSpeedDownTimer.RegisterComplete(() => AttackSpeedDown = false);
+            holdJumpTimer.MaxDuration = jumpMaxDuration;
 
             ConfigureDependency();
             ConfigureInputEvent();
-            InitFSM();
         }
 
         private void OnDestroy()
@@ -84,6 +99,7 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
+            InitMainFSM();
             _moveController.IsFrozen = false;
             _moveController.Acceleration = acc;
             _moveController.Deceleration = deAcc;
@@ -92,9 +108,10 @@ namespace Shuile.Gameplay
 
         private void FixedUpdate()
         {
-            mFsm.FixedUpdate();
+            mainFsm.FixedUpdate();
             attackSpeedDownTimer.Tick(Time.fixedDeltaTime);
-
+            BehaveUpdate();
+            RefreshParameter();
         }
 
         /// <summary> update velocity </summary>
@@ -110,18 +127,33 @@ namespace Shuile.Gameplay
             playerModel.faceDir = xInput;
         }
 
-        public void SingleJump()
+        public void JumpPress()
         {
-            if (mFsm.CurrentStateId == State.JumpUp || mFsm.CurrentStateId == State.Drop) return;
+            if (mainFsm.CurrentStateId != MainState.Normal) return;
 
-            jumpCommand
-                .Bind(new()
-                {
-                    moveController = _moveController,
-                    jumpVel = jumpVel
-                })
-                .Execute();
-            mFsm.SwitchState(State.JumpUp);
+            _moveController.Velocity = _moveController.Velocity.With(y: jumpStartVel);
+            holdJumpTimer.StartTime = Time.time;
+            mainFsm.SwitchState(MainState.JumpUpAndInputHoldOn);
+            OnJumpStart.Invoke();
+        }
+
+        public void HoldJump()
+        {
+            if (mainFsm.CurrentStateId != MainState.JumpUpAndInputHoldOn) return;
+
+            _moveController.Velocity += new Vector2(0, holdJumpVelAdd);
+            var hitWall = Mathf.Abs(_moveController.Velocity.y) < 1e-4; // ...
+
+            if (holdJumpTimer.HasReachTime(Time.time) || hitWall)
+            {
+                //Debug.Log("Stop Jump Hold On Acceleration");
+                mainFsm.SwitchState(MainState.JumpUpAndInputHoldOff);
+            }
+        }
+        public void JumpRelese()
+        {
+            if (mainFsm.CurrentStateId != MainState.JumpUpAndInputHoldOn) return;
+            mainFsm.SwitchState(MainState.JumpUpAndInputHoldOff);
         }
 
         public void Attack()
@@ -144,13 +176,33 @@ namespace Shuile.Gameplay
 
         private void CheckGround()
         {
-            // easy way to fix groundcheck is true on jumping first frame, but it maybe lead to other bug
-            //var groundCheck = Rb.velocity.y < 0 &&
-            //      Physics2D.Raycast(transform.position + new Vector3(0, -1.3f, 0), Vector2.down, 0.3f, LayerMask.GetMask("Ground"));
             if (_moveController.IsOnGround)
             {
-                mFsm.SwitchState(State.Normal);
+                mainFsm.SwitchState(MainState.Normal);
                 OnTouchGround.Invoke();
+            }
+        }
+
+        private void RefreshParameter()
+        {
+            _moveController.IsFrozen = false;
+            _moveController.Acceleration = acc;
+            _moveController.Deceleration = deAcc;
+            _moveController.XMaxSpeed = xMaxSpeed;
+
+            holdJumpTimer.MaxDuration = jumpMaxDuration;
+        }
+
+        private void BehaveUpdate()
+        {
+            if (isMoving)
+            {
+                NormalMove(moveParam);
+            }
+
+            if (isJumping)
+            {
+                HoldJump();
             }
         }
 
@@ -161,36 +213,62 @@ namespace Shuile.Gameplay
 
         private void ConfigureInputEvent()
         {
-            mPlayerInput.OnJump += SingleJump;
-            mPlayerInput.OnAttack += Attack;
-            mPlayerInput.OnMove += NormalMove;
+            mPlayerInput.OnAttack.Register(Attack)
+               .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            mPlayerInput.OnMoveStart.Register((v) =>
+            {
+                isMoving = true;
+                moveParam = v;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            mPlayerInput.OnMoveCanceled.Register(v => isMoving = false)
+              .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            mPlayerInput.OnJumpStart.Register(v =>
+            {
+                JumpPress();
+                isJumping = true;
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            mPlayerInput.OnJumpCanceled.Register(v =>
+            {
+                isJumping = false;
+                JumpRelese();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
         private void ClearInputEvent()
         {
-            mPlayerInput.OnJump -= SingleJump;
-            mPlayerInput.OnAttack -= Attack;
-            mPlayerInput.OnMove -= NormalMove;
         }
 
-        private void InitFSM()
+        private void InitMainFSM()
         {
-            mFsm.NewEventState(State.Normal)
+            mainFsm.NewEventState(MainState.Normal)
                 .OnEnter(() =>
                 {
                     _moveController.Gravity = normalGravity;
+
+                    //Debug.Log("Enter Normal");
                 });
-            mFsm.NewEventState(State.JumpUp)
+            mainFsm.NewEventState(MainState.JumpUpAndInputHoldOff)
+                .OnEnter(() =>
+                {
+                    _moveController.Gravity = dropGravity;
+                    isJumping = false;
+                })
                 .OnFixedUpdate(() =>
                 {
                     CheckGround();
 
+                    _moveController.Velocity -= new Vector2(0, holdOffYDamping);
+
                     if (_moveController.Velocity.y < 0)
                     {
-                        mFsm.SwitchState(State.Drop);
+                        mainFsm.SwitchState(MainState.Drop);
                     }
                 });
-            mFsm.NewEventState(State.Drop)
+            mainFsm.NewEventState(MainState.Drop)
                 .OnEnter(() =>
                 {
                     _moveController.Gravity = dropGravity;
@@ -199,7 +277,12 @@ namespace Shuile.Gameplay
                 {
                     CheckGround();
                 });
-            mFsm.StartState(State.Normal);
+            mainFsm.StartState(MainState.Normal);
+
+            //mFsm.OnStateChanged += (o, n) =>
+            //{
+            //    Debug.Log($"{o} -> {n}");
+            //};
         }
     }
 
@@ -220,19 +303,19 @@ namespace Shuile.Gameplay
         }
     }
 
-    public struct PlayerJumpCommandData
-    {
-        public SmoothMoveCtrl moveController;
-        public float jumpVel;
-    }
-    public class PlayerJumpCommand : BaseCommand<PlayerJumpCommandData>
-    {
-        public override void OnExecute()
-        {
-            state.moveController.JumpVelocity = state.jumpVel;
-            state.moveController.SimpleJump(1f);
-        }
-    }
+    //public struct PlayerJumpCommandData
+    //{
+    //    public SmoothMoveCtrl moveController;
+    //    public float jumpVel;
+    //}
+    //public class PlayerJumpCommand : BaseCommand<PlayerJumpCommandData>
+    //{
+    //    public override void OnExecute()
+    //    {
+    //        state.moveController.JumpVelocity = state.jumpVel;
+    //        state.moveController.SimpleJump(1f);
+    //    }
+    //}
 
     public struct PlayerMoveCommandData
     {

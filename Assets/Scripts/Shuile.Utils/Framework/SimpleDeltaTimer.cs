@@ -1,6 +1,6 @@
 namespace Shuile.Framework
 {
-    public class SimpleTimer
+    public class SimpleDeltaTimer
     {
         protected enum State
         {
@@ -24,17 +24,17 @@ namespace Shuile.Framework
 
         public float LastDeltaTime { get; private set; }
 
-        public SimpleTimer SetDuration(float duration)
+        public SimpleDeltaTimer SetDuration(float duration)
         {
             Duration = duration;
             return this;
         }
-        public SimpleTimer RegisterComplete(System.Action onComplete)
+        public SimpleDeltaTimer RegisterComplete(System.Action onComplete)
         {
             this.onComplete += onComplete;
             return this;
         }
-        public SimpleTimer UnRegisterComplete(System.Action onComplete)
+        public SimpleDeltaTimer UnRegisterComplete(System.Action onComplete)
         {
             this.onComplete -= onComplete;
             return this;
@@ -81,5 +81,12 @@ namespace Shuile.Framework
             onComplete?.Invoke();
             state = State.Sleep;
         }
+    }
+
+    public class SimpleDurationTimer
+    {
+        public float StartTime { get; set; }
+        public float MaxDuration { get; set; }
+        public bool HasReachTime(float time) => time - StartTime > MaxDuration;
     }
 }
