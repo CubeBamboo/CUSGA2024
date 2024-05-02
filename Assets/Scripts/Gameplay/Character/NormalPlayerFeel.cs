@@ -78,9 +78,9 @@ namespace Shuile.Gameplay
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            playerCtrl.moveCommand.RegisterCommandAfter(() =>
+            playerCtrl.OnMoveStart.Register(v =>
             {
-                animCtrl.FlipX = playerInput.XInput < 0;
+                animCtrl.FlipX = v < 0;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             playerCtrl.OnTouchGround.Register(() =>

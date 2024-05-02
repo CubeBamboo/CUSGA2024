@@ -1,15 +1,17 @@
-using DG.Tweening;
 using Shuile.Framework;
 using Shuile.MonoGadget;
 using Shuile.Rhythm.Runtime;
-using System;
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+
+using UObject = UnityEngine.Object;
 
 namespace Shuile.Gameplay
 {
@@ -22,6 +24,8 @@ namespace Shuile.Gameplay
             public RectTransform transform;
             public Graphic graphic;
 
+            public bool isFadeOut = false;
+
             public UINote(RectTransform transform, Graphic graphic, float targetTime) : base(targetTime)
             {
                 this.transform = transform;
@@ -30,14 +34,19 @@ namespace Shuile.Gameplay
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void UpdateView(float time, float distanceUnit, float preDisplayTime, float MissTolerance)
+            public void UpdateView(float time, float distanceUnit, float preDisplayTime, float MissTolerance, float maxNegativeDeltaTime = 0.2f)
             {
                 if (isHit) return;
                 var delta = this.realTime - time;
                 var waitForHit = delta > 0;
 
                 this.transform.localPosition = this.transform.localPosition.With(x: distanceUnit * delta);
-                if (!waitForHit) return;
+
+                if (!waitForHit && -delta > maxNegativeDeltaTime)
+                {
+                    this.graphic.enabled = false;
+                    return;
+                }
 
                 float alpha = 1f - Mathf.Clamp01((delta - preDisplayTime + MissTolerance) / MissTolerance);
                 this.graphic.color = Color.white.With(a: alpha);
@@ -55,11 +64,12 @@ namespace Shuile.Gameplay
         private ReadOnlyCollection<SingleNote> renderNoteList;
 
         [SerializeField] private float distanceUnit;
+        [SerializeField] private float maxNegativeDeltaTime = 0.2f;
         private float preDisplayTime;
 
-        private GameObject notePrefab;
+        private Graphic notePrefab;
 
-        private ObjectPool<GameObject> notePool;
+        private ObjectPool<Graphic> notePool;
         private List<UINote> uiNoteList;
         //private ChartPlayer chartPlayer;
 
@@ -72,10 +82,10 @@ namespace Shuile.Gameplay
 
         public RhythmIndicator()
         {
-            notePool = new ObjectPool<GameObject>(() => Instantiate(notePrefab, transform),
-                ObjectPoolFuncStore.GameObjectGet,
-                ObjectPoolFuncStore.GameObjectRelease,
-                ObjectPoolFuncStore.GameObjectDestroy,
+            notePool = new ObjectPool<Graphic>(() => Instantiate(notePrefab.gameObject, transform).GetComponent<Graphic>(),
+                g => { g.gameObject.SetActive(true); g.enabled = true; },
+                g => g.gameObject.SetActive(false),
+                g => UObject.Destroy(g.gameObject),
                 8);
             uiNoteList = new(8);
         }
@@ -103,7 +113,7 @@ namespace Shuile.Gameplay
         {
             for (int i = 0; i < uiNoteList.Count;)
             {
-                uiNoteList[i++].UpdateView(TimeTweener.TweenTime, distanceUnit, preDisplayTime, MissTolerance);
+                uiNoteList[i++].UpdateView(TimeTweener.TweenTime, distanceUnit, preDisplayTime, MissTolerance, maxNegativeDeltaTime);
             }
         }
 
@@ -112,8 +122,6 @@ namespace Shuile.Gameplay
             var uiNote = TryGetNearestNote();
             if (uiNote == null) return;
             ReleseNote(uiNote);
-            //uiNote.graphic.color = Color.red;
-            //uiNote.graphic.DOFade(0f, 0.2f).OnComplete(() => ReleseNote(uiNote));
         }
 
         private void OnPlayerHit()
@@ -130,14 +138,14 @@ namespace Shuile.Gameplay
         private void OnNote(BaseNoteData noteData, float time)
         {
             var obj = notePool.Get();
-            var graphic = obj.GetComponent<Graphic>();
+            var graphic = obj;
             graphic.color = graphic.color.With(a: 0f);
             uiNoteList.Add(new ((RectTransform)obj.transform, graphic, noteData.ToPlayTime()));
         }
 
         private void ReleseNote(UINote note)
         {
-            notePool.Release(note.transform.gameObject);
+            notePool.Release(note.graphic);
             uiNoteList.UnorderedRemove(note);
         }
 

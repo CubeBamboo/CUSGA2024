@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Shuile
 {
@@ -28,7 +29,7 @@ namespace Shuile
         public GameObject laser;
 
         [Header("RhythmIndicator")]
-        public GameObject noteIndicator;
+        public Graphic noteIndicator;
 
         [Header("Effect")]
         public SpawnEffect enemySpawnEffect;

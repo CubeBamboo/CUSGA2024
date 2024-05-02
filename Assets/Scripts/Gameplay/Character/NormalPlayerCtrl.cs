@@ -56,9 +56,10 @@ namespace Shuile.Gameplay
 
         private PlayerModel playerModel;
 
+        private PlayerMoveCommand moveCommand = new();
         public EasyEvent OnTouchGround { get; } = new();
+        public EasyEvent<float> OnMoveStart { get; } = new();
         public PlayerAttackCommand attackCommand { get; } = new();
-        public PlayerMoveCommand moveCommand { get; } = new();
 
         public EasyEvent OnJumpStart = new();
 
@@ -124,6 +125,7 @@ namespace Shuile.Gameplay
                     moveController = _moveController,
                 })
                 .Execute();
+            OnMoveStart?.Invoke(xInput);
             playerModel.faceDir = xInput;
         }
 
