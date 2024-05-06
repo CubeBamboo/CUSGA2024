@@ -1,6 +1,9 @@
 using UnityEngine;
 using DG.Tweening;
 using Shuile.Gameplay;
+using System;
+using System.Linq.Expressions;
+using Shuile.MonoGadget;
 
 namespace Shuile
 {
@@ -30,7 +33,8 @@ namespace Shuile
 
         public enum AnimTrigger
         {
-            Attack,
+            AttackStart,
+            AttackStop,
             Jump,
             Land,
             Die,
@@ -42,6 +46,8 @@ namespace Shuile
             _target = go;
             _spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
             _animator = go.GetComponentInChildren<Animator>();
+            if (_animator.gameObject.GetComponent<AttackingUnlocker>() is AttackingUnlocker unlocker)
+                unlocker.ctrl = go.GetComponent<NormalPlayerCtrl>();
             _playerModel = GameplayService.Interface.Get<PlayerModel>();
         }
 
@@ -54,8 +60,13 @@ namespace Shuile
         {
             switch (trigger)
             {
-                case AnimTrigger.Attack:
-                    TriggerAttack();
+                case AnimTrigger.AttackStart:
+                    Debug.LogWarning($"Use {nameof(TriggerAttack)} to trigger attack animation");
+                    TriggerAttack(true, WeaponType.Sword);
+                    break;
+                case AnimTrigger.AttackStop:
+                    Debug.LogWarning($"Use {nameof(TriggerAttack)} to trigger attack animation");
+                    TriggerAttack(true, WeaponType.Sword);
                     break;
                 case AnimTrigger.Hurt:
                     TriggerHurt();
@@ -72,11 +83,10 @@ namespace Shuile
             _spriteRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f).OnComplete(() =>
                 _spriteRenderer.DOColor(Color.white, 0.2f));
         }
-        private void TriggerAttack()
+        public void TriggerAttack(bool start, WeaponType type)
         {
-            _animator.SetTrigger("Attack");
-            LevelFeelManager.Instance.PlayParticle(
-                "SwordSlash", _target.transform.position, new Vector2(_playerModel.faceDir, 0), _target.transform);
+            _animator.SetInteger("WeaponType", (int)type);
+            _animator.SetBool("Attack", start);
         }
     }
 }

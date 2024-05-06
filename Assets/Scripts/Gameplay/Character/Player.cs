@@ -29,7 +29,7 @@ namespace Shuile.Gameplay
             playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
 
             _PlayerInput = gameObject.AddComponent<NormalPlayerInput>();
-            _PlayerCtrl = gameObject.AddComponent<NormalPlayerCtrl>();
+            _PlayerCtrl = gameObject.GetComponent<NormalPlayerCtrl>();
             _PlayerFeel = gameObject.AddComponent<NormalPlayerFeel>();
 
             GameplayService.Interface.Register<Player>(this);

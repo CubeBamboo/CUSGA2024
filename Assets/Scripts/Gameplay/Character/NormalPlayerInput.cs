@@ -18,13 +18,13 @@ namespace Shuile.Gameplay
 
         public float XInput { get; private set; }
 
-        public EasyEvent OnAttack = new();
         //public event System.Action OnJumpPress, OnJumpHold, OnJumpRelese;
         //public event System.Action<float> OnMove;
 
         // [for inputHelper]
         public EasyEvent<float> OnMoveStart = new(), OnMoveCanceled = new();
         public EasyEvent<float> OnJumpStart = new(), OnJumpCanceled = new();
+        public EasyEvent<float> OnAttackStart = new(), OnAttackCanceled = new();
 
         PlayerPlayerInputHelper inputHelper = new();
 
@@ -78,11 +78,6 @@ namespace Shuile.Gameplay
             //}
 
             // attack
-            bool attackInput = keyboard.jKey.wasPressedThisFrame || mouse.leftButton.wasPressedThisFrame;
-            if (attackInput)
-            {
-                OnAttack.Invoke();
-            }
         }
 
         private void InitInputHelper()
@@ -91,6 +86,8 @@ namespace Shuile.Gameplay
             inputHelper.onMoveCanceled = v => OnMoveCanceled.Invoke(v);
             inputHelper.onJumpStart = v => OnJumpStart.Invoke(v);
             inputHelper.onJumpCanceled = v => OnJumpCanceled.Invoke(v);
+            inputHelper.onAttackStart = v => OnAttackStart.Invoke(v);
+            inputHelper.onAttackCanceled = v => OnAttackCanceled.Invoke(v);
         }
     }
 
@@ -98,6 +95,7 @@ namespace Shuile.Gameplay
     {
         public System.Action<float> onMoveStart, onMoveCanceled;
         public System.Action<float> onJumpStart, onJumpCanceled;
+        public System.Action<float> onAttackStart, onAttackCanceled;
 
         public void OnPlayerInputTriggered(InputAction.CallbackContext ctx)
         {
@@ -108,6 +106,9 @@ namespace Shuile.Gameplay
                     break;
                 case "Jump":
                     ProcessJumpPhase(ctx);
+                    break;
+                case "Fire":
+                    ProcessAttackPhase(ctx);
                     break;
             }
         }
@@ -134,5 +135,6 @@ namespace Shuile.Gameplay
 
         private void ProcessJumpPhase(InputAction.CallbackContext ctx) => InternalProcessPhase(ctx, onJumpStart, onJumpCanceled);
         private void ProcessMovePhase(InputAction.CallbackContext ctx) => InternalProcessPhase(ctx, onMoveStart, onMoveCanceled);
+        private void ProcessAttackPhase(InputAction.CallbackContext ctx) => InternalProcessPhase(ctx, onAttackStart, onAttackCanceled);
     }
 }
