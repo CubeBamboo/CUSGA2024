@@ -64,11 +64,9 @@ namespace Shuile.Gameplay
                 LevelFeelManager.Instance.VignettePulse();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            playerCtrl.attackCommand.RegisterCommandAfter(() =>
+            playerCtrl.OnWeaponAttack.Register(enable =>
             {
-                animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Attack);
-                //MonoAudioCtrl.Instance.PlayOneShot("Player_Attack");
-
+                animCtrl.TriggerAttack(enable, playerCtrl.CurrentWeapon.Type);
                 levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 

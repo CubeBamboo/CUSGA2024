@@ -1,5 +1,9 @@
 using CbUtils;
 
+using PlasticPipe.PlasticProtocol.Server.Stubs;
+
+using System;
+
 namespace Shuile.Framework
 {
     public interface ICommand
@@ -76,5 +80,19 @@ namespace Shuile.Framework
             => _afterCommand.UnRegister(action);
     }
 
+    public class DelegateCommand<TData> : BaseCommand<TData> where TData : struct
+    {
+        private Action<TData> action;
+
+        public DelegateCommand(Action<TData> action)
+        {
+            this.action = action;
+        }
+
+        public override void OnExecute()
+        {
+            action.Invoke(state);
+        }
+    }
     // TODO: interceptable command (provide a async call before execute)
 }

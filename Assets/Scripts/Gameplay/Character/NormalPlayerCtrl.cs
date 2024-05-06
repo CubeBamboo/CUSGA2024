@@ -1,11 +1,14 @@
 using CbUtils;
 using CbUtils.Editor;
 using Shuile.Framework;
+using Shuile.Gameplay.Weapon;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
 
 using System.Linq;
 using UnityEngine;
+
+using static UnityEngine.UI.CanvasScaler;
 
 namespace Shuile.Gameplay
 {
@@ -50,35 +53,67 @@ namespace Shuile.Gameplay
         [SerializeField] private float normalGravity = 3f;
         [SerializeField] private float dropGravity = 6f;
         [SerializeField] private float holdOffYDamping = 0.4f;
-        
+
         // [attack]
-        [SerializeField] private float attackRadius = 2.8f;
+        [SerializeField] private Transform handTransform;
+        private IWeapon currentWeapon;
+        private bool attackingLock;
 
         private PlayerModel playerModel;
 
         private PlayerMoveCommand moveCommand = new();
         public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
-        public PlayerAttackCommand attackCommand { get; } = new();
+        public EasyEvent<WeaponHitData> OnWeaponHit { get; } = new();
+        public EasyEvent<bool> OnWeaponAttack { get; } = new();
 
         public EasyEvent OnJumpStart = new();
 
-        public bool CheckRhythm =>
-            PlayerChartManager.Instance.TryHit(
-                MusicRhythmManager.Instance.CurrentTime, out playerModel.currentHitOffset);
-
-        private SimpleDeltaTimer attackSpeedDownTimer = new();
-        private SimpleDurationTimer holdJumpTimer = new();
-
-        public bool AttackSpeedDown
+        public IWeapon CurrentWeapon
         {
+            get => currentWeapon;
             set
             {
+                if (AttackingLock)
+                {
+                    Debug.LogWarning("Not support to change weapon while attack locking");
+                    return;
+                }
+                if (currentWeapon != null)
+                {
+                    currentWeapon.OnHit.UnRegister(OnWeaponHit.Invoke);
+                    currentWeapon.BindToTransform(null);
+                }
+                currentWeapon = value;
+                if (currentWeapon != null)
+                {
+                    currentWeapon.OnHit.Register(OnWeaponHit.Invoke);
+                    currentWeapon.BindToTransform(handTransform);
+                }
+            }
+        }
+        public bool IsWeaponExist => currentWeapon != null && currentWeapon.GetType() != typeof(NoWeapon);
+        public bool AttackingLock
+        {
+            get => attackingLock;
+            set
+            {
+                if (attackingLock == value) return;
+                attackingLock = value;
+                if (!value)
+                    StopAttack();
+
                 _moveController.XMaxSpeed = value ? xMaxSpeed * 0.3f : xMaxSpeed;
                 if (value && Mathf.Abs(_moveController.Velocity.x) > _moveController.XMaxSpeed)
                     _moveController.Velocity = _moveController.Velocity.With(x: Mathf.Sign(_moveController.Velocity.x) * _moveController.XMaxSpeed);
             }
         }
+
+        public bool CheckRhythm =>
+            PlayerChartManager.Instance.TryHit(
+                MusicRhythmManager.Instance.CurrentTime, out playerModel.currentHitOffset);
+
+        private SimpleDurationTimer holdJumpTimer = new();
 
         //private StateCheckDebugProperty _checkDebugProperty;
         private void Awake()
@@ -86,8 +121,8 @@ namespace Shuile.Gameplay
             player = GetComponent<Player>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GameplayService.Interface.Get<PlayerModel>().moveCtrl;
-            attackSpeedDownTimer.RegisterComplete(() => AttackSpeedDown = false);
             holdJumpTimer.MaxDuration = jumpMaxDuration;
+            CurrentWeapon = handTransform.GetComponentInChildren<IWeapon>() ?? new NoWeapon();
 
             ConfigureDependency();
             ConfigureInputEvent();
@@ -110,7 +145,6 @@ namespace Shuile.Gameplay
         private void FixedUpdate()
         {
             mainFsm.FixedUpdate();
-            attackSpeedDownTimer.Tick(Time.fixedDeltaTime);
             BehaveUpdate();
             RefreshParameter();
         }
@@ -162,19 +196,26 @@ namespace Shuile.Gameplay
         {
             if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm) return;
 
-            attackCommand
-                .Bind(new()
-                {
-                    position = transform.position,
-                    attackRadius = attackRadius,
-                    attackPoint = player.Property.attackPoint
-                })
+            CurrentWeapon.AttackCommand
+                .Bind(new(transform.position, new Vector2(Mathf.Sign(playerModel.faceDir), 0f)))
                 .Execute();
-
-            AttackSpeedDown = true;
-            attackSpeedDownTimer.RestartTick();
-            attackSpeedDownTimer.Duration = 0.2f;
+            OnWeaponAttack.Invoke(true);
         }
+
+        public void StopAttack()
+        {
+            if (attackingLock)
+                return;
+
+            CurrentWeapon.AttackFinishCommand
+                .Bind(new(transform.position, new Vector2(Mathf.Sign(playerModel.faceDir), 0f)))
+                .Execute();
+            OnWeaponAttack.Invoke(false);
+        }
+
+        // Shortcut to invoke by animator
+        public void ReleaseAttackingLock()
+            => AttackingLock = false;
 
         private void CheckGround()
         {
@@ -215,9 +256,6 @@ namespace Shuile.Gameplay
 
         private void ConfigureInputEvent()
         {
-            mPlayerInput.OnAttack.Register(Attack)
-               .UnRegisterWhenGameObjectDestroyed(gameObject);
-
             mPlayerInput.OnMoveStart.Register((v) =>
             {
                 isMoving = true;
@@ -238,6 +276,13 @@ namespace Shuile.Gameplay
                 isJumping = false;
                 JumpRelese();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            mPlayerInput.OnAttackStart.Register(v => Attack())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            mPlayerInput.OnAttackCanceled.Register(v => StopAttack())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
+
         }
 
         private void ClearInputEvent()
@@ -285,23 +330,6 @@ namespace Shuile.Gameplay
             //{
             //    Debug.Log($"{o} -> {n}");
             //};
-        }
-    }
-
-    public struct PlayerAttackCommandData
-    {
-        public Vector2 position;
-        public float attackRadius;
-        public int attackPoint;
-    }
-    public class PlayerAttackCommand : BaseCommand<PlayerAttackCommandData>
-    {
-        public override void OnExecute()
-        {
-            var hits = Physics2D.OverlapCircleAll(state.position, state.attackRadius, LayerMask.GetMask("Enemy"));
-            var hurts = hits.Select(hit => hit.GetComponent<IHurtable>());
-            foreach (var hurt in hurts)
-                hurt.OnHurt(state.attackPoint);
         }
     }
 
