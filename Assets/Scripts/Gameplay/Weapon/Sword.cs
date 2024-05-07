@@ -45,8 +45,8 @@ namespace Shuile.Gameplay.Weapon
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            Debug.Log(collision.name);
-            if (!playerCtrl.AttackingLock || collision.CompareTag("Player"))  // ·ÀÖ¹×ÏÉ°
+            //Debug.Log(collision.name);
+            if (!playerCtrl.AttackingLock || collision.CompareTag("Player"))  // é˜²æ­¢ç´«ç ‚
                 return;
 
             var hurtable = collision.GetComponent<IHurtable>();

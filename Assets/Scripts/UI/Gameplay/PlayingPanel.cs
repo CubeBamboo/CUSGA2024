@@ -23,7 +23,7 @@ namespace Shuile.UI
         private void OnDisable()
             => LevelLoadEndEvent.UnRegister(OnStart);
 
-        private void OnStart()
+        private void OnStart(string sceneName)
         {
             var player = GameplayService.Interface.Get<Player>();
             UpdateHpText(int.MinValue, player.CurrentHp.Value);

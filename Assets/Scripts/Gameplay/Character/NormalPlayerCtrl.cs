@@ -120,7 +120,7 @@ namespace Shuile.Gameplay
         {
             player = GetComponent<Player>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
-            _moveController = GameplayService.Interface.Get<PlayerModel>().moveCtrl;
+            _moveController = GetComponent<SmoothMoveCtrl>();
             holdJumpTimer.MaxDuration = jumpMaxDuration;
             CurrentWeapon = handTransform.GetComponentInChildren<IWeapon>() ?? new NoWeapon();
 

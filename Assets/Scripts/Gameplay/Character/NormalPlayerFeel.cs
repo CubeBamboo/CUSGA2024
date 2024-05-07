@@ -26,7 +26,7 @@ namespace Shuile.Gameplay
             levelModel = GameplayService.Interface.Get<LevelModel>();
             playerModel = GameplayService.Interface.Get<PlayerModel>();
 
-            _moveController = GameplayService.Interface.Get<PlayerModel>().moveCtrl;
+            _moveController = GetComponent<SmoothMoveCtrl>();
             player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();
             playerInput = GetComponent<NormalPlayerInput>();

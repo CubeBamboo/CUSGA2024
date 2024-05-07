@@ -1,16 +1,11 @@
 using CbUtils.Extension;
-using PlasticPipe.PlasticProtocol.Messages;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Unity.VisualScripting.YamlDotNet.Serialization;
+
 using UnityEngine;
-using static UnityEngine.UI.CanvasScaler;
 
 namespace Shuile
 {
     /// <summary>
-    /// inifinit scrolling background
+    /// [WIP] inifinit scrolling background
     /// </summary>
     public class ScrollBGCtrl : MonoBehaviour
     {

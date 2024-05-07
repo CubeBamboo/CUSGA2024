@@ -9,6 +9,9 @@ using UnityEngine.SceneManagement;
 using UDebug = UnityEngine.Debug;
 using Shuile.Gameplay;
 using Shuile.Audio;
+using Shuile.Gameplay.Event;
+using UnityEngine;
+using Shuile.Gameplay.Feel;
 
 namespace Shuile.Root
 {
