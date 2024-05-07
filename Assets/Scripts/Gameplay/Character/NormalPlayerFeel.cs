@@ -67,7 +67,8 @@ namespace Shuile.Gameplay
             playerCtrl.OnWeaponAttack.Register(enable =>
             {
                 animCtrl.TriggerAttack(enable, playerCtrl.CurrentWeapon.Type);
-                levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
+                if (enable) LevelFeelManager.Instance.PlayParticle("SwordSlash", transform.position, new Vector2(playerModel.faceDir, 0), transform);
+                if (enable) levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             playerCtrl.OnJumpStart.Register(() =>

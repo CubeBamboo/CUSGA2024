@@ -3561,10 +3561,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u8282\u594F"
+  m_text: Echo Swirl
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1507730935366ad4ea39cc5abde18aad, type: 2}
-  m_sharedMaterial: {fileID: -3281966118334265686, guid: 1507730935366ad4ea39cc5abde18aad, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: be307aadcecc5f64b8b7ca582184f3c3, type: 2}
+  m_sharedMaterial: {fileID: -8693064956410066039, guid: be307aadcecc5f64b8b7ca582184f3c3, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

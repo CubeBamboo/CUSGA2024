@@ -1,14 +1,11 @@
 using CbUtils;
-using CbUtils.Editor;
+using CbUtils.ActionKit;
 using Shuile.Framework;
 using Shuile.Gameplay.Weapon;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
 
-using System.Linq;
 using UnityEngine;
-
-using static UnityEngine.UI.CanvasScaler;
 
 namespace Shuile.Gameplay
 {
@@ -122,7 +119,7 @@ namespace Shuile.Gameplay
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
             holdJumpTimer.MaxDuration = jumpMaxDuration;
-            CurrentWeapon = handTransform.GetComponentInChildren<IWeapon>() ?? new NoWeapon();
+            CurrentWeapon = handTransform.GetComponent<IWeapon>() ?? new NoWeapon();
 
             ConfigureDependency();
             ConfigureInputEvent();
@@ -200,6 +197,10 @@ namespace Shuile.Gameplay
                 .Bind(new(transform.position, new Vector2(Mathf.Sign(playerModel.faceDir), 0f)))
                 .Execute();
             OnWeaponAttack.Invoke(true);
+
+            ActionCtrl.Delay(durationInSeconds: 0.2f)
+                .OnComplete(() => AttackingLock = true)
+                .Start(gameObject);
         }
 
         public void StopAttack()

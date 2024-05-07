@@ -18,6 +18,8 @@ namespace Shuile
 
         private float dangerScore = 0f;
 
+        private int dangerLevel = -1;
+
         public LevelModel()
         {
             var resources = LevelResources.Instance;
@@ -34,10 +36,17 @@ namespace Shuile
         public float OffsetInSeconds => musicOffset * 0.001f;
         public float MissToleranceInSeconds => missTolerance * 0.001f;
         public int DangerLevel => DangerLevelUtils.GetDangerLevelUnClamped(DangerScore);
+        /// <summary> float - old value </summary>
+        public EasyEvent<float> OnDangerScoreChange { get; } = new();
         public float DangerScore
         {
             get => dangerScore;
-            set => dangerScore = value < 0 ? 0 : value;
+            set
+            {
+                var oldVal = dangerScore;
+                dangerScore = value < 0 ? 0 : value;
+                if (oldVal != dangerScore) OnDangerScoreChange.Invoke(oldVal);
+            }
         }
     }
 }

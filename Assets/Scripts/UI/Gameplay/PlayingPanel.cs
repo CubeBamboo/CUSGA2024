@@ -11,8 +11,8 @@ namespace Shuile.UI
     public class PlayingPanel : BasePanelWithMono
     {
         [SerializeField] private TextMeshProUGUI hpTextUGUI;
+        [SerializeField] private TextMeshProUGUI dangerLevelText;
 
-        public TextMeshProUGUI HpTextUGUI => hpTextUGUI;
         private void Awake()
             => this.RegisterUI<PlayingPanel>();
         private void OnDestroy()
@@ -29,11 +29,16 @@ namespace Shuile.UI
             UpdateHpText(int.MinValue, player.CurrentHp.Value);
             player.CurrentHp.Register(UpdateHpText)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
+
+            var levelModel = GameplayService.Interface.Get<LevelModel>();
+            levelModel.OnDangerScoreChange.Register(old =>
+                dangerLevelText.text = levelModel.DangerLevel.ToString())
+               .UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
         private void UpdateHpText(int oldHp, int newHp)
         {
-            hpTextUGUI.text = "Player HP: " + (newHp > 0 ? newHp : 0).ToString();
+            hpTextUGUI.text = (newHp > 0 ? newHp : 0).ToString();
         }
 
         public override void Hide()
