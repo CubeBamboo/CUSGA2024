@@ -2,22 +2,38 @@ namespace Shuile.Persistent
 {
     public class Config : PersistentData<Config>
     {
-        private AudioConfig audio;
+        private int globalDelay = 0;
+        private int bgAudioVolume = 100;
+        private int fxAudioVolume = 100;
+        private bool vibrationFeel = true;
 
-        public AudioConfig Audio
+        public int GlobalDelay
         {
-            get => audio;
-            set => this.UpdateClassProperty(ref audio, value);
+            get => globalDelay;
+            set => this.UpdateStructProperty(ref globalDelay, value);
+        }
+        public int BgAudioVolume
+        {
+            get => bgAudioVolume;
+            set => this.UpdateStructProperty(ref bgAudioVolume, value);
+        }
+        public int FxAudioVolume
+        {
+            get => fxAudioVolume;
+            set => this.UpdateStructProperty(ref fxAudioVolume, value);
+        }
+        public bool VibrationFeel
+        {
+            get => vibrationFeel;
+            set => this.UpdateStructProperty(ref vibrationFeel, value);
         }
 
         public Config()
         {
-            audio = new AudioConfig();
-            audio.OnTreePropertyChanged += INotifyTreePropertyChangedExtension.BuildEventLinker(this, nameof(Audio));
         }
 
 
-        public class AudioConfig : INotifyTreePropertyChanged
+        /*public class AudioConfig : INotifyTreePropertyChanged
         {
             private int globalDelay = 0;
 
@@ -34,6 +50,6 @@ namespace Shuile.Persistent
 
             public void InvokeTreePropertyChanged(object value, string path)
                 => OnTreePropertyChanged?.Invoke(value, path);
-        }
+        }*/
     }
 }

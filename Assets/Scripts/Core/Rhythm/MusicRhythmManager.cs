@@ -66,7 +66,7 @@ namespace Shuile.Rhythm.Runtime
 
         public void StartPlay()
         {
-            float offsetInSeconds = (currentChart.time[0].offset + MainGame.Interface.Get<Config>().Audio.GlobalDelay) * 0.001f;
+            float offsetInSeconds = (currentChart.time[0].offset + MainGame.Interface.Get<Config>().GlobalDelay) * 0.001f;
             Time.timeScale = playTimeScale;
             preciseMusicPlayer.Volume = volume;
 
