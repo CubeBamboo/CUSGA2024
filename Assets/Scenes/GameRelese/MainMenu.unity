@@ -2840,6 +2840,22 @@ PrefabInstance:
       propertyPath: m_text
       value: I want to play Genshin Impact
       objectReference: {fileID: 0}
+    - target: {fileID: 2561162612366057933, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2561162612366057933, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -263
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911000791884922254, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 224.00006
+      objectReference: {fileID: 0}
+    - target: {fileID: 2911000791884922254, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -203
+      objectReference: {fileID: 0}
     - target: {fileID: 3148981736818482122, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2902,11 +2918,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3148981736818482122, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -620.3468
+      value: -620.34674
       objectReference: {fileID: 0}
     - target: {fileID: 3148981736818482122, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 235.61884
+      value: 235.61879
       objectReference: {fileID: 0}
     - target: {fileID: 3148981736818482122, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2935,6 +2951,14 @@ PrefabInstance:
     - target: {fileID: 7723960650777633936, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9159698799485572269, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 394
+      objectReference: {fileID: 0}
+    - target: {fileID: 9159698799485572269, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -149
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

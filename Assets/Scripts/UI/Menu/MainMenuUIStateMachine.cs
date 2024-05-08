@@ -92,15 +92,21 @@ namespace Shuile
                     PlayFlash();
                     btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, 20f), 0.2f).SetEase(Ease.OutSine);
                     btn_Setting.targetGraphic.DOFade(0f, 0.3f);
+                    btn_Setting.enabled = false;
                     btn_Start.targetGraphic.DOFade(0f, 0.3f);
+                    btn_Start.enabled = false;
                     selectPanel.GetComponent<CanvasGroup>().DOFade(1f, 0.3f);
+                    settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
                 })
                 .OnExit(() =>
                 {
                     btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, -20f), 0.2f).SetEase(Ease.OutSine);
                     btn_Setting.targetGraphic.DOFade(1f, 0.3f);
+                    btn_Setting.enabled = true;
                     btn_Start.targetGraphic.DOFade(1f, 0.3f);
+                    btn_Start.enabled = true;
                     selectPanel.GetComponent<CanvasGroup>().DOFade(0f, 0.3f);
+                    settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
                 });
             _fsm.NewEventState(State.Settings)
                 .OnEnter(() =>

@@ -1,3 +1,5 @@
+using Shuile.UI;
+
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +12,7 @@ namespace Shuile
         [SerializeField] private Button btn_Next;
         [SerializeField] private Button btn_Prev;
         [SerializeField] private Button btn_Play;
+        [SerializeField] private AudioSpectrum spectrum;
 
         [SerializeField] private TextMeshProUGUI text_SongName;
         [SerializeField] private TextMeshProUGUI text_SongArtist;
