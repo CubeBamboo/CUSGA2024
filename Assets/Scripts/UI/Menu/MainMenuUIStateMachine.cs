@@ -56,7 +56,6 @@ namespace Shuile
         private void InitUIState()
         {
             titlePanel.SetActive(true);
-            selectPanel.SetActive(false);
 
             //tips.gameObject.SetActive(true);
             //tips.alpha = 0;
@@ -90,12 +89,18 @@ namespace Shuile
             _fsm.NewEventState(State.Select)
                 .OnEnter(() =>
                 {
-                    selectPanel.SetActive(true);
                     PlayFlash();
+                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, 20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Setting.targetGraphic.DOFade(0f, 0.3f);
+                    btn_Start.targetGraphic.DOFade(0f, 0.3f);
+                    selectPanel.GetComponent<CanvasGroup>().DOFade(1f, 0.3f);
                 })
                 .OnExit(() =>
                 {
-                    selectPanel.SetActive(false);
+                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, -20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Setting.targetGraphic.DOFade(1f, 0.3f);
+                    btn_Start.targetGraphic.DOFade(1f, 0.3f);
+                    selectPanel.GetComponent<CanvasGroup>().DOFade(0f, 0.3f);
                 });
             _fsm.NewEventState(State.Settings)
                 .OnEnter(() =>
