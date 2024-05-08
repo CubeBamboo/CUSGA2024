@@ -1,3 +1,5 @@
+using DG.Tweening;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,8 +9,9 @@ namespace Shuile
     {
         [SerializeField] private Button btn_Start;
         [SerializeField] private Button btn_Settings;
-        [SerializeField] private Button btn_Credits;
+        [SerializeField] private Button btn_Help;
         [SerializeField] private Button btn_Exit;
+        [SerializeField] private Button helpPage;
 
         [SerializeField] private MainMenuUIStateMachine mainMenu;
 
@@ -28,6 +31,14 @@ namespace Shuile
             btn_Settings.onClick.AddListener(() =>
             {
                 mainMenu.SwitchState(MainMenuUIStateMachine.State.Settings);
+            });
+            btn_Help.onClick.AddListener(() =>
+            {
+                helpPage.gameObject.SetActive(true);
+            });
+            helpPage.onClick.AddListener(() =>
+            {
+                helpPage.gameObject.SetActive(false);
             });
         }
 
