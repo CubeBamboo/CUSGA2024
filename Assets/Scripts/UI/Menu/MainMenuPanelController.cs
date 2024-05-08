@@ -25,6 +25,10 @@ namespace Shuile
             {
                 mainMenu.SwitchState(MainMenuUIStateMachine.State.Select);
             });
+            btn_Settings.onClick.AddListener(() =>
+            {
+                mainMenu.SwitchState(MainMenuUIStateMachine.State.Settings);
+            });
         }
 
         public void ExitGame()

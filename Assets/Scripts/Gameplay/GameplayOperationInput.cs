@@ -24,7 +24,7 @@ namespace Shuile.Gameplay
         {
             if (context.action.name == "Exit")
             {
-                Debug.Log(context.action.phase);
+                //Debug.Log(context.action.phase);
                 if (context.action.phase == InputActionPhase.Started)
                     exitPanel.Show();
                 else if (context.action.phase == InputActionPhase.Canceled)

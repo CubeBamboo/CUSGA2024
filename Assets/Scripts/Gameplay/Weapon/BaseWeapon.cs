@@ -25,7 +25,7 @@ namespace Shuile.Gameplay
 
     public abstract class BaseWeapon : MonoBehaviour, IWeapon
     {
-        private bool attacking = false;
+        //private bool attacking = false;
 
         public BaseCommand<WeaponCommandData> AttackCommand { get; private set; }
         public BaseCommand<WeaponCommandData> AttackFinishCommand { get; private set; }

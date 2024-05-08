@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace Shuile.UI
 {
-    public class SettingPanel : BasePanelWithMono
+    public class SettingPanel : MonoBehaviour
     {
         [SerializeField] private Slider bgAudioVolumeSlider;
         [SerializeField] private TMP_Text bgAudioVolumeText;
@@ -20,16 +20,26 @@ namespace Shuile.UI
         [SerializeField] private TMP_Text delayText;
         [SerializeField] private Toggle vibrationFeelToggle;
 
+        [Header("Other")]
+        [SerializeField] private Button btn_Return;
+
         private Viewer<Config> configViewer;
 
-        public override void Show()
+        [SerializeField] private MainMenuUIStateMachine stateMachine;
+        private void Awake()
+        {
+            ConfigEventListener();
+        }
+
+        //public override void Show()
+        private void OnEnable()
         {
             configViewer = MainGame.Interface.CreatePersistentDataViewer<Config, MainGame>();
             configViewer.Data.OnTreePropertyChanged += OnConfigPropertyChanged;
-            bgAudioVolumeSlider.onValueChanged.RemoveListener(OnBgAudioVolumeSliderValueChanged);
-            fxAudioVolumeSlider.onValueChanged.RemoveListener(OnFxAudioVolumeSliderValueChanged);
-            delaySlider.onValueChanged.RemoveListener(OnGlobalDelaySliderValueChanged);
-            vibrationFeelToggle.onValueChanged.RemoveListener(OnVibrationFeelToggleValueChanged);
+            bgAudioVolumeSlider.onValueChanged.AddListener(OnBgAudioVolumeSliderValueChanged);
+            fxAudioVolumeSlider.onValueChanged.AddListener(OnFxAudioVolumeSliderValueChanged);
+            delaySlider.onValueChanged.AddListener(OnGlobalDelaySliderValueChanged);
+            vibrationFeelToggle.onValueChanged.AddListener(OnVibrationFeelToggleValueChanged);
 
             OnConfigPropertyChanged(configViewer.Data.BgAudioVolume, nameof(Config.BgAudioVolume));
             OnConfigPropertyChanged(configViewer.Data.FxAudioVolume, nameof(Config.FxAudioVolume));
@@ -37,16 +47,18 @@ namespace Shuile.UI
             OnConfigPropertyChanged(configViewer.Data.VibrationFeel, nameof(Config.VibrationFeel));
         }
 
-        public override void Hide()
+        //public override void Hide()
+        private void OnDisable()
         {
             configViewer.Data.OnTreePropertyChanged -= OnConfigPropertyChanged;
             configViewer.SaveIfDirty().Forget();
-            bgAudioVolumeSlider.onValueChanged.AddListener(OnBgAudioVolumeSliderValueChanged);
-            fxAudioVolumeSlider.onValueChanged.AddListener(OnFxAudioVolumeSliderValueChanged);
-            delaySlider.onValueChanged.AddListener(OnGlobalDelaySliderValueChanged);
-            vibrationFeelToggle.onValueChanged.AddListener(OnVibrationFeelToggleValueChanged);
+            bgAudioVolumeSlider.onValueChanged.RemoveListener(OnBgAudioVolumeSliderValueChanged);
+            fxAudioVolumeSlider.onValueChanged.RemoveListener(OnFxAudioVolumeSliderValueChanged);
+            delaySlider.onValueChanged.RemoveListener(OnGlobalDelaySliderValueChanged);
+            vibrationFeelToggle.onValueChanged.RemoveListener(OnVibrationFeelToggleValueChanged);
         }
 
+        // TODO: change logic // TODO: use settings when enter the game.
         private void OnBgAudioVolumeSliderValueChanged(float value)
             => configViewer.Data.BgAudioVolume = (int)value;
         private void OnFxAudioVolumeSliderValueChanged(float value)
@@ -77,6 +89,11 @@ namespace Shuile.UI
             {
                 vibrationFeelToggle.isOn = (bool)value;
             }
+        }
+
+        private void ConfigEventListener()
+        {
+            btn_Return.onClick.AddListener(() => stateMachine.SwitchState(MainMenuUIStateMachine.State.Menu));
         }
     }
 }

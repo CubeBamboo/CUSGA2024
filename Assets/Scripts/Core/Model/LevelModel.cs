@@ -18,7 +18,7 @@ namespace Shuile
 
         private float dangerScore = 0f;
 
-        private int dangerLevel = -1;
+        //private int dangerLevel = -1;
 
         public LevelModel()
         {

@@ -51,7 +51,7 @@ namespace Shuile.Gameplay
         private void LevelFail()
         {
             var endPanel = UICtrl.Instance.Get<EndLevelPanel>();
-            endPanel.TimeTextUGUI.text = "SurviveTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.0");
+            endPanel.SetState(false);
             endPanel.Show();
             ActionCtrl.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
@@ -60,8 +60,7 @@ namespace Shuile.Gameplay
         private void LevelWin()
         {
             var endPanel = UICtrl.Instance.Get<EndLevelPanel>();
-            endPanel.TimeTextUGUI.text = "UseTime: " + MusicRhythmManager.Instance.CurrentTime.ToString("0.0");
-            endPanel.TitleUGUI.text = "Stage Clear";
+            endPanel.SetState(true);
             endPanel.Show();
 
             MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
