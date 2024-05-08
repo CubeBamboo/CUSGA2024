@@ -8,11 +8,7 @@ namespace Shuile
 {
     public class EndLevelPanel : BasePanelWithMono
     {
-        [SerializeField] private TextMeshProUGUI timeTextUGUI;
-        [SerializeField] private TextMeshProUGUI titleUGUI;
-
-        public TextMeshProUGUI TimeTextUGUI => timeTextUGUI;
-        public TextMeshProUGUI TitleUGUI => titleUGUI;
+        [SerializeField] private GameObject win, fail;
 
         public static PanelCreateor Creator = () =>
             Resources.Load<GameObject>("UIDesign/EndLevelPanel").Instantiate().GetComponent<IPanel>();
@@ -25,6 +21,15 @@ namespace Shuile
 
         private void OnDestroy()
             => this.UnRegisterUI<EndLevelPanel>();
+
+        public void SetState(bool isWin)
+        {
+            win.SetActive(false);
+            fail.SetActive(false);
+
+            if(isWin) win.SetActive(true);
+            else fail.SetActive(true);
+        }
 
         public override void Show()
         {
