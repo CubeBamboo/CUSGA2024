@@ -36,6 +36,8 @@ namespace Shuile.UI
         {
             configViewer = MainGame.Interface.CreatePersistentDataViewer<Config, MainGame>();
             configViewer.Data.OnTreePropertyChanged += OnConfigPropertyChanged;
+            configViewer.AutoSave = true;
+
             bgAudioVolumeSlider.onValueChanged.AddListener(OnBgAudioVolumeSliderValueChanged);
             fxAudioVolumeSlider.onValueChanged.AddListener(OnFxAudioVolumeSliderValueChanged);
             delaySlider.onValueChanged.AddListener(OnGlobalDelaySliderValueChanged);
@@ -89,6 +91,7 @@ namespace Shuile.UI
             {
                 vibrationFeelToggle.isOn = (bool)value;
             }
+
         }
 
         private void ConfigEventListener()
