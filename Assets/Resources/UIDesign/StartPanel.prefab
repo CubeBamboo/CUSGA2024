@@ -274,8 +274,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   btn_Start: {fileID: 3933567147987614024}
   btn_Settings: {fileID: 4633420961426936428}
-  btn_Credits: {fileID: 5362553969897499264}
+  btn_Help: {fileID: 5362553969897499264}
   btn_Exit: {fileID: 847392441411776826}
+  helpPage: {fileID: 0}
   mainMenu: {fileID: 0}
 --- !u!1 &5788215542024683142
 GameObject:

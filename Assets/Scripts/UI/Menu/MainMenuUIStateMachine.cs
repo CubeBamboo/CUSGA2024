@@ -3,6 +3,7 @@ using CbUtils;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Shuile
 {
@@ -11,6 +12,10 @@ namespace Shuile
         [SerializeField] private GameObject titlePanel;
         [SerializeField] private GameObject selectPanel;
         [SerializeField] private GameObject settingsPanel;
+        [SerializeField] private Animation flashAnimation;
+        [SerializeField] private Button btn_Start;
+        [SerializeField] private Button btn_Setting;
+        [SerializeField] private Button btn_Back;
 
         // [start panel]
         private RectTransform titleLogo;
@@ -35,7 +40,7 @@ namespace Shuile
             Settings
         }
 
-        private FSM<State> fsm;
+        private FSM<State> _fsm;
         private void Awake()
         {
             InitUIComponent();
@@ -51,8 +56,6 @@ namespace Shuile
         private void InitUIState()
         {
             titlePanel.SetActive(true);
-            selectPanel.SetActive(false);
-            settingsPanel.SetActive(false);
 
             //tips.gameObject.SetActive(true);
             //tips.alpha = 0;
@@ -71,47 +74,87 @@ namespace Shuile
 
         private void InitFSM()
         {
-            fsm = new();
-            fsm.NewEventState(State.Menu)
-               .OnEnter(() =>
-               {
-                   //menuPanel.DOAnchorPos3DY(MenuEnterPosY, 0.3f).SetEase(Ease.InOutSine);
-                   titlePanel.SetActive(true);
-               })
-               .OnExit(() =>
-               {
-                   //menuPanel.DOAnchorPos3DY(MenuInitPosY, 0.3f).SetEase(Ease.InOutSine);
-                   titlePanel.SetActive(false);
-               });
-            fsm.NewEventState(State.Select)
-               .OnEnter(() =>
-               {
-                   //selectPanel.DOAnchorPos3DY(MenuEnterPosY, 0.3f).SetEase(Ease.InOutSine);
-                   selectPanel.SetActive(true);
-               })
-               .OnExit(() =>
-               {
-                   //selectPanel.DOAnchorPos3DY(MenuInitPosY, 0.3f).SetEase(Ease.InOutSine);
-                   selectPanel.SetActive(false);
-               });
-            fsm.NewEventState(State.Settings)
-               .OnEnter(() =>
-               {
-                   settingsPanel.SetActive(true);
-               })
-               .OnExit(() =>
-               {
-                   settingsPanel.SetActive(false);
-               });
+            _fsm = new();
+            _fsm.NewEventState(State.Menu)
+                .OnEnter(() =>
+                {
+                    ((RectTransform)titleLogo.transform).DOAnchorPosY(106, 0.4f).SetEase(Ease.OutSine);
+                    ((RectTransform)flashAnimation.transform).DOAnchorPos(new(-215f, 56f), 0.3f).SetEase(Ease.OutSine);
+                    RewindFlash();
+                })
+                .OnExit(() =>
+                {
+                    ((RectTransform)titleLogo.transform).DOAnchorPosY(1000, 0.4f).SetEase(Ease.OutSine);
+                });
+            _fsm.NewEventState(State.Select)
+                .OnEnter(() =>
+                {
+                    PlayFlash();
+                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, 20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Setting.targetGraphic.DOFade(0f, 0.3f);
+                    btn_Setting.enabled = false;
+                    btn_Start.targetGraphic.DOFade(0f, 0.3f);
+                    btn_Start.enabled = false;
+                    selectPanel.GetComponent<CanvasGroup>().DOFade(1f, 0.3f);
+                    settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
+                })
+                .OnExit(() =>
+                {
+                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, -20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Setting.targetGraphic.DOFade(1f, 0.3f);
+                    btn_Setting.enabled = true;
+                    btn_Start.targetGraphic.DOFade(1f, 0.3f);
+                    btn_Start.enabled = true;
+                    selectPanel.GetComponent<CanvasGroup>().DOFade(0f, 0.3f);
+                    settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
+                });
+            _fsm.NewEventState(State.Settings)
+                .OnEnter(() =>
+                {
+                    btn_Setting.enabled = false;
+                    PlayFlash();
+                    ((RectTransform)flashAnimation.transform).DOAnchorPos(new(-330, 350), 0.3f).SetEase(Ease.OutSine);
+                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, 20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Setting.transform.DORotate(new(0f, 0f, 0), 0.3f).SetEase(Ease.OutSine);
+                    ((RectTransform)btn_Start.transform).DOAnchorPosY(300f, 0.3f).SetEase(Ease.OutSine);
+                    ((RectTransform)btn_Setting.transform).DOAnchorPosY(-215f, 0.3f).SetEase(Ease.OutSine);
+                    ((RectTransform)settingsPanel.transform).DOAnchorPosY(-325, 0.1f).SetEase(Ease.OutSine);
+                    settingsPanel.GetComponent<CanvasGroup>().DOFade(1f, 0.1f);
+                })
+                .OnExit(() =>
+                {
+                    btn_Setting.enabled = true;
+                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, -20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Setting.transform.DORotate(new(0f, 0f, 18.4f), 0.3f).SetEase(Ease.OutSine);
+                    ((RectTransform)btn_Start.transform).DOAnchorPosY(-486f, 0.3f).SetEase(Ease.OutSine);
+                    ((RectTransform)btn_Setting.transform).DOAnchorPosY(-710f, 0.3f).SetEase(Ease.OutSine);
+                    ((RectTransform)settingsPanel.transform).DOAnchorPosY(-600, 0.1f).SetEase(Ease.OutSine);
+                    settingsPanel.GetComponent<CanvasGroup>().DOFade(0f, 0.1f);
+                });
 
-            fsm.StartState(State.Menu);
+            _fsm.StartState(State.Menu);
         }
 
         public void SwitchState(State state)
         {
-            fsm.SwitchState(state);
+            _fsm.SwitchState(state);
         }
 
-        public State CurrentState => fsm.CurrentStateId;
+        private void PlayFlash()
+        {
+            FlashAnimState.time = FlashAnimState.normalizedTime < 0f ? 0f : FlashAnimState.time;
+            FlashAnimState.speed = 1f;
+            flashAnimation.Play();
+        }
+        private void RewindFlash()
+        {
+            FlashAnimState.time = FlashAnimState.normalizedTime > 1f ? flashAnimation.clip.length : FlashAnimState.time;
+            FlashAnimState.speed = -1f;
+            flashAnimation.Play();
+        }
+
+        private AnimationState FlashAnimState => flashAnimation[flashAnimation.clip.name];
+
+        public State CurrentState => _fsm.CurrentStateId;
     }
 }
