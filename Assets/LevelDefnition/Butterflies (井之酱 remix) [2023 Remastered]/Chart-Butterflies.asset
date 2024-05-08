@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2fd045ba15c1194c93cd3198d799a81, type: 3}
-  m_Name: Forever loved_EnemyData
+  m_Script: {fileID: 11500000, guid: ce5bd2d80d386f84ea8e86761fa27109, type: 3}
+  m_Name: Chart-Butterflies
   m_EditorClassIdentifier: 
-  enemies:
-  - enemyList: 0000000001000000
-  - enemyList: 00000000010000000000000000000000
-  - enemyList: 000000000100000002000000000000000000000000000000
+  chartFile: {fileID: 4900000, guid: aafeb91d085b02944ae204db72777143, type: 3}
+  clip: {fileID: 8300000, guid: 8ac213971e43692468beb29c2c0c7021, type: 3}
+  musicLength: 135.6

@@ -23,6 +23,16 @@ namespace Shuile
         {
             ConfigureButtonEvent();
         }
+        private void Start()
+        {
+            Refresh();
+        }
+
+        public void Refresh()
+        {
+            currentIndex = 0;
+            RefreshSongView();
+        }
 
         private void ConfigureButtonEvent()
         {

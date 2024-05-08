@@ -25,3 +25,11 @@ MonoBehaviour:
     sceneName: Level2
     enemyData: {fileID: 11400000, guid: b4e96d053fd89064ea3442e5be3ad37d, type: 2}
     chartFiles: {fileID: 11400000, guid: a224ad59e4b47ac4c9c7c5290d0cfece, type: 2}
+  - label: Butterflies
+    sceneName: Level3
+    enemyData: {fileID: 11400000, guid: e603b3bf84d360a44949107180d9de8e, type: 2}
+    chartFiles: {fileID: 11400000, guid: be247be9d8e8a1d498ca48cf48766d55, type: 2}
+  - label: Ice_Flower
+    sceneName: Level4
+    enemyData: {fileID: 11400000, guid: ea23dcc6ac203fe48bc59b9d74296a5d, type: 2}
+    chartFiles: {fileID: 11400000, guid: 607ccae37d7da9e438bde0bf3ae40f15, type: 2}

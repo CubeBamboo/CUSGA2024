@@ -29,6 +29,8 @@ namespace Shuile.Gameplay.Feel
         {
             if (player == null) return;
 
+            // camera will move in a circle
+
             var offset = player.position - origin.position;
             var originPos = origin.position;
             offset = Vector2.Lerp(originPos, offset, moveScale);

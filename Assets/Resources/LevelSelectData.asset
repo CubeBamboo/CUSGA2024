@@ -19,6 +19,12 @@ MonoBehaviour:
   - levelDataLabel: Ginevra
     songName: Ginevra
     songArtist: MYUKKE.
+  - levelDataLabel: Butterflies
+    songName: "Butterflies (\u4E95\u4E4B\u9171 remix)"
+    songArtist: "\u4E95\u4E4B\u9171"
+  - levelDataLabel: Ice_Flower
+    songName: Ice Flower
+    songArtist: Light Blue
   - levelDataLabel: Break
     songName: Break
     songArtist: ???
