@@ -17,7 +17,7 @@ namespace Shuile.Gameplay
         {
             levelModel = GameplayService.Interface.Get<LevelModel>();
 
-            gameObject.AddComponent<UpdateEventMono>().OnUpdate += DebugUpdate;
+            //gameObject.AddComponent<UpdateEventMono>().OnUpdate += DebugUpdate;
         }
 
         private void Start()
@@ -45,11 +45,11 @@ namespace Shuile.Gameplay
         private void GlobalOnEnemyHurt(GameObject @object)
         {
             LevelFeelManager.Instance.CameraShake();
-            MonoAudioCtrl.Instance.PlayOneShot("Enemy_Hurt");
+            //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Hurt");
         }
         private void GlobalOnEnemyDie(GameObject go)
         {
-            MonoAudioCtrl.Instance.PlayOneShot("Enemy_Die");
+            //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Die");
         }
 
         private void DebugUpdate()

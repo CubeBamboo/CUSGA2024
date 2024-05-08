@@ -43,7 +43,7 @@ namespace Shuile.Gameplay.Feel
             endPos.z = transform.position.z;
             transform.position = Vector3.Lerp(transform.position, endPos, moveSpeed);
             
-            OnInit(""); // for debug
+            //OnInit(""); // for debug
         }
     }
 }

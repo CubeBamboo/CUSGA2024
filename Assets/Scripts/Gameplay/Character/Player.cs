@@ -20,6 +20,8 @@ namespace Shuile.Gameplay
         public EasyEvent OnHurted = new();
 
         private PlayerModel playerModel;
+
+        private bool isInviciable;
         private bool isDie;
 
         public PlayerPropertySO Property => property;

@@ -39,9 +39,8 @@ namespace Shuile.Gameplay.Entity.Enemies
         {
             mFsm.SwitchState(DefaultEnemyState.Dead);
             moveController.IsFrozen = true;
-
             transform.DOScale(Vector3.zero, 0.1f)
-                .OnComplete(() => Object.Destroy(gameObject));
+                .OnComplete(() => gameObject.Destroy());
         }
 
         protected void RegisterState(FSM<DefaultEnemyState> mFsm)

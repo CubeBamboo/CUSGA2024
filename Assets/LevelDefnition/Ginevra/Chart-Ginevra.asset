@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce5bd2d80d386f84ea8e86761fa27109, type: 3}
   m_Name: Chart-Ginevra
   m_EditorClassIdentifier: 
-  chartFile: {fileID: 4900000, guid: f6cb617e8d361be4598813bbba763e45, type: 3}
+  chartFile: {fileID: 4900000, guid: c0ac9805b68017749848e132bf1ec90e, type: 3}
   clip: {fileID: 8300000, guid: 3ac5709a755c72345a61a50cdc94d1a7, type: 3}
   musicLength: 118.6

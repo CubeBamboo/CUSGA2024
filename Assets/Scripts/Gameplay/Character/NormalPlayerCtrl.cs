@@ -1,10 +1,11 @@
 using CbUtils;
 using CbUtils.ActionKit;
+using CbUtils.Extension;
 using Shuile.Framework;
 using Shuile.Gameplay.Weapon;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
-
+using System.Linq;
 using UnityEngine;
 
 namespace Shuile.Gameplay
@@ -52,6 +53,8 @@ namespace Shuile.Gameplay
         [SerializeField] private float holdOffYDamping = 0.4f;
 
         // [attack]
+        [SerializeField] private float attackRadius = 3.2f;
+        [SerializeField] private int attackPoint = 20;
         [SerializeField] private Transform handTransform;
         private IWeapon currentWeapon;
         private bool attackingLock;
@@ -59,6 +62,7 @@ namespace Shuile.Gameplay
         private PlayerModel playerModel;
 
         private PlayerMoveCommand moveCommand = new();
+        private PlayerAttackCommand attackCommand = new();
         public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
         public EasyEvent<WeaponHitData> OnWeaponHit { get; } = new();
@@ -125,6 +129,11 @@ namespace Shuile.Gameplay
             ConfigureInputEvent();
         }
 
+        private void OnDrawGizmosSelected()
+        {
+            UnityAPIExt.GizmosSphereForOverlapCircle2D(transform.position, attackRadius, LayerMask.GetMask("Enemy")); // for debug
+        }
+
         private void OnDestroy()
         {
             ClearInputEvent();
@@ -144,6 +153,7 @@ namespace Shuile.Gameplay
             mainFsm.FixedUpdate();
             BehaveUpdate();
             RefreshParameter();
+
         }
 
         /// <summary> update velocity </summary>
@@ -193,13 +203,24 @@ namespace Shuile.Gameplay
         {
             if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm) return;
 
-            CurrentWeapon.AttackCommand
-                .Bind(new(transform.position, new Vector2(Mathf.Sign(playerModel.faceDir), 0f)))
+            //CurrentWeapon.AttackCommand
+            //    .Bind(new(transform.position, new Vector2(Mathf.Sign(playerModel.faceDir), 0f)))
+            //    .Execute();
+
+            attackCommand
+                .Bind(new()
+                {
+                    position = transform.position,
+                    attackRadius = attackRadius,
+                    attackPoint = attackPoint
+                })
                 .Execute();
+
             OnWeaponAttack.Invoke(true);
 
+            AttackingLock = false;
             ActionCtrl.Delay(durationInSeconds: 0.2f)
-                .OnComplete(() => AttackingLock = true)
+                .OnComplete(() => AttackingLock = false)
                 .Start(gameObject);
         }
 
@@ -358,6 +379,25 @@ namespace Shuile.Gameplay
         public override void OnExecute()
         {
             state.moveController.XMove(state.xInput);
+        }
+    }
+
+    public struct PlayerAttackCommandData
+    {
+        public Vector2 position;
+        public float attackRadius;
+        public int attackPoint;
+    }
+    public class PlayerAttackCommand : BaseCommand<PlayerAttackCommandData>
+    {
+        public override void OnExecute()
+        {
+            var hits = Physics2D.OverlapCircleAll(state.position, state.attackRadius, LayerMask.GetMask("Enemy"));
+            foreach (var hit in hits)
+            {
+                if(hit.TryGetComponent<IHurtable>(out var hurt))
+                    hurt.OnHurt(state.attackPoint);
+            }
         }
     }
 }

@@ -1,17 +1,9 @@
 using CbUtils;
 using Shuile.Framework;
 using Shuile.UI;
-using Shuile.Rhythm.Runtime;
-using CbUtils.Event;
-
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-using UDebug = UnityEngine.Debug;
 using Shuile.Gameplay;
-using Shuile.Audio;
-using Shuile.Gameplay.Event;
+using CbUtils.ActionKit;
 using UnityEngine;
-using Shuile.Gameplay.Feel;
 
 namespace Shuile.Root
 {
@@ -48,7 +40,7 @@ namespace Shuile.Root
         {
             UICtrl.Instance.Create<EndLevelPanel>().Hide();
             UICtrl.Instance.Get<PlayingPanel>().Show();
-            UICtrl.Instance.Get<DebugPanel>().Show();
+            //UICtrl.Instance.Get<DebugPanel>().Show();
         }
     }
 }

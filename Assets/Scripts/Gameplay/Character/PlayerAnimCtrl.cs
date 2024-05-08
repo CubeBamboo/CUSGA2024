@@ -1,9 +1,8 @@
-using UnityEngine;
-using DG.Tweening;
 using Shuile.Gameplay;
-using System;
-using System.Linq.Expressions;
 using Shuile.MonoGadget;
+
+using DG.Tweening;
+using UnityEngine;
 
 namespace Shuile
 {
@@ -31,14 +30,24 @@ namespace Shuile
             }
         }
 
+        public bool Inviciable
+        {
+            set
+            {
+                _animator.SetBool("IsInviciable", value);
+            }
+        }
+
         public enum AnimTrigger
         {
-            AttackStart,
-            AttackStop,
-            Jump,
-            Land,
             Die,
-            Hurt
+            Hurt,
+            Run
+            //AttackStart,
+            //AttackStop,
+            //Jump,
+            //Land,
+
         }
 
         public PlayerAnimCtrl(GameObject go)
@@ -60,16 +69,20 @@ namespace Shuile
         {
             switch (trigger)
             {
-                case AnimTrigger.AttackStart:
-                    Debug.LogWarning($"Use {nameof(TriggerAttack)} to trigger attack animation");
-                    TriggerAttack(true, WeaponType.Sword);
-                    break;
-                case AnimTrigger.AttackStop:
-                    Debug.LogWarning($"Use {nameof(TriggerAttack)} to trigger attack animation");
-                    TriggerAttack(true, WeaponType.Sword);
-                    break;
+                //case AnimTrigger.AttackStart:
+                //    Debug.LogWarning($"Use {nameof(TriggerAttackWithType)} to trigger attack animation");
+                //    TriggerAttackWithType(true, WeaponType.Sword);
+                //    break;
+                //case AnimTrigger.AttackStop:
+                //    Debug.LogWarning($"Use {nameof(TriggerAttackWithType)} to trigger attack animation");
+                //    TriggerAttackWithType(true, WeaponType.Sword);
+                //    break;
                 case AnimTrigger.Hurt:
                     TriggerHurt();
+                    break;
+                case AnimTrigger.Run:
+                    if(!_animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+                        _animator.SetTrigger("ForceRun");
                     break;
                 default:
                     _animator.SetTrigger(trigger.ToString());
@@ -83,7 +96,7 @@ namespace Shuile
             _spriteRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f).OnComplete(() =>
                 _spriteRenderer.DOColor(Color.white, 0.2f));
         }
-        public void TriggerAttack(bool start, WeaponType type)
+        public void TriggerAttackWithType(bool start, WeaponType type)
         {
             _animator.SetInteger("WeaponType", (int)type);
             _animator.SetBool("Attack", start);

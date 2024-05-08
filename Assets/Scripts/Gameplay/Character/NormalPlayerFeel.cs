@@ -1,6 +1,6 @@
 using CbUtils.ActionKit;
-using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
+
 using UnityEngine;
 
 namespace Shuile.Gameplay
@@ -55,25 +55,34 @@ namespace Shuile.Gameplay
                 _moveController.Velocity = new Vector2(playerModel.faceDir * HurtXForce, HurtYForce);
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt);
                 LevelFeelManager.Instance.CameraShake();
-                MonoAudioCtrl.Instance.PlayOneShot("Player_Hurt");
+                //MonoAudioCtrl.Instance.PlayOneShot("Player_Hurt");
                 levelModel.DangerScore -= DangerLevelConfigClass.PlayerHurtReduction;
 
                 playerModel.isInviciable = true;
-                ActionCtrl.Delay(0.5f).OnComplete(() => playerModel.isInviciable = false).Start(gameObject);
+                animCtrl.Inviciable = true;
+
+                ActionCtrl.Delay(1.5f).OnComplete(() =>
+                {
+                    animCtrl.Inviciable = false;
+                    playerModel.isInviciable = false;
+                })
+                .SetDebounce("PlayerHurt")
+                .Start(gameObject);
 
                 LevelFeelManager.Instance.VignettePulse();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             playerCtrl.OnWeaponAttack.Register(enable =>
             {
-                animCtrl.TriggerAttack(enable, playerCtrl.CurrentWeapon.Type);
+                //animCtrl.TriggerAttackWithType(enable, playerCtrl.CurrentWeapon.Type);
+                animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
                 if (enable) LevelFeelManager.Instance.PlayParticle("SwordSlash", transform.position, new Vector2(playerModel.faceDir, 0), transform);
                 if (enable) levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
             playerCtrl.OnJumpStart.Register(() =>
             {
-                animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Jump);
+                //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
 
@@ -84,7 +93,7 @@ namespace Shuile.Gameplay
 
             playerCtrl.OnTouchGround.Register(() =>
             {
-                animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Land);
+                //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
             }).UnRegisterWhenGameObjectDestroyed(gameObject);
         }
     }

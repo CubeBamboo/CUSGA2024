@@ -7,6 +7,7 @@ using DG.Tweening;
 using UnityEngine;
 
 using UObject = UnityEngine.Object;
+using Cysharp.Threading.Tasks;
 
 namespace Shuile.Gameplay
 {
@@ -35,7 +36,6 @@ namespace Shuile.Gameplay
             OnAwake();
         }
 
-
         protected virtual void OnDestroy()
         {
             if (hpBarUI) UObject.Destroy(hpBarUI.gameObject);
@@ -55,8 +55,13 @@ namespace Shuile.Gameplay
             if (Health == 0)
             {
                 OnSelfDie();
-                EnemyDieEvent.Trigger(gameObject);
+                HandleDieEvent();
             }
+        }
+        private async void HandleDieEvent()
+        {
+            await UniTask.WaitUntil(() => !EntityManager.Instance.IsJudging);
+            EnemyDieEvent.Trigger(gameObject);
         }
         protected abstract void OnSelfHurt(int oldVal, int newVal);
         protected abstract void OnSelfDie();

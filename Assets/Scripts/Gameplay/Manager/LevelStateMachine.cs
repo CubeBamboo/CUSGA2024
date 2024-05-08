@@ -53,6 +53,8 @@ namespace Shuile.Gameplay
             var endPanel = UICtrl.Instance.Get<EndLevelPanel>();
             endPanel.SetState(false);
             endPanel.Show();
+            MonoAudioCtrl.Instance.PlayOneShot("Level_Fail", 0.6f);
+
             ActionCtrl.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
                 .Start(gameObject);
@@ -64,6 +66,7 @@ namespace Shuile.Gameplay
             endPanel.Show();
 
             MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
+            MonoAudioCtrl.Instance.PlayOneShot("Level_Win", 0.6f);
 
             ActionCtrl.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToMenu())

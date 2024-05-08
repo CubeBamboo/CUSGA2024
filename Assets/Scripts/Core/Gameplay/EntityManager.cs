@@ -27,6 +27,8 @@ namespace Shuile.Gameplay
 
         private LevelModel levelModel;
 
+        public bool IsJudging => judging;
+
         public Transform EnemyParent => enemyParent;
 
         public PrefabConfigSO Prefabs

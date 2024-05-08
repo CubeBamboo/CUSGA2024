@@ -47,7 +47,7 @@ namespace Shuile
             }
             catch (System.OperationCanceledException)
             {
-                // do nothing
+                // do nothing // TODO: can't catch this exception
                 Debug.Log("Laser play canceled");
             }
             catch (System.Exception e)
@@ -62,7 +62,7 @@ namespace Shuile
             await UniTask.Delay(System.TimeSpan.FromSeconds(usingInTime),
                 cancellationToken: gameObject.GetCancellationTokenOnDestroy());
 
-            await AttackBehave();
+            AttackBehave().Forget();
 
             await UniTask.Delay(System.TimeSpan.FromSeconds(attackStayTime),
                 cancellationToken: gameObject.GetCancellationTokenOnDestroy());
@@ -79,12 +79,12 @@ namespace Shuile
             transform.DOScaleX(targetScaleX * 0.1f, usingInTime);
         }
 
-        private async UniTask AttackBehave()
+        private async UniTaskVoid AttackBehave()
         {
             transform.DOScaleX(targetScaleX, 0.15f).SetEase(Ease.OutBack);
             mRenderer.DOFade(1f, 0.15f);
 
-            var evtMono = gameObject.AddComponent<Collider2DEventMono>();
+            var evtMono = gameObject.GetOrAddComponent<Collider2DEventMono>();
             evtMono.TriggerStayed += (collider) =>
             {
                 if (collider.CompareTag("Player"))
@@ -94,7 +94,7 @@ namespace Shuile
                 }
             };
 
-            await UniTask.DelayFrame(2, cancellationToken: gameObject.GetCancellationTokenOnDestroy());
+            await UniTask.DelayFrame(30, cancellationToken: gameObject.GetCancellationTokenOnDestroy());
             if (evtMono) evtMono.Destroy(); //销毁组件
         }
 
