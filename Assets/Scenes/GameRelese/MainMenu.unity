@@ -2833,6 +2833,14 @@ PrefabInstance:
       value: Fire In the Hole!!! Hole In the Fire!!!
       objectReference: {fileID: 0}
     - target: {fileID: 1417346098912276403, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_fontSize
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 1417346098912276403, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 1417346098912276403, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
       propertyPath: m_overflowMode
       value: 4
       objectReference: {fileID: 0}
@@ -2935,6 +2943,14 @@ PrefabInstance:
     - target: {fileID: 3148981736818482122, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4356122483318444005, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 54
+      objectReference: {fileID: 0}
+    - target: {fileID: 4356122483318444005, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -48
       objectReference: {fileID: 0}
     - target: {fileID: 5379696433284131598, guid: 81ef8cd8013d5d140aed1df880a08497, type: 3}
       propertyPath: btn_Return
