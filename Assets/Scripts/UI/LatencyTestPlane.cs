@@ -165,8 +165,8 @@ namespace Shuile.UI
                 notes = chart.note.Select(note => note.ToPlayTime()).Select(time => new Note(time)).ToArray();
             }
 
-            latencyIndicator.localPosition = latencyIndicator.localPosition.With(x: configViewer.Data.Audio.GlobalDelay / 1000f * distanceUnit);
-            latencyText.text = configViewer.Data.Audio.GlobalDelay.ToString() + "ms";
+            latencyIndicator.localPosition = latencyIndicator.localPosition.With(x: configViewer.Data.GlobalDelay / 1000f * distanceUnit);
+            latencyText.text = configViewer.Data.GlobalDelay.ToString() + "ms";
             ResetTest();
         }
 
@@ -204,11 +204,11 @@ namespace Shuile.UI
                 return;
 
             isPlaying = true;
-            int savedDelay = configViewer.Data.Audio.GlobalDelay;
-            configViewer.Data.Audio.GlobalDelay = 0;
+            int savedDelay = configViewer.Data.GlobalDelay;
+            configViewer.Data.GlobalDelay = 0;
             musicRhythmManager.SetCurrentTime(0);
             musicRhythmManager.StartPlay();
-            configViewer.Data.Audio.GlobalDelay = savedDelay;
+            configViewer.Data.GlobalDelay = savedDelay;
         }
 
         public void ResetTest()
@@ -240,14 +240,14 @@ namespace Shuile.UI
         {
             if (isPlaying)
                 return;
-            configViewer.Data.Audio.GlobalDelay += value;
-            latencyIndicator.localPosition = latencyIndicator.localPosition.With(x: configViewer.Data.Audio.GlobalDelay / 1000f * distanceUnit);
-            latencyText.text = configViewer.Data.Audio.GlobalDelay.ToString() + "ms";
+            configViewer.Data.GlobalDelay += value;
+            latencyIndicator.localPosition = latencyIndicator.localPosition.With(x: configViewer.Data.GlobalDelay / 1000f * distanceUnit);
+            latencyText.text = configViewer.Data.GlobalDelay.ToString() + "ms";
         }
 
         public void ApplyTestLatency()
         {
-            AddLatency(testResultLatency - configViewer.Data.Audio.GlobalDelay);
+            AddLatency(testResultLatency - configViewer.Data.GlobalDelay);
         }
         #endregion
     }

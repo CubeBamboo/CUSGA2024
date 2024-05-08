@@ -45,8 +45,8 @@ namespace Shuile
         {
             if (Mathf.Abs(value) > MAX_LATENCY) return;
 
-            configViewer.Data.Audio.GlobalDelay = value;
-            text_Latency.text = $"Latency: {configViewer.Data.Audio.GlobalDelay} ms";
+            configViewer.Data.GlobalDelay = value;
+            text_Latency.text = $"Latency: {configViewer.Data.GlobalDelay} ms";
         }
 
         private void InitializeDependency()
@@ -57,14 +57,14 @@ namespace Shuile
 
         private void InitializeState()
         {
-            text_Latency.text = $"Latency: {configViewer.Data.Audio.GlobalDelay} ms";
+            text_Latency.text = $"Latency: {configViewer.Data.GlobalDelay} ms";
         }
 
         private void ConfigureButtonEvent()
         {
             btn_Return.onClick.AddListener(Return);
-            btn_LatencyAdd.onClick.AddListener(()=> UpdateLatency(configViewer.Data.Audio.GlobalDelay + LATENCY_LARGE_STEP));
-            btn_LatencyMinus.onClick.AddListener(()=> UpdateLatency(configViewer.Data.Audio.GlobalDelay - LATENCY_LARGE_STEP));
+            btn_LatencyAdd.onClick.AddListener(()=> UpdateLatency(configViewer.Data.GlobalDelay + LATENCY_LARGE_STEP));
+            btn_LatencyMinus.onClick.AddListener(()=> UpdateLatency(configViewer.Data.GlobalDelay - LATENCY_LARGE_STEP));
         }
 
 

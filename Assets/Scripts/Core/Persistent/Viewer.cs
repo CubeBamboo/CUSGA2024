@@ -53,4 +53,12 @@ namespace Shuile.Persistent
             IsDirty = false;
         }
     }
+
+    public static class ViewerExtension
+    {
+        public static UniTask SaveIfDirty<T>(this Viewer<T> viewer) where T : PersistentData<T>, new()
+        {
+            return viewer.IsDirty ? viewer.SaveAsync() : UniTask.CompletedTask;
+        }
+    }
 }

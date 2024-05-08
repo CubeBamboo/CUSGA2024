@@ -49,15 +49,6 @@ namespace Shuile.Root
             UICtrl.Instance.Create<EndLevelPanel>().Hide();
             UICtrl.Instance.Get<PlayingPanel>().Show();
             UICtrl.Instance.Get<DebugPanel>().Show();
-
-            this.gameObject.AddComponent<UpdateEventMono>().OnUpdate += () =>
-            {
-                // TODO: [!] for debug
-                if (Keyboard.current.escapeKey.wasPressedThisFrame)
-                {
-                    SceneManager.LoadScene("MainMenu");
-                }
-            };
         }
     }
 }
