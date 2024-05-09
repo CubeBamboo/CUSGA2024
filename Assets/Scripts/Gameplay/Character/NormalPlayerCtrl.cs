@@ -94,15 +94,18 @@ namespace Shuile.Gameplay
             }
         }
         public bool IsWeaponExist => currentWeapon != null && currentWeapon.GetType() != typeof(NoWeapon);
+        // it has bug (((((
         public bool AttackingLock
         {
             get => attackingLock;
             set
             {
+                Debug.Log("lock changed: " + value);
+
                 if (attackingLock == value) return;
                 attackingLock = value;
-                if (!value)
-                    StopAttack();
+                //if (!value)
+                //    StopAttack();
 
                 _moveController.XMaxSpeed = value ? xMaxSpeed * 0.3f : xMaxSpeed;
                 if (value && Mathf.Abs(_moveController.Velocity.x) > _moveController.XMaxSpeed)
@@ -218,22 +221,22 @@ namespace Shuile.Gameplay
 
             OnWeaponAttack.Invoke(true);
 
-            AttackingLock = false;
-            ActionCtrl.Delay(durationInSeconds: 0.2f)
-                .OnComplete(() => AttackingLock = false)
-                .Start(gameObject);
+            //AttackingLock = true;
+            //ActionCtrl.Delay(durationInSeconds: 1.5f)
+            //    .OnComplete(() => AttackingLock = false)
+            //    .Start(gameObject);
         }
 
-        public void StopAttack()
-        {
-            if (attackingLock)
-                return;
+        //public void StopAttack()
+        //{
+        //    if (attackingLock)
+        //        return;
 
-            CurrentWeapon.AttackFinishCommand
-                .Bind(new(transform.position, new Vector2(Mathf.Sign(playerModel.faceDir), 0f)))
-                .Execute();
-            OnWeaponAttack.Invoke(false);
-        }
+        //    CurrentWeapon.AttackFinishCommand
+        //        .Bind(new(transform.position, new Vector2(Mathf.Sign(playerModel.faceDir), 0f)))
+        //        .Execute();
+        //    OnWeaponAttack.Invoke(false);
+        //}
 
         // Shortcut to invoke by animator
         public void ReleaseAttackingLock()
@@ -302,8 +305,8 @@ namespace Shuile.Gameplay
             mPlayerInput.OnAttackStart.Register(v => Attack())
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            mPlayerInput.OnAttackCanceled.Register(v => StopAttack())
-                .UnRegisterWhenGameObjectDestroyed(gameObject);
+            //mPlayerInput.OnAttackCanceled.Register(v => StopAttack())
+            //    .UnRegisterWhenGameObjectDestroyed(gameObject);
 
         }
 

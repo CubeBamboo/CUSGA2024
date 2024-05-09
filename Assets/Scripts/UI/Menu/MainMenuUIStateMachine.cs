@@ -95,6 +95,7 @@ namespace Shuile
                     btn_Setting.enabled = false;
                     btn_Start.targetGraphic.DOFade(0f, 0.3f);
                     btn_Start.enabled = false;
+                    selectPanel.SetActive(true);
                     selectPanel.GetComponent<CanvasGroup>().DOFade(1f, 0.3f);
                     settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
                 })
@@ -105,6 +106,7 @@ namespace Shuile
                     btn_Setting.enabled = true;
                     btn_Start.targetGraphic.DOFade(1f, 0.3f);
                     btn_Start.enabled = true;
+                    selectPanel.SetActive(false);
                     selectPanel.GetComponent<CanvasGroup>().DOFade(0f, 0.3f);
                     settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
                 });
