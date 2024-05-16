@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace CbUtils
 {
+    // inspired by qframework
     public interface IState
     {
         void Enter();
@@ -112,7 +113,7 @@ namespace CbUtils
             => _states.ToArray()
                       .Select(val => val.Key)
                       .ToArray()
-                      .ArrayToString();
+                      .IEnumerableToString();
     }
 
     public abstract class BaseState<TState, TTarget> : IState

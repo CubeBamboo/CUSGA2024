@@ -4,7 +4,7 @@ using Shuile.Gameplay;
 namespace Shuile
 {
     // don't write logic here
-    public class PlayerModel : IModel
+    public class PlayerModel
     {
         public float currentHitOffset;
 

@@ -64,7 +64,7 @@ namespace Shuile.Gameplay.Entity.Enemies
                 {
                     if (!EnemyBehaviorAction.XRayCastPlayer(transform.position, faceDir, checkPlayerRange))
                         mFsm.SwitchState(DefaultEnemyState.Patrol);
-                    UnityAPIExt.DebugLineForRayCast2D(transform.position, Vector2.right * faceDir, checkPlayerRange, LayerMask.GetMask("Player"));
+                    UnityAPIExtension.DebugLineForRayCast2D(transform.position, Vector2.right * faceDir, checkPlayerRange, LayerMask.GetMask("Player"));
 
                     faceDir = chaseBehavior.FaceDir;
                     chaseBehavior.Do();

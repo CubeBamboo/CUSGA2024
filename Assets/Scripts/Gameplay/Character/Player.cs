@@ -5,6 +5,7 @@ using Shuile.Root;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using CbUtils.Preview.Event;
 
 namespace Shuile.Gameplay
 {

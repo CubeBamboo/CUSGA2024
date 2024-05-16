@@ -5,17 +5,9 @@ namespace CbUtils
     /// <summary>
     /// a global event system use string
     /// </summary>
-    public class StringEventManager : CbUtils.MonoSingletons<StringEventManager>
+    public class StringEventManager : CSharpLazySingletons<StringEventManager>
     {
-        protected override void Awake()
-        {
-            base.Awake();
-            SetDontDestroyOnLoad();
-        }
-
-        #region EventManager
-
-        private Dictionary<string, System.Action> eventDict = new Dictionary<string, System.Action>();
+        private readonly Dictionary<string, System.Action> eventDict = new Dictionary<string, System.Action>();
 
         public void Register(string eventName, System.Action handler)
         {
@@ -39,8 +31,5 @@ namespace CbUtils
         {
             eventDict.Clear();
         }
-
-        #endregion
-
     }
 }

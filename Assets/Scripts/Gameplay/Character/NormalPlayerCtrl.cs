@@ -134,7 +134,7 @@ namespace Shuile.Gameplay
 
         private void OnDrawGizmosSelected()
         {
-            UnityAPIExt.GizmosSphereForOverlapCircle2D(transform.position, attackRadius, LayerMask.GetMask("Enemy")); // for debug
+            UnityAPIExtension.GizmosSphereForOverlapCircle2D(transform.position, attackRadius, LayerMask.GetMask("Enemy")); // for debug
         }
 
         private void OnDestroy()

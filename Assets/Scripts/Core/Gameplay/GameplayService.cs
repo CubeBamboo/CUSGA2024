@@ -22,7 +22,7 @@ namespace Shuile.Gameplay
 
     public class GameplayService : AbstractLocator<GameplayService>
     {
-        public override bool IsGlobal => false;
+        public override bool InitOnApplicationAwake => false;
 
         public override void OnInit()
         {

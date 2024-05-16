@@ -7,7 +7,7 @@ namespace Shuile.Framework
 {
     public class MainGame : AbstractLocator<MainGame>
     {
-        public override bool IsGlobal => true;
+        public override bool InitOnApplicationAwake => true;
 
         public override void OnInit()
         {

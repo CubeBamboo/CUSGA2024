@@ -10,6 +10,7 @@ using CbUtils.Event;
 
 using UnityEngine;
 using TMPro;
+using CbUtils.Preview.Event;
 
 namespace Shuile
 {

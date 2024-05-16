@@ -108,7 +108,7 @@ namespace Shuile.Gameplay.Entity
         {
             if (!moveCtrl.IsOnGround) return;
             var hit = XRayCastWall(moveCtrl.Position, faceDir, checkDistance);
-            if(showDebugLine) UnityAPIExt.DebugLineForRayCast2D(moveCtrl.Position, Vector2.right * faceDir, checkDistance, LayerMask.GetMask("Ground"));
+            if(showDebugLine) UnityAPIExtension.DebugLineForRayCast2D(moveCtrl.Position, Vector2.right * faceDir, checkDistance, LayerMask.GetMask("Ground"));
             if (hit)
                 moveCtrl.SimpleJump(1f);
         }

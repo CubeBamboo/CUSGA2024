@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Shuile
 {
     /// <summary> data in single level </summary>
-    public class LevelModel : IModel
+    public class LevelModel
     {
         public float musicBpm;
         public float musicOffset;
