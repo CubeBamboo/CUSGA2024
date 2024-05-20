@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4264378223475921471}
   - component: {fileID: 6490625675106999616}
   m_Layer: 0
-  m_Name: GameResources
+  m_Name: MonoGameResources
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8788106654651735183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36ea15d72cbd3324987089a2405a7d2f, type: 3}
+  m_Script: {fileID: 11500000, guid: e7a0896d2d5c5be40ace46d2ea8f5e35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelDataMap: {fileID: 11400000, guid: f86459a467bc97c4cbc3f0134bbbf071, type: 2}

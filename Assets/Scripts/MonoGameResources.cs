@@ -2,7 +2,7 @@ using CbUtils;
 
 namespace Shuile
 {
-    public class GameResources : MonoSingletons<GameResources>
+    public class MonoGameResources : MonoSingletons<MonoGameResources>
     {
         public LevelDataMapSO levelDataMap;
     }
