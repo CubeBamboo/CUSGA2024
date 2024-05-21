@@ -17,10 +17,6 @@ namespace Shuile.ResourcesManagement.Loader
             levelDataMap = levelDataMap ? levelDataMap : await levelDataMapFactory();
         }
 
-        public async Task<LevelDataMapSO> GetLevelDataMapAsync()
-        {
-            if (!levelDataMap) await levelDataMapFactory();
-            return levelDataMap;
-        }
+        public async Task<LevelDataMapSO> GetLevelDataMapAsync() => levelDataMap = levelDataMap ? levelDataMap : await levelDataMapFactory();
     }
 }

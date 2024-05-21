@@ -22,15 +22,7 @@ namespace Shuile.ResourcesManagement.Loader
             globalPrefabs = globalPrefabs ? globalPrefabs : await globalPrefabsFactory();
         }
 
-        public async Task<LevelConfigSO> GetLevelConfigAsync()
-        {
-            if (!levelConfig) await levelConfigFactory();
-            return levelConfig;
-        }
-        public async Task<PrefabConfigSO> GetGlobalPrefabsAsync()
-        {
-            if (!globalPrefabs) await globalPrefabsFactory();
-            return globalPrefabs;
-        }
+        public async Task<LevelConfigSO> GetLevelConfigAsync() => levelConfig = levelConfig ? levelConfig : await levelConfigFactory();
+        public async Task<PrefabConfigSO> GetGlobalPrefabsAsync() => globalPrefabs = globalPrefabs ? globalPrefabs : await globalPrefabsFactory();
     }
 }
