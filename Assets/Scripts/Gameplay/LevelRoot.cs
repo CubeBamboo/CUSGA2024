@@ -2,8 +2,6 @@ using CbUtils;
 using Shuile.Framework;
 using Shuile.UI;
 using Shuile.Gameplay;
-using CbUtils.ActionKit;
-using UnityEngine;
 
 namespace Shuile.Root
 {

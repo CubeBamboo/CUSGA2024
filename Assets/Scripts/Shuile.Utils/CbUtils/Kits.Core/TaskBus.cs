@@ -18,6 +18,9 @@ namespace CbUtils.Kits.Tasks
         private int taskCount = 0;
         private bool isBusy;
 
+        public event System.Action OnTaskComplete;
+        public event System.Action OnTaskComplete_AutoClear;
+
         public bool IsBusy
         {
             get => isBusy;
@@ -26,6 +29,11 @@ namespace CbUtils.Kits.Tasks
                 if (isBusy == value)
                     return;
                 isBusy = value;
+
+                OnTaskComplete?.Invoke();
+                OnTaskComplete_AutoClear?.Invoke();
+                OnTaskComplete_AutoClear = null;
+
                 if(isBusy && busyScreen != null)
                     busyScreen.Show();
                 else
@@ -38,6 +46,16 @@ namespace CbUtils.Kits.Tasks
             this.busyScreen = busyScreen;
         }
 
+        public void ExecuteVoid(Task task)
+        {
+            IsBusy = true;
+            taskCount++;
+            if (task.IsCompleted)
+                HandleTaskComplete();
+            else
+                task.ConfigureAwait(false)
+                    .GetAwaiter().OnCompleted(() => HandleTaskComplete());
+        }
         public Task Execute(Task task)
         {
             IsBusy = true;
@@ -61,7 +79,7 @@ namespace CbUtils.Kits.Tasks
             return task;
         }
 
-        public UniTask Execute(UniTask unitask)
+        public void ExecuteVoid(UniTask unitask)
         {
             IsBusy = true;
             taskCount++;
@@ -69,20 +87,21 @@ namespace CbUtils.Kits.Tasks
                 HandleTaskComplete();
             else
                 unitask.ContinueWith(() => HandleTaskComplete());
-                //unitask.GetAwaiter().OnCompleted(() => HandleTaskComplete(unitask));
-            return unitask;
         }
-
-        public UniTask<T> Execute<T>(UniTask<T> unitask)
+        public UniTask Execute(UniTask unitask)
         {
             IsBusy = true;
             taskCount++;
             if (unitask.Status.IsCompleted())
+            {
                 HandleTaskComplete();
+                return unitask;
+            }
             else
-                unitask.ContinueWith(v => HandleTaskComplete());
-                //unitask.GetAwaiter().OnCompleted(() => HandleTaskComplete(unitask));
-            return unitask;
+            {
+                var ret = unitask.ContinueWith(() => HandleTaskComplete());
+                return ret;
+            }
         }
 
         private void HandleTaskComplete() => HandleTaskCompleteWithCount();

@@ -24,6 +24,7 @@ namespace Shuile
         [SerializeField] private LevelSelectDataSO levelSelectData;
 
         private int currentIndex = 0;
+        private LevelData _level;
 
         private void Awake()
         {
@@ -65,26 +66,22 @@ namespace Shuile
 
         public async void StartLevel(string label)
         {
-            var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());
-            //var level = await TaskBus.Instance.Execute(LoadLevelResources(label));
-            // TODO: [!] orgin unitask has some propblem that lead to program end after "await" keyword.
-            // this code will leads to bugs: "var level = await TaskBus.Instance.Execute(LoadLevelResources(label));"
-            // code below can run successfully:
-            // - "var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());"
-            // - "var level = await TaskBus.Instance.Execute(LoadLevelResourcesUseTask(label).AsUniTask());"  // ??????
+            //var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());
+            await TaskBus.Instance.Execute(LoadLevelResources(label));
 
-            LevelDataBinder.Instance.SetLevelData(level);
-            MonoGameRouter.Instance.ToLevelScene(level.sceneName);
+            LevelDataBinder.Instance.SetLevelData(_level);
+            MonoGameRouter.Instance.ToLevelScene(_level.sceneName);
         }
 
-        private async UniTask<LevelData> LoadLevelResources(string label)
+        private async UniTask LoadLevelResources(string label)
         {
             var levels = await GameResourcesLoader.Instance.GetLevelDataMapAsync();
 
-            var level = levels.GetLevelData(label);
+            _level = levels.GetLevelData(label);
             await LevelResourcesLoader.Instance.PreCacheAsync();
             await UniTask.Delay(1000);
-            return level;
+
+            //return level;
         }
 
         private void RefreshSongView()
