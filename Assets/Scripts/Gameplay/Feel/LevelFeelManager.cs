@@ -12,7 +12,7 @@ namespace Shuile
     {
         CameraFeelHelper cameraFeelHelper;
         VolumeFeelHelper volumeFeelHelper;
-        private LevelResources levelResources => LevelResources.Instance;
+        private MonoLevelResources levelResources => MonoLevelResources.Instance;
 
         protected override void OnAwake()
         {

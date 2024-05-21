@@ -7,7 +7,7 @@ using Shuile.Gameplay;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using Shuile.Gameplay.Event;
-using Shuile.Gameplay.Entity;
+using Shuile.Core.Gameplay;
 
 namespace Shuile
 {
@@ -31,7 +31,7 @@ namespace Shuile
 
         public GameObject SpawnEnemyWithEffectDelay(EnemyType enemyType, Vector3 pos)
         {
-            var effect = LevelResources.Instance.globalPrefabs.enemySpawnEffect;
+            var effect = MonoLevelResources.Instance.globalPrefabs.enemySpawnEffect;
             effect.effect.Instantiate()
                   .SetPosition(pos);
 
@@ -59,7 +59,7 @@ namespace Shuile
 
         public GameObject SpawnLaser()
         {
-            PrefabConfigSO prefabConfig = LevelResources.Instance.globalPrefabs;
+            PrefabConfigSO prefabConfig = MonoLevelResources.Instance.globalPrefabs;
             var go = prefabConfig.laser.Instantiate(); // spawn
             return go;
         }

@@ -9,6 +9,7 @@ namespace Shuile.Gameplay
     {
         public enum LevelState
         {
+            Loading,
             Playing,
             Fail,
             Win
@@ -57,7 +58,7 @@ namespace Shuile.Gameplay
 
             ActionCtrl.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
-                .Start(gameObject);
+                .Start();
         }
         private void LevelWin()
         {
@@ -70,12 +71,12 @@ namespace Shuile.Gameplay
 
             ActionCtrl.Delay(3f)
                 .OnComplete(() => MonoGameRouter.Instance.ToMenu())
-                .Start(gameObject);
+                .Start();
         }
 
         public void Init()
         {
-            state = LevelState.Playing;
+            state = LevelState.Loading;
         }
     }
 }

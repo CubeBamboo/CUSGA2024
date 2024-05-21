@@ -6,7 +6,7 @@ namespace Shuile
     {
         public static GameObject CreateParticle(string name, Vector3 position, Vector3 direction)
         {
-            var particle = LevelResources.Instance.GetParticle(name);
+            var particle = MonoLevelResources.Instance.GetParticle(name);
             if (particle == null) return null;
 
             var instance = Object.Instantiate(particle, position, Quaternion.identity);

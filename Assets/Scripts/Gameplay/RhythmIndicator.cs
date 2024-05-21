@@ -92,7 +92,7 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            notePrefab = LevelResources.Instance.globalPrefabs.noteIndicator;
+            notePrefab = MonoLevelResources.Instance.globalPrefabs.noteIndicator;
             preDisplayTime = PlayerChartManager.Instance.NotePreShowInterval;
             PlayerChartManager.Instance.ChartPlayer.OnNotePlay += OnNote;
             PlayerChartManager.Instance.OnPlayerHitOn += OnPlayerHit;

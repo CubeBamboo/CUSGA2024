@@ -1,5 +1,8 @@
+using CbUtils.Kits.Tasks;
+using Cysharp.Threading.Tasks;
+using Shuile.Core.Gameplay;
+using Shuile.ResourcesManagement.Loader;
 using Shuile.UI;
-
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,11 +63,28 @@ namespace Shuile
             //btn_level3.onClick.AddListener(() => StartLevel("Ginevra"));
         }
 
-        public void StartLevel(string label)
+        public async void StartLevel(string label)
         {
-            var level = GameResources.Instance.levelDataMap.GetLevelData(label);
+            var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());
+            //var level = await TaskBus.Instance.Execute(LoadLevelResources(label));
+            // TODO: [!] orgin unitask has some propblem that lead to program end after "await" keyword.
+            // this code will leads to bugs: "var level = await TaskBus.Instance.Execute(LoadLevelResources(label));"
+            // code below can run successfully:
+            // - "var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());"
+            // - "var level = await TaskBus.Instance.Execute(LoadLevelResourcesUseTask(label).AsUniTask());"  // ??????
+
             LevelDataBinder.Instance.SetLevelData(level);
             MonoGameRouter.Instance.ToLevelScene(level.sceneName);
+        }
+
+        private async UniTask<LevelData> LoadLevelResources(string label)
+        {
+            var levels = await GameResourcesLoader.Instance.GetLevelDataMapAsync();
+
+            var level = levels.GetLevelData(label);
+            await LevelResourcesLoader.Instance.PreCacheAsync();
+            await UniTask.Delay(1000);
+            return level;
         }
 
         private void RefreshSongView()

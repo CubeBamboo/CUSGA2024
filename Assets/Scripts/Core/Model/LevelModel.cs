@@ -22,7 +22,7 @@ namespace Shuile
 
         public LevelModel()
         {
-            var resources = LevelResources.Instance;
+            var resources = MonoLevelResources.Instance;
             missTolerance = resources.levelConfig.missTolerance;
 
             var currentChart = LevelDataBinder.Instance.ChartData;

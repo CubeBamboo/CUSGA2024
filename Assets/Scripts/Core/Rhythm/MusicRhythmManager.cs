@@ -8,14 +8,17 @@ using Cysharp.Threading.Tasks;
 using Shuile.Framework;
 using Shuile.Persistent;
 using Shuile.Gameplay;
+using Shuile.ResourcesManagement.Loader;
+using System.Threading.Tasks;
 
 namespace Shuile.Rhythm.Runtime
 {
     //control the music play and music time progress, manage the rhythm check
     public class MusicRhythmManager : MonoNonAutoSpawnSingletons<MusicRhythmManager>
     {
+        private LevelConfigSO levelConfig;
+
         private ChartData currentChart;
-        private PlayerSettingsConfigSO playerConfig;
         private bool isPlaying = false;
 
         public LevelModel levelModel => GameplayService.Interface.LevelModel;
@@ -50,15 +53,21 @@ namespace Shuile.Rhythm.Runtime
             preciseMusicPlayer.Reset();
         }
 
+        // [WIP]
+        private async Task InitilizeResources()
+        {
+            levelConfig = await LevelResourcesLoader.Instance.GetLevelConfigAsync();
+
+        }
+
         public void RefreshData()
         {
             currentChart = LevelDataBinder.Instance.ChartData;
             
-            var resources = LevelResources.Instance;
-            playerConfig = resources.playerConfig;
-            playOnAwake = resources.musicManagerConfig.playOnAwake;
-            playTimeScale = resources.musicManagerConfig.playTimeScale;
-            volume = resources.musicManagerConfig.volume;
+            var resources = MonoLevelResources.Instance;
+            playOnAwake = resources.levelConfig.playOnAwake;
+            playTimeScale = resources.levelConfig.playTimeScale;
+            volume = resources.levelConfig.volume;
 
             preciseMusicPlayer.Reset();
             preciseMusicPlayer.LoadClip(currentChart.audioClip);

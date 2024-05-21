@@ -29,7 +29,7 @@ namespace Shuile.Rhythm.Runtime
         protected override void OnAwake()
         {
             levelModel = GameplayService.Interface.Get<LevelModel>();
-            notePreShowInterval = LevelResources.Instance.levelConfig.playerNotePreShowTime;
+            notePreShowInterval = MonoLevelResources.Instance.levelConfig.playerNotePreShowTime;
             chartPlayer = new(() => new ChartPlayer(chart,
                 note => note.GetRealTime() - notePreShowInterval));
         }

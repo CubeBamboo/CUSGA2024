@@ -26,7 +26,7 @@ namespace Shuile.Root
 
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
             UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
-            needHitWithRhythm = LevelResources.Instance.debugSettings.needHitWithRhythm;
+            needHitWithRhythm = MonoLevelResources.Instance.levelConfig.needHitWithRhythm;
         }
         private void OnDestroy()
         {

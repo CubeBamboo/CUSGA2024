@@ -1,9 +1,10 @@
 using CbUtils.Extension;
-
+using Shuile.Core.Gameplay;
 using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.MonoGadget;
 using Shuile.Persistent;
+using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm.Runtime;
 
 using System.Linq;
@@ -149,7 +150,7 @@ namespace Shuile.UI
         {
             gameObject.SetActive(true);
             // Create a playing scope to play music and chart
-            var level = GameResources.Instance.levelDataMap.GetLevelData(LevelLabel);
+            var level = GameResourcesLoader.Instance.GetLevelDataMapAsync().Result.GetLevelData(LevelLabel);
             LevelDataBinder.Instance.SetLevelData(level);
             GameplayService.Interface.OnInit();
 
@@ -216,7 +217,7 @@ namespace Shuile.UI
             if (isPlaying)
                 return;
 
-            var prefab = LevelResources.Instance.globalPrefabs.noteIndicator;
+            var prefab = MonoLevelResources.Instance.globalPrefabs.noteIndicator;
             for (int i = 0; i < notes.Length; i++)
             {
                 if (notes[i].transform == null)

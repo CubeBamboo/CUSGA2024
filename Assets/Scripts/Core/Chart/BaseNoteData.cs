@@ -3,6 +3,7 @@
 using UnityEngine;
 
 using CbUtils.Extension;
+using Shuile.Core.Gameplay;
 
 namespace Shuile.Rhythm.Runtime
 {

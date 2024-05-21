@@ -1,6 +1,6 @@
 using Shuile;
+using Shuile.Core.Gameplay;
 using Shuile.Gameplay;
-using Shuile.Rhythm.Runtime;
 
 using UnityEngine;
 
