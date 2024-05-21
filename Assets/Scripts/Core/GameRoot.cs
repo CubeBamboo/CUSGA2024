@@ -8,21 +8,21 @@ namespace Shuile
 {
     public class GameRoot : MonoSingletons<GameRoot>
     {
-        [Header("DontDestroyOnLoad")]
-        private GameObject globalObjectRoot;
-        public List<GameObject> notDestroyOnLoadList; // it's just a transition scheme for game jam(((
+        //[Header("DontDestroyOnLoad")]
+        //private GameObject globalObjectRoot;
+        //public List<GameObject> notDestroyOnLoadList; // it's just a transition scheme for game jam(((
 
         protected override void OnAwake()
         {
-            SetDontDestroyOnLoad();
+            //SetDontDestroyOnLoad();
 
-            globalObjectRoot = new GameObject("GlobalObject");
-            foreach (var obj in notDestroyOnLoadList)
-            {
-                var spawn = obj.Instantiate();
-                spawn.SetParent(globalObjectRoot.transform);
-            }
-            DontDestroyOnLoad(globalObjectRoot);
+            //globalObjectRoot = new GameObject("GlobalObject");
+            //foreach (var obj in notDestroyOnLoadList)
+            //{
+            //    var spawn = obj.Instantiate();
+            //    spawn.SetParent(globalObjectRoot.transform);
+            //}
+            //DontDestroyOnLoad(globalObjectRoot);
         }
 
         private void Start()

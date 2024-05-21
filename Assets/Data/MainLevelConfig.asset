@@ -9,10 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0432b70a5e2a3e14fa668618707d5200, type: 3}
-  m_Name: Break_EnemyData
+  m_Script: {fileID: 11500000, guid: 8c172fbb00e9eaa4d8676430b2884b9b, type: 3}
+  m_Name: MainLevelConfig
   m_EditorClassIdentifier: 
-  enemies:
-  - enemyList: 0000000000000000
-  - enemyList: 0000000001000000
-  - enemyList: 0000000002000000010000000100000000000000
+  missTolerance: 260.4
+  playerNotePreShowTime: 2
+  playOnAwake: 1
+  playTimeScale: 1
+  volume: 0.3
+  globalOffset: 200
+  needHitWithRhythm: 1

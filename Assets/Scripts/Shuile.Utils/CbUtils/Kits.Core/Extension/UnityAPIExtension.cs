@@ -7,9 +7,7 @@ namespace CbUtils.Extension
         #region UnityEngine.GameObject
 
         public static T Instantiate<T>(this T go) where T : Object
-        {
-            return Object.Instantiate(go);
-        }
+            => Object.Instantiate(go);
 
         public static GameObject SetPosition(this GameObject go, Vector3 pos)
         {
@@ -41,15 +39,31 @@ namespace CbUtils.Extension
             return go;
         }
 
-        public static void Destroy(this Object go)
-        {
-            Object.Destroy(go);
-        }
+        public static void Destroy(this Object go) => Object.Destroy(go);
 
         public static void DestroySafe(this Object go)
         {
             if (go)
                 Object.Destroy(go);
+        }
+
+        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+        {
+            var component = gameObject.GetComponent<T>();
+            if (component == null)  // cannot use ??=
+                component = gameObject.AddComponent<T>();
+            return component;
+        }
+
+        public static GameObject GetChildByPath(this GameObject go, string namePath)
+        {
+            var child = go.transform.Find(namePath);
+            return child == null ? null : child.gameObject;
+        }
+        public static T GetChildByPath<T>(this GameObject go, string namePath)
+        {
+            var child = go.transform.Find(namePath);
+            return child == null ? default : child.GetComponent<T>();
         }
 
         #endregion
@@ -79,16 +93,15 @@ namespace CbUtils.Extension
 
         #endregion
 
+        #region Log
+
+        public static void DumpToUnityLogger(this object obj) => Debug.Log(obj);
+
+        #endregion
     }
 
     public static class GameObjectExtension
     {
-        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
-        {
-            var component = gameObject.GetComponent<T>();
-            if (component == null)  // cannot use ??=
-                component = gameObject.AddComponent<T>();
-            return component;
-        }
+
     }
 }

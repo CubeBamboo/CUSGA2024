@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5538106431896425686}
-  - component: {fileID: 8155970851606481481}
+  - component: {fileID: 698685226741789288}
   m_Layer: 0
   m_Name: LevelResources
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8155970851606481481
+--- !u!114 &698685226741789288
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,11 +41,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 786542733079060244}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81596a707118405409c745ea329c789c, type: 3}
+  m_Script: {fileID: 11500000, guid: 80a08fe81fe1cb944b4dc419befa00e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicManagerConfig: {fileID: 11400000, guid: 68ed4b2d24e96734093a7000e2cfc360, type: 2}
   levelConfig: {fileID: 11400000, guid: 33051b7261f31514783d021c269ff9be, type: 2}
-  playerConfig: {fileID: 11400000, guid: e840ec97e75580341944e4bf37eb34d0, type: 2}
-  debugSettings: {fileID: 11400000, guid: 593a565c2ee8f3b4b9b06b5013e40390, type: 2}
   globalPrefabs: {fileID: 11400000, guid: 952ea785214116b4eae37f9383ae9234, type: 2}

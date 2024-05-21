@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54cd308c2a1cfcc419084c04b5424c07, type: 3}
+  m_Script: {fileID: 11500000, guid: ee6ce6ffb973ebb45836f6048518e81f, type: 3}
   m_Name: GlobalPrefabConfig
   m_EditorClassIdentifier: 
   zakoRobot: {fileID: 3418564270763865659, guid: 728774616213cbd4e9465f369b371956, type: 3}
