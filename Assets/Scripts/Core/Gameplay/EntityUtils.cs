@@ -1,4 +1,5 @@
 using Shuile.Core.Gameplay;
+using Shuile.ResourcesManagement.Loader;
 
 namespace Shuile
 {
@@ -6,7 +7,7 @@ namespace Shuile
     {
         public static UnityEngine.GameObject EnemyType2Prefab(EnemyType enemyType)
         {
-            PrefabConfigSO prefabConfig = MonoLevelResources.Instance.globalPrefabs;
+            PrefabConfigSO prefabConfig = LevelResourcesLoader.Instance.SyncContext.globalPrefabs;
             var res = enemyType switch
             {
                 EnemyType.ZakoRobot => prefabConfig.zakoRobot,

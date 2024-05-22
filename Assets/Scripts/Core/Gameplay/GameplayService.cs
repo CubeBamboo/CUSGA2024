@@ -1,5 +1,6 @@
+using CbUtils.Kits.Tasks;
 using Shuile.Framework;
-
+using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
 namespace Shuile.Gameplay
@@ -26,8 +27,10 @@ namespace Shuile.Gameplay
 
         public override void OnInit()
         {
+            var levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+
             this.Register<PlayerModel>(new PlayerModel());
-            this.Register<LevelModel>(new LevelModel());
+            this.Register<LevelModel>(new LevelModel(levelConfig));
             this.Register<IRouteFinder>(new SimpleRouteFinder());
         }
 

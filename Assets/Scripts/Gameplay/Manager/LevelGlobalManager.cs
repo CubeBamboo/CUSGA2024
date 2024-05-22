@@ -1,6 +1,7 @@
 using CbUtils.Event;
 using Shuile.Gameplay.Event;
 using Shuile.Rhythm.Runtime;
+using Shuile.Root;
 using System;
 using UnityEngine;
 
@@ -16,8 +17,6 @@ namespace Shuile.Gameplay
         private void Awake()
         {
             levelModel = GameplayService.Interface.Get<LevelModel>();
-
-            //gameObject.AddComponent<UpdateEventMono>().OnUpdate += DebugUpdate;
         }
 
         private void Start()
@@ -33,6 +32,8 @@ namespace Shuile.Gameplay
         }
         private void FixedUpdate()
         {
+            if (!LevelRoot.Instance.IsStart) return;
+
             levelModel.DangerScore -= DangerLevelConfigClass.NormalReductionPerSecond * Time.fixedDeltaTime;
 
             // check end

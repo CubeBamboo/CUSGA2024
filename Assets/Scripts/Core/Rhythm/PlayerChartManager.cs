@@ -1,14 +1,20 @@
 using CbUtils;
+using CbUtils.Kits.Tasks;
 using Shuile.Framework;
 using Shuile.Gameplay;
+using Shuile.Gameplay.Event;
+using Shuile.ResourcesManagement.Loader;
+using Shuile.Root;
+using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
 {
 
     // manage chart of player, convert chart to runtime note object noteContainer
-    public class PlayerChartManager : MonoNonAutoSpawnSingletons<PlayerChartManager>
+    public class PlayerChartManager : MonoSingletons<PlayerChartManager>
     {
         private readonly NoteContainer noteContainer = new();
 
@@ -20,6 +26,7 @@ namespace Shuile.Rhythm.Runtime
 
         private float notePreShowInterval = 0.4f;
         public System.Action OnPlayerHitOn;
+        private LevelConfigSO _levelConfig;
 
         public float NotePreShowInterval => notePreShowInterval;
         public NoteContainer NoteContainer => noteContainer;
@@ -29,17 +36,22 @@ namespace Shuile.Rhythm.Runtime
         protected override void OnAwake()
         {
             levelModel = GameplayService.Interface.Get<LevelModel>();
-            notePreShowInterval = MonoLevelResources.Instance.levelConfig.playerNotePreShowTime;
+            InitilizeResources();
+            notePreShowInterval = _levelConfig.playerNotePreShowTime;
             chartPlayer = new(() => new ChartPlayer(chart,
                 note => note.GetRealTime() - notePreShowInterval));
-        }
-        private void Start()
-        {
             ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetRealTime());
+        }
+
+        private void InitilizeResources()
+        {
+            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
         }
 
         private void FixedUpdate()
         {
+            if (!LevelRoot.Instance.IsStart) return;
+
             ChartPlayer.PlayUpdate(MusicRhythmManager.Instance.CurrentTime);
             noteContainer.CheckRelese(MusicRhythmManager.Instance.CurrentTime);
         }

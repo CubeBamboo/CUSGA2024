@@ -2,6 +2,7 @@ using CbUtils;
 using CbUtils.Kits.Tasks;
 using Cysharp.Threading.Tasks;
 using Shuile.Gameplay.Event;
+using Shuile.Utils;
 using UnityEngine.SceneManagement;
 
 namespace Shuile
@@ -27,9 +28,12 @@ namespace Shuile
             await InternalLoadScene("LevelDependency", LoadSceneMode.Single); // you can load resources you need in LevelDependency scene's GameObjects.
             await UniTask.WaitUntil(() => !TaskBus.Instance.IsBusy);
             await InternalLoadScene(sceneName, LoadSceneMode.Additive);
-            //GlobalEventUtils.SafeTrigger(() => LevelLoadEndEvent.Trigger());
-            LevelLoadEndEvent.Trigger(sceneName); // maybe obsolete in future
-            LevelLoadEndEvent.Clear();
+            ExceptionUtils.UnityCatch(() =>
+            {
+                LevelStartEvent_AutoClear.Trigger(sceneName);
+                LevelLoadEndEvent.Trigger(sceneName); // maybe obsolete in future
+                LevelLoadEndEvent.Clear();
+            });
         }
 
         public void ToLevelScene(string sceneName)

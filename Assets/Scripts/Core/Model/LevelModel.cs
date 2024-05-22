@@ -20,10 +20,9 @@ namespace Shuile
 
         //private int dangerLevel = -1;
 
-        public LevelModel()
+        public LevelModel(LevelConfigSO levelConfig)
         {
-            var resources = MonoLevelResources.Instance;
-            missTolerance = resources.levelConfig.missTolerance;
+            missTolerance = levelConfig.missTolerance;
 
             var currentChart = LevelDataBinder.Instance.ChartData;
             musicBpm = currentChart.time[0].bpm;

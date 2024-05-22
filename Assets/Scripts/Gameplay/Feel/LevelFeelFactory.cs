@@ -1,3 +1,4 @@
+using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
 namespace Shuile
@@ -6,7 +7,7 @@ namespace Shuile
     {
         public static GameObject CreateParticle(string name, Vector3 position, Vector3 direction)
         {
-            var particle = MonoLevelResources.Instance.GetParticle(name);
+            var particle = LevelResourcesLoader.Instance.GetParticleFromCache(name);
             if (particle == null) return null;
 
             var instance = Object.Instantiate(particle, position, Quaternion.identity);

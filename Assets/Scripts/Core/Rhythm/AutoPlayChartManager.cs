@@ -4,7 +4,7 @@ using Shuile.Gameplay;
 namespace Shuile.Rhythm.Runtime
 {
     // manage auto play chart. (for someone like enemy or game ui animation)
-    public class AutoPlayChartManager : MonoNonAutoSpawnSingletons<AutoPlayChartManager>
+    public class AutoPlayChartManager : MonoSingletons<AutoPlayChartManager>
     {
         // chart part
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();

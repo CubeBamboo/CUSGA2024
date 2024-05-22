@@ -217,7 +217,7 @@ namespace Shuile.UI
             if (isPlaying)
                 return;
 
-            var prefab = MonoLevelResources.Instance.globalPrefabs.noteIndicator;
+            var prefab = LevelResourcesLoader.Instance.SyncContext.globalPrefabs.noteIndicator;
             for (int i = 0; i < notes.Length; i++)
             {
                 if (notes[i].transform == null)

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security;
 using UnityEngine;
 
 namespace CbUtils
@@ -15,7 +12,8 @@ namespace CbUtils
                 bool isNew = !instance;
                 if (!instance)
                 {
-                    new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
+                    var go = new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
+                    Debug.Log($"New MonoSingleton Create: {go.name}");
                     instance.OnInstanceCall(isNew);
                 }
                 return instance;

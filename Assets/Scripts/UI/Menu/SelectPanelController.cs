@@ -1,5 +1,6 @@
 using CbUtils.Kits.Tasks;
 using Cysharp.Threading.Tasks;
+using log4net.Core;
 using Shuile.Core.Gameplay;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.UI;
@@ -80,8 +81,6 @@ namespace Shuile
             _level = levels.GetLevelData(label);
             await LevelResourcesLoader.Instance.PreCacheAsync();
             await UniTask.Delay(1000);
-
-            //return level;
         }
 
         private void RefreshSongView()

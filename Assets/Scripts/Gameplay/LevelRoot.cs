@@ -2,6 +2,8 @@ using CbUtils;
 using Shuile.Framework;
 using Shuile.UI;
 using Shuile.Gameplay;
+using Shuile.Gameplay.Event;
+using Shuile.ResourcesManagement.Loader;
 
 namespace Shuile.Root
 {
@@ -13,6 +15,7 @@ namespace Shuile.Root
     //it also contains the level state callback
     public class LevelRoot : MonoNonAutoSpawnSingletons<LevelRoot>
     {
+        public bool IsStart { get; private set; } = false;
         public bool needHitWithRhythm { get; private set; }
 
         protected override void OnAwake()
@@ -24,7 +27,12 @@ namespace Shuile.Root
 
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
             UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
-            needHitWithRhythm = MonoLevelResources.Instance.levelConfig.needHitWithRhythm;
+            needHitWithRhythm = LevelResourcesLoader.Instance.SyncContext.levelConfig.needHitWithRhythm;
+
+            LevelStartEvent_AutoClear.Register(name =>
+            {
+                IsStart = true;
+            });
         }
         private void OnDestroy()
         {

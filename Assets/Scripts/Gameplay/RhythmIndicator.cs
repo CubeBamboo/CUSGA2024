@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using UObject = UnityEngine.Object;
+using Shuile.ResourcesManagement.Loader;
 
 namespace Shuile.Gameplay
 {
@@ -92,7 +93,7 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            notePrefab = MonoLevelResources.Instance.globalPrefabs.noteIndicator;
+            notePrefab = LevelResourcesLoader.Instance.SyncContext.globalPrefabs.noteIndicator;
             preDisplayTime = PlayerChartManager.Instance.NotePreShowInterval;
             PlayerChartManager.Instance.ChartPlayer.OnNotePlay += OnNote;
             PlayerChartManager.Instance.OnPlayerHitOn += OnPlayerHit;

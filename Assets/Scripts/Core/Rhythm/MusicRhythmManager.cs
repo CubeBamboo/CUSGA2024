@@ -10,11 +10,13 @@ using Shuile.Persistent;
 using Shuile.Gameplay;
 using Shuile.ResourcesManagement.Loader;
 using System.Threading.Tasks;
+using CbUtils.Kits.Tasks;
+using Shuile.Gameplay.Event;
 
 namespace Shuile.Rhythm.Runtime
 {
     //control the music play and music time progress, manage the rhythm check
-    public class MusicRhythmManager : MonoNonAutoSpawnSingletons<MusicRhythmManager>
+    public class MusicRhythmManager : MonoSingletons<MusicRhythmManager>
     {
         private LevelConfigSO levelConfig;
 
@@ -35,12 +37,19 @@ namespace Shuile.Rhythm.Runtime
         public float MusicLength => currentChart.musicLength;
         public bool IsMusicEnd => CurrentTime >= MusicLength;
 
-        private void Start()
+        protected override void OnAwake()
         {
             preciseMusicPlayer = new(new SimpleAudioPlayer());
+            levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
             RefreshData();
-            if (playOnAwake)
-                StartPlay();
+        }
+        private void Start()
+        {
+            LevelStartEvent_AutoClear.Register(name =>
+            {
+                if (playOnAwake)
+                    StartPlay();
+            });
         }
 
         private void FixedUpdate()
@@ -53,21 +62,13 @@ namespace Shuile.Rhythm.Runtime
             preciseMusicPlayer.Reset();
         }
 
-        // [WIP]
-        private async Task InitilizeResources()
-        {
-            levelConfig = await LevelResourcesLoader.Instance.GetLevelConfigAsync();
-
-        }
-
         public void RefreshData()
         {
             currentChart = LevelDataBinder.Instance.ChartData;
-            
-            var resources = MonoLevelResources.Instance;
-            playOnAwake = resources.levelConfig.playOnAwake;
-            playTimeScale = resources.levelConfig.playTimeScale;
-            volume = resources.levelConfig.volume;
+
+            playOnAwake = levelConfig.playOnAwake;
+            playTimeScale = levelConfig.playTimeScale;
+            volume = levelConfig.volume;
 
             preciseMusicPlayer.Reset();
             preciseMusicPlayer.LoadClip(currentChart.audioClip);

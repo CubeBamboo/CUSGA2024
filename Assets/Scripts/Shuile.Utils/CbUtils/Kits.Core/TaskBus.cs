@@ -18,6 +18,7 @@ namespace CbUtils.Kits.Tasks
         private int taskCount = 0;
         private bool isBusy;
 
+        // if you can call Execute() to solve, don't use this event.
         public event System.Action OnTaskComplete;
         public event System.Action OnTaskComplete_AutoClear;
 
@@ -101,6 +102,29 @@ namespace CbUtils.Kits.Tasks
             {
                 var ret = unitask.ContinueWith(() => HandleTaskComplete());
                 return ret;
+            }
+        }
+        /// <summary> [warning]: With GC </summary>
+        public UniTask<T> Execute<T>(UniTask<T> unitask)
+        {
+            IsBusy = true;
+            taskCount++;
+
+            var tcs = new UniTaskCompletionSource<T>();
+            
+            if (unitask.Status.IsCompleted())
+            {
+                HandleTaskComplete();
+                return unitask;
+            }
+            else
+            {
+                unitask.ContinueWith(res =>
+                {
+                    HandleTaskComplete();
+                    tcs.TrySetResult(res);
+                });
+                return tcs.Task;
             }
         }
 

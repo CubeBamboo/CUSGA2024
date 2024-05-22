@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Shuile.Utils
@@ -21,5 +22,33 @@ namespace Shuile.Utils
             op.completed += operation => tcs.TrySetResult(op.asset as T);
             return tcs.Task;
         }
+    }
+
+    public static class ExceptionUtils
+    {
+        public static void UnityCatch(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogError($"Some exception were captured: {e}");
+            }
+        }
+
+        public static Task Catch(this Task task, System.Action<Exception> action)
+        {
+            task.ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                {
+                    action(t.Exception);
+                }
+            });
+            return task;
+        }
+
     }
 }

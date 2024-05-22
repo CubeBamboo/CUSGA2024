@@ -7,7 +7,7 @@ using URandom = UnityEngine.Random;
 
 namespace Shuile
 {
-    public class EnemySpawnManager : MonoNonAutoSpawnSingletons<EnemySpawnManager>
+    public class EnemySpawnManager : MonoSingletons<EnemySpawnManager>
     {
         [HideInInspector] public LevelEnemySO currentEnemyData;
 
