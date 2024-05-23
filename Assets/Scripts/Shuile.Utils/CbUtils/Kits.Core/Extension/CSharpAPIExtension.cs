@@ -16,4 +16,9 @@ namespace CbUtils.Extension
             return sb.ToString();
         }
     }
+
+    public static class MathUtils
+    {
+        public static int RoundToInt(float value) => (int)System.Math.Round(value);
+    }
 }

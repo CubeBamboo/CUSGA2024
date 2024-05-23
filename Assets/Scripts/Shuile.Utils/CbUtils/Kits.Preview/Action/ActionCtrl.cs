@@ -1,5 +1,3 @@
-using DG.Tweening.Core;
-
 namespace CbUtils.ActionKit
 {
     public interface IAction
@@ -10,6 +8,7 @@ namespace CbUtils.ActionKit
     /// <summary>
     /// control timing sequence logic
     /// </summary>
+    [System.Obsolete("use TimingCtrl instead")]
     public class ActionCtrl: CSharpLazySingletons<ActionCtrl>
     {
         public static OldDelayAction Delay(float durationInSeconds)

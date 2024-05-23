@@ -44,5 +44,13 @@ namespace CbUtils
 
         protected virtual void OnAwake() { }
         protected virtual void OnInstanceCall(bool isNewObject) { }
+
+        public static void TryAccessInstance(System.Action<T> action)
+        {
+            if (IsInstance)
+            {
+                action(instance);
+            }
+        }
     }
 }
