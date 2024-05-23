@@ -28,7 +28,7 @@ namespace Shuile
         private void OnDestroy()
         {
             rectTransform.DOKill();
-            AutoPlayChartManager.Instance.OnRhythmHit -= OnRhythmHit;
+            AutoPlayChartManager.TryAccessInstance(mgr => mgr.OnRhythmHit -= OnRhythmHit);
         }
 
         private void OnRhythmHit()

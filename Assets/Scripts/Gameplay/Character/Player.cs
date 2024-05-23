@@ -77,6 +77,11 @@ namespace Shuile.Gameplay
                 Debug.Log("开挂模式");
                 CurrentHp.Value = 999999;
             }
+            if (Keyboard.current.upArrowKey.isPressed && Keyboard.current.leftArrowKey.wasPressedThisFrame)
+            {
+                playerModel.canInviciable = !playerModel.canInviciable;
+                Debug.Log($"受击无敌变更 -> {playerModel.canInviciable}");
+            }
             if (Keyboard.current.bKey.wasPressedThisFrame)
             {
                 this.OnHurt(20);

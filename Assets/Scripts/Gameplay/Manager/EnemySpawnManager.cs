@@ -29,7 +29,7 @@ namespace Shuile
         }
         private void OnDestroy()
         {
-            AutoPlayChartManager.Instance.OnRhythmHit -= OnRhythmHit;
+            AutoPlayChartManager.TryAccessInstance(mgr => mgr.OnRhythmHit -= OnRhythmHit);
         }
         private void OnRhythmHit()
         {

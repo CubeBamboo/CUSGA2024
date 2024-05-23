@@ -66,7 +66,7 @@ namespace Shuile.Gameplay
         {
             EnemySpawnEvent.UnRegister(OnEnemySpawn);
             EnemyDieEvent.UnRegister(OnEnemyDie);
-            AutoPlayChartManager.Instance.OnRhythmHit -= OnRhythmHit;
+            AutoPlayChartManager.TryAccessInstance(mgr => mgr.OnRhythmHit -= OnRhythmHit);
         }
 
         private void OnEnemySpawn(GameObject go)

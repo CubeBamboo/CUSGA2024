@@ -4,6 +4,7 @@ using Shuile.UI;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Event;
 using Shuile.ResourcesManagement.Loader;
+using UnityEngine;
 
 namespace Shuile.Root
 {
@@ -20,6 +21,7 @@ namespace Shuile.Root
 
         protected override void OnAwake()
         {
+            Debug.Log("level awake and is initializing");
             GameplayService.Interface.OnInit();
             LevelDataBinder.Instance.Initialize();
 
@@ -31,16 +33,19 @@ namespace Shuile.Root
 
             LevelStartEvent_AutoClear.Register(name =>
             {
+                Debug.Log("level load end, game start");
                 IsStart = true;
             });
         }
         private void OnDestroy()
         {
+            Debug.Log("level end and is disposing");
             UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
             UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
 
             LevelDataBinder.Instance.DeInitialize();
             GameplayService.Interface.OnDeInit();
+            Debug.Log("level dispose end and close");
         }
         private void Start()
         {

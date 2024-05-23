@@ -3,6 +3,7 @@ using CbUtils.ActionKit;
 
 using DG.Tweening;
 using UnityEngine;
+using CbUtils.Timing;
 
 namespace Shuile
 {
@@ -33,9 +34,11 @@ namespace Shuile
             var unit = 2 * fadeOutDuration;
             var waitTime = !waitUtilFadeOut ?
                 duration : ((int)(duration / unit) + 1) * unit;
-            ActionCtrl.Delay(waitTime)
-                .OnComplete(HandleEnd)
-                .Start(gameObject);
+
+            TimingCtrl.Instance.Timer(waitTime, HandleEnd).Start();
+            //ActionCtrl.Delay(waitTime)
+            //    .OnComplete(HandleEnd)
+            //    .Start(gameObject);
         }
 
         protected override void StopAnimation()

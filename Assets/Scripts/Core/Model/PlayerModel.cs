@@ -9,9 +9,9 @@ namespace Shuile
         public float currentHitOffset;
 
         public float faceDir = 1;
-
         public SmoothMoveCtrl moveCtrl;
 
+        public bool canInviciable = true;
         public bool isInviciable = false;
     }
 }

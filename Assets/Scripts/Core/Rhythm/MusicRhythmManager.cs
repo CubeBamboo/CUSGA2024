@@ -59,7 +59,7 @@ namespace Shuile.Rhythm.Runtime
 
         private void OnDestroy()
         {
-            preciseMusicPlayer.Reset();
+            if(preciseMusicPlayer != null) preciseMusicPlayer = null;
         }
 
         public void RefreshData()

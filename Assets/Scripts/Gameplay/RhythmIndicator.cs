@@ -102,9 +102,12 @@ namespace Shuile.Gameplay
 
         private void OnDestroy()
         {
-            PlayerChartManager.Instance.ChartPlayer.OnNotePlay -= OnNote;
-            PlayerChartManager.Instance.OnPlayerHitOn -= OnPlayerHit;
-            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelese;
+            PlayerChartManager.TryAccessInstance(mgr =>
+            {
+                mgr.ChartPlayer.OnNotePlay -= OnNote;
+                mgr.OnPlayerHitOn -= OnPlayerHit;
+                mgr.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelese;
+            });
 
             uiNoteList.Clear();
             notePool.DestroyAll();

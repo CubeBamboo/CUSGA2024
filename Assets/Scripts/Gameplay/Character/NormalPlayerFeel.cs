@@ -58,16 +58,19 @@ namespace Shuile.Gameplay
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Hurt");
                 levelModel.DangerScore -= DangerLevelConfigClass.PlayerHurtReduction;
 
-                playerModel.isInviciable = true;
-                animCtrl.Inviciable = true;
-
-                ActionCtrl.Delay(1.5f).OnComplete(() =>
+                if (playerModel.canInviciable)
                 {
-                    animCtrl.Inviciable = false;
-                    playerModel.isInviciable = false;
-                })
-                .SetDebounce("PlayerHurt")
-                .Start(gameObject);
+                    playerModel.isInviciable = true;
+                    animCtrl.Inviciable = true;
+
+                    ActionCtrl.Delay(1.5f).OnComplete(() =>
+                    {
+                        animCtrl.Inviciable = false;
+                        playerModel.isInviciable = false;
+                    })
+                    .SetDebounce("PlayerHurt")
+                    .Start(gameObject);
+                }
 
                 LevelFeelManager.Instance.VignettePulse();
             }).UnRegisterWhenGameObjectDestroyed(gameObject);

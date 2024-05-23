@@ -1,4 +1,5 @@
 using CbUtils.Event;
+using CbUtils.Timing;
 using Shuile.Gameplay.Event;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
@@ -29,6 +30,8 @@ namespace Shuile.Gameplay
         {
             EnemyDieEvent.UnRegister(GlobalOnEnemyDie);
             EnemyHurtEvent.UnRegister(GlobalOnEnemyHurt);
+
+            TimingCtrl.Instance.StopAllTimer();
         }
         private void FixedUpdate()
         {

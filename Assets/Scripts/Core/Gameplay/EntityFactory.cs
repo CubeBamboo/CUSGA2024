@@ -9,6 +9,7 @@ using UObject = UnityEngine.Object;
 using Shuile.Gameplay.Event;
 using Shuile.Core.Gameplay;
 using Shuile.ResourcesManagement.Loader;
+using CbUtils.Timing;
 
 namespace Shuile
 {
@@ -38,9 +39,9 @@ namespace Shuile
 
             var enemy = InternalSpawnEnemy(EntityUtils.EnemyType2Prefab(enemyType), pos);
             enemy.SetActive(false);
-            ActionCtrl.Delay(effect.duration)
-                      .OnComplete(() => enemy.SetActive(true))
-                      .Start(LevelRoot.Instance.gameObject);
+            TimingCtrl.Instance
+                .Timer(effect.duration, () => enemy.SetActive(true))
+                .Start();
             return enemy;
         }
 

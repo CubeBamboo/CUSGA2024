@@ -43,7 +43,7 @@ namespace Shuile
         {
             try
             {
-                InternalPlay();
+                InternalPlay().Forget();
             }
             catch (System.OperationCanceledException)
             {
@@ -55,7 +55,7 @@ namespace Shuile
                 throw e;
             }
         }
-        public async void InternalPlay()
+        public async UniTaskVoid InternalPlay()
         {
             FadeInBehave();
 

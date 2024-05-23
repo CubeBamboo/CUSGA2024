@@ -1,5 +1,5 @@
 using CbUtils.ActionKit;
-
+using CbUtils.Timing;
 using DG.Tweening;
 using UnityEngine;
 
@@ -25,9 +25,13 @@ namespace Shuile
             {
                 mCamera.transform.position = initPos;
             });
-            ActionCtrl.Delay(0.2f)
-                .OnComplete(() => isCameraShake = false)
-                .Start(mCamera.gameObject);
+
+            Debug.Log("canera shake");
+            TimingCtrl.Instance.Timer(duration, () => isCameraShake = false)
+                .Start();
+            //ActionCtrl.Delay(0.2f)
+            //    .OnComplete(() => isCameraShake = false)
+            //    .Start(mCamera.gameObject);
         }
     }
 }

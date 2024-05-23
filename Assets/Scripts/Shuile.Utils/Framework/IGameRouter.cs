@@ -1,4 +1,5 @@
 using CbUtils.ActionKit;
+using CbUtils.Timing;
 using Cysharp.Threading.Tasks;
 
 namespace Shuile
@@ -12,11 +13,16 @@ namespace Shuile
             loadingViewer.OnStart();
             loadingViewer.In();
 
-            var exitDelay = ActionCtrl.Delay(loadingViewer.ExitDuration)
-                .OnComplete(() => loadingViewer.OnEnd());
-            var enterDelay = ActionCtrl.Delay(loadingViewer.InDuration)
-                .OnComplete(() => { action?.Invoke(); loadingViewer.Out(); exitDelay.Start(); });
-            enterDelay.Start(); // 没有使用序列导致的抽象写法 not using sequence leads to such a fuuuuuuckkking code :((((
+            var exitTimer = TimingCtrl.Instance.Timer(loadingViewer.ExitDuration,
+                () => loadingViewer.OnEnd());
+            var enterTimer = TimingCtrl.Instance.Timer(loadingViewer.InDuration, () =>
+            {
+                action?.Invoke();
+                loadingViewer.Out();
+                exitTimer.Start();
+            });
+            enterTimer.Start();
+            // 没有使用序列导致的抽象写法 not using sequence leads to such a fuuuuuuckkking code :((((
         }
 
         public static void DoTransition(this IGameRouter gameRouter,
@@ -25,16 +31,17 @@ namespace Shuile
             loadingViewer.OnStart();
             loadingViewer.In();
 
-            var exitDelay = ActionCtrl.Delay(loadingViewer.ExitDuration)
-                .OnComplete(() => loadingViewer.OnEnd());
-            var enterDelay = ActionCtrl.Delay(loadingViewer.InDuration)
-                .OnComplete(async () => {
-                    if (asyncAction != null)
-                        await asyncAction.Invoke();
-                    loadingViewer.Out();
-                    exitDelay.Start();
-                });
-            enterDelay.Start(); // 没有使用序列导致的抽象写法 not using sequence leads to such a fuuuuuuckkking code :((((
+            var exitTimer = TimingCtrl.Instance.Timer(loadingViewer.ExitDuration,
+                () => loadingViewer.OnEnd());
+            var enterTimer = TimingCtrl.Instance.Timer(loadingViewer.InDuration, async () =>
+            {
+                if (asyncAction != null)
+                    await asyncAction.Invoke();
+                loadingViewer.Out();
+                exitTimer.Start();
+            });
+            enterTimer.Start();
+            // 没有使用序列导致的抽象写法 not using sequence leads to such a fuuuuuuckkking code :((((
         }
     }
 

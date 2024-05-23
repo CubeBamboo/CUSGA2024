@@ -1,5 +1,6 @@
 using CbUtils;
 using CbUtils.ActionKit;
+using CbUtils.Timing;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
 
@@ -56,9 +57,12 @@ namespace Shuile.Gameplay
             endPanel.Show();
             MonoAudioCtrl.Instance.PlayOneShot("Level_Fail", 0.6f);
 
-            ActionCtrl.Delay(3f)
-                .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
+            TimingCtrl.Instance
+                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
                 .Start();
+            //ActionCtrl.Delay(3f)
+            //    .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
+            //    .Start();
         }
         private void LevelWin()
         {
@@ -69,9 +73,12 @@ namespace Shuile.Gameplay
             MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
             MonoAudioCtrl.Instance.PlayOneShot("Level_Win", 0.6f);
 
-            ActionCtrl.Delay(3f)
-                .OnComplete(() => MonoGameRouter.Instance.ToMenu())
+            TimingCtrl.Instance
+                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
                 .Start();
+            //ActionCtrl.Delay(3f)
+            //    .OnComplete(() => MonoGameRouter.Instance.ToMenu())
+            //    .Start();
         }
 
         public void Init()
