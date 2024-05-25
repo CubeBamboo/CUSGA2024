@@ -38,7 +38,6 @@ namespace Shuile
         public void OnEnd()
         {
             gameObject.SetActive(false);
-            Debug.Log("Transition End");
         }
     }
 }

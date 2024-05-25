@@ -44,6 +44,8 @@ namespace Shuile.Gameplay
             inputHelper.onAttackStart = v => OnAttackStart.Invoke(v);
             inputHelper.onAttackCanceled = v => OnAttackCanceled.Invoke(v);
         }
+
+        public void ClearAll() => inputHelper.ClearAll();
     }
 
     public class PlayerPlayerInputHelper
@@ -86,6 +88,7 @@ namespace Shuile.Gameplay
                 if(res) handler(ctx);
                 return res;
             }
+            public void ClearAll() => actionHandlers.Clear();
         }
 
         private InternalHelper internalHelper = new InternalHelper();
@@ -101,10 +104,11 @@ namespace Shuile.Gameplay
             internalHelper.RegisterActionHandler("Fire", ProcessAttackPhase);
         }
 
-        public void OnPlayerInputTriggered(InputAction.CallbackContext ctx) => internalHelper.OnPlayerInputTriggered(ctx);
-
         private void ProcessJumpPhase(InputAction.CallbackContext ctx) => internalHelper.InternalProcessPhase(ctx, onJumpStart, onJumpCanceled);
         private void ProcessMovePhase(InputAction.CallbackContext ctx) => internalHelper.InternalProcessPhase(ctx, onMoveStart, onMoveCanceled);
         private void ProcessAttackPhase(InputAction.CallbackContext ctx) => internalHelper.InternalProcessPhase(ctx, onAttackStart, onAttackCanceled);
+
+        public void OnPlayerInputTriggered(InputAction.CallbackContext ctx) => internalHelper.OnPlayerInputTriggered(ctx);
+        public void ClearAll() => internalHelper.ClearAll();
     }
 }

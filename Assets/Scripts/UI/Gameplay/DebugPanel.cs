@@ -11,12 +11,16 @@ using CbUtils.Event;
 using UnityEngine;
 using TMPro;
 using CbUtils.Preview.Event;
+using Shuile.Core.Framework;
+using Shuile.Core;
 
 namespace Shuile
 {
     // 写成屎了，不过调试用就算了
     public class DebugPanel : BasePanelWithMono
     {
+        private IMusicRhythmManager _musicRhythmManager;
+
         [SerializeField] private TextMeshProUGUI hitOffsetText;
         [SerializeField] private TextMeshProUGUI playTimeText;
         [SerializeField] private TextMeshProUGUI dangerScoreText;
@@ -33,13 +37,14 @@ namespace Shuile
 
         private void Start()
         {
+            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
             playerModel = GameplayService.Interface.Get<PlayerModel>();
             levelModel = GameplayService.Interface.Get<LevelModel>();
 
             gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
             {
                 hitOffsetText.text = $"HitOffset: {playerModel.currentHitOffset:0.000}";
-                playTimeText.text = $"PlayTime: {MusicRhythmManager.Instance.CurrentTime:0.000}";
+                playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
                 dangerScoreText.text = $"DangerScore: {levelModel.DangerScore:0.000}";
                 dangerLevelText.text = $"DangerLevel: {levelModel.DangerLevel}";
                 enemyCountText.text = $"EnemyCount: {EntityManager.Instance.EnemyCount}";

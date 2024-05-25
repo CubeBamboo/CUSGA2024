@@ -1,5 +1,6 @@
 using CbUtils;
 using CbUtils.Kits.Tasks;
+using Shuile.Core;
 using Shuile.Core.Configuration;
 using Shuile.Framework;
 using Shuile.Gameplay;
@@ -17,13 +18,13 @@ namespace Shuile.Rhythm.Runtime
     // manage chart of player, convert chart to runtime note object noteContainer
     public class PlayerChartManager : MonoSingletons<PlayerChartManager>
     {
+        private IMusicRhythmManager _musicRhythmManager;
+
         private readonly NoteContainer noteContainer = new();
 
         // chart part
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
         private CustomLoadObject<ChartPlayer> chartPlayer;
-
-        private LevelModel levelModel;
 
         private float notePreShowInterval = 0.4f;
         public System.Action OnPlayerHitOn;
@@ -36,7 +37,8 @@ namespace Shuile.Rhythm.Runtime
 
         protected override void OnAwake()
         {
-            levelModel = GameplayService.Interface.Get<LevelModel>();
+            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+
             InitilizeResources();
             notePreShowInterval = _levelConfig.playerNotePreShowTime;
             chartPlayer = new(() => new ChartPlayer(chart,
@@ -53,8 +55,8 @@ namespace Shuile.Rhythm.Runtime
         {
             if (!LevelRoot.Instance.IsStart) return;
 
-            ChartPlayer.PlayUpdate(MusicRhythmManager.Instance.CurrentTime);
-            noteContainer.CheckRelese(MusicRhythmManager.Instance.CurrentTime);
+            ChartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
+            noteContainer.CheckRelese(_musicRhythmManager.CurrentTime);
         }
 
         public int Count => noteContainer.Count;

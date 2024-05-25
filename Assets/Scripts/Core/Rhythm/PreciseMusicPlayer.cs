@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Shuile.Audio;
+using Shuile.Gameplay;
 using System.Threading;
 using UnityEngine;
 
@@ -8,26 +9,26 @@ namespace Shuile.Utils
     /// <summary>
     /// it provide a async player for lower delay, a timer start from music's specific position
     /// </summary>
-    public class PreciseMusicPlayer
+    public class PreciseMusicPlayer : MonoBehaviour
     {
-        private readonly AudioPlayerInUnity audioPlayer;
-        private System.Action tickAction;
-
+        private AudioPlayerInUnity audioPlayer;
         public AudioPlayerInUnity AudioPlayer => audioPlayer;
 
-        public PreciseMusicPlayer(AudioPlayerInUnity audioPlayer)
+        private void Awake()
         {
-            this.audioPlayer = audioPlayer;
+            GameplayService.Interface.Register<PreciseMusicPlayer>(this);
+            audioPlayer = new SimpleAudioPlayer();
+            Restore();
+        }
+        private void OnDestroy()
+        {
+            GameplayService.Interface.UnRegister<PreciseMusicPlayer>();
+        }
 
-            tickAction = () =>
-            {
-                if (!IsPlaying)
-                    return;
-
-                CurrentTime += Time.fixedDeltaTime;
-            };
-
-            Reset();
+        public void FixedUpdate()
+        {
+            if (!IsPlaying) return;
+            CurrentTime += Time.fixedDeltaTime;
         }
 
         /// <summary> timer for music playing by play offset </summary>
@@ -75,20 +76,11 @@ namespace Shuile.Utils
             asyncPlayTokenSource?.Cancel();
         }
 
-        public void CustomTicker(System.Action action)
-        {
-            tickAction = action;
-        }
-
         /// <summary>
         /// default need to call in FixedUpdate
         /// </summary>
-        public void CallTickAction()
-        {
-            tickAction.Invoke();
-        }
 
-        public void Reset()
+        public void Restore()
         {
             CurrentTime = 0;
             IsPlaying = false;

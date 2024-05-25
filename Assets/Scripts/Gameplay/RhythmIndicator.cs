@@ -1,4 +1,3 @@
-using Shuile.Framework;
 using Shuile.MonoGadget;
 using Shuile.Rhythm.Runtime;
 
@@ -14,6 +13,8 @@ using UnityEngine.UI;
 using UObject = UnityEngine.Object;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Core.Configuration;
+using System;
+using Shuile.Core;
 
 namespace Shuile.Gameplay
 {
@@ -75,8 +76,9 @@ namespace Shuile.Gameplay
         private List<UINote> uiNoteList;
         //private ChartPlayer chartPlayer;
 
-        private readonly CustomLoadObject<MusicTimeTweener> timeTweener
-            = new(() => MusicRhythmManager.Instance.gameObject.GetOrAddComponent<MusicTimeTweener>());
+        private IMusicRhythmManager _musicRhythmManager;
+        private Lazy<MusicTimeTweener> timeTweener;
+
         public MusicTimeTweener TimeTweener => timeTweener.Value;
 
         private float CurrentTime => TimeTweener.TweenTime;
@@ -94,6 +96,9 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
+            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+            timeTweener = new(() => _musicRhythmManager.PreciseMusicPlayer.gameObject.GetOrAddComponent<MusicTimeTweener>());
+
             notePrefab = LevelResourcesLoader.Instance.SyncContext.globalPrefabs.noteIndicator;
             preDisplayTime = PlayerChartManager.Instance.NotePreShowInterval;
             PlayerChartManager.Instance.ChartPlayer.OnNotePlay += OnNote;

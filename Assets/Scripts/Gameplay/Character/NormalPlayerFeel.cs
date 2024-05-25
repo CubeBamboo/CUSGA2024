@@ -1,4 +1,5 @@
 using CbUtils.ActionKit;
+using Shuile.Core;
 using Shuile.Rhythm.Runtime;
 
 using UnityEngine;
@@ -8,28 +9,28 @@ namespace Shuile.Gameplay
     // player feedback and other event
     public class NormalPlayerFeel : MonoBehaviour
     {
+        private IMusicRhythmManager _musicRhythmManager;
+
         private Player player;
         private NormalPlayerCtrl playerCtrl;
-        private NormalPlayerInput playerInput;
         private PlayerAnimCtrl animCtrl;
         private Rigidbody2D _rb;
 
         private PlayerModel playerModel;
         private SmoothMoveCtrl _moveController;
         private LevelModel levelModel;
-
         private const float HurtXForce = 6f;
         private const float HurtYForce = 0.2f;
 
         private void Awake()
         {
+            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
             levelModel = GameplayService.Interface.Get<LevelModel>();
             playerModel = GameplayService.Interface.Get<PlayerModel>();
 
             _moveController = GetComponent<SmoothMoveCtrl>();
             player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();
-            playerInput = GetComponent<NormalPlayerInput>();
             _rb = GetComponent<Rigidbody2D>();
 
             animCtrl = new(gameObject);
@@ -47,8 +48,8 @@ namespace Shuile.Gameplay
             {
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Die);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Death");
-                MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+                _musicRhythmManager.FadeOutAndStop(); // 当前音乐淡出
+            });
 
             player.OnHurted.Register(() =>
             {
@@ -73,7 +74,7 @@ namespace Shuile.Gameplay
                 }
 
                 LevelFeelManager.Instance.VignettePulse();
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            });
 
             playerCtrl.OnWeaponAttack.Register(enable =>
             {
@@ -81,23 +82,22 @@ namespace Shuile.Gameplay
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
                 if (enable) LevelFeelManager.Instance.PlayParticle("SwordSlash", transform.position, new Vector2(playerModel.faceDir, 0), transform);
                 if (enable) levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
-
-            playerCtrl.OnJumpStart.Register(() =>
-            {
-                //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
-                //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            });
 
             playerCtrl.OnMoveStart.Register(v =>
             {
                 animCtrl.FlipX = v < 0;
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            });
 
-            playerCtrl.OnTouchGround.Register(() =>
-            {
-                //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            //playerCtrl.OnJumpStart.Register(() =>
+            //{
+            //    //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
+            //    //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
+            //});
+            //playerCtrl.OnTouchGround.Register(() =>
+            //{
+            //    //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
+            //});
         }
     }
 }

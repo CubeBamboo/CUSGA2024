@@ -31,6 +31,7 @@ namespace Shuile
             ExceptionUtils.UnityCatch(() =>
             {
                 LevelStartEvent_AutoClear.Trigger(sceneName);
+                LevelStartEvent.Trigger(sceneName);
                 LevelLoadEndEvent.Trigger(sceneName); // maybe obsolete in future
                 LevelLoadEndEvent.Clear();
             });

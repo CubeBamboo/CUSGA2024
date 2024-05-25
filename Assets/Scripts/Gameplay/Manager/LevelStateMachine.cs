@@ -1,6 +1,7 @@
 using CbUtils;
 using CbUtils.ActionKit;
 using CbUtils.Timing;
+using Shuile.Core;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
 
@@ -18,6 +19,7 @@ namespace Shuile.Gameplay
 
         public event System.Action OnStart, OnFail, OnWin;
 
+        private IMusicRhythmManager _musicRhythmManager;
         private LevelState state;
 
         public LevelState State
@@ -50,6 +52,11 @@ namespace Shuile.Gameplay
             }
         }
 
+        protected override void OnAwake()
+        {
+            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+        }
+
         private void LevelFail()
         {
             var endPanel = UICtrl.Instance.Get<EndLevelPanel>();
@@ -70,7 +77,7 @@ namespace Shuile.Gameplay
             endPanel.SetState(true);
             endPanel.Show();
 
-            MusicRhythmManager.Instance.FadeOutAndStop(); // 当前音乐淡出
+            _musicRhythmManager.FadeOutAndStop(); // 当前音乐淡出
             MonoAudioCtrl.Instance.PlayOneShot("Level_Win", 0.6f);
 
             TimingCtrl.Instance

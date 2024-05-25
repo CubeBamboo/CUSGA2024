@@ -1,5 +1,6 @@
 using CbUtils.Event;
 using CbUtils.Timing;
+using Shuile.Core;
 using Shuile.Gameplay.Event;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
@@ -13,11 +14,13 @@ namespace Shuile.Gameplay
     // if you dont know where to put the logic, put it here
     public class LevelGlobalManager : MonoBehaviour
     {
+        private IMusicRhythmManager _musicRhythmManager;
         private LevelModel levelModel;
 
         private void Awake()
         {
             levelModel = GameplayService.Interface.Get<LevelModel>();
+            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
         }
 
         private void Start()
@@ -40,7 +43,7 @@ namespace Shuile.Gameplay
             levelModel.DangerScore -= DangerLevelConfigClass.NormalReductionPerSecond * Time.fixedDeltaTime;
 
             // check end
-            if (MusicRhythmManager.Instance.IsMusicEnd)
+            if (_musicRhythmManager.IsMusicEnd)
             {
                 LevelStateMachine.Instance.State = LevelStateMachine.LevelState.Win;
             }
@@ -60,11 +63,11 @@ namespace Shuile.Gameplay
         {
             if (UInput.Keyboard.current.zKey.wasPressedThisFrame)
             {
-                MusicRhythmManager.Instance.SetCurrentTime(MusicRhythmManager.Instance.CurrentTime + 5f);
+                _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime + 5f);
             }
             if (UInput.Keyboard.current.xKey.wasPressedThisFrame)
             {
-                MusicRhythmManager.Instance.SetCurrentTime(MusicRhythmManager.Instance.CurrentTime - 5f);
+                _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime - 5f);
             }
         }
     }

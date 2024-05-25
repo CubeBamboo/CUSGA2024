@@ -1,4 +1,5 @@
 using CbUtils;
+using Shuile.Core;
 using Shuile.Rhythm;
 using UDebug = UnityEngine.Debug;
 
@@ -9,6 +10,8 @@ namespace Shuile.Rhythm.Runtime
     // it will auto play.
     public class LevelChartManager : MonoSingletons<LevelChartManager>
     {
+        private IMusicRhythmManager _musicRhythmManager;
+
         public bool isPlay = true;
 
         // chart part
@@ -17,6 +20,8 @@ namespace Shuile.Rhythm.Runtime
 
         private void Start()
         {
+            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+
             chart = LevelDataBinder.Instance.ChartData;
             chartPlayer = new ChartPlayer(chart);
             chartPlayer.OnNotePlay += (note, _) => note.Process();
@@ -27,7 +32,7 @@ namespace Shuile.Rhythm.Runtime
 #if UNITY_EDITOR
             if (!isPlay) return;
 #endif
-            chartPlayer.PlayUpdate(MusicRhythmManager.Instance.CurrentTime);
+            chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
         }
     }
 }

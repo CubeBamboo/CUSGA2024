@@ -9,9 +9,9 @@ namespace Shuile.Core.Framework
         private readonly Dictionary<Type, object> _services = new();
         private readonly Dictionary<Type, Func<object>> _serviceCreators = new();
 
-        public void RegisterCreator<T>(Func<T> creator)
+        public void RegisterCreator<T>(Func<ServiceLocator, T> creator)
         {
-            _serviceCreators[typeof(T)] = () => creator();
+            _serviceCreators[typeof(T)] = () => creator(this);
         }
 
         public void UnRegisterCreator<T>()

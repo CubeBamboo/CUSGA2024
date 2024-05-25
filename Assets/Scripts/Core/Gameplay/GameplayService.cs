@@ -1,26 +1,8 @@
-using CbUtils.Kits.Tasks;
 using Shuile.Framework;
-using Shuile.ResourcesManagement.Loader;
-using UnityEngine;
+using Shuile.Rhythm;
 
 namespace Shuile.Gameplay
 {
-    /*public class GameplayServiceMono : MonoBehaviour
-    {
-        [SerializeField] private PlayerController playerController;
-
-        private void Awake()
-        {
-            GameplayService.Interface.Register(playerController);
-        }
-
-        private void OnDestroy()
-        {
-            GameplayService.Interface.UnRegister<PlayerController>();
-            GameplayService.Interface.OnDeInit();
-        }
-    }*/
-
     public class GameplayService : AbstractLocator<GameplayService>
     {
         public override bool InitOnApplicationAwake => false;
@@ -30,6 +12,7 @@ namespace Shuile.Gameplay
             this.Register<PlayerModel>(new PlayerModel());
             this.Register<LevelModel>(new LevelModel());
             this.Register<IRouteFinder>(new SimpleRouteFinder());
+            this.Register<LevelTimingManager>(new LevelTimingManager());
         }
 
         public override void OnDeInit()
@@ -37,10 +20,7 @@ namespace Shuile.Gameplay
             this.UnRegister<PlayerModel>();
             this.UnRegister<LevelModel>();
             this.UnRegister<IRouteFinder>();
-            levelModel.SetValueWithoutEvent(null);
+            this.UnRegister<LevelTimingManager>();
         }
-
-        private CustomLoadObject<LevelModel> levelModel = new(() => Interface.Get<LevelModel>());
-        public LevelModel LevelModel => levelModel.Value;
     }
 }

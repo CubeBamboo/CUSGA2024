@@ -1,20 +1,12 @@
 using CbUtils;
-using CbUtils.Event;
-using Shuile.Root;
-
-using DG.Tweening;
+using CbUtils.Preview.Event;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using CbUtils.Preview.Event;
 
 namespace Shuile.Gameplay
 {
     public class Player : MonoBehaviour, IHurtable
     {
-        private NormalPlayerInput _PlayerInput;
-        private NormalPlayerCtrl _PlayerCtrl;
-        private NormalPlayerFeel _PlayerFeel;
-
         [SerializeField] private PlayerPropertySO property;
         public HearableProperty<int> CurrentHp { get; private set; } = new();
         public EasyEvent OnDie = new();
@@ -22,7 +14,6 @@ namespace Shuile.Gameplay
 
         private PlayerModel playerModel;
 
-        private bool isInviciable;
         private bool isDie;
 
         public PlayerPropertySO Property => property;
@@ -30,10 +21,6 @@ namespace Shuile.Gameplay
         {
             playerModel = GameplayService.Interface.Get<PlayerModel>();
             playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
-
-            _PlayerInput = gameObject.GetComponent<NormalPlayerInput>();
-            _PlayerCtrl = gameObject.GetComponent<NormalPlayerCtrl>();
-            _PlayerFeel = gameObject.GetComponent<NormalPlayerFeel>();
 
             GameplayService.Interface.Register<Player>(this);
         }

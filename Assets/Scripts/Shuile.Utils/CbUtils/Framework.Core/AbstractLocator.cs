@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 namespace Shuile.Framework
 {
-    // easy ioc container
     public abstract class AbstractLocator<T> where T : new()
     {
         private static T mInterface = new();

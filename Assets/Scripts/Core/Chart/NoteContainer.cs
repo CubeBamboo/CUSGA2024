@@ -1,5 +1,6 @@
 // encoding: UTF-8 cp65001
 
+using Shuile.Core;
 using Shuile.Core.Configuration;
 using Shuile.Gameplay;
 using System;
@@ -13,6 +14,8 @@ namespace Shuile.Rhythm.Runtime
      */
     public class NoteContainer : INoteContainer
     {
+        private IMusicRhythmManager _musicRhythmManager;
+
         // note to hit
         private ObjectPool<SingleNote> notePool = new ObjectPool<SingleNote>(
             ()=>new SingleNote(0f));
@@ -22,6 +25,11 @@ namespace Shuile.Rhythm.Runtime
         public event System.Action<float> OnNoteAutoRelese;
         public ReadOnlyCollection<SingleNote> OrderedNoteList => noteList.AsReadOnly();
         public int Count => notePool.Count;
+
+        public NoteContainer()
+        {
+            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+        }
 
         public SingleNote AddNote(float realTime)
         {
@@ -39,7 +47,7 @@ namespace Shuile.Rhythm.Runtime
 
         public SingleNote TryGetNearestNote()
         {
-            CheckRelese(MusicRhythmManager.Instance.CurrentTime);
+            CheckRelese(_musicRhythmManager.CurrentTime);
             return noteList.Count != 0 ? noteList[0] : null;
         }
 

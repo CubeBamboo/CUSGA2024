@@ -25,7 +25,7 @@ namespace CbUtils.Timing.Scheduler
             _monoBehaviour = new UnityEngine.GameObject("CbUtils.Timing.MonoBehaviorTimerScheduler")
                 .SetDontDestroyOnLoad()
                 .AddComponent<EmptyMonoBehavior>();
-            _monoBehaviour.gameObject.GetOrAddComponent<MonoUpdateEventTrigger>().OnUpdate += OnUpdate;
+            _monoBehaviour.gameObject.GetOrAddComponent<MonoUpdateEventTrigger>().UpdateEvt += OnUpdate;
         }
 
         private void OnUpdate()

@@ -2,6 +2,7 @@ using CbUtils.Extension;
 using CbUtils.Kits.Tasks;
 using Shuile.Core.Framework;
 using Shuile.ResourcesManagement.Loader;
+using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
 namespace Shuile.Core
@@ -14,7 +15,8 @@ namespace Shuile.Core
         public static void PreInitialize()
         {
             // Initialize the game
-            ServiceLocator.InitializeCreator();
+            ServiceLocator
+                .AddImplemenation<IMusicRhythmManager>(s => new MusicRhythmManager());
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
