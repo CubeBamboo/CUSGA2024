@@ -1,11 +1,13 @@
 using CbUtils;
 using CbUtils.Preview.Event;
+using Shuile.Core.Framework;
+using Unity.XR.OpenVR;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Shuile.Gameplay
 {
-    public class Player : MonoBehaviour, IHurtable
+    public class Player : MonoEntity, IHurtable
     {
         [SerializeField] private PlayerPropertySO property;
         public HearableProperty<int> CurrentHp { get; private set; } = new();
@@ -17,14 +19,14 @@ namespace Shuile.Gameplay
         private bool isDie;
 
         public PlayerPropertySO Property => property;
-        private void Awake()
+        protected override void AwakeOverride()
         {
-            playerModel = GameplayService.Interface.Get<PlayerModel>();
+            playerModel = this.GetModel<PlayerModel>();
             playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
 
             GameplayService.Interface.Register<Player>(this);
         }
-        private void OnDestroy()
+        protected override void OnDestroyOverride()
         {
             GameplayService.Interface.UnRegister<Player>();
         }
@@ -75,6 +77,8 @@ namespace Shuile.Gameplay
                 this.OnHurt((int)(CurrentHp.Value * 0.25f));
             }
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 
     public static class PlayerExtension

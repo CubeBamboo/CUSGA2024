@@ -6,11 +6,13 @@ using Shuile.Rhythm.Runtime;
 using UnityEngine;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using Shuile.Core.Framework;
+using Shuile.Rhythm;
 
 namespace Shuile
 {
     // attach to laser GameObject
-    public class Laser : MonoBehaviour, IRhythmable
+    public class Laser : MonoBehaviour, IRhythmable, IEntity
     {
         [SerializeField] private bool playOnAwake = true;
         [SerializeField] private float attackStayTime = 0.8f;
@@ -23,9 +25,11 @@ namespace Shuile
         float usingInTime;
         float targetScaleX;
         SpriteRenderer mRenderer;
+        private LevelTimingManager timingManager;
 
         private void Awake()
         {
+            timingManager = this.GetSystem<LevelTimingManager>();
             mRenderer = GetComponent<SpriteRenderer>();
             gameObject.SetOnDestroy(() => mRenderer.DOKill(), "renderer");
             targetScaleX = transform.localScale.x;
@@ -111,9 +115,16 @@ namespace Shuile
 
             if (useRhythmTime)
             {
-                usingInTime = this.GetRealTime(InTime);
-                attackStayTime = this.GetRealTime(attackStayTime);
+                usingInTime = this.GetRealTime(InTime, timingManager);
+                attackStayTime = this.GetRealTime(attackStayTime, timingManager);
             }
         }
+
+        public void OnSelfEnable()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

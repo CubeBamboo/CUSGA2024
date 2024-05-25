@@ -3,7 +3,7 @@ using Shuile.ResourcesManagement.Loader;
 
 namespace Shuile
 {
-    public static class EntityUtils
+    public static class LevelEntityUtils
     {
         public static UnityEngine.GameObject EnemyType2Prefab(EnemyType enemyType)
         {

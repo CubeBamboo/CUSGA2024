@@ -4,6 +4,7 @@ using UnityEngine;
 
 using CbUtils.Extension;
 using Shuile.Core.Gameplay;
+using Shuile.Root;
 
 namespace Shuile.Rhythm.Runtime
 {
@@ -13,7 +14,7 @@ namespace Shuile.Rhythm.Runtime
         public float rhythmTime;
         public virtual void Process() { }
         public virtual float ToPlayTime()
-            => this.GetRealTime(rhythmTime);
+            => this.GetRealTime(rhythmTime, LevelRoot.Instance.LevelContext.timingManager);
 
         public static BaseNoteData Create(float time)
             => new() { rhythmTime = time };
@@ -28,12 +29,12 @@ namespace Shuile.Rhythm.Runtime
     {
         public override void Process()
         {
-            EntityFactory.Instance.SpawnLaser()
+            LevelEntityFactory.Instance.SpawnLaser()
                 .SetPosition(LevelZoneManager.Instance.RandomValidPosition());
         }
 
         public override float ToPlayTime()
-            => this.GetRealTime(rhythmTime - Laser.InTime);
+            => this.GetRealTime(rhythmTime - Laser.InTime, LevelRoot.Instance.LevelContext.timingManager);
     }
 
     public class SpawnSingleEnemyNoteData : BaseNoteData
@@ -41,7 +42,7 @@ namespace Shuile.Rhythm.Runtime
         public override void Process()
         {
             var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
-            EntityFactory.Instance.SpawnEnemy(randomType, LevelZoneManager.Instance.RandomValidPosition());
+            LevelEntityFactory.Instance.SpawnEnemy(randomType, LevelZoneManager.Instance.RandomValidPosition());
         }
     }
 }

@@ -1,34 +1,51 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Shuile.Audio;
+using Shuile.Core;
+using Shuile.Core.Framework;
 using Shuile.Gameplay;
+using Shuile.Model;
+using Shuile.ResourcesManagement.Loader;
+using Shuile.Rhythm.Runtime;
 using System.Threading;
 using UnityEngine;
 
-namespace Shuile.Utils
+namespace Shuile
 {
     /// <summary>
     /// it provide a async player for lower delay, a timer start from music's specific position
     /// </summary>
-    public class PreciseMusicPlayer : MonoBehaviour
+    // TODO: it designed for a utils class in the first time, but now it's implemented to be a entity, and it needs to refactor
+    public class PreciseMusicPlayer : MonoEntity
     {
+        private LevelConfigSO levelConfig;
+
+        private MusicRhythmManager _musicRhythmManager;
+        private LevelModel levelModel;
         private AudioPlayerInUnity audioPlayer;
         public AudioPlayerInUnity AudioPlayer => audioPlayer;
-
-        private void Awake()
+        protected override void AwakeOverride()
         {
-            GameplayService.Interface.Register<PreciseMusicPlayer>(this);
+            GameplayService.Interface.Register(this);
+            levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            levelModel = this.GetModel<LevelModel>();
+
             audioPlayer = new SimpleAudioPlayer();
             Restore();
+            InitializeEvent();
         }
-        private void OnDestroy()
+        protected override void OnDestroyOverride()
         {
-            GameplayService.Interface.UnRegister<PreciseMusicPlayer>();
+            GameplayService.Interface.UnRegister(this);
         }
 
         public void FixedUpdate()
         {
             if (!IsPlaying) return;
             CurrentTime += Time.fixedDeltaTime;
+            levelModel.currentMusicTime = CurrentTime;
         }
 
         /// <summary> timer for music playing by play offset </summary>
@@ -94,5 +111,29 @@ namespace Shuile.Utils
             CurrentTime = time;
             audioPlayer.TargetSource.time = time;
         }
+
+        private void InitializeEvent()
+        {
+            _musicRhythmManager.OnReloadData.Register(() =>
+            {
+                Restore();
+                LoadClip(LevelDataBinder.Instance.ChartData.audioClip);
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            _musicRhythmManager.OnStartPlay.Register(offset =>
+            {
+                Volume = levelConfig.volume;
+                Play(offset).Forget();
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            _musicRhythmManager.OnStopPlay.Register(Stop)
+              .UnRegisterWhenGameObjectDestroyed(gameObject);
+            _musicRhythmManager.OnFadeOutAndStop.Register(duration =>
+            {
+                AudioPlayer.TargetSource.DOFade(0, duration).OnComplete(() => AudioPlayer.Stop());
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            _musicRhythmManager.OnSetCurrentTime.Register(SetCurrentTime)
+              .UnRegisterWhenGameObjectDestroyed(gameObject);
+        }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

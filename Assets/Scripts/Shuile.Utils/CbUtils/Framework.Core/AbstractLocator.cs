@@ -24,6 +24,7 @@ namespace Shuile.Framework
         public void Register<S>(S instance) => mContainer.Add(typeof(S), instance);
 
         public void UnRegister<S>() => mContainer.Remove(typeof(S));
+        public void UnRegister(object instance) => mContainer.Remove(instance.GetType());
 
         [DebuggerHidden]
         public S Get<S>()

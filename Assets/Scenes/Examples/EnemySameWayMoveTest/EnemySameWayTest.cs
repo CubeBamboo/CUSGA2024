@@ -9,14 +9,14 @@ public class EnemySameWayTest : MonoBehaviour
 {
     private void Start()
     {
-        var enemyPrefab = EntityUtils.EnemyType2Prefab(EnemyType.ZakoRobot);
+        var enemyPrefab = LevelEntityUtils.EnemyType2Prefab(EnemyType.ZakoRobot);
         var playerPos = GameplayService.Interface.Get<Player>().transform.position;
 
-        EntityFactory.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(-3, 0, 0));
-        EntityFactory.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(-2, 0, 0));
+        LevelEntityFactory.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(-3, 0, 0));
+        LevelEntityFactory.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(-2, 0, 0));
 
-        EntityFactory.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(2, 0, 0));
-        EntityFactory.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(3, 0, 0));
+        LevelEntityFactory.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(2, 0, 0));
+        LevelEntityFactory.Instance.SpawnEnemy(enemyPrefab, playerPos + new Vector3(3, 0, 0));
     }
 }
 #endif

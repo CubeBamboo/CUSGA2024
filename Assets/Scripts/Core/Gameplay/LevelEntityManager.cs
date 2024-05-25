@@ -1,6 +1,8 @@
 using CbUtils;
+using Shuile.Core.Framework;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Event;
+using Shuile.Model;
 using Shuile.Rhythm.Runtime;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,13 +11,13 @@ using UnityEngine;
 
 namespace Shuile.Gameplay
 {
-    public class EntityManager : MonoSingletons<EntityManager>
+    public class LevelEntityManager : MonoSingletons<LevelEntityManager>, IEntity
     {
         //[SerializeField] private List<BehaviourEntity> preset = new();
 
         private readonly List<Enemy> enemyList = new();
-        private readonly List<Gadget> gadgetList = new();
-        private readonly List<BehaviourEntity> removeList = new();
+        //private readonly List<Gadget> gadgetList = new();
+        private readonly List<BehaviourLevelEntity> removeList = new();
 
         private PrefabConfigSO prefabs;
         private bool judging = false;
@@ -26,24 +28,15 @@ namespace Shuile.Gameplay
         private Transform propParent;
 
         private LevelModel levelModel;
+        private AutoPlayChartManager _autoPlayChartManager;
 
         public bool IsJudging => judging;
 
         public Transform EnemyParent => enemyParent;
 
-        public PrefabConfigSO Prefabs
-        {
-            get
-            {
-                if (prefabs == null)
-                    prefabs = GameplayService.Interface.Get<PrefabConfigSO>();
-                return prefabs;
-            }
-        }
-
         public int EnemyCount { get; set; }
         public ReadOnlyCollection<Enemy> Enemies => enemyList.AsReadOnly();
-        public ReadOnlyCollection<Gadget> Gadgets => gadgetList.AsReadOnly();
+        //public ReadOnlyCollection<Gadget> Gadgets => gadgetList.AsReadOnly();
 
         protected override void Awake()
         {
@@ -52,21 +45,22 @@ namespace Shuile.Gameplay
             gadgetParent = new GameObject("Gadgets").transform;
             propParent = new GameObject("Props").transform;
 
-            levelModel = GameplayService.Interface.Get<LevelModel>();
+            levelModel = this.GetModel<LevelModel>();
         }
 
         private void Start()
         {
             EnemySpawnEvent.Register(OnEnemySpawn);
             EnemyDieEvent.Register(OnEnemyDie);
-            AutoPlayChartManager.Instance.OnRhythmHit += OnRhythmHit;
+            _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
+            _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
         }
 
         private void OnDestroy()
         {
             EnemySpawnEvent.UnRegister(OnEnemySpawn);
             EnemyDieEvent.UnRegister(OnEnemyDie);
-            AutoPlayChartManager.TryAccessInstance(mgr => mgr.OnRhythmHit -= OnRhythmHit);
+            _autoPlayChartManager.OnRhythmHit -= OnRhythmHit;
         }
 
         private void OnEnemySpawn(GameObject go)
@@ -102,16 +96,16 @@ namespace Shuile.Gameplay
             removeList.Clear();
 
             // Then is gadget
-            foreach (var gadget in gadgetList)
-                gadget.Judge(version, false);
-            foreach (Gadget gadget in removeList)
-                RemoveImmediate(gadget);
+            //foreach (var gadget in gadgetList)
+            //    gadget.Judge(version, false);
+            //foreach (Gadget gadget in removeList)
+            //    RemoveImmediate(gadget);
             removeList.Clear();
 
             judging = false;
         }
 
-        public void Remove<T>(T behaviourEntity) where T : BehaviourEntity
+        public void Remove<T>(T behaviourEntity) where T : BehaviourLevelEntity
         {
             if (judging)
             {
@@ -121,11 +115,11 @@ namespace Shuile.Gameplay
             RemoveImmediate(behaviourEntity);
         }
 
-        public void RemoveImmediate<T>(T behaviourEntity) where T : BehaviourEntity
+        public void RemoveImmediate<T>(T behaviourEntity) where T : BehaviourLevelEntity
         {
-            if (behaviourEntity is Gadget gadget)
-                gadgetList.UnorderedRemove(gadget);
-            else if (behaviourEntity is Enemy enemy)
+            //if (behaviourEntity is Gadget gadget)
+            //    gadgetList.UnorderedRemove(gadget);
+            if (behaviourEntity is Enemy enemy)
                 enemyList.UnorderedRemove(enemy);
         }
         public void RemoveImmediate(Enemy enemy)
@@ -137,9 +131,16 @@ namespace Shuile.Gameplay
         {
             enemyList.Add(enemy);
         }
-        public void MarkGadget(Gadget gadget)
+
+        public void OnSelfEnable()
         {
-            gadgetList.Add(gadget);
+            throw new System.NotImplementedException();
         }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        //public void MarkGadget(Gadget gadget)
+        //{
+        //    gadgetList.Add(gadget);
+        //}
     }
 }

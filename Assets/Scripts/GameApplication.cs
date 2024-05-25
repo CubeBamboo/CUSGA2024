@@ -1,22 +1,29 @@
 using CbUtils.Extension;
 using CbUtils.Kits.Tasks;
 using Shuile.Core.Framework;
+using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
-namespace Shuile.Core
+namespace Shuile
 {
     public static class GameApplication
     {
-        public static ServiceLocator ServiceLocator { get; } = new ServiceLocator();
+        public static LayerableServiceLocator ServiceLocator { get; } = new LayerableServiceLocator();
+        public static LayerableServiceLocator LevelServiceLocator { get; } = new LayerableServiceLocator();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void PreInitialize()
         {
             // Initialize the game
-            ServiceLocator
-                .AddImplemenation<IMusicRhythmManager>(s => new MusicRhythmManager());
+            LevelServiceLocator.AddModelCreator<LevelModel>(() => new LevelModel());
+            LevelServiceLocator.AddModelCreator<PlayerModel>(() => new PlayerModel());
+            LevelServiceLocator.AddSystemCreator<MusicRhythmManager>(() => new MusicRhythmManager());
+            LevelServiceLocator.AddSystemCreator<PlayerChartManager>(() => new PlayerChartManager());
+            LevelServiceLocator.AddSystemCreator<LevelTimingManager>(() => new LevelTimingManager());
+            LevelServiceLocator.AddSystemCreator<AutoPlayChartManager>(() => new AutoPlayChartManager());
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

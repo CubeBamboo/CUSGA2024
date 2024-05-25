@@ -5,11 +5,13 @@ using Shuile.Gameplay;
 using Shuile.Framework;
 using Shuile.Gameplay.Event;
 using UnityEngine.UI;
+using Shuile.Model;
+using Shuile.Core.Framework;
 
 
 namespace Shuile.UI
 {
-    public class PlayingPanel : BasePanelWithMono
+    public class PlayingPanel : BasePanelWithMono, IEntity
     {
         [SerializeField] private Image hpFillImage;
         [SerializeField] private TextMeshProUGUI dangerLevelText;
@@ -35,7 +37,7 @@ namespace Shuile.UI
             player.CurrentHp.Register(UpdateHpUI)
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
 
-            var levelModel = GameplayService.Interface.Get<LevelModel>();
+            var levelModel = this.GetModel<LevelModel>();
             levelModel.OnDangerScoreChange.Register(old =>
                 dangerLevelText.text = levelModel.DangerLevel.ToString())
                .UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -55,5 +57,11 @@ namespace Shuile.UI
         {
             gameObject.SetActive(true);
         }
+
+        public void OnSelfEnable()
+        {
+        }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

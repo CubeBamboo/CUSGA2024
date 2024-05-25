@@ -1,27 +1,27 @@
-using Shuile.Core;
-using Shuile.Rhythm.Runtime;
+//using Shuile.Core;
+//using Shuile.Rhythm.Runtime;
 
-namespace Shuile.Gameplay
-{
-    public abstract class Gadget : BehaviourEntity
-    {
-        private IMusicRhythmManager _musicRhythmManager;
+//namespace Shuile.Gameplay
+//{
+//    public abstract class Gadget : BehaviourLevelEntity
+//    {
+//        private MusicRhythmManager _musicRhythmManager;
 
-        public float destroyTime = float.PositiveInfinity;
+//        public float destroyTime = float.PositiveInfinity;
 
-        public Gadget() : base(EntityType.Gadget)
-        {
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
-        }
+//        public Gadget() : base(LevelEntityType.Gadget)
+//        {
+//            _musicRhythmManager = GameApplication.ServiceLocator.GetService<MusicRhythmManager>();
+//        }
 
-        protected override void FixedUpdate()
-        {
-            base.FixedUpdate();
+//        protected override void FixedUpdate()
+//        {
+//            base.FixedUpdate();
 
-            if (_musicRhythmManager.CurrentTime >= destroyTime)
-            {
-                fsm.SwitchState(EntityStateType.Dead);
-            }
-        }
-    }
-}
+//            if (_musicRhythmManager.CurrentTime >= destroyTime)
+//            {
+//                fsm.SwitchState(EntityStateType.Dead);
+//            }
+//        }
+//    }
+//}

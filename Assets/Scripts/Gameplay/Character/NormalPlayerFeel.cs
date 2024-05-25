@@ -1,5 +1,7 @@
 using CbUtils.ActionKit;
 using Shuile.Core;
+using Shuile.Core.Framework;
+using Shuile.Model;
 using Shuile.Rhythm.Runtime;
 
 using UnityEngine;
@@ -7,9 +9,9 @@ using UnityEngine;
 namespace Shuile.Gameplay
 {
     // player feedback and other event
-    public class NormalPlayerFeel : MonoBehaviour
+    public class NormalPlayerFeel : MonoEntity
     {
-        private IMusicRhythmManager _musicRhythmManager;
+        private MusicRhythmManager _musicRhythmManager;
 
         private Player player;
         private NormalPlayerCtrl playerCtrl;
@@ -22,18 +24,18 @@ namespace Shuile.Gameplay
         private const float HurtXForce = 6f;
         private const float HurtYForce = 0.2f;
 
-        private void Awake()
+        protected override void AwakeOverride()
         {
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
-            levelModel = GameplayService.Interface.Get<LevelModel>();
-            playerModel = GameplayService.Interface.Get<PlayerModel>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            levelModel = this.GetModel<LevelModel>();
+            playerModel = this.GetModel<PlayerModel>();
 
             _moveController = GetComponent<SmoothMoveCtrl>();
             player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();
             _rb = GetComponent<Rigidbody2D>();
 
-            animCtrl = new(gameObject);
+            animCtrl = new(gameObject, playerModel);
             ConfigureFeelEvent();
         }
 
@@ -99,5 +101,7 @@ namespace Shuile.Gameplay
             //    //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
             //});
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

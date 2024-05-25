@@ -1,20 +1,23 @@
 using CbUtils;
+using Shuile.Core.Framework;
 using Shuile.Core.Gameplay;
 using Shuile.Gameplay;
+using Shuile.Model;
 using Shuile.Rhythm.Runtime;
 using UnityEngine;
 using URandom = UnityEngine.Random;
 
 namespace Shuile
 {
-    public class EnemySpawnManager : MonoSingletons<EnemySpawnManager>
+    public class EnemySpawnManager : MonoSingletons<EnemySpawnManager>, IEntity
     {
         [HideInInspector] public LevelEnemySO currentEnemyData;
 
         private int currentRoundIndex = 0;
         private LevelModel levelModel;
+        private AutoPlayChartManager _autoPlayChartManager;
 
-        public int EnemyCount => EntityManager.Instance.EnemyCount;
+        public int EnemyCount => LevelEntityManager.Instance.EnemyCount;
         public int CurrentRoundIndex => currentRoundIndex;
 
         protected override void OnAwake()
@@ -24,12 +27,13 @@ namespace Shuile
 
         private void Start()
         {
-            levelModel = GameplayService.Interface.Get<LevelModel>();
-            AutoPlayChartManager.Instance.OnRhythmHit += OnRhythmHit;
+            levelModel = this.GetModel<LevelModel>();
+            _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
+            _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
         }
         private void OnDestroy()
         {
-            AutoPlayChartManager.TryAccessInstance(mgr => mgr.OnRhythmHit -= OnRhythmHit);
+            _autoPlayChartManager.OnRhythmHit -= OnRhythmHit;
         }
         private void OnRhythmHit()
         {
@@ -48,7 +52,14 @@ namespace Shuile
             var useIndex = level <= length - 1 ? level : length-1;
             var useEnemies = currentEnemyData.enemies[useIndex].enemyList;
             int index = URandom.Range(0, useEnemies.Length);
-            EntityFactory.Instance.SpawnEnemyWithEffectDelay(useEnemies[index], LevelZoneManager.Instance.RandomValidPosition());
+            LevelEntityFactory.Instance.SpawnEnemyWithEffectDelay(useEnemies[index], LevelZoneManager.Instance.RandomValidPosition());
         }
+
+        public void OnSelfEnable()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

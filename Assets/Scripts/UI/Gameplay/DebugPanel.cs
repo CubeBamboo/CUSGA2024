@@ -13,13 +13,14 @@ using TMPro;
 using CbUtils.Preview.Event;
 using Shuile.Core.Framework;
 using Shuile.Core;
+using Shuile.Model;
 
 namespace Shuile
 {
     // 写成屎了，不过调试用就算了
-    public class DebugPanel : BasePanelWithMono
+    public class DebugPanel : BasePanelWithMono, IEntity
     {
-        private IMusicRhythmManager _musicRhythmManager;
+        private MusicRhythmManager _musicRhythmManager;
 
         [SerializeField] private TextMeshProUGUI hitOffsetText;
         [SerializeField] private TextMeshProUGUI playTimeText;
@@ -37,9 +38,9 @@ namespace Shuile
 
         private void Start()
         {
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
-            playerModel = GameplayService.Interface.Get<PlayerModel>();
-            levelModel = GameplayService.Interface.Get<LevelModel>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            playerModel = this.GetModel<PlayerModel>();
+            levelModel = this.GetModel<LevelModel>();
 
             gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
             {
@@ -47,7 +48,7 @@ namespace Shuile
                 playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
                 dangerScoreText.text = $"DangerScore: {levelModel.DangerScore:0.000}";
                 dangerLevelText.text = $"DangerLevel: {levelModel.DangerLevel}";
-                enemyCountText.text = $"EnemyCount: {EntityManager.Instance.EnemyCount}";
+                enemyCountText.text = $"EnemyCount: {LevelEntityManager.Instance.EnemyCount}";
             };
         }
 
@@ -60,5 +61,12 @@ namespace Shuile
         {
             gameObject.SetActive(true);
         }
+
+        public void OnSelfEnable()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

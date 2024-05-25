@@ -1,57 +1,57 @@
-using CbUtils;
-using CbUtils.Kits.Tasks;
+using DG.Tweening.Plugins.Options;
 using Shuile.Core;
-using Shuile.Core.Configuration;
-using Shuile.Framework;
+using Shuile.Core.Framework;
 using Shuile.Gameplay;
-using Shuile.Gameplay.Event;
+using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Root;
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
 {
+    class PlayerChartManagerUpdater : MonoEntity
+    {
+        private PlayerChartManager _playerChartManager;
+        protected override void AwakeOverride()
+        {
+            _playerChartManager = this.GetSystem<PlayerChartManager>();
+        }
+        private void FixedUpdate()
+        {
+            _playerChartManager.OnFixedUpdate();
+        }
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+    }
 
     // manage chart of player, convert chart to runtime note object noteContainer
-    public class PlayerChartManager : MonoSingletons<PlayerChartManager>
+    public class PlayerChartManager : ISystem
     {
-        private IMusicRhythmManager _musicRhythmManager;
+        private MusicRhythmManager _musicRhythmManager;
 
-        private readonly NoteContainer noteContainer = new();
+        private System.Lazy<ChartPlayer> chartPlayer;
 
         // chart part
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
-        private CustomLoadObject<ChartPlayer> chartPlayer;
 
         private float notePreShowInterval = 0.4f;
-        public System.Action OnPlayerHitOn;
         private LevelConfigSO _levelConfig;
 
-        public float NotePreShowInterval => notePreShowInterval;
-        public NoteContainer NoteContainer => noteContainer;
-        public ChartPlayer ChartPlayer => chartPlayer.Value;
-        public ReadOnlyCollection<SingleNote> OrderedNoteList => noteContainer.OrderedNoteList;
+        private NoteContainer noteContainer;
+        public event System.Action OnPlayerHitOn;
 
-        protected override void OnAwake()
+        public PlayerChartManager()
         {
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            var levelTimingManager = this.GetSystem<LevelTimingManager>();
 
-            InitilizeResources();
-            notePreShowInterval = _levelConfig.playerNotePreShowTime;
-            chartPlayer = new(() => new ChartPlayer(chart,
-                note => note.GetRealTime() - notePreShowInterval));
-            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetRealTime());
-        }
-
-        private void InitilizeResources()
-        {
             _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
-        }
+            notePreShowInterval = _levelConfig.playerNotePreShowTime;
 
-        private void FixedUpdate()
+            noteContainer = new();
+            chartPlayer = new(() => new ChartPlayer(chart,
+                note => note.GetRealTime(levelTimingManager) - notePreShowInterval));
+            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetRealTime(levelTimingManager));
+        }
+        public void OnFixedUpdate()
         {
             if (!LevelRoot.Instance.IsStart) return;
 
@@ -59,31 +59,16 @@ namespace Shuile.Rhythm.Runtime
             noteContainer.CheckRelese(_musicRhythmManager.CurrentTime);
         }
 
+        public NoteContainer NoteContainer => noteContainer;
+        public ChartPlayer ChartPlayer => chartPlayer.Value;
         public int Count => noteContainer.Count;
-        public SingleNote TryGetNearestNote() => noteContainer.TryGetNearestNote();
-        public void HitNote(SingleNote note) => noteContainer.ReleseNote(note);
-    }
-
-    public static class PlayerChartManagerExtension
-    {
-        public static bool TryHit(this PlayerChartManager self, float inputTime, out float hitOffset)
+        public SingleNote TryGetNearestNote(float currentTime) => noteContainer.TryGetNearestNote(currentTime);
+        public void HitNote(SingleNote note)
         {
-            float missTolerance = ImmutableConfiguration.Instance.MissToleranceInSeconds;
-
-            // get the nearest note's time and judge
-            hitOffset = float.NaN;
-            SingleNote targetNote = self.TryGetNearestNote();
-            if (targetNote == null)
-                return false;
-
-            bool ret = Mathf.Abs(inputTime - targetNote.realTime) < missTolerance;
-            if (ret)
-            {
-                self.HitNote(targetNote);
-                hitOffset = inputTime - targetNote.realTime;
-                self.OnPlayerHitOn?.Invoke();
-            }
-            return ret;
+            OnPlayerHitOn?.Invoke();
+            noteContainer.ReleseNote(note);
         }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

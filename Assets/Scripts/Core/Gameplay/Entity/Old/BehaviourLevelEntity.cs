@@ -17,20 +17,20 @@ namespace Shuile.Gameplay
         Dead,  // 寄了
     }
 
-    public enum EntityType
+    public enum LevelEntityType
     {
         Gadget,  // 机关
         Prop,  // 道具
         Enemy,  // 敌人
     }
 
-    public abstract class BehaviourEntity : MonoBehaviour, IJudgeable
+    public abstract class BehaviourLevelEntity : MonoBehaviour, IJudgeable
     {
-        protected readonly EntityType type;
+        protected readonly LevelEntityType type;
         protected int lastJudgeFrame;
         protected FSM<EntityStateType> fsm;
 
-        protected BehaviourEntity(EntityType type)
+        protected BehaviourLevelEntity(LevelEntityType type)
         {
             this.type = type;
         }
@@ -47,7 +47,7 @@ namespace Shuile.Gameplay
             }
         }
         
-        public EntityType Type => type;
+        public LevelEntityType Type => type;
 
         public int LastJudgeFrame => lastJudgeFrame;
 

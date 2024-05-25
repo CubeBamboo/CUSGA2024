@@ -50,14 +50,14 @@ namespace Shuile
 
         }
 
-        public PlayerAnimCtrl(GameObject go)
+        public PlayerAnimCtrl(GameObject go, PlayerModel playerModel)
         {
             _target = go;
             _spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
             _animator = go.GetComponentInChildren<Animator>();
             if (_animator.gameObject.GetComponent<AttackingUnlocker>() is AttackingUnlocker unlocker)
                 unlocker.ctrl = go.GetComponent<NormalPlayerCtrl>();
-            _playerModel = GameplayService.Interface.Get<PlayerModel>();
+            _playerModel = playerModel;
         }
 
         public void AnimControlUpdate()

@@ -1,5 +1,5 @@
 using CbUtils;
-using Shuile.Core;
+using Shuile.Core.Framework;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay
 {
-    public class NormalPlayerCtrl : MonoBehaviour
+    public class NormalPlayerCtrl : MonoEntity
     {
         private enum MainState
         {
@@ -56,7 +56,7 @@ namespace Shuile.Gameplay
         [SerializeField] private Transform handTransform;
         private bool attackingLock;
 
-        private IMusicRhythmManager _musicRhythmManager;
+        private MusicRhythmManager _musicRhythmManager;
         private PlayerModel playerModel;
 
         public EasyEvent OnTouchGround { get; } = new();
@@ -86,14 +86,13 @@ namespace Shuile.Gameplay
         }
 
         public bool CheckRhythm =>
-            PlayerChartManager.Instance.TryHit(
-                _musicRhythmManager.CurrentTime, out playerModel.currentHitOffset);
+            ChartManagerCommands.TryHitNote(_musicRhythmManager.CurrentTime, out playerModel.currentHitOffset, this.GetLocator());
 
-        private SimpleDurationTimer holdJumpTimer = new();
+        private readonly SimpleDurationTimer holdJumpTimer = new();
 
-        private void Awake()
+        protected override void AwakeOverride()
         {
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
             holdJumpTimer.MaxDuration = jumpMaxDuration;
@@ -101,8 +100,7 @@ namespace Shuile.Gameplay
             ConfigureDependency();
             ConfigureInputEvent();
         }
-
-        private void OnDestroy()
+        protected override void OnDestroyOverride()
         {
             mPlayerInput.ClearAll();
         }
@@ -252,7 +250,9 @@ namespace Shuile.Gameplay
 
         private void ConfigureDependency()
         {
-            playerModel = GameplayService.Interface.Get<PlayerModel>();
+            playerModel = this.GetModel<PlayerModel>();
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

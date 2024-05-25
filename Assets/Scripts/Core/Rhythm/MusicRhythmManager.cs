@@ -1,62 +1,47 @@
-using Shuile.Audio;
-using Shuile.Utils;
-
 using UnityEngine;
-using DG.Tweening;
-using Cysharp.Threading.Tasks;
 using Shuile.Framework;
 using Shuile.Persistent;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Gameplay.Event;
-using Shuile.Gameplay;
+using Shuile.Core.Framework;
+using Shuile.Model;
+using CbUtils;
+using Shuile.Core;
 
 namespace Shuile.Rhythm.Runtime
 {
-    public interface IMusicRhythmManager
-    {
-        AudioPlayerInUnity AudioPlayer { get; }
-        PreciseMusicPlayer PreciseMusicPlayer { get; }
-        bool IsPlaying { get; }
-        float CurrentTime { get; }
-        float MusicLength { get; }
-        bool IsMusicEnd { get; }
-        void RefreshData();
-        void StartPlay();
-        void StopPlay();
-        void RestartPlay();
-        void FadeOutAndStop(float duration = 0.8f);
-        void SetCurrentTime(float time);
-    }
-
     //control the music play and music time progress, manage the rhythm check
-    public class MusicRhythmManager : IMusicRhythmManager
+    public class MusicRhythmManager : ISystem
     {
+        private LevelModel levelModel;
         private LevelConfigSO levelConfig;
+
+        public EasyEvent OnReloadData = new(), OnStopPlay = new(), OnRestartPlay = new();
+        /// <summary> param: offset in secods </summary>
+        public EasyEvent<float> OnStartPlay = new();
+        public EasyEvent<float> OnFadeOutAndStop = new (),  OnSetCurrentTime = new();
 
         private ChartData currentChart;
         private bool isPlaying = false;
 
-        private PreciseMusicPlayer preciseMusicPlayer;
+        //private PreciseMusicPlayer preciseMusicPlayer;
 
         [HideInInspector] public bool playOnAwake = true;
         [HideInInspector] public float playTimeScale = 1f;
         [HideInInspector] public float volume = 0.4f;
 
-        public AudioPlayerInUnity AudioPlayer => preciseMusicPlayer.AudioPlayer;
-        public PreciseMusicPlayer PreciseMusicPlayer => preciseMusicPlayer;
         public bool IsPlaying => isPlaying;
-        public float CurrentTime => preciseMusicPlayer.CurrentTime;
+        public float CurrentTime => levelModel.currentMusicTime;
         public float MusicLength => currentChart.musicLength;
         public bool IsMusicEnd => CurrentTime >= MusicLength;
 
         public MusicRhythmManager()
         {
-            preciseMusicPlayer = GameplayService.Interface.Get<PreciseMusicPlayer>();
+            levelModel = this.GetModel<LevelModel>();
             levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
 
             LevelStartEvent.Register(name =>
             {
-                preciseMusicPlayer = GameplayService.Interface.Get<PreciseMusicPlayer>();
                 RefreshData();
                 if (playOnAwake)
                     StartPlay();
@@ -66,46 +51,34 @@ namespace Shuile.Rhythm.Runtime
         public void RefreshData()
         {
             currentChart = LevelDataBinder.Instance.ChartData;
-
+            
             playOnAwake = levelConfig.playOnAwake;
             playTimeScale = levelConfig.playTimeScale;
             volume = levelConfig.volume;
 
-            preciseMusicPlayer.Restore();
-            preciseMusicPlayer.LoadClip(currentChart.audioClip);
+            OnReloadData.Invoke();
         }
 
         public void StartPlay()
         {
             float offsetInSeconds = (currentChart.time[0].offset + MainGame.Interface.Get<Config>().GlobalDelay) * 0.001f;
             Time.timeScale = playTimeScale;
-            preciseMusicPlayer.Volume = volume;
 
-            preciseMusicPlayer.Play(offsetInSeconds).Forget();
+            OnStartPlay.Invoke(offsetInSeconds);
         }
 
-        public void StopPlay()
-        {
-            preciseMusicPlayer.Stop();
-        }
+        public void StopPlay() => OnStopPlay?.Invoke();
 
         public void RestartPlay()
         {
-            preciseMusicPlayer.Restore();
-            preciseMusicPlayer.LoadClip(currentChart.audioClip);
+            OnReloadData.Invoke();
             StartPlay();
         }
 
-        public void FadeOutAndStop(float duration = 0.8f)
-        {
-            var targetAudioPlayer = AudioPlayer;
-            targetAudioPlayer.TargetSource.DOFade(0, duration).OnComplete(() =>
-            {
-                targetAudioPlayer.Stop();
-            });
-        }
+        public void FadeOutAndStop(float duration = 0.8f) => OnFadeOutAndStop.Invoke(duration);
 
-        public void SetCurrentTime(float time)
-            => preciseMusicPlayer.SetCurrentTime(time);
+        public void SetCurrentTime(float time) => OnSetCurrentTime.Invoke(time);
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

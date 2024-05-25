@@ -1,5 +1,7 @@
 using CbUtils;
 using Shuile.Core;
+using Shuile.Core.Framework;
+using Shuile.Gameplay;
 using Shuile.Rhythm;
 using UDebug = UnityEngine.Debug;
 
@@ -8,9 +10,9 @@ namespace Shuile.Rhythm.Runtime
     // play chart for single level
     // control enemy spawn and other event
     // it will auto play.
-    public class LevelChartManager : MonoSingletons<LevelChartManager>
+    public class LevelChartManager : MonoEntity
     {
-        private IMusicRhythmManager _musicRhythmManager;
+        private MusicRhythmManager _musicRhythmManager;
 
         public bool isPlay = true;
 
@@ -20,7 +22,7 @@ namespace Shuile.Rhythm.Runtime
 
         private void Start()
         {
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
 
             chart = LevelDataBinder.Instance.ChartData;
             chartPlayer = new ChartPlayer(chart);
@@ -34,5 +36,7 @@ namespace Shuile.Rhythm.Runtime
 #endif
             chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

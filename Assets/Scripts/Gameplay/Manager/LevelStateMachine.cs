@@ -1,13 +1,12 @@
 using CbUtils;
-using CbUtils.ActionKit;
 using CbUtils.Timing;
-using Shuile.Core;
+using Shuile.Core.Framework;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
 
 namespace Shuile.Gameplay
 {
-    public class LevelStateMachine : MonoSingletons<LevelStateMachine>
+    public class LevelStateMachine : MonoSingletons<LevelStateMachine>, IEntity
     {
         public enum LevelState
         {
@@ -19,7 +18,7 @@ namespace Shuile.Gameplay
 
         public event System.Action OnStart, OnFail, OnWin;
 
-        private IMusicRhythmManager _musicRhythmManager;
+        private MusicRhythmManager _musicRhythmManager;
         private LevelState state;
 
         public LevelState State
@@ -54,7 +53,7 @@ namespace Shuile.Gameplay
 
         protected override void OnAwake()
         {
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
         }
 
         private void LevelFail()
@@ -92,5 +91,11 @@ namespace Shuile.Gameplay
         {
             state = LevelState.Loading;
         }
+
+        public void OnSelfEnable()
+        {
+        }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

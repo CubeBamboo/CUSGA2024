@@ -1,17 +1,20 @@
 using CbUtils;
+using Shuile.Core;
+using Shuile.Core.Framework;
 using Shuile.Gameplay;
-
+using Shuile.Rhythm.Runtime;
 using System.Collections.Generic;
 
-namespace Shuile
+namespace Shuile.Model
 {
     /// <summary> data in single level </summary>
-    public class LevelModel
+    public class LevelModel : IModel
     {
         public float musicBpm;
         public float musicOffset;
+
         public List<IJudgeable> JudgeObjects { get; set; } = new();
-        //public EasyEvent OnPlayerHit { get; set; } = new(); // rhythm hit
+        public float currentMusicTime;
 
         private float dangerScore = 0f;
 
@@ -39,5 +42,7 @@ namespace Shuile
                 if (oldVal != dangerScore) OnDangerScoreChange.Invoke(oldVal);
             }
         }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

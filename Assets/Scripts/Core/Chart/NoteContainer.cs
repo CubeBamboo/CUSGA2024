@@ -14,8 +14,6 @@ namespace Shuile.Rhythm.Runtime
      */
     public class NoteContainer : INoteContainer
     {
-        private IMusicRhythmManager _musicRhythmManager;
-
         // note to hit
         private ObjectPool<SingleNote> notePool = new ObjectPool<SingleNote>(
             ()=>new SingleNote(0f));
@@ -25,11 +23,6 @@ namespace Shuile.Rhythm.Runtime
         public event System.Action<float> OnNoteAutoRelese;
         public ReadOnlyCollection<SingleNote> OrderedNoteList => noteList.AsReadOnly();
         public int Count => notePool.Count;
-
-        public NoteContainer()
-        {
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
-        }
 
         public SingleNote AddNote(float realTime)
         {
@@ -45,9 +38,9 @@ namespace Shuile.Rhythm.Runtime
             notePool.Release(note);
         }
 
-        public SingleNote TryGetNearestNote()
+        public SingleNote TryGetNearestNote(float currentTime)
         {
-            CheckRelese(_musicRhythmManager.CurrentTime);
+            CheckRelese(currentTime);
             return noteList.Count != 0 ? noteList[0] : null;
         }
 
@@ -93,7 +86,7 @@ namespace Shuile.Rhythm.Runtime
     {
         SingleNote AddNote(float targetTime);
         void ReleseNote(SingleNote note);
-        SingleNote TryGetNearestNote();
+        SingleNote TryGetNearestNote(float currentTime);
         void CheckRelese(float currentTime);
     }
 }

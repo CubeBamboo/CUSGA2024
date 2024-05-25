@@ -2,11 +2,11 @@ using CbUtils;
 
 namespace Shuile.Gameplay
 {
-    public abstract class EntityState : IState
+    public abstract class LevelEntityState : IState
     {
         protected object entity;
 
-        public EntityState(object entity)
+        public LevelEntityState(object entity)
         {
             this.entity = entity;
         }

@@ -13,13 +13,13 @@ using CbUtils.Timing;
 
 namespace Shuile
 {
-    public class EntityFactory : CSharpLazySingletons<EntityFactory>
+    public class LevelEntityFactory : CSharpLazySingletons<LevelEntityFactory>
     {
         #region Enemy
 
         private GameObject InternalSpawnEnemy(GameObject enemyPrefab, Vector3 pos)
         {
-            var enemyObject = UObject.Instantiate(enemyPrefab, pos, Quaternion.identity, EntityManager.Instance.EnemyParent);
+            var enemyObject = UObject.Instantiate(enemyPrefab, pos, Quaternion.identity, LevelEntityManager.Instance.EnemyParent);
             EnemySpawnEvent.Trigger(enemyObject);
             return enemyObject;
         }
@@ -27,9 +27,9 @@ namespace Shuile
         public GameObject SpawnEnemy(GameObject enemyPrefab, Vector3 pos)
             => InternalSpawnEnemy(enemyPrefab, pos);
         public GameObject SpawnEnemy(EnemyType enemyType, Vector3 pos)
-            => InternalSpawnEnemy(EntityUtils.EnemyType2Prefab(enemyType), pos);
+            => InternalSpawnEnemy(LevelEntityUtils.EnemyType2Prefab(enemyType), pos);
         public GameObject SpawnEnemy(EnemyType enemyType)
-            => InternalSpawnEnemy(EntityUtils.EnemyType2Prefab(enemyType), Vector3.zero);
+            => InternalSpawnEnemy(LevelEntityUtils.EnemyType2Prefab(enemyType), Vector3.zero);
 
         public GameObject SpawnEnemyWithEffectDelay(EnemyType enemyType, Vector3 pos)
         {
@@ -37,7 +37,7 @@ namespace Shuile
             effect.effect.Instantiate()
                   .SetPosition(pos);
 
-            var enemy = InternalSpawnEnemy(EntityUtils.EnemyType2Prefab(enemyType), pos);
+            var enemy = InternalSpawnEnemy(LevelEntityUtils.EnemyType2Prefab(enemyType), pos);
             enemy.SetActive(false);
             TimingCtrl.Instance
                 .Timer(effect.duration, () => enemy.SetActive(true))
@@ -47,15 +47,15 @@ namespace Shuile
 
         #endregion
 
-        public Gadget SpawnGadget(GameObject gadgetPrefab, float destroyTime, Vector3 pos, Vector3 rotation)
-        {
-            var gadgetObject = UObject.Instantiate(gadgetPrefab, pos, Quaternion.Euler(rotation));
-            var gadget = gadgetObject.GetComponent<Gadget>();
+        //public Gadget SpawnGadget(GameObject gadgetPrefab, float destroyTime, Vector3 pos, Vector3 rotation)
+        //{
+        //    var gadgetObject = UObject.Instantiate(gadgetPrefab, pos, Quaternion.Euler(rotation));
+        //    var gadget = gadgetObject.GetComponent<Gadget>();
 
-            gadget.destroyTime = destroyTime;
-            EntityManager.Instance.MarkGadget(gadget);
-            return gadget;
-        }
+        //    gadget.destroyTime = destroyTime;
+        //    LevelEntityManager.Instance.MarkGadget(gadget);
+        //    return gadget;
+        //}
 
         #region Mechanism
 

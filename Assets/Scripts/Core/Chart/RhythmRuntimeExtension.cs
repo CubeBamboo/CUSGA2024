@@ -5,15 +5,12 @@ namespace Shuile.Rhythm.Runtime
 {
     public static class SingleNoteExtension
     {
-        
+
     }
 
     public static class BaseNoteDataExtension
     {
-        static LevelTimingManager _levelTimingManager;
-        static LevelTimingManager levelTimingManager => _levelTimingManager ??= GameplayService.Interface.Get<LevelTimingManager>();
-
-        public static float GetRealTime(this BaseNoteData note)
+        public static float GetRealTime(this BaseNoteData note, LevelTimingManager levelTimingManager)
             => levelTimingManager.GetRealTime(note.rhythmTime);
     }
 }

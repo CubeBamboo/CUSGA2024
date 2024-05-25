@@ -1,10 +1,11 @@
 using CbUtils.Event;
 using CbUtils.Timing;
 using Shuile.Core;
+using Shuile.Core.Framework;
 using Shuile.Gameplay.Event;
+using Shuile.Model;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
-using System;
 using UnityEngine;
 
 using UInput = UnityEngine.InputSystem;
@@ -12,15 +13,14 @@ using UInput = UnityEngine.InputSystem;
 namespace Shuile.Gameplay
 {
     // if you dont know where to put the logic, put it here
-    public class LevelGlobalManager : MonoBehaviour
+    public class LevelGlobalManager : MonoEntity
     {
-        private IMusicRhythmManager _musicRhythmManager;
+        private MusicRhythmManager _musicRhythmManager;
         private LevelModel levelModel;
-
-        private void Awake()
+        protected override void AwakeOverride()
         {
-            levelModel = GameplayService.Interface.Get<LevelModel>();
-            _musicRhythmManager = GameApplication.ServiceLocator.GetService<IMusicRhythmManager>();
+            levelModel = this.GetModel<LevelModel>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
         }
 
         private void Start()
@@ -28,8 +28,7 @@ namespace Shuile.Gameplay
             EnemyDieEvent.Register(GlobalOnEnemyDie);
             EnemyHurtEvent.Register(GlobalOnEnemyHurt);
         }
-
-        private void OnDestroy()
+        protected override void OnDestroyOverride()
         {
             EnemyDieEvent.UnRegister(GlobalOnEnemyDie);
             EnemyHurtEvent.UnRegister(GlobalOnEnemyHurt);
@@ -70,5 +69,7 @@ namespace Shuile.Gameplay
                 _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime - 5f);
             }
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }
