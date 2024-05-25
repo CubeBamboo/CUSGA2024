@@ -6,7 +6,7 @@ using DelayTween = DG.Tweening.Core.TweenerCore<int, int, DG.Tweening.Plugins.Op
 
 namespace CbUtils.ActionKit
 {
-    public class DelayAction : IAction
+    /*public class DelayAction : IAction
     {
         public struct DelayActionData
         {
@@ -39,5 +39,5 @@ namespace CbUtils.ActionKit
             DotweenActionCtrlExecutor.Instance.Execute(data);
         }
         public void Start() => this.Start(null);
-    }
+    }*/
 }

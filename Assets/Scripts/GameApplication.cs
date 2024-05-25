@@ -1,5 +1,6 @@
 using CbUtils.Extension;
 using CbUtils.Kits.Tasks;
+using Shuile.Core.Framework;
 using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
@@ -7,10 +8,13 @@ namespace Shuile.Core
 {
     public static class GameApplication
     {
+        public static ServiceLocator ServiceLocator { get; } = new ServiceLocator();
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void PreInitialize()
         {
             // Initialize the game
+            ServiceLocator.InitializeCreator();
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

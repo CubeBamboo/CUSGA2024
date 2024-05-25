@@ -13,6 +13,7 @@ using UnityEngine.UI;
 
 using UObject = UnityEngine.Object;
 using Shuile.ResourcesManagement.Loader;
+using Shuile.Core.Configuration;
 
 namespace Shuile.Gameplay
 {
@@ -79,7 +80,7 @@ namespace Shuile.Gameplay
         public MusicTimeTweener TimeTweener => timeTweener.Value;
 
         private float CurrentTime => TimeTweener.TweenTime;
-        private float MissTolerance => GameplayService.Interface.LevelModel.MissToleranceInSeconds;
+        private float MissTolerance => ImmutableConfiguration.Instance.MissToleranceInSeconds;
 
         public RhythmIndicator()
         {

@@ -27,10 +27,8 @@ namespace Shuile.Gameplay
 
         public override void OnInit()
         {
-            var levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
-
             this.Register<PlayerModel>(new PlayerModel());
-            this.Register<LevelModel>(new LevelModel(levelConfig));
+            this.Register<LevelModel>(new LevelModel());
             this.Register<IRouteFinder>(new SimpleRouteFinder());
         }
 

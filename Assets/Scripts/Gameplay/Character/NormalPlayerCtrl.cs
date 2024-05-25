@@ -61,7 +61,6 @@ namespace Shuile.Gameplay
 
         private PlayerModel playerModel;
 
-        private PlayerMoveCommand moveCommand = new();
         private PlayerAttackCommand attackCommand = new();
         public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
@@ -162,13 +161,7 @@ namespace Shuile.Gameplay
         /// <summary> update velocity </summary>
         public void NormalMove(float xInput)
         {
-            moveCommand
-                .Bind(new()
-                {
-                    xInput = xInput,
-                    moveController = _moveController,
-                })
-                .Execute();
+            PlayerCommands.Move(xInput, _moveController);
             OnMoveStart?.Invoke(xInput);
             playerModel.faceDir = xInput;
         }
@@ -304,10 +297,6 @@ namespace Shuile.Gameplay
 
             mPlayerInput.OnAttackStart.Register(v => Attack())
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
-
-            //mPlayerInput.OnAttackCanceled.Register(v => StopAttack())
-            //    .UnRegisterWhenGameObjectDestroyed(gameObject);
-
         }
 
         private void ClearInputEvent()
@@ -357,20 +346,6 @@ namespace Shuile.Gameplay
             //};
         }
     }
-
-    //public struct PlayerJumpCommandData
-    //{
-    //    public SmoothMoveCtrl moveController;
-    //    public float jumpVel;
-    //}
-    //public class PlayerJumpCommand : BaseCommand<PlayerJumpCommandData>
-    //{
-    //    public override void OnExecute()
-    //    {
-    //        state.moveController.JumpVelocity = state.jumpVel;
-    //        state.moveController.SimpleJump(1f);
-    //    }
-    //}
 
     public struct PlayerMoveCommandData
     {

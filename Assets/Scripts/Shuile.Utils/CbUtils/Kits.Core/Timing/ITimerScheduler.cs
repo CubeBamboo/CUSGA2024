@@ -1,6 +1,7 @@
 using CbUtils.Event;
 using CbUtils.Extension;
 using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace CbUtils.Timing.Scheduler
@@ -8,7 +9,53 @@ namespace CbUtils.Timing.Scheduler
     public interface ITimerScheduler
     {
         void Schedule(ValueTimerData timerData, bool canBeCancelled = true);
+        void Schedule(RefTimerData timerData, bool canBeCancelled = true);
         void StopAllTimer();
+    }
+
+    public class MonoBehaviorTimerScheduler : ITimerScheduler
+    {
+        private readonly UnityEngine.MonoBehaviour _monoBehaviour;
+        private float globalTimer = 0f;
+
+        private List<ValueTimerData> valueTimers = new();
+
+        public MonoBehaviorTimerScheduler()
+        {
+            _monoBehaviour = new UnityEngine.GameObject("CbUtils.Timing.MonoBehaviorTimerScheduler")
+                .SetDontDestroyOnLoad()
+                .AddComponent<EmptyMonoBehavior>();
+            _monoBehaviour.gameObject.GetOrAddComponent<MonoUpdateEventTrigger>().OnUpdate += OnUpdate;
+        }
+
+        private void OnUpdate()
+        {
+            globalTimer += UnityEngine.Time.deltaTime;
+
+            foreach (var timer in valueTimers)
+            {
+                if (globalTimer > (float)timer.delay.TotalSeconds)
+                {
+                    timer.onComplete.SafeInvoke();
+                }
+            }
+        }
+
+        public void Schedule(ValueTimerData timerData, bool canBeCancelled = true)
+        {
+            
+            throw new System.NotImplementedException();
+        }
+
+        public void Schedule(RefTimerData timerData, bool canBeCancelled = true)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void StopAllTimer()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class UniTaskTimerScheduler : ITimerScheduler
@@ -25,6 +72,11 @@ namespace CbUtils.Timing.Scheduler
             InternalSchedule(timerData, canBeCancelled ? globalCts.Token : default).Forget();
         }
 
+        public void Schedule(RefTimerData timerData, bool canBeCancelled = true)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void StopAllTimer()
         {
             globalCts.Cancel();
@@ -34,12 +86,12 @@ namespace CbUtils.Timing.Scheduler
 
         private async UniTask InternalSchedule(ValueTimerData timerData, CancellationToken ct = default)
         {
-            await UniTask.Delay(timerData.millisecondsDelay, cancellationToken: ct);
+            await UniTask.Delay(timerData.delay, cancellationToken: ct);
             timerData.onComplete();
         }
     }
 
-    public class CoroutineTimerScheduler : ITimerScheduler
+    /*public class CoroutineTimerScheduler : ITimerScheduler
     {
         private readonly UnityEngine.MonoBehaviour _monoBehaviour;
 
@@ -66,5 +118,5 @@ namespace CbUtils.Timing.Scheduler
             yield return new UnityEngine.WaitForSeconds(timerData.millisecondsDelay / 1000f);
             timerData.onComplete();
         }
-    }
+    }*/
 }

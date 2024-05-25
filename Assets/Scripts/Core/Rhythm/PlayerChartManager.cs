@@ -1,5 +1,6 @@
 using CbUtils;
 using CbUtils.Kits.Tasks;
+using Shuile.Core.Configuration;
 using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Event;
@@ -65,7 +66,7 @@ namespace Shuile.Rhythm.Runtime
     {
         public static bool TryHit(this PlayerChartManager self, float inputTime, out float hitOffset)
         {
-            float missTolerance = GameplayService.Interface.LevelModel.MissToleranceInSeconds;
+            float missTolerance = ImmutableConfiguration.Instance.MissToleranceInSeconds;
 
             // get the nearest note's time and judge
             hitOffset = float.NaN;

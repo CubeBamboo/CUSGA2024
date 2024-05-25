@@ -38,9 +38,9 @@ namespace Shuile
                 if (asyncAction != null)
                     await asyncAction.Invoke();
                 loadingViewer.Out();
-                exitTimer.Start();
+                exitTimer.Start(false);
             });
-            enterTimer.Start();
+            enterTimer.Start(false);
             // 没有使用序列导致的抽象写法 not using sequence leads to such a fuuuuuuckkking code :((((
         }
     }

@@ -15,6 +15,16 @@ namespace CbUtils.Extension
             }
             return sb.ToString();
         }
+
+        public static void SafeInvoke(this System.Action self, System.Action<System.Exception> onCatch = null)
+        {
+            if (self == null) return;
+            try { self(); } catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogException(e);
+                onCatch?.Invoke(e);
+            }
+        }
     }
 
     public static class MathUtils

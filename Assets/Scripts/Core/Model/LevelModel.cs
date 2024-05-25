@@ -1,5 +1,4 @@
 using CbUtils;
-using Shuile.Framework;
 using Shuile.Gameplay;
 
 using System.Collections.Generic;
@@ -14,16 +13,10 @@ namespace Shuile
         public List<IJudgeable> JudgeObjects { get; set; } = new();
         //public EasyEvent OnPlayerHit { get; set; } = new(); // rhythm hit
 
-        private float missTolerance;
-
         private float dangerScore = 0f;
 
-        //private int dangerLevel = -1;
-
-        public LevelModel(LevelConfigSO levelConfig)
+        public LevelModel()
         {
-            missTolerance = levelConfig.missTolerance;
-
             var currentChart = LevelDataBinder.Instance.ChartData;
             musicBpm = currentChart.time[0].bpm;
             musicOffset = currentChart.time[0].offset;
@@ -33,7 +26,6 @@ namespace Shuile
 
         public float BpmIntervalInSeconds => 60f / musicBpm;
         public float OffsetInSeconds => musicOffset * 0.001f;
-        public float MissToleranceInSeconds => missTolerance * 0.001f;
         public int DangerLevel => DangerLevelUtils.GetDangerLevelUnClamped(DangerScore);
         /// <summary> float - old value </summary>
         public EasyEvent<float> OnDangerScoreChange { get; } = new();

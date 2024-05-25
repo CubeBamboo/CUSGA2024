@@ -1,5 +1,6 @@
 // encoding: UTF-8 cp65001
 
+using Shuile.Core.Configuration;
 using Shuile.Gameplay;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace Shuile.Rhythm.Runtime
                 return;
             noteList.Sort((a, b) => a.realTime.CompareTo(b.realTime)); //升序排序
             // 检查所有需要销毁的note
-            while (noteList.Count > 0 && noteList[0].NeedRelese(currentTime, GameplayService.Interface.LevelModel.MissToleranceInSeconds))
+            while (noteList.Count > 0 && noteList[0].NeedRelese(currentTime, ImmutableConfiguration.Instance.MissToleranceInSeconds))
             {
                 var time = noteList[0].realTime;
                 notePool.Release(noteList[0]);

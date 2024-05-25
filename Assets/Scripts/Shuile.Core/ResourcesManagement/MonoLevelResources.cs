@@ -1,21 +1,21 @@
-using CbUtils;
-using UDebug = UnityEngine.Debug;
+//using CbUtils;
+//using UDebug = UnityEngine.Debug;
 
-namespace Shuile
-{
-    // use unity monobehavior to manage the resources
-    public class MonoLevelResources : MonoSingletons<MonoLevelResources>
-    {
-        public LevelConfigSO levelConfig;
+//namespace Shuile
+//{
+//    // use unity monobehavior to manage the resources
+//    public class MonoLevelResources : MonoSingletons<MonoLevelResources>
+//    {
+//        public LevelConfigSO levelConfig;
 
-        public PrefabConfigSO globalPrefabs;
+//        public PrefabConfigSO globalPrefabs;
 
-        protected override void OnInstanceCall(bool isNewObject)
-        {
-            if (isNewObject)
-            {
-                UDebug.LogWarning("[For tester] LevelResources is not init by scene, load \"Root\" scene first");
-            }
-        }
-    }
-}
+//        protected override void OnInstanceCall(bool isNewObject)
+//        {
+//            if (isNewObject)
+//            {
+//                UDebug.LogWarning("[For tester] LevelResources is not init by scene, load \"Root\" scene first");
+//            }
+//        }
+//    }
+//}
