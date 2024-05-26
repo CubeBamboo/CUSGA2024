@@ -10,7 +10,7 @@ namespace Shuile.Core.Framework
     {
     }
 
-    // oprate data, and not response event for better, dont refernce IEntity
+    // oprate data, and not response event for better, dont refernce IEntity (like singleton)
     public interface ISystem : IBelongsToLayerControl
     {
     }

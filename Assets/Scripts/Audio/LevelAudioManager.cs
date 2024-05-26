@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Shuile.Audio
 {
-    public class LevelAudioManager : MonoNonAutoSpawnSingletons<LevelAudioManager>
+    public class LevelAudioManager : MonoNotAutoSpawnSingletons<LevelAudioManager>
     {
         [SerializeField] private AudioSource musicSource;
         [SerializeField] private AudioSource sfxSource;

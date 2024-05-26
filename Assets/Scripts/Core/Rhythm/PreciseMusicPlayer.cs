@@ -1,8 +1,10 @@
+using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Audio;
 using Shuile.Core;
 using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using Shuile.Gameplay;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
@@ -18,6 +20,8 @@ namespace Shuile
     // TODO: it designed for a utils class in the first time, but now it's implemented to be a entity, and it needs to refactor
     public class PreciseMusicPlayer : MonoEntity
     {
+        public static PreciseMusicPlayer Instance => MonoSingletonProperty<PreciseMusicPlayer>.Instance;
+
         private LevelConfigSO levelConfig;
 
         private MusicRhythmManager _musicRhythmManager;
@@ -26,7 +30,6 @@ namespace Shuile
         public AudioPlayerInUnity AudioPlayer => audioPlayer;
         protected override void AwakeOverride()
         {
-            GameplayService.Interface.Register(this);
             levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
 
             _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
@@ -35,10 +38,6 @@ namespace Shuile
             audioPlayer = new SimpleAudioPlayer();
             Restore();
             InitializeEvent();
-        }
-        protected override void OnDestroyOverride()
-        {
-            GameplayService.Interface.UnRegister(this);
         }
 
         public void FixedUpdate()

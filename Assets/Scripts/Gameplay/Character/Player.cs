@@ -1,7 +1,8 @@
 using CbUtils;
 using CbUtils.Preview.Event;
+using CbUtils.Unity;
 using Shuile.Core.Framework;
-using Unity.XR.OpenVR;
+using Shuile.Core.Framework.Unity;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,8 @@ namespace Shuile.Gameplay
 {
     public class Player : MonoEntity, IHurtable
     {
+        public static Player Instance => MonoSingletonProperty<Player>.Instance;
+
         [SerializeField] private PlayerPropertySO property;
         public HearableProperty<int> CurrentHp { get; private set; } = new();
         public EasyEvent OnDie = new();
@@ -21,14 +24,9 @@ namespace Shuile.Gameplay
         public PlayerPropertySO Property => property;
         protected override void AwakeOverride()
         {
+            // init part
             playerModel = this.GetModel<PlayerModel>();
             playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
-
-            GameplayService.Interface.Register<Player>(this);
-        }
-        protected override void OnDestroyOverride()
-        {
-            GameplayService.Interface.UnRegister<Player>();
         }
         private void Start()
         {
@@ -83,8 +81,6 @@ namespace Shuile.Gameplay
 
     public static class PlayerExtension
     {
-        public static Player GetPlayer(this GameObject gameObject)
-            => GameplayService.Interface.Get<Player>();
         public static void ForceDie(this Player player)
             => player.OnHurt(player.Property.maxHealthPoint + 1);
     }

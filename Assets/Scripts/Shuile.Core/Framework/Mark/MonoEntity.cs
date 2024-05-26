@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Shuile.Core.Framework
+namespace Shuile.Core.Framework.Unity
 {
     public abstract class MonoEntity : MonoBehaviour, IEntity
     {

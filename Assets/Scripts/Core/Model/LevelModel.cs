@@ -1,8 +1,6 @@
 using CbUtils;
-using Shuile.Core;
 using Shuile.Core.Framework;
 using Shuile.Gameplay;
-using Shuile.Rhythm.Runtime;
 using System.Collections.Generic;
 
 namespace Shuile.Model

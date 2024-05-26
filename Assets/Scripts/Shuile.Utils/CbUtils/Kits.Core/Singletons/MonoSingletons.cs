@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CbUtils
+namespace CbUtils.Unity
 {
     public class MonoSingletons<T> : MonoBehaviour where T : MonoSingletons<T>
     {
@@ -12,8 +12,7 @@ namespace CbUtils
                 bool isNew = !instance;
                 if (!instance)
                 {
-                    var go = new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
-                    Debug.Log($"New MonoSingleton Create: {go.name}");
+                    SingletonCreator.GetMonoBehaviourSingletons<T>();
                     instance.OnInstanceCall(isNew);
                 }
                 return instance;

@@ -1,8 +1,5 @@
-using DG.Tweening.Plugins.Options;
-using Shuile.Core;
 using Shuile.Core.Framework;
-using Shuile.Gameplay;
-using Shuile.Model;
+using Shuile.Core.Framework.Unity;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Root;
 

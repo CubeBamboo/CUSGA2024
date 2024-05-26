@@ -3,6 +3,7 @@ using CbUtils.Extension;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 
 namespace CbUtils.Timing.Scheduler
 {
@@ -15,14 +16,14 @@ namespace CbUtils.Timing.Scheduler
 
     public class MonoBehaviorTimerScheduler : ITimerScheduler
     {
-        private readonly UnityEngine.MonoBehaviour _monoBehaviour;
+        private readonly MonoBehaviour _monoBehaviour;
         private float globalTimer = 0f;
 
         private List<ValueTimerData> valueTimers = new();
 
         public MonoBehaviorTimerScheduler()
         {
-            _monoBehaviour = new UnityEngine.GameObject("CbUtils.Timing.MonoBehaviorTimerScheduler")
+            _monoBehaviour = new GameObject("CbUtils.Timing.MonoBehaviorTimerScheduler")
                 .SetDontDestroyOnLoad()
                 .AddComponent<EmptyMonoBehavior>();
             _monoBehaviour.gameObject.GetOrAddComponent<MonoUpdateEventTrigger>().UpdateEvt += OnUpdate;
@@ -30,7 +31,7 @@ namespace CbUtils.Timing.Scheduler
 
         private void OnUpdate()
         {
-            globalTimer += UnityEngine.Time.deltaTime;
+            globalTimer += Time.deltaTime;
 
             foreach (var timer in valueTimers)
             {

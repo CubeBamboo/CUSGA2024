@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Shuile
 {
     // shit for data generate in .scene
-    public class LevelDataGetter : MonoNonAutoSpawnSingletons<LevelDataGetter>
+    public class LevelDataGetter : MonoNotAutoSpawnSingletons<LevelDataGetter>
     {
         [System.Serializable]
         public struct CameraParallaxMoveCtrlData

@@ -17,6 +17,8 @@ using System;
 using Shuile.Core.Framework;
 using Shuile.Model;
 using Shuile.Root;
+using Shuile.Core.Framework.Unity;
+using CbUtils.Extension;
 
 namespace Shuile.Gameplay
 {
@@ -105,7 +107,7 @@ namespace Shuile.Gameplay
             _playerChartManager = this.GetSystem<PlayerChartManager>();
             levelModel = this.GetModel<LevelModel>();
 
-            var preciseMusicPlayer = GameplayService.Interface.Get<PreciseMusicPlayer>();
+            var preciseMusicPlayer = PreciseMusicPlayer.Instance;
             timeTweener = new(() => preciseMusicPlayer.gameObject.GetOrAddComponent<MusicTimeTweener>());
 
             levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;

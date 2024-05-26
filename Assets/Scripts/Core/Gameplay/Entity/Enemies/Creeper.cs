@@ -11,6 +11,7 @@ namespace Shuile.Gameplay.Entity.Enemies
     public class Creeper : Enemy
     {
         private FSM<DefaultEnemyState> mFsm = new();
+        private Player player;
 
         ZakoPatrolBehavior patrolBehavior;
         ZakoChaseBehavior chaseBehavior;
@@ -26,6 +27,7 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         protected override void OnAwake()
         {
+            player = Player.Instance;
             moveController.JumpVelocity = jumpVel;
             moveController.XMaxSpeed = xMaxSpeed;
             patrolBehavior = new(gameObject, moveController, 5f);
@@ -58,7 +60,7 @@ namespace Shuile.Gameplay.Entity.Enemies
             mFsm.NewEventState(DefaultEnemyState.Chase)
                 .OnEnter(() =>
                 {
-                    chaseBehavior.Bind(GameplayService.Interface.Get<Player>().gameObject, moveController);
+                    chaseBehavior.Bind(player.gameObject, moveController);
                 })
                 .OnFixedUpdate(() =>
                 {
@@ -83,7 +85,7 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         private bool Attack()
         {
-            var player = GameplayService.Interface.Get<Player>();
+            var player = Player.Instance;
 
             if (Vector3.Distance(player.transform.position, MoveController.Position) <= attackRange)
                 player.OnHurt((int)(player.Property.maxHealthPoint * 0.6f));

@@ -18,12 +18,13 @@ namespace Shuile
         public static void PreInitialize()
         {
             // Initialize the game
-            LevelServiceLocator.AddModelCreator<LevelModel>(() => new LevelModel());
-            LevelServiceLocator.AddModelCreator<PlayerModel>(() => new PlayerModel());
-            LevelServiceLocator.AddSystemCreator<MusicRhythmManager>(() => new MusicRhythmManager());
-            LevelServiceLocator.AddSystemCreator<PlayerChartManager>(() => new PlayerChartManager());
-            LevelServiceLocator.AddSystemCreator<LevelTimingManager>(() => new LevelTimingManager());
-            LevelServiceLocator.AddSystemCreator<AutoPlayChartManager>(() => new AutoPlayChartManager());
+            LevelServiceLocator
+                .AddModelImplemenation<LevelModel>(() => new LevelModel())
+                .AddModelImplemenation<PlayerModel>(() => new PlayerModel())
+                .AddSystemImplemenation<MusicRhythmManager>(() => new MusicRhythmManager())
+                .AddSystemImplemenation<PlayerChartManager>(() => new PlayerChartManager())
+                .AddSystemImplemenation<LevelTimingManager>(() => new LevelTimingManager())
+                .AddSystemImplemenation<AutoPlayChartManager>(() => new AutoPlayChartManager());
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

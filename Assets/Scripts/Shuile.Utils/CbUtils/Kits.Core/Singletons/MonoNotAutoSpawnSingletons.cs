@@ -3,7 +3,7 @@ using UnityEngine;
 namespace CbUtils
 {
     /// <summary> singletons that can only spawn by your hand </summary>
-    public abstract class MonoNonAutoSpawnSingletons<T> : MonoBehaviour where T : MonoNonAutoSpawnSingletons<T>
+    public abstract class MonoNotAutoSpawnSingletons<T> : MonoBehaviour where T : MonoNotAutoSpawnSingletons<T>
     {
         public static T Instance { get; protected set; }
 

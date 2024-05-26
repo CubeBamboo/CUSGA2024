@@ -15,8 +15,7 @@ namespace Shuile.Gameplay.Entity
         //private Animator animator;
 
         private Vector3 initScale;
-        float exitAnimDuration = 0.5f;
-
+        //float exitAnimDuration = 0.5f;
 
         private void Start()
         {
@@ -28,10 +27,6 @@ namespace Shuile.Gameplay.Entity
 
         public void Explode(int attackPoint, float radius)
         {
-            //var gridPosition = LevelGrid.Instance.grid.WorldToCell(transform.position);
-            //var grid = LevelGrid.Instance.grid;
-            //grid.Get(gridPosition)?.GetComponent<IHurtable>()?.OnAttack(attackPoint);
-
             var hurtables = Physics2D.OverlapCircleAll(transform.position, radius, hurtMask)
                 .Select(collider => collider.GetComponent<IHurtable>())
                 .Where(hurtable => hurtable != null);
@@ -49,17 +44,6 @@ namespace Shuile.Gameplay.Entity
                         {
                             gameObject.Destroy();
                         }));
-            // LevelFeelManager.PlayParticle()
-            //var effectDuration = 0.8f;
-            //ActionCtrl.Delay(effectDuration)
-            //    .OnComplete(() =>
-            //    {
-            //        animator.SetTrigger("Exit");
-            //        ActionCtrl.Delay(exitAnimDuration)
-            //            .OnComplete(() => gameObject.Destroy())
-            //            .Start(gameObject);
-            //    }).Start(gameObject);
-            //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Bomb", 0.6f);
         }
 
         public void Interrupt()

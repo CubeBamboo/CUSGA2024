@@ -1,8 +1,5 @@
-using CbUtils;
-using Shuile.Core;
 using Shuile.Core.Framework;
-using Shuile.Gameplay;
-using Shuile.Rhythm;
+using Shuile.Core.Framework.Unity;
 using UDebug = UnityEngine.Debug;
 
 namespace Shuile.Rhythm.Runtime

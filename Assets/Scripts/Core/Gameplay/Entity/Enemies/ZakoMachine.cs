@@ -5,7 +5,6 @@ using DG.Tweening;
 using UnityEngine;
 
 using URandom = UnityEngine.Random;
-using CbUtils.Extension;
 
 namespace Shuile.Gameplay.Entity.Enemies
 {
@@ -69,7 +68,7 @@ namespace Shuile.Gameplay.Entity.Enemies
             mFsm.NewEventState(DefaultEnemyState.Chase)
                 .OnEnter(() =>
                 {
-                    chaseBehavior.Bind(GameplayService.Interface.Get<Player>().gameObject, moveController);
+                    chaseBehavior.Bind(Player.Instance.gameObject, moveController);
                 })
                 .OnFixedUpdate(() =>
                 {
@@ -87,7 +86,7 @@ namespace Shuile.Gameplay.Entity.Enemies
                 });
 
             mFsm.NewEventState(DefaultEnemyState.Attack)
-                .OnCustom(() => Attack(GameplayService.Interface.Get<Player>()))
+                .OnCustom(() => Attack(Player.Instance))
                 .OnFixedUpdate(() =>
                 {
                     if (!chaseBehavior.XCloseEnoughToTarget(checkAttackRange)) // can attack

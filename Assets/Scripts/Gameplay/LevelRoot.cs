@@ -1,12 +1,11 @@
-using CbUtils;
 using Shuile.Framework;
-using Shuile.UI;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Event;
 using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 using Shuile.Core.Framework;
 using Shuile.Rhythm;
+using CbUtils.Unity;
 
 namespace Shuile.Root
 {
@@ -25,8 +24,7 @@ namespace Shuile.Root
 
         protected override void OnAwake()
         {
-            Debug.Log("level awake and is initializing");
-            GameplayService.Interface.OnInit();
+            Debug.Log("Level awake and is initializing");
             LevelDataBinder.Instance.Initialize();
 
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
@@ -37,7 +35,7 @@ namespace Shuile.Root
 
             LevelStartEvent_AutoClear.Register(name =>
             {
-                Debug.Log("level load end, game start");
+                Debug.Log("Level load end, game start");
                 IsStart = true;
                 IsLevelActive = true;
                 EntitySystem.Instance.EnableAllEntities();
@@ -49,15 +47,14 @@ namespace Shuile.Root
         }
         public void OnDestroy()
         {
-            Debug.Log("level end and is disposing");
+            Debug.Log("Level end and is disposing");
             UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
             UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
 
             LevelDataBinder.Instance.DeInitialize();
-            GameplayService.Interface.OnDeInit();
             GameApplication.LevelServiceLocator.ClearExsiting();
             IsLevelActive = false;
-            Debug.Log("level dispose end and close");
+            Debug.Log("Level dispose end and close");
         }
 
         public void OnSelfEnable()

@@ -6,7 +6,6 @@ using Shuile.Gameplay.Event;
 using Shuile.Core.Framework;
 using Shuile.Model;
 using CbUtils;
-using Shuile.Core;
 
 namespace Shuile.Rhythm.Runtime
 {
@@ -26,9 +25,9 @@ namespace Shuile.Rhythm.Runtime
 
         //private PreciseMusicPlayer preciseMusicPlayer;
 
-        [HideInInspector] public bool playOnAwake = true;
-        [HideInInspector] public float playTimeScale = 1f;
-        [HideInInspector] public float volume = 0.4f;
+        public bool playOnAwake = true;
+        public float playTimeScale = 1f;
+        public float volume = 0.4f;
 
         public bool IsPlaying => isPlaying;
         public float CurrentTime => levelModel.currentMusicTime;

@@ -30,7 +30,7 @@ namespace Shuile.UI
 
         private void OnStart(string sceneName)
         {
-            var player = GameplayService.Interface.Get<Player>();
+            var player = Player.Instance;
             playerMaxHp = player.Property.maxHealthPoint;
 
             UpdateHpUI(int.MinValue, player.CurrentHp.Value);
