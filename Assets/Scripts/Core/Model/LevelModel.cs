@@ -8,6 +8,7 @@ namespace Shuile.Model
     /// <summary> data in single level </summary>
     public class LevelModel : IModel
     {
+        private readonly LayerableServiceLocator serviceLocator;
         public float musicBpm;
         public float musicOffset;
 
@@ -16,8 +17,9 @@ namespace Shuile.Model
 
         private float dangerScore = 0f;
 
-        public LevelModel()
+        public LevelModel(LayerableServiceLocator serviceLocator)
         {
+            this.serviceLocator = serviceLocator;
             var currentChart = LevelDataBinder.Instance.ChartData;
             musicBpm = currentChart.time[0].bpm;
             musicOffset = currentChart.time[0].offset;
@@ -41,6 +43,6 @@ namespace Shuile.Model
             }
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public LayerableServiceLocator GetLocator() => serviceLocator;
     }
 }

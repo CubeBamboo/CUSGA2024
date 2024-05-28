@@ -96,13 +96,6 @@ namespace Shuile.Gameplay
             //    RemoveImmediate(enemy);
             removeList.Clear();
 
-            // Then is gadget
-            //foreach (var gadget in gadgetList)
-            //    gadget.Judge(version, false);
-            //foreach (Gadget gadget in removeList)
-            //    RemoveImmediate(gadget);
-            removeList.Clear();
-
             judging = false;
         }
 
@@ -118,8 +111,6 @@ namespace Shuile.Gameplay
 
         public void RemoveImmediate<T>(T behaviourEntity) where T : BehaviourLevelEntity
         {
-            //if (behaviourEntity is Gadget gadget)
-            //    gadgetList.UnorderedRemove(gadget);
             if (behaviourEntity is Enemy enemy)
                 enemyList.UnorderedRemove(enemy);
         }
@@ -135,13 +126,8 @@ namespace Shuile.Gameplay
 
         public void OnSelfEnable()
         {
-            throw new System.NotImplementedException();
         }
 
         public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
-        //public void MarkGadget(Gadget gadget)
-        //{
-        //    gadgetList.Add(gadget);
-        //}
     }
 }

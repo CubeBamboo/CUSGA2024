@@ -14,12 +14,16 @@ namespace Shuile.Gameplay
     // if you dont know where to put the logic, put it here
     public class LevelGlobalManager : MonoEntity
     {
+        private LevelModel _levelModel;
         private MusicRhythmManager _musicRhythmManager;
-        private LevelModel levelModel;
+        private LevelFeelManager _levelFeelManager;
+        private LevelStateMachine _levelStateMachine;
         protected override void AwakeOverride()
         {
-            levelModel = this.GetModel<LevelModel>();
+            _levelModel = this.GetModel<LevelModel>();
             _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            _levelFeelManager = this.GetSystem<LevelFeelManager>();
+            _levelStateMachine = this.GetSystem<LevelStateMachine>();
         }
 
         private void Start()
@@ -38,18 +42,22 @@ namespace Shuile.Gameplay
         {
             if (!LevelRoot.Instance.IsStart) return;
 
-            levelModel.DangerScore -= DangerLevelConfigClass.NormalReductionPerSecond * Time.fixedDeltaTime;
+            _levelModel.DangerScore -= DangerLevelConfigClass.NormalReductionPerSecond * Time.fixedDeltaTime;
 
             // check end
             if (_musicRhythmManager.IsMusicEnd)
             {
-                LevelStateMachine.Instance.State = LevelStateMachine.LevelState.Win;
+                _levelStateMachine.State = LevelStateMachine.LevelState.Win;
             }
+        }
+        private void Update()
+        {
+            DebugUpdate();
         }
 
         private void GlobalOnEnemyHurt(GameObject @object)
         {
-            LevelFeelManager.Instance.CameraShake();
+            _levelFeelManager.CameraShake();
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Hurt");
         }
         private void GlobalOnEnemyDie(GameObject go)

@@ -10,52 +10,65 @@ namespace CbUtils.Timing.Scheduler
     public interface ITimerScheduler
     {
         void Schedule(ValueTimerData timerData, bool canBeCancelled = true);
-        void Schedule(RefTimerData timerData, bool canBeCancelled = true);
         void StopAllTimer();
     }
 
     public class MonoBehaviorTimerScheduler : ITimerScheduler
     {
         private readonly MonoBehaviour _monoBehaviour;
-        private float globalTimer = 0f;
+        private float baseTimer = 0f;
 
-        private List<ValueTimerData> valueTimers = new();
+        private readonly List<ValueTimerData> valueTimerList = new();
+        private readonly List<RefTimerData> refTimerList = new();
 
         public MonoBehaviorTimerScheduler()
         {
-            _monoBehaviour = new GameObject("CbUtils.Timing.MonoBehaviorTimerScheduler")
+            _monoBehaviour = new GameObject("Framework.Timing.MonoBehaviorTimerScheduler")
                 .SetDontDestroyOnLoad()
                 .AddComponent<EmptyMonoBehavior>();
             _monoBehaviour.gameObject.GetOrAddComponent<MonoUpdateEventTrigger>().UpdateEvt += OnUpdate;
         }
+        ~MonoBehaviorTimerScheduler()
+        {
+            _monoBehaviour.gameObject.GetOrAddComponent<MonoUpdateEventTrigger>().UpdateEvt -= OnUpdate;
+        }
 
         private void OnUpdate()
         {
-            globalTimer += Time.deltaTime;
+            baseTimer += Time.deltaTime;
 
-            foreach (var timer in valueTimers)
+            foreach (var timer in valueTimerList)
             {
-                if (globalTimer > (float)timer.delay.TotalSeconds)
+                if (baseTimer > (float)timer.delay.TotalSeconds)
                 {
                     timer.onComplete.SafeInvoke();
+                    valueTimerList.Remove(timer);
+                }
+            }
+            foreach (var timer in refTimerList)
+            {
+                if (baseTimer > (float)timer.delay.TotalSeconds)
+                {
+                    timer.onComplete.SafeInvoke();
+                    refTimerList.Remove(timer);
                 }
             }
         }
 
         public void Schedule(ValueTimerData timerData, bool canBeCancelled = true)
         {
-            
-            throw new System.NotImplementedException();
+            valueTimerList.Add(timerData);
         }
 
         public void Schedule(RefTimerData timerData, bool canBeCancelled = true)
         {
-            throw new System.NotImplementedException();
+            refTimerList.Add(timerData);
         }
 
         public void StopAllTimer()
         {
-            throw new System.NotImplementedException();
+            valueTimerList.Clear();
+            refTimerList.Clear();
         }
     }
 
@@ -71,11 +84,6 @@ namespace CbUtils.Timing.Scheduler
         public void Schedule(ValueTimerData timerData, bool canBeCancelled = true)
         {
             InternalSchedule(timerData, canBeCancelled ? globalCts.Token : default).Forget();
-        }
-
-        public void Schedule(RefTimerData timerData, bool canBeCancelled = true)
-        {
-            throw new System.NotImplementedException();
         }
 
         public void StopAllTimer()
@@ -95,6 +103,7 @@ namespace CbUtils.Timing.Scheduler
     /*public class CoroutineTimerScheduler : ITimerScheduler
     {
         private readonly UnityEngine.MonoBehaviour _monoBehaviour;
+        private List<Coroutine> valueTimerCoroutines = new();
 
         public CoroutineTimerScheduler()
         {
@@ -105,8 +114,12 @@ namespace CbUtils.Timing.Scheduler
 
         public void Schedule(ValueTimerData timerData, bool canBeCancelled = true)
         {
+            _monoBehaviour.StartCoroutine(InternalSchedule(timerData));
+        }
+
+        public void Schedule(RefTimerData timerData, bool canBeCancelled = true)
+        {
             throw new System.NotImplementedException();
-            //_monoBehaviour.StartCoroutine(InternalSchedule(timerData));
         }
 
         public void StopAllTimer()
@@ -116,8 +129,8 @@ namespace CbUtils.Timing.Scheduler
 
         private System.Collections.IEnumerator InternalSchedule(ValueTimerData timerData)
         {
-            yield return new UnityEngine.WaitForSeconds(timerData.millisecondsDelay / 1000f);
-            timerData.onComplete();
+            yield return new UnityEngine.WaitForSeconds((float)timerData.delay.TotalSeconds);
+            timerData.onComplete.SafeInvoke();
         }
     }*/
 }

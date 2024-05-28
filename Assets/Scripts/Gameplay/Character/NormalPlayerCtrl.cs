@@ -93,13 +93,10 @@ namespace Shuile.Gameplay
 
         protected override void AwakeOverride()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
-            mPlayerInput = GetComponent<NormalPlayerInput>();
-            _moveController = GetComponent<SmoothMoveCtrl>();
-            holdJumpTimer.MaxDuration = jumpMaxDuration;
-
             ConfigureDependency();
             ConfigureInputEvent();
+
+            holdJumpTimer.MaxDuration = jumpMaxDuration;
         }
         protected override void OnDestroyOverride()
         {
@@ -252,6 +249,9 @@ namespace Shuile.Gameplay
         private void ConfigureDependency()
         {
             playerModel = this.GetModel<PlayerModel>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            mPlayerInput = GetComponent<NormalPlayerInput>();
+            _moveController = GetComponent<SmoothMoveCtrl>();
         }
 
         public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;

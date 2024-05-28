@@ -12,21 +12,24 @@ namespace Shuile.Gameplay
     {
         public static Player Instance => MonoSingletonProperty<Player>.Instance;
 
+        private PlayerModel _playerModel;
+        private LevelStateMachine _levelStateMachine;
+
         [SerializeField] private PlayerPropertySO property;
         public HearableProperty<int> CurrentHp { get; private set; } = new();
         public EasyEvent OnDie = new();
         public EasyEvent OnHurted = new();
-
-        private PlayerModel playerModel;
 
         private bool isDie;
 
         public PlayerPropertySO Property => property;
         protected override void AwakeOverride()
         {
-            // init part
-            playerModel = this.GetModel<PlayerModel>();
-            playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
+            MonoSingletonProperty<Player>.InitSingleton(this);
+            MonoSingletonProperty<Player>.EnableAutoSpawn = false;
+            _playerModel = this.GetModel<PlayerModel>();
+            _levelStateMachine = this.GetSystem<LevelStateMachine>();
+            _playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
         }
         private void Start()
         {
@@ -38,7 +41,7 @@ namespace Shuile.Gameplay
 
         public void OnHurt(int attackPoint)
         {
-            if (isDie || playerModel.isInviciable) return;
+            if (isDie || _playerModel.isInviciable) return;
 
             OnHurted.Invoke();
             CurrentHp.Value -= attackPoint;
@@ -51,7 +54,7 @@ namespace Shuile.Gameplay
                 CurrentHp.Value = 0;
                 isDie = true;
                 OnDie.Invoke();
-                LevelStateMachine.Instance.State = LevelStateMachine.LevelState.Fail;
+                _levelStateMachine.State = LevelStateMachine.LevelState.Fail;
             }
         }
 
@@ -66,8 +69,8 @@ namespace Shuile.Gameplay
             }
             if (Keyboard.current.upArrowKey.isPressed && Keyboard.current.leftArrowKey.wasPressedThisFrame)
             {
-                playerModel.canInviciable = !playerModel.canInviciable;
-                Debug.Log($"受击无敌变更 -> {playerModel.canInviciable}");
+                _playerModel.canInviciable = !_playerModel.canInviciable;
+                Debug.Log($"受击无敌变更 -> {_playerModel.canInviciable}");
             }
             if (Keyboard.current.bKey.wasPressedThisFrame)
             {

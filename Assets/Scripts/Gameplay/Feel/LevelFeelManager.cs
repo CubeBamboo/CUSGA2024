@@ -1,6 +1,7 @@
 using CbUtils;
 using CbUtils.Extension;
 using CbUtils.Unity;
+using Shuile.Core.Framework;
 using UnityEngine;
 
 namespace Shuile
@@ -8,12 +9,12 @@ namespace Shuile
     /// <summary>
     /// manage all about game feeling (like camera shake, particle effects, sound effects)
     /// </summary>
-    public class LevelFeelManager : MonoSingletons<LevelFeelManager>
+    public class LevelFeelManager : ISystem
     {
         CameraFeelHelper cameraFeelHelper;
         VolumeFeelHelper volumeFeelHelper;
 
-        protected override void OnAwake()
+        public LevelFeelManager()
         {
             cameraFeelHelper = new();
             volumeFeelHelper = new();
@@ -24,10 +25,12 @@ namespace Shuile
         
         /// <param name="name"> see in LevelResources.particles </param>
         public void PlayParticle(string name, Vector3 position, Vector3 direction, Transform parent = null)
-            => LevelFeelFactory.CreateParticle(name, position, direction).SetParent(parent);
+            => LevelFeelFactory.CreateParticle(name, position, direction, parent);
 
         public void VignettePulse() => volumeFeelHelper.VignettePulse();
         public void VignettePulse(Color targetColor, float lerpValue = 0.3f)
             => volumeFeelHelper.VignettePulse(targetColor, lerpValue);
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

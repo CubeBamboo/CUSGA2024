@@ -77,6 +77,7 @@ namespace Shuile
             CurrentTime = -offsetInSeconds + (float)audioDelta;
             IsPlaying = true; // -> start timing
         }
+
         public void PlayImmediatly(float offset)
         {
             audioPlayer.Pitch = PlayTimeScale;

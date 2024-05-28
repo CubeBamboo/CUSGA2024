@@ -1,5 +1,4 @@
 using CbUtils.ActionKit;
-using Shuile.Core;
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
 using Shuile.Model;
@@ -12,31 +11,33 @@ namespace Shuile.Gameplay
     // player feedback and other event
     public class NormalPlayerFeel : MonoEntity
     {
+        private LevelModel _levelModel;
+        private PlayerModel _playerModel;
         private MusicRhythmManager _musicRhythmManager;
+        private LevelFeelManager _levelFeelManager;
 
         private Player player;
         private NormalPlayerCtrl playerCtrl;
         private PlayerAnimCtrl animCtrl;
         private Rigidbody2D _rb;
 
-        private PlayerModel playerModel;
         private SmoothMoveCtrl _moveController;
-        private LevelModel levelModel;
         private const float HurtXForce = 6f;
         private const float HurtYForce = 0.2f;
 
         protected override void AwakeOverride()
         {
+            _levelModel = this.GetModel<LevelModel>();
+            _playerModel = this.GetModel<PlayerModel>();
             _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
-            levelModel = this.GetModel<LevelModel>();
-            playerModel = this.GetModel<PlayerModel>();
+            _levelFeelManager = this.GetSystem<LevelFeelManager>();
 
             _moveController = GetComponent<SmoothMoveCtrl>();
             player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();
             _rb = GetComponent<Rigidbody2D>();
 
-            animCtrl = new(gameObject, playerModel);
+            animCtrl = new(gameObject, _playerModel);
             ConfigureFeelEvent();
         }
 
@@ -56,51 +57,41 @@ namespace Shuile.Gameplay
 
             player.OnHurted.Register(() =>
             {
-                _moveController.Velocity = new Vector2(playerModel.faceDir * HurtXForce, HurtYForce);
+                _moveController.Velocity = new Vector2(_playerModel.faceDir * HurtXForce, HurtYForce);
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt);
-                LevelFeelManager.Instance.CameraShake();
+                _levelFeelManager.CameraShake();
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Hurt");
-                levelModel.DangerScore -= DangerLevelConfigClass.PlayerHurtReduction;
+                _levelModel.DangerScore -= DangerLevelConfigClass.PlayerHurtReduction;
 
-                if (playerModel.canInviciable)
+                if (_playerModel.canInviciable)
                 {
-                    playerModel.isInviciable = true;
+                    _playerModel.isInviciable = true;
                     animCtrl.Inviciable = true;
 
                     ActionCtrl.Delay(1.5f).OnComplete(() =>
                     {
                         animCtrl.Inviciable = false;
-                        playerModel.isInviciable = false;
+                        _playerModel.isInviciable = false;
                     })
                     .SetDebounce("PlayerHurt")
                     .Start(gameObject);
                 }
 
-                LevelFeelManager.Instance.VignettePulse();
+                _levelFeelManager.VignettePulse();
             });
 
             playerCtrl.OnWeaponAttack.Register(enable =>
             {
                 //animCtrl.TriggerAttackWithType(enable, playerCtrl.CurrentWeapon.Type);
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
-                if (enable) LevelFeelManager.Instance.PlayParticle("SwordSlash", transform.position, new Vector2(playerModel.faceDir, 0), transform);
-                if (enable) levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
+                if (enable) _levelFeelManager.PlayParticle("SwordSlash", transform.position, new Vector2(_playerModel.faceDir, 0), transform);
+                if (enable) _levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
             });
 
             playerCtrl.OnMoveStart.Register(v =>
             {
                 animCtrl.FlipX = v < 0;
             });
-
-            //playerCtrl.OnJumpStart.Register(() =>
-            //{
-            //    //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
-            //    //MonoAudioCtrl.Instance.PlayOneShot("Player_Jump");
-            //});
-            //playerCtrl.OnTouchGround.Register(() =>
-            //{
-            //    //animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
-            //});
         }
 
         public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;

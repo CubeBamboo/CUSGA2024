@@ -7,7 +7,7 @@ using Shuile.Rhythm.Runtime;
 
 namespace Shuile.Gameplay
 {
-    public class LevelStateMachine : MonoSingletons<LevelStateMachine>, IEntity
+    public class LevelStateMachine : ISystem
     {
         public enum LevelState
         {
@@ -52,7 +52,7 @@ namespace Shuile.Gameplay
             }
         }
 
-        protected override void OnAwake()
+        public LevelStateMachine()
         {
             _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
         }

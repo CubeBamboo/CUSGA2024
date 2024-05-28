@@ -27,7 +27,6 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         protected override void OnAwake()
         {
-            player = Player.Instance;
             moveController.JumpVelocity = jumpVel;
             moveController.XMaxSpeed = xMaxSpeed;
             patrolBehavior = new(gameObject, moveController, 5f);
@@ -35,6 +34,11 @@ namespace Shuile.Gameplay.Entity.Enemies
             mRenderer = GetComponentInChildren<SpriteRenderer>();
 
             RegisterState(mFsm);
+        }
+
+        private void Start()
+        {
+            player = Player.Instance;
         }
 
         protected override void OnSelfDie()

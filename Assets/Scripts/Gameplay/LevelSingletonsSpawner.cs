@@ -22,13 +22,10 @@ namespace Shuile
 
             new GameObject($"{nameof(AutoPlayChartManagerUpdater)}", typeof(AutoPlayChartManagerUpdater)).SetParent(singletonParent);
             new GameObject($"{nameof(PlayerChartManagerUpdater)}", typeof(PlayerChartManagerUpdater)).SetParent(singletonParent);
+            new GameObject($"{nameof(MonoEnemySpawnTrigger)}", typeof(MonoEnemySpawnTrigger)).SetParent(singletonParent);
             new GameObject($"{nameof(LevelChartManager)}", typeof(LevelChartManager)).SetParent(singletonParent);
-            new GameObject($"{nameof(EnemySpawnManager)}", typeof(EnemySpawnManager)).SetParent(singletonParent);
             new GameObject($"{nameof(LevelEntityManager)}", typeof(LevelEntityManager)).SetParent(singletonParent);
-            new GameObject($"{nameof(LevelFeelManager)}", typeof(LevelFeelManager)).SetParent(singletonParent);
             new GameObject($"{nameof(LevelGlobalManager)}", typeof(LevelGlobalManager)).SetParent(singletonParent);
-
-            LevelStateMachine.Instance.enabled = true;
         }
         public void OnDestroy()
         {

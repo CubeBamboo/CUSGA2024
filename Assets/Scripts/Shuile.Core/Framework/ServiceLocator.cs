@@ -26,9 +26,9 @@ namespace Shuile.Core.Framework
             {
                 return (T)obj;
             }
-            else if(_serviceCreators.TryGetValue(typeof(T), out var ctr))
+            else if(_serviceCreators.TryGetValue(typeof(T), out var cre))
             {
-                var service = (T)ctr();
+                var service = (T)cre();
                 _services[typeof(T)] = service;
                 return service;
             }
