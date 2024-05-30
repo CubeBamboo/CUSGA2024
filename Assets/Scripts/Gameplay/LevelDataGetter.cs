@@ -1,4 +1,5 @@
 using CbUtils;
+using Shuile.Gameplay.Feel;
 using UnityEngine;
 
 namespace Shuile
@@ -10,13 +11,13 @@ namespace Shuile
         public struct CameraParallaxMoveCtrlData
         {
             public Transform origin;
-            public Transform player;
             public float moveScale; // = 0.1f;
             public float moveSpeed; // = 0.02f;
             public float moveRadius; // = 0.1f;
         }
 
         public CameraParallaxMoveCtrlData cameraParallaxMove;
+        public Transform playerInitPosition;
 
         protected override void OnAwake() => OnInitializeData();
         
@@ -24,12 +25,10 @@ namespace Shuile
 
         public void OnInitializeData()
         {
-
         }
 
         public void OnDeInitializeData()
         {
-
         }
     }
 }

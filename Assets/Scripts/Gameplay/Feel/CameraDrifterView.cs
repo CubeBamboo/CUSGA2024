@@ -1,30 +1,38 @@
+using CbUtils.Extension;
+using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
 {
-    public class CameraDrifter : MonoBehaviour
+    public class CameraDrifterView : MonoEntity
     {
-        private Transform _transform;
-        private readonly ViewEntityProperty<Vector2> targetPosition = new();
+        private CameraDrifterController _controller;
 
-        public Vector2 TargetPosition
-        {
-            get => targetPosition.TargetValue;
-            set => targetPosition.TargetValue = value;
-        }
+        private readonly ViewEntityProperty<Vector2> targetPosition = new();
 
         public Vector2 originPosition { get; set; }
         public float moveScale { get; set; } = 0.1f;
         public float moveSpeed { get; set; } = 0.01f;
         public float moveRadius { get; set; } = 0.1f;
 
-        private void Awake()
+        protected override void AwakeOverride()
         {
+            _controller = gameObject.GetOrAddComponent<CameraDrifterController>();
+
             targetPosition.DirtyCheck = (a, b) => (a - b).sqrMagnitude > 1e-12f;
             targetPosition.OnValueDirty(OnValueDirty);
 
-            _transform = transform;
-            originPosition = _transform.position;
+            originPosition = transform.position;
+        }
+        private void Start()
+        {
+            // params
+            var data = LevelDataGetter.Instance.cameraParallaxMove;
+
+            originPosition = data.origin.position;
+            moveScale = data.moveScale;
+            moveRadius = data.moveRadius;
         }
         private Vector2 OnValueDirty(Vector2 target)
         {
@@ -47,7 +55,12 @@ namespace Shuile.Gameplay.Feel
         private void LateUpdate()
         {
             targetPosition.TryUpdateDirtValue();
-            _transform.position = new Vector3(targetPosition.RawValue.x, targetPosition.RawValue.y, _transform.position.z);
+            transform.position = new Vector3(targetPosition.RawValue.x, targetPosition.RawValue.y, transform.position.z);
+
+            if (!_controller.HasTargetPosition) return;
+            targetPosition.TargetValue = GetUsingTargetValue(_controller.TargetPosition);
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

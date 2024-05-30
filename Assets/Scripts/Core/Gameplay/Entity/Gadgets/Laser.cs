@@ -27,6 +27,8 @@ namespace Shuile
         SpriteRenderer mRenderer;
         private LevelTimingManager timingManager;
 
+        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
         private void Awake()
         {
             timingManager = this.GetSystem<LevelTimingManager>();
@@ -120,11 +122,11 @@ namespace Shuile
             }
         }
 
-        public void OnSelfEnable()
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+
+        public void OnInitData(object data)
         {
             throw new System.NotImplementedException();
         }
-
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

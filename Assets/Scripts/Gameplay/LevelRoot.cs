@@ -21,6 +21,7 @@ namespace Shuile.Root
         public bool IsStart { get; private set; } = false;
         public bool needHitWithRhythm { get; private set; }
         public LevelContext LevelContext { get; private set; }
+        public bool SelfEnable { get => throw new System.NotSupportedException(); set => throw new System.NotSupportedException(); }
 
         protected override void OnAwake()
         {
@@ -57,10 +58,15 @@ namespace Shuile.Root
             Debug.Log("Level dispose end and close");
         }
 
-        public void OnSelfEnable()
+        public void EnableSelf()
         {
         }
 
         public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+
+        public void OnInitData(object data)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

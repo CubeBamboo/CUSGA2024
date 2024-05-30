@@ -1,10 +1,6 @@
 using CbUtils.Extension;
-using Shuile.Framework;
-using Shuile.Gameplay;
 
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
-using static UnityEngine.GraphicsBuffer;
 
 namespace Shuile.Gameplay.Entity
 {

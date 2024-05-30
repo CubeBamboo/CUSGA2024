@@ -3,6 +3,7 @@ using CbUtils.Preview.Event;
 using CbUtils.Unity;
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using Shuile.Gameplay.Event;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -33,6 +34,9 @@ namespace Shuile.Gameplay
         }
         private void Start()
         {
+            //TypeEventSystem.Global.Trigger<PlayerSpawnEvent>(new PlayerSpawnEvent() { player = this });
+            transform.position = LevelDataGetter.Instance.playerInitPosition.position;
+
             isDie = false;
             CurrentHp.Value = property.maxHealthPoint;
 

@@ -31,4 +31,8 @@ namespace CbUtils.Extension
     {
         public static int RoundToInt(float value) => (int)System.Math.Round(value);
     }
+
+    public static class CollectionsExtension
+    {
+    }
 }

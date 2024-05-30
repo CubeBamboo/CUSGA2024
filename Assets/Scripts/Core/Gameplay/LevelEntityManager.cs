@@ -37,6 +37,9 @@ namespace Shuile.Gameplay
 
         public int EnemyCount { get; set; }
         public ReadOnlyCollection<Enemy> Enemies => enemyList.AsReadOnly();
+
+        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
         //public ReadOnlyCollection<Gadget> Gadgets => gadgetList.AsReadOnly();
 
         protected override void Awake()
@@ -124,10 +127,11 @@ namespace Shuile.Gameplay
             enemyList.Add(enemy);
         }
 
-        public void OnSelfEnable()
-        {
-        }
-
         public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+
+        public void OnInitData(object data)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

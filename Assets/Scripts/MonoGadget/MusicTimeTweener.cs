@@ -14,10 +14,13 @@ namespace Shuile.MonoGadget
 
         public float TweenTime => tweenTime;
 
+        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
         public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
 
-        public void OnSelfEnable()
+        public void OnInitData(object data)
         {
+            throw new System.NotImplementedException();
         }
 
         protected void Awake()

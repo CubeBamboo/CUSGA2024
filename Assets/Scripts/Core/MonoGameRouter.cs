@@ -26,9 +26,9 @@ namespace Shuile
 
         private async UniTask InternalLoadLevel(string sceneName)
         {
-            await InternalLoadScene("LevelDependency", LoadSceneMode.Single); // you can load resources you need in LevelDependency scene's GameObjects.
+            await InternalLoadScene(sceneName, LoadSceneMode.Single);
+            await InternalLoadScene("LevelChild", LoadSceneMode.Additive); // you can load resources you need in LevelChild scene's GameObjects.
             await UniTask.WaitUntil(() => !TaskBus.Instance.IsBusy);
-            await InternalLoadScene(sceneName, LoadSceneMode.Additive);
             ExceptionUtils.UnityCatch(() =>
             {
                 LevelStartEvent_AutoClear.Trigger(sceneName);

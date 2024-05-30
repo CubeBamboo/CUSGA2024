@@ -29,6 +29,9 @@ namespace Shuile
                 .AddSystemImplemenation<LevelFeelManager>(() => new LevelFeelManager())
                 .AddSystemImplemenation<LevelStateMachine>(() => new LevelStateMachine())
                 .AddSystemImplemenation<EnemySpawnManager>(() => new EnemySpawnManager());
+
+            //LevelServiceLocator
+            //    .AddViewToEntityLinking<CameraDrifterController, CameraDrifterView>(c => c.gameObject.AddComponent<CameraDrifterView>());
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

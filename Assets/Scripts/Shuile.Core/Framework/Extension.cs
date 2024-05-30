@@ -18,5 +18,11 @@ namespace Shuile.Core.Framework
             serviceLocator.AddSystemCreator(implementation);
             return serviceLocator;
         }
+
+        /*public static LayerableServiceLocator AddViewToEntityLinking<TEntity, TView>(this LayerableServiceLocator serviceLocator, System.Func<TEntity, TView> func) where TEntity : IEntity where TView : IView
+        {
+            serviceLocator.LinkViewToEntity(func);
+            return serviceLocator;
+        }*/
     }
 }

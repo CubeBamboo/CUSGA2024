@@ -4,10 +4,9 @@ namespace Shuile.Core.Framework.Unity
 {
     public abstract class MonoEntity : MonoBehaviour, IEntity
     {
-        public virtual void OnSelfEnable() => this.enabled = true;
+        public virtual bool SelfEnable { get => this.enabled; set => this.enabled = value; }
         protected void Awake()
         {
-            this.enabled = false;
             EntitySystem.Instance.AddEntity(this);
             AwakeOverride();
         }
@@ -20,5 +19,6 @@ namespace Shuile.Core.Framework.Unity
         protected virtual void OnDestroyOverride() { }
 
         public abstract LayerableServiceLocator GetLocator();
+        public virtual void OnInitData(object data) { }
     }
 }
