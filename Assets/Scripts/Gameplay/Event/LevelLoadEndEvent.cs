@@ -8,4 +8,8 @@ namespace Shuile.Gameplay.Event
     public class LevelLoadEndEvent : GlobalEvent<LevelLoadEndEvent, string>
     {
     }
+
+    public class LevelStartEvent : GlobalEvent<LevelStartEvent, string>
+    {
+    }
 }

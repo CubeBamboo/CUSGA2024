@@ -11,6 +11,7 @@ namespace Shuile.Gameplay.Entity.Enemies
     public class Creeper : Enemy
     {
         private FSM<DefaultEnemyState> mFsm = new();
+        private Player player;
 
         ZakoPatrolBehavior patrolBehavior;
         ZakoChaseBehavior chaseBehavior;
@@ -33,6 +34,11 @@ namespace Shuile.Gameplay.Entity.Enemies
             mRenderer = GetComponentInChildren<SpriteRenderer>();
 
             RegisterState(mFsm);
+        }
+
+        private void Start()
+        {
+            player = Player.Instance;
         }
 
         protected override void OnSelfDie()
@@ -58,13 +64,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             mFsm.NewEventState(DefaultEnemyState.Chase)
                 .OnEnter(() =>
                 {
-                    chaseBehavior.Bind(GameplayService.Interface.Get<Player>().gameObject, moveController);
+                    chaseBehavior.Bind(player.gameObject, moveController);
                 })
                 .OnFixedUpdate(() =>
                 {
                     if (!EnemyBehaviorAction.XRayCastPlayer(transform.position, faceDir, checkPlayerRange))
                         mFsm.SwitchState(DefaultEnemyState.Patrol);
-                    UnityAPIExt.DebugLineForRayCast2D(transform.position, Vector2.right * faceDir, checkPlayerRange, LayerMask.GetMask("Player"));
+                    UnityAPIExtension.DebugLineForRayCast2D(transform.position, Vector2.right * faceDir, checkPlayerRange, LayerMask.GetMask("Player"));
 
                     faceDir = chaseBehavior.FaceDir;
                     chaseBehavior.Do();
@@ -83,7 +89,7 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         private bool Attack()
         {
-            var player = GameplayService.Interface.Get<Player>();
+            var player = Player.Instance;
 
             if (Vector3.Distance(player.transform.position, MoveController.Position) <= attackRange)
                 player.OnHurt((int)(player.Property.maxHealthPoint * 0.6f));

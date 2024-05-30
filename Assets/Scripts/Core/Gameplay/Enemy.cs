@@ -60,7 +60,7 @@ namespace Shuile.Gameplay
         }
         private async void HandleDieEvent()
         {
-            await UniTask.WaitUntil(() => !EntityManager.Instance.IsJudging);
+            await UniTask.WaitUntil(() => !LevelEntityManager.Instance.IsJudging);
             EnemyDieEvent.Trigger(gameObject);
         }
         protected abstract void OnSelfHurt(int oldVal, int newVal);

@@ -1,24 +1,17 @@
-/*using Shuile.Gameplay.Entity;
-using Shuile;
-using Shuile.Rhythm.Runtime;
-using UnityEditor;
+using CbUtils.Collections;
 using UnityEngine;
 
 namespace CbUtils
 {
     public class CbFoo : MonoBehaviour
     {
-        public GameObject bombPrefab;
-        public int attackPoint = 100;
-        public float explodeRadius = 2f;
-
         private void Start()
         {
-            
+
         }
     }
     
-    [CustomEditor(typeof(CbFoo))]
+    /*[CustomEditor(typeof(CbFoo))]
     public class InspectorExtExample : Editor
     {
         private CbFoo obj;
@@ -47,6 +40,6 @@ namespace CbUtils
                 bomb.Explode(obj.attackPoint, obj.explodeRadius);
             }
         }
-    }
+    }*/
 }
-*/
+

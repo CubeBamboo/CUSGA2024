@@ -1,38 +1,31 @@
-using CbUtils;
+using Shuile.Core.Framework;
+using Shuile.Core.Gameplay;
 using Shuile.Gameplay;
-using Shuile.Rhythm.Runtime;
+using Shuile.Model;
 using UnityEngine;
 using URandom = UnityEngine.Random;
 
 namespace Shuile
 {
-    public class EnemySpawnManager : MonoNonAutoSpawnSingletons<EnemySpawnManager>
+    public class EnemySpawnManager : ISystem
     {
         [HideInInspector] public LevelEnemySO currentEnemyData;
 
         private int currentRoundIndex = 0;
-        private LevelModel levelModel;
+        private LevelModel _levelModel;
 
-        public int EnemyCount => EntityManager.Instance.EnemyCount;
+        public int EnemyCount => LevelEntityManager.Instance.EnemyCount;
         public int CurrentRoundIndex => currentRoundIndex;
 
-        protected override void OnAwake()
+        public EnemySpawnManager()
         {
             currentEnemyData = LevelDataBinder.Instance.levelEnemyData;
+            _levelModel = this.GetModel<LevelModel>();
         }
 
-        private void Start()
+        public void OnRhythmHit()
         {
-            levelModel = GameplayService.Interface.Get<LevelModel>();
-            AutoPlayChartManager.Instance.OnRhythmHit += OnRhythmHit;
-        }
-        private void OnDestroy()
-        {
-            AutoPlayChartManager.Instance.OnRhythmHit -= OnRhythmHit;
-        }
-        private void OnRhythmHit()
-        {
-            var dangerLevel = levelModel.DangerLevel;
+            var dangerLevel = _levelModel.DangerLevel;
             var currentEnemyCountIsTooLow = EnemyCount <= DangerLevelUtils.GetEnemySpawnThreshold(dangerLevel);
             //var currentEnemyCountIsTooLow = EnemyCount <= 0;
             if (currentEnemyCountIsTooLow)
@@ -47,7 +40,9 @@ namespace Shuile
             var useIndex = level <= length - 1 ? level : length-1;
             var useEnemies = currentEnemyData.enemies[useIndex].enemyList;
             int index = URandom.Range(0, useEnemies.Length);
-            EntityFactory.Instance.SpawnEnemyWithEffectDelay(useEnemies[index], LevelZoneManager.Instance.RandomValidPosition());
+            LevelEntityFactory.Instance.SpawnEnemyWithEffectDelay(useEnemies[index], LevelZoneManager.Instance.RandomValidPosition());
         }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

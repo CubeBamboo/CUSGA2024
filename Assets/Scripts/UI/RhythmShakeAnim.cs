@@ -1,4 +1,6 @@
 using DG.Tweening;
+using Shuile.Core.Framework;
+using Shuile.Gameplay;
 using Shuile.Rhythm.Runtime;
 
 using System;
@@ -7,8 +9,10 @@ using UnityEngine;
 namespace Shuile
 {
     [RequireComponent(typeof(RectTransform))]
-    public class RhythmShakeAnim : MonoBehaviour
+    public class RhythmShakeAnim : MonoBehaviour, IEntity
     {
+        private AutoPlayChartManager _autoPlayChartManager;
+
         RectTransform rectTransform;
         private Vector3 InitScale;
 
@@ -17,18 +21,22 @@ namespace Shuile
 
         private float halfShakeDurationCache;
 
+        public bool SelfEnable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         private void Start()
         {
+            _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
             rectTransform = GetComponent<RectTransform>();
+
             InitScale = rectTransform.localScale;
             halfShakeDurationCache = shakeDuration / 2;
-            AutoPlayChartManager.Instance.OnRhythmHit += OnRhythmHit;
+            _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
         }
 
         private void OnDestroy()
         {
             rectTransform.DOKill();
-            AutoPlayChartManager.Instance.OnRhythmHit -= OnRhythmHit;
+            _autoPlayChartManager.OnRhythmHit -= OnRhythmHit;
         }
 
         private void OnRhythmHit()
@@ -37,6 +45,13 @@ namespace Shuile
             {
                 rectTransform.DOScale(InitScale, halfShakeDurationCache);
             });
+        }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+
+        public void OnInitData(object data)
+        {
+            throw new NotImplementedException();
         }
     }
 }

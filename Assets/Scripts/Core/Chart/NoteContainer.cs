@@ -1,5 +1,7 @@
 // encoding: UTF-8 cp65001
 
+using Shuile.Core;
+using Shuile.Core.Configuration;
 using Shuile.Gameplay;
 using System;
 using System.Collections.Generic;
@@ -36,9 +38,9 @@ namespace Shuile.Rhythm.Runtime
             notePool.Release(note);
         }
 
-        public SingleNote TryGetNearestNote()
+        public SingleNote TryGetNearestNote(float currentTime)
         {
-            CheckRelese(MusicRhythmManager.Instance.CurrentTime);
+            CheckRelese(currentTime);
             return noteList.Count != 0 ? noteList[0] : null;
         }
 
@@ -48,7 +50,7 @@ namespace Shuile.Rhythm.Runtime
                 return;
             noteList.Sort((a, b) => a.realTime.CompareTo(b.realTime)); //升序排序
             // 检查所有需要销毁的note
-            while (noteList.Count > 0 && noteList[0].NeedRelese(currentTime, GameplayService.Interface.LevelModel.MissToleranceInSeconds))
+            while (noteList.Count > 0 && noteList[0].NeedRelese(currentTime, ImmutableConfiguration.Instance.MissToleranceInSeconds))
             {
                 var time = noteList[0].realTime;
                 notePool.Release(noteList[0]);
@@ -84,7 +86,7 @@ namespace Shuile.Rhythm.Runtime
     {
         SingleNote AddNote(float targetTime);
         void ReleseNote(SingleNote note);
-        SingleNote TryGetNearestNote();
+        SingleNote TryGetNearestNote(float currentTime);
         void CheckRelese(float currentTime);
     }
 }

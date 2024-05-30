@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security;
 using UnityEngine;
 
-namespace CbUtils
+namespace CbUtils.Unity
 {
     public class MonoSingletons<T> : MonoBehaviour where T : MonoSingletons<T>
     {
@@ -15,7 +12,7 @@ namespace CbUtils
                 bool isNew = !instance;
                 if (!instance)
                 {
-                    new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
+                    SingletonCreator.GetMonoBehaviourSingletons<T>();
                     instance.OnInstanceCall(isNew);
                 }
                 return instance;
@@ -46,5 +43,13 @@ namespace CbUtils
 
         protected virtual void OnAwake() { }
         protected virtual void OnInstanceCall(bool isNewObject) { }
+
+        public static void TryAccessInstance(System.Action<T> action)
+        {
+            if (IsInstance)
+            {
+                action(instance);
+            }
+        }
     }
 }

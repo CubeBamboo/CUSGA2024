@@ -1,11 +1,12 @@
+using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using Shuile.Rhythm.Runtime;
 
 using UnityEngine;
 
 namespace Shuile.MonoGadget
 {
-    [RequireComponent(typeof(MusicRhythmManager))]
-    public class MusicTimeTweener : MonoBehaviour
+    public class MusicTimeTweener : MonoBehaviour, IEntity
     {
         private MusicRhythmManager manager;
         private float lastManagerTime;
@@ -13,16 +14,25 @@ namespace Shuile.MonoGadget
 
         public float TweenTime => tweenTime;
 
-        private void Awake()
+        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+
+        public void OnInitData(object data)
         {
-            manager = GetComponent<MusicRhythmManager>();
+            throw new System.NotImplementedException();
+        }
+
+        protected void Awake()
+        {
+            manager = this.GetSystem<MusicRhythmManager>();
             tweenTime = lastManagerTime = manager.CurrentTime;
         }
 
         private void Update()
         {
-            if (!manager.IsPlaying || lastManagerTime != MusicRhythmManager.Instance.CurrentTime)
-                tweenTime = lastManagerTime = MusicRhythmManager.Instance.CurrentTime;
+            if (!manager.IsPlaying || lastManagerTime != manager.CurrentTime)
+                tweenTime = lastManagerTime = manager.CurrentTime;
             else
                 tweenTime += Time.deltaTime;
         }

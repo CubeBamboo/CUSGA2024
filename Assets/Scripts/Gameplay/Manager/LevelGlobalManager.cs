@@ -1,7 +1,10 @@
-using CbUtils.Event;
+using CbUtils.Timing;
+using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using Shuile.Gameplay.Event;
+using Shuile.Model;
 using Shuile.Rhythm.Runtime;
-using System;
+using Shuile.Root;
 using UnityEngine;
 
 using UInput = UnityEngine.InputSystem;
@@ -9,15 +12,18 @@ using UInput = UnityEngine.InputSystem;
 namespace Shuile.Gameplay
 {
     // if you dont know where to put the logic, put it here
-    public class LevelGlobalManager : MonoBehaviour
+    public class LevelGlobalManager : MonoEntity
     {
-        private LevelModel levelModel;
-
-        private void Awake()
+        private LevelModel _levelModel;
+        private MusicRhythmManager _musicRhythmManager;
+        private LevelFeelManager _levelFeelManager;
+        private LevelStateMachine _levelStateMachine;
+        protected override void AwakeOverride()
         {
-            levelModel = GameplayService.Interface.Get<LevelModel>();
-
-            //gameObject.AddComponent<UpdateEventMono>().OnUpdate += DebugUpdate;
+            _levelModel = this.GetModel<LevelModel>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            _levelFeelManager = this.GetSystem<LevelFeelManager>();
+            _levelStateMachine = this.GetSystem<LevelStateMachine>();
         }
 
         private void Start()
@@ -25,26 +31,33 @@ namespace Shuile.Gameplay
             EnemyDieEvent.Register(GlobalOnEnemyDie);
             EnemyHurtEvent.Register(GlobalOnEnemyHurt);
         }
-
-        private void OnDestroy()
+        protected override void OnDestroyOverride()
         {
             EnemyDieEvent.UnRegister(GlobalOnEnemyDie);
             EnemyHurtEvent.UnRegister(GlobalOnEnemyHurt);
+
+            TimingCtrl.Instance.StopAllTimer();
         }
         private void FixedUpdate()
         {
-            levelModel.DangerScore -= DangerLevelConfigClass.NormalReductionPerSecond * Time.fixedDeltaTime;
+            if (!LevelRoot.Instance.IsStart) return;
+
+            _levelModel.DangerScore -= DangerLevelConfigClass.NormalReductionPerSecond * Time.fixedDeltaTime;
 
             // check end
-            if (MusicRhythmManager.Instance.IsMusicEnd)
+            if (_musicRhythmManager.IsMusicEnd)
             {
-                LevelStateMachine.Instance.State = LevelStateMachine.LevelState.Win;
+                _levelStateMachine.State = LevelStateMachine.LevelState.Win;
             }
+        }
+        private void Update()
+        {
+            DebugUpdate();
         }
 
         private void GlobalOnEnemyHurt(GameObject @object)
         {
-            LevelFeelManager.Instance.CameraShake();
+            _levelFeelManager.CameraShake();
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Hurt");
         }
         private void GlobalOnEnemyDie(GameObject go)
@@ -56,12 +69,14 @@ namespace Shuile.Gameplay
         {
             if (UInput.Keyboard.current.zKey.wasPressedThisFrame)
             {
-                MusicRhythmManager.Instance.SetCurrentTime(MusicRhythmManager.Instance.CurrentTime + 5f);
+                _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime + 5f);
             }
             if (UInput.Keyboard.current.xKey.wasPressedThisFrame)
             {
-                MusicRhythmManager.Instance.SetCurrentTime(MusicRhythmManager.Instance.CurrentTime - 5f);
+                _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime - 5f);
             }
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

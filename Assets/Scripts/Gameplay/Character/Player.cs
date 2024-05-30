@@ -1,47 +1,42 @@
 using CbUtils;
-using CbUtils.Event;
-using Shuile.Root;
-
-using DG.Tweening;
+using CbUtils.Preview.Event;
+using CbUtils.Unity;
+using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
+using Shuile.Gameplay.Event;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Shuile.Gameplay
 {
-    public class Player : MonoBehaviour, IHurtable
+    public class Player : MonoEntity, IHurtable
     {
-        private NormalPlayerInput _PlayerInput;
-        private NormalPlayerCtrl _PlayerCtrl;
-        private NormalPlayerFeel _PlayerFeel;
+        public static Player Instance => MonoSingletonProperty<Player>.Instance;
+
+        private PlayerModel _playerModel;
+        private LevelStateMachine _levelStateMachine;
 
         [SerializeField] private PlayerPropertySO property;
         public HearableProperty<int> CurrentHp { get; private set; } = new();
         public EasyEvent OnDie = new();
         public EasyEvent OnHurted = new();
 
-        private PlayerModel playerModel;
-
-        private bool isInviciable;
         private bool isDie;
 
         public PlayerPropertySO Property => property;
-        private void Awake()
+        protected override void AwakeOverride()
         {
-            playerModel = GameplayService.Interface.Get<PlayerModel>();
-            playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
-
-            _PlayerInput = gameObject.GetComponent<NormalPlayerInput>();
-            _PlayerCtrl = gameObject.GetComponent<NormalPlayerCtrl>();
-            _PlayerFeel = gameObject.GetComponent<NormalPlayerFeel>();
-
-            GameplayService.Interface.Register<Player>(this);
-        }
-        private void OnDestroy()
-        {
-            GameplayService.Interface.UnRegister<Player>();
+            MonoSingletonProperty<Player>.InitSingleton(this);
+            MonoSingletonProperty<Player>.EnableAutoSpawn = false;
+            _playerModel = this.GetModel<PlayerModel>();
+            _levelStateMachine = this.GetSystem<LevelStateMachine>();
+            _playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
         }
         private void Start()
         {
+            //TypeEventSystem.Global.Trigger<PlayerSpawnEvent>(new PlayerSpawnEvent() { player = this });
+            transform.position = LevelDataGetter.Instance.playerInitPosition.position;
+
             isDie = false;
             CurrentHp.Value = property.maxHealthPoint;
 
@@ -50,7 +45,7 @@ namespace Shuile.Gameplay
 
         public void OnHurt(int attackPoint)
         {
-            if (isDie || playerModel.isInviciable) return;
+            if (isDie || _playerModel.isInviciable) return;
 
             OnHurted.Invoke();
             CurrentHp.Value -= attackPoint;
@@ -63,7 +58,7 @@ namespace Shuile.Gameplay
                 CurrentHp.Value = 0;
                 isDie = true;
                 OnDie.Invoke();
-                LevelStateMachine.Instance.State = LevelStateMachine.LevelState.Fail;
+                _levelStateMachine.State = LevelStateMachine.LevelState.Fail;
             }
         }
 
@@ -76,18 +71,23 @@ namespace Shuile.Gameplay
                 Debug.Log("开挂模式");
                 CurrentHp.Value = 999999;
             }
+            if (Keyboard.current.upArrowKey.isPressed && Keyboard.current.leftArrowKey.wasPressedThisFrame)
+            {
+                _playerModel.canInviciable = !_playerModel.canInviciable;
+                Debug.Log($"受击无敌变更 -> {_playerModel.canInviciable}");
+            }
             if (Keyboard.current.bKey.wasPressedThisFrame)
             {
                 this.OnHurt(20);
                 this.OnHurt((int)(CurrentHp.Value * 0.25f));
             }
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 
     public static class PlayerExtension
     {
-        public static Player GetPlayer(this GameObject gameObject)
-            => GameplayService.Interface.Get<Player>();
         public static void ForceDie(this Player player)
             => player.OnHurt(player.Property.maxHealthPoint + 1);
     }

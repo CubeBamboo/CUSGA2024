@@ -1,32 +1,21 @@
 using CbUtils;
-using Shuile.Framework;
-using Shuile.Rhythm.Runtime;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 namespace Shuile.Gameplay
 {
-    /* logic chain: PlayerCtrl -> NormalPlayerInput
-     */
     public class NormalPlayerInput : MonoBehaviour
     {
         private Player player;
         private PlayerInput playerInput;
-
-        public float XInput { get; private set; }
-
-        //public event System.Action OnJumpPress, OnJumpHold, OnJumpRelese;
-        //public event System.Action<float> OnMove;
 
         // [for inputHelper]
         public EasyEvent<float> OnMoveStart = new(), OnMoveCanceled = new();
         public EasyEvent<float> OnJumpStart = new(), OnJumpCanceled = new();
         public EasyEvent<float> OnAttackStart = new(), OnAttackCanceled = new();
 
-        PlayerPlayerInputHelper inputHelper = new();
+        readonly PlayerPlayerInputHelper inputHelper = new();
 
         private void Awake()
         {
@@ -46,40 +35,6 @@ namespace Shuile.Gameplay
             playerInput.onActionTriggered -= inputHelper.OnPlayerInputTriggered;
         }
 
-        private void Update()
-        {
-            Mouse mouse = Mouse.current;
-            Keyboard keyboard = Keyboard.current;
-
-            // jump
-            //bool jumpPressing = keyboard.spaceKey.isPressed;
-            //if (jumpPressing)
-            //{
-            //    OnJumpHold?.Invoke();
-            //}
-            //bool jumpInput = keyboard.spaceKey.wasPressedThisFrame;
-            //if (jumpInput)
-            //{
-            //    OnJumpPress?.Invoke();
-            //}
-            //bool jumpRelese = keyboard.spaceKey.wasReleasedThisFrame;
-            //if (jumpRelese)
-            //{
-            //    OnJumpRelese?.Invoke();
-            //}
-
-            // move
-            //bool moveInput = keyboard.aKey.isPressed || keyboard.dKey.isPressed || keyboard.leftArrowKey.isPressed || keyboard.rightArrowKey.isPressed;
-            //if (moveInput)
-            //{
-            //    int dir = keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed ? -1 : 1;
-            //    XInput = dir;
-            //    OnMove?.Invoke(dir);
-            //}
-
-            // attack
-        }
-
         private void InitInputHelper()
         {
             inputHelper.onMoveStart = v => OnMoveStart.Invoke(v);
@@ -89,52 +44,71 @@ namespace Shuile.Gameplay
             inputHelper.onAttackStart = v => OnAttackStart.Invoke(v);
             inputHelper.onAttackCanceled = v => OnAttackCanceled.Invoke(v);
         }
+
+        public void ClearAll() => inputHelper.ClearAll();
     }
 
     public class PlayerPlayerInputHelper
     {
+        private class InternalHelper
+        {
+            private Dictionary<string, System.Action<InputAction.CallbackContext>> actionHandlers = new Dictionary<string, System.Action<InputAction.CallbackContext>>();
+
+            public void InternalProcessPhase<T>(InputAction.CallbackContext ctx, System.Action<T> onStart, System.Action<T> onCanceled)
+                where T : struct
+            {
+                if (onStart == null || onCanceled == null)
+                {
+                    Debug.LogWarning("onStart or onCanceled is null.");
+                    return;
+                }
+
+                switch (ctx.phase)
+                {
+                    case InputActionPhase.Started:
+                        onStart.Invoke(ctx.ReadValue<T>());
+                        break;
+                    case InputActionPhase.Canceled:
+                        onCanceled.Invoke(ctx.ReadValue<T>());
+                        break;
+                }
+            }
+
+            public bool TryTriggerAction(InputAction.CallbackContext ctx, string actionName, System.Action<InputAction.CallbackContext> handler)
+            {
+                var res = ctx.action.name == actionName;
+                if(res) handler(ctx);
+                return res;
+            }
+            public void RegisterActionHandler(string actionName, System.Action<InputAction.CallbackContext> handler) => actionHandlers[actionName] = handler;
+            public void UnRegisterActionHandler(string actionName) => actionHandlers.Remove(actionName);
+            public bool OnPlayerInputTriggered(InputAction.CallbackContext ctx)
+            {
+                var res = actionHandlers.TryGetValue(ctx.action.name, out var handler);
+                if(res) handler(ctx);
+                return res;
+            }
+            public void ClearAll() => actionHandlers.Clear();
+        }
+
+        private InternalHelper internalHelper = new InternalHelper();
+
         public System.Action<float> onMoveStart, onMoveCanceled;
         public System.Action<float> onJumpStart, onJumpCanceled;
         public System.Action<float> onAttackStart, onAttackCanceled;
 
-        public void OnPlayerInputTriggered(InputAction.CallbackContext ctx)
+        public PlayerPlayerInputHelper()
         {
-            switch (ctx.action.name)
-            {
-                case "HorizontalMove":
-                    ProcessMovePhase(ctx);
-                    break;
-                case "Jump":
-                    ProcessJumpPhase(ctx);
-                    break;
-                case "Fire":
-                    ProcessAttackPhase(ctx);
-                    break;
-            }
+            internalHelper.RegisterActionHandler("HorizontalMove", ProcessMovePhase);
+            internalHelper.RegisterActionHandler("Jump", ProcessJumpPhase);
+            internalHelper.RegisterActionHandler("Fire", ProcessAttackPhase);
         }
 
-        private void InternalProcessPhase<T>(InputAction.CallbackContext ctx, System.Action<T> onStart, System.Action<T> onCanceled)
-            where T : struct
-        {
-            if(onStart == null || onCanceled == null)
-            {
-                Debug.LogWarning("onStart or onCanceled is null.");
-                return;
-            }
+        private void ProcessJumpPhase(InputAction.CallbackContext ctx) => internalHelper.InternalProcessPhase(ctx, onJumpStart, onJumpCanceled);
+        private void ProcessMovePhase(InputAction.CallbackContext ctx) => internalHelper.InternalProcessPhase(ctx, onMoveStart, onMoveCanceled);
+        private void ProcessAttackPhase(InputAction.CallbackContext ctx) => internalHelper.InternalProcessPhase(ctx, onAttackStart, onAttackCanceled);
 
-            switch (ctx.phase)
-            {
-                case InputActionPhase.Started:
-                    onStart.Invoke(ctx.ReadValue<T>());
-                    break;
-                case InputActionPhase.Canceled:
-                    onCanceled.Invoke(ctx.ReadValue<T>());
-                    break;
-            }
-        }
-
-        private void ProcessJumpPhase(InputAction.CallbackContext ctx) => InternalProcessPhase(ctx, onJumpStart, onJumpCanceled);
-        private void ProcessMovePhase(InputAction.CallbackContext ctx) => InternalProcessPhase(ctx, onMoveStart, onMoveCanceled);
-        private void ProcessAttackPhase(InputAction.CallbackContext ctx) => InternalProcessPhase(ctx, onAttackStart, onAttackCanceled);
+        public void OnPlayerInputTriggered(InputAction.CallbackContext ctx) => internalHelper.OnPlayerInputTriggered(ctx);
+        public void ClearAll() => internalHelper.ClearAll();
     }
 }

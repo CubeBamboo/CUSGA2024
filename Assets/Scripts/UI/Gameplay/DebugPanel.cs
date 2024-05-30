@@ -10,12 +10,18 @@ using CbUtils.Event;
 
 using UnityEngine;
 using TMPro;
+using CbUtils.Preview.Event;
+using Shuile.Core.Framework;
+using Shuile.Core;
+using Shuile.Model;
 
 namespace Shuile
 {
     // 写成屎了，不过调试用就算了
-    public class DebugPanel : BasePanelWithMono
+    public class DebugPanel : BasePanelWithMono, IEntity
     {
+        private MusicRhythmManager _musicRhythmManager;
+
         [SerializeField] private TextMeshProUGUI hitOffsetText;
         [SerializeField] private TextMeshProUGUI playTimeText;
         [SerializeField] private TextMeshProUGUI dangerScoreText;
@@ -25,6 +31,8 @@ namespace Shuile
         private PlayerModel playerModel;
         private LevelModel levelModel;
 
+        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
         private void Awake()
             => this.RegisterUI<DebugPanel>();
         private void OnDestroy()
@@ -32,16 +40,17 @@ namespace Shuile
 
         private void Start()
         {
-            playerModel = GameplayService.Interface.Get<PlayerModel>();
-            levelModel = GameplayService.Interface.Get<LevelModel>();
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            playerModel = this.GetModel<PlayerModel>();
+            levelModel = this.GetModel<LevelModel>();
 
             gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
             {
                 hitOffsetText.text = $"HitOffset: {playerModel.currentHitOffset:0.000}";
-                playTimeText.text = $"PlayTime: {MusicRhythmManager.Instance.CurrentTime:0.000}";
+                playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
                 dangerScoreText.text = $"DangerScore: {levelModel.DangerScore:0.000}";
                 dangerLevelText.text = $"DangerLevel: {levelModel.DangerLevel}";
-                enemyCountText.text = $"EnemyCount: {EntityManager.Instance.EnemyCount}";
+                enemyCountText.text = $"EnemyCount: {LevelEntityManager.Instance.EnemyCount}";
             };
         }
 
@@ -53,6 +62,13 @@ namespace Shuile
         public override void Show()
         {
             gameObject.SetActive(true);
+        }
+
+        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+
+        public void OnInitData(object data)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

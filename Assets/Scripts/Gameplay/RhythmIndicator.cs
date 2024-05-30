@@ -1,4 +1,3 @@
-using Shuile.Framework;
 using Shuile.MonoGadget;
 using Shuile.Rhythm.Runtime;
 
@@ -12,10 +11,18 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using UObject = UnityEngine.Object;
+using Shuile.ResourcesManagement.Loader;
+using Shuile.Core.Configuration;
+using System;
+using Shuile.Core.Framework;
+using Shuile.Model;
+using Shuile.Root;
+using Shuile.Core.Framework.Unity;
+using CbUtils.Extension;
 
 namespace Shuile.Gameplay
 {
-    public class RhythmIndicator : MonoBehaviour
+    public class RhythmIndicator : MonoEntity
     {
         private class UINote : SingleNote
         {
@@ -73,12 +80,16 @@ namespace Shuile.Gameplay
         private List<UINote> uiNoteList;
         //private ChartPlayer chartPlayer;
 
-        private readonly CustomLoadObject<MusicTimeTweener> timeTweener
-            = new(() => MusicRhythmManager.Instance.gameObject.GetOrAddComponent<MusicTimeTweener>());
+        private MusicRhythmManager _musicRhythmManager;
+        private PlayerChartManager _playerChartManager;
+        private LevelModel levelModel;
+        private Lazy<MusicTimeTweener> timeTweener;
+        private LevelConfigSO levelConfig;
+
         public MusicTimeTweener TimeTweener => timeTweener.Value;
 
         private float CurrentTime => TimeTweener.TweenTime;
-        private float MissTolerance => GameplayService.Interface.LevelModel.MissToleranceInSeconds;
+        private float MissTolerance => ImmutableConfiguration.Instance.MissToleranceInSeconds;
 
         public RhythmIndicator()
         {
@@ -92,18 +103,30 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            notePrefab = LevelResources.Instance.globalPrefabs.noteIndicator;
-            preDisplayTime = PlayerChartManager.Instance.NotePreShowInterval;
-            PlayerChartManager.Instance.ChartPlayer.OnNotePlay += OnNote;
-            PlayerChartManager.Instance.OnPlayerHitOn += OnPlayerHit;
-            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese += OnNoteNeedRelese;
-        }
+            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            _playerChartManager = this.GetSystem<PlayerChartManager>();
+            levelModel = this.GetModel<LevelModel>();
 
-        private void OnDestroy()
+            var preciseMusicPlayer = PreciseMusicPlayer.Instance;
+            timeTweener = new(() => preciseMusicPlayer.gameObject.GetOrAddComponent<MusicTimeTweener>());
+
+            levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+            //var playerChartManager = GameplayService.Interface.Get<PlayerChartManager>();
+
+            notePrefab = LevelResourcesLoader.Instance.SyncContext.globalPrefabs.noteIndicator;
+            preDisplayTime = levelConfig.playerNotePreShowTime;
+            _playerChartManager.ChartPlayer.OnNotePlay += OnNote;
+            _playerChartManager.OnPlayerHitOn += OnPlayerHit;
+            _playerChartManager.NoteContainer.OnNoteAutoRelese += OnNoteNeedRelese;
+        }
+        protected override void OnDestroyOverride()
         {
-            PlayerChartManager.Instance.ChartPlayer.OnNotePlay -= OnNote;
-            PlayerChartManager.Instance.OnPlayerHitOn -= OnPlayerHit;
-            PlayerChartManager.Instance.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelese;
+            if (LevelRoot.IsLevelActive)
+            {
+                _playerChartManager.ChartPlayer.OnNotePlay -= OnNote;
+                _playerChartManager.OnPlayerHitOn -= OnPlayerHit;
+                _playerChartManager.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelese;
+            }
 
             uiNoteList.Clear();
             notePool.DestroyAll();
@@ -156,5 +179,7 @@ namespace Shuile.Gameplay
             if (uiNoteList.Count == 0) return null;
             return uiNoteList.Min();
         }
+
+        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

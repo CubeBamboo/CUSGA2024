@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Shuile.Rhythm.Runtime;
+using Shuile.Core.Rhythm;
+
 using UDebug = UnityEngine.Debug;
 
 namespace Shuile.Rhythm

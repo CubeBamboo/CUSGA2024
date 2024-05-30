@@ -1,5 +1,9 @@
+using CbUtils.Kits.Tasks;
+using Cysharp.Threading.Tasks;
+using log4net.Core;
+using Shuile.Core.Gameplay;
+using Shuile.ResourcesManagement.Loader;
 using Shuile.UI;
-
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +25,7 @@ namespace Shuile
         [SerializeField] private LevelSelectDataSO levelSelectData;
 
         private int currentIndex = 0;
+        private LevelData _level;
 
         private void Awake()
         {
@@ -60,11 +65,22 @@ namespace Shuile
             //btn_level3.onClick.AddListener(() => StartLevel("Ginevra"));
         }
 
-        public void StartLevel(string label)
+        public async void StartLevel(string label)
         {
-            var level = GameResources.Instance.levelDataMap.GetLevelData(label);
-            LevelDataBinder.Instance.SetLevelData(level);
-            MonoGameRouter.Instance.ToLevelScene(level.sceneName);
+            //var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());
+            await TaskBus.Instance.Execute(LoadLevelResources(label));
+
+            LevelDataBinder.Instance.SetLevelData(_level);
+            MonoGameRouter.Instance.ToLevelScene(_level.sceneName);
+        }
+
+        private async UniTask LoadLevelResources(string label)
+        {
+            var levels = await GameResourcesLoader.Instance.GetLevelDataMapAsync();
+
+            _level = levels.GetLevelData(label);
+            await LevelResourcesLoader.Instance.PreCacheAsync();
+            await UniTask.Delay(1000);
         }
 
         private void RefreshSongView()

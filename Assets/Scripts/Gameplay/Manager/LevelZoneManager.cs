@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Shuile
 {
     [RequireComponent(typeof(MarkedZone2D))]
-    public class LevelZoneManager : MonoNonAutoSpawnSingletons<LevelZoneManager>
+    public class LevelZoneManager : MonoNotAutoSpawnSingletons<LevelZoneManager>
     {
         private MarkedZone2D markedZone;
 

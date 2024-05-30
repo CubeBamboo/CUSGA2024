@@ -1,3 +1,5 @@
+using Shuile.Gameplay;
+
 namespace Shuile.Rhythm.Runtime
 {
     public interface IRhythmable
@@ -11,12 +13,12 @@ namespace Shuile.Rhythm.Runtime
         /// {timeInSingleBar} should be in [0, 1)
         /// </summary>
         /// <returns> time in seconds </returns>
-        public static float GetRealTime(this IRhythmable rhythmable, float rhythmTime)
-            => MusicRhythmManager.Instance.GetRealTime(rhythmTime);
+        public static float GetRealTime(this IRhythmable rhythmable, float rhythmTime, LevelTimingManager levelTimingManager)
+            => levelTimingManager.GetRealTime(rhythmTime);
 
         /// <summary> {barTime}th beat and {timeInSingleBar} position in this bar </summary>
         /// <returns> time in seconds </returns>
-        public static float GetRealTime(this IRhythmable rhythmable, float barTime, float timeInSingleBar)
-            => GetRealTime(rhythmable, barTime + timeInSingleBar);
+        public static float GetRealTime(this IRhythmable rhythmable, float barTime, float timeInSingleBar, LevelTimingManager levelTimingManager)
+            => GetRealTime(rhythmable, barTime + timeInSingleBar, levelTimingManager);
     }
 }

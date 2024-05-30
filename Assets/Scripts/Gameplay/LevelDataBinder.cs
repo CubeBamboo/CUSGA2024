@@ -1,9 +1,9 @@
 using CbUtils;
+using CbUtils.Unity;
+using Shuile.Core.Gameplay;
+using Shuile.Core.Rhythm;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Shuile
 {

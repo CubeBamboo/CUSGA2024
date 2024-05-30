@@ -4,10 +4,6 @@ using System.Collections.Generic;
 //inspired by qframework
 namespace CbUtils
 {
-    public interface ISimepleEvent
-    {
-    }
-
     public interface ICustomUnRegister
     {
         void OnDo();

@@ -1,30 +1,25 @@
 using CbUtils;
-using Shuile.Framework;
+using Shuile.Core.Framework;
 using Shuile.Gameplay;
-
 using System.Collections.Generic;
 
-namespace Shuile
+namespace Shuile.Model
 {
     /// <summary> data in single level </summary>
     public class LevelModel : IModel
     {
+        private readonly LayerableServiceLocator serviceLocator;
         public float musicBpm;
         public float musicOffset;
-        public List<IJudgeable> JudgeObjects { get; set; } = new();
-        //public EasyEvent OnPlayerHit { get; set; } = new(); // rhythm hit
 
-        private float missTolerance;
+        public List<IJudgeable> JudgeObjects { get; set; } = new();
+        public float currentMusicTime;
 
         private float dangerScore = 0f;
 
-        //private int dangerLevel = -1;
-
-        public LevelModel()
+        public LevelModel(LayerableServiceLocator serviceLocator)
         {
-            var resources = LevelResources.Instance;
-            missTolerance = resources.levelConfig.missTolerance;
-
+            this.serviceLocator = serviceLocator;
             var currentChart = LevelDataBinder.Instance.ChartData;
             musicBpm = currentChart.time[0].bpm;
             musicOffset = currentChart.time[0].offset;
@@ -34,7 +29,6 @@ namespace Shuile
 
         public float BpmIntervalInSeconds => 60f / musicBpm;
         public float OffsetInSeconds => musicOffset * 0.001f;
-        public float MissToleranceInSeconds => missTolerance * 0.001f;
         public int DangerLevel => DangerLevelUtils.GetDangerLevelUnClamped(DangerScore);
         /// <summary> float - old value </summary>
         public EasyEvent<float> OnDangerScoreChange { get; } = new();
@@ -48,5 +42,7 @@ namespace Shuile
                 if (oldVal != dangerScore) OnDangerScoreChange.Invoke(oldVal);
             }
         }
+
+        public LayerableServiceLocator GetLocator() => serviceLocator;
     }
 }
