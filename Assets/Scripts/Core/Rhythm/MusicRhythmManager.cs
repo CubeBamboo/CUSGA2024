@@ -78,6 +78,6 @@ namespace Shuile.Rhythm.Runtime
 
         public void SetCurrentTime(float time) => OnSetCurrentTime.Invoke(time);
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

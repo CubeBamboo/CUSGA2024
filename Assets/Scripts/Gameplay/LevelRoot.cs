@@ -53,7 +53,7 @@ namespace Shuile.Root
             UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
 
             LevelDataBinder.Instance.DeInitialize();
-            GameApplication.LevelServiceLocator.ClearExsiting();
+            GameApplication.Level.ServiceLocator.ClearExsiting();
             IsLevelActive = false;
             Debug.Log("Level dispose end and close");
         }
@@ -62,7 +62,7 @@ namespace Shuile.Root
         {
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
 
         public void OnInitData(object data)
         {

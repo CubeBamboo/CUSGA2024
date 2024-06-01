@@ -134,6 +134,6 @@ namespace Shuile
               .UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

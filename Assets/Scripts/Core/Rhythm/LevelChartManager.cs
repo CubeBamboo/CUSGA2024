@@ -34,6 +34,6 @@ namespace Shuile.Rhythm.Runtime
             chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

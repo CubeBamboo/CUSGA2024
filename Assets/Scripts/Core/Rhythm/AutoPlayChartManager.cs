@@ -15,7 +15,7 @@ namespace Shuile.Rhythm.Runtime
         {
             _autoPlayChartManager.OnFixedUpdate();
         }
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 
     // manage auto play chart. (for someone like enemy or game ui animation)
@@ -53,6 +53,6 @@ namespace Shuile.Rhythm.Runtime
             chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

@@ -1,32 +1,71 @@
 using Shuile.Core.Configuration;
 using Shuile.Core.Framework;
-using Shuile.Model;
 using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
 {
-    public static class ChartManagerCommands
+    internal class TryHitNoteCommand : ICommand
     {
-        public static bool TryHitNote(float inputTime, out float hitOffset, LayerableServiceLocator serviceLocator)
+        internal struct Result
         {
-            MusicRhythmManager musicRhythmManager = serviceLocator.GetSystem<MusicRhythmManager>();
-            PlayerChartManager playerChartManager = serviceLocator.GetSystem<PlayerChartManager>();
+            public float hitOffset;
+            public bool isHitOn;
+        }
 
+        public float inputTime;
+        public MusicRhythmManager musicRhythmManager;
+        public PlayerChartManager playerChartManager;
+
+        public Result result { get; private set; }
+
+        public void Execute()
+        {
+            Result result = new();
             float missTolerance = ImmutableConfiguration.Instance.MissToleranceInSeconds;
 
             // get the nearest note's time and judge
-            hitOffset = float.NaN;
+            result.hitOffset = float.NaN;
             SingleNote targetNote = playerChartManager.TryGetNearestNote(musicRhythmManager.CurrentTime);
             if (targetNote == null)
-                return false;
+            {
+                result.isHitOn = false;
+                return;
+            }
 
             bool ret = Mathf.Abs(inputTime - targetNote.realTime) < missTolerance;
             if (ret)
             {
                 playerChartManager.HitNote(targetNote);
-                hitOffset = inputTime - targetNote.realTime;
+                result.hitOffset = inputTime - targetNote.realTime;
             }
-            return ret;
+            result.isHitOn = ret;
+            this.result = result;
+            return;
         }
     }
+
+    //public static class ChartManagerCommands
+    //{
+    //    //public static bool TryHitNote(float inputTime, out float hitOffset, ModuleContainer serviceLocator)
+    //    //{
+    //    //    MusicRhythmManager musicRhythmManager = serviceLocator.GetSystemImplemenation<MusicRhythmManager>();
+    //    //    PlayerChartManager playerChartManager = serviceLocator.GetSystemImplemenation<PlayerChartManager>();
+
+    //    //    float missTolerance = ImmutableConfiguration.Instance.MissToleranceInSeconds;
+
+    //    //    // get the nearest note's time and judge
+    //    //    hitOffset = float.NaN;
+    //    //    SingleNote targetNote = playerChartManager.TryGetNearestNote(musicRhythmManager.CurrentTime);
+    //    //    if (targetNote == null)
+    //    //        return false;
+
+    //    //    bool ret = Mathf.Abs(inputTime - targetNote.realTime) < missTolerance;
+    //    //    if (ret)
+    //    //    {
+    //    //        playerChartManager.HitNote(targetNote);
+    //    //        hitOffset = inputTime - targetNote.realTime;
+    //    //    }
+    //    //    return ret;
+    //    //}
+    //}
 }

@@ -16,6 +16,6 @@ namespace Shuile.Gameplay.Feel
             player = Player.Instance.transform;
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

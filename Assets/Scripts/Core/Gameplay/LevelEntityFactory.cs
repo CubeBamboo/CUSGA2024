@@ -20,7 +20,7 @@ namespace Shuile
         private GameObject InternalSpawnEnemy(GameObject enemyPrefab, Vector3 pos)
         {
             var enemyObject = UObject.Instantiate(enemyPrefab, pos, Quaternion.identity, LevelEntityManager.Instance.EnemyParent);
-            EnemySpawnEvent.Trigger(enemyObject);
+            OldEnemySpawnEvent.Trigger(enemyObject);
             return enemyObject;
         }
 

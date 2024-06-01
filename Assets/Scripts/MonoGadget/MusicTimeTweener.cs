@@ -16,7 +16,7 @@ namespace Shuile.MonoGadget
 
         public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
 
         public void OnInitData(object data)
         {

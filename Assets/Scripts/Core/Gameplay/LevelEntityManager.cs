@@ -54,16 +54,16 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            EnemySpawnEvent.Register(OnEnemySpawn);
-            EnemyDieEvent.Register(OnEnemyDie);
+            OldEnemySpawnEvent.Register(OnEnemySpawn);
+            OldEnemyDieEvent.Register(OnEnemyDie);
             _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
             _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
         }
 
         private void OnDestroy()
         {
-            EnemySpawnEvent.UnRegister(OnEnemySpawn);
-            EnemyDieEvent.UnRegister(OnEnemyDie);
+            OldEnemySpawnEvent.UnRegister(OnEnemySpawn);
+            OldEnemyDieEvent.UnRegister(OnEnemyDie);
             _autoPlayChartManager.OnRhythmHit -= OnRhythmHit;
         }
 
@@ -127,7 +127,7 @@ namespace Shuile.Gameplay
             enemyList.Add(enemy);
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
 
         public void OnInitData(object data)
         {

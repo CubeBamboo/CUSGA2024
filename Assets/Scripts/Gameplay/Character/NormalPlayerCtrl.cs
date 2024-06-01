@@ -60,6 +60,8 @@ namespace Shuile.Gameplay
         private MusicRhythmManager _musicRhythmManager;
         private PlayerModel playerModel;
 
+        private AttackCommand attackCommand;
+
         public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
         public EasyEvent<WeaponHitData> OnWeaponHit { get; } = new();
@@ -86,15 +88,37 @@ namespace Shuile.Gameplay
             }
         }
 
-        public bool CheckRhythm =>
-            ChartManagerCommands.TryHitNote(_musicRhythmManager.CurrentTime, out playerModel.currentHitOffset, this.GetLocator());
+        private TryHitNoteCommand hitNoteCommand;
 
+        public bool CheckRhythm
+        {
+            get
+            {
+                hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
+                this.ExecuteCommand<TryHitNoteCommand>(hitNoteCommand);
+                playerModel.currentHitOffset = hitNoteCommand.result.hitOffset;
+                return hitNoteCommand.result.isHitOn;
+            }
+        }
         private readonly SimpleDurationTimer holdJumpTimer = new();
 
         protected override void AwakeOverride()
         {
             ConfigureDependency();
             ConfigureInputEvent();
+
+            attackCommand = new()
+            {
+                position = transform.position,
+                attackRadius = attackRadius,
+                attackPoint = attackPoint
+            };
+            hitNoteCommand = new()
+            {
+                musicRhythmManager = _musicRhythmManager,
+                playerChartManager = this.GetSystem<PlayerChartManager>(),
+                inputTime = _musicRhythmManager.CurrentTime
+            };
 
             holdJumpTimer.MaxDuration = jumpMaxDuration;
         }
@@ -124,7 +148,7 @@ namespace Shuile.Gameplay
         /// <summary> update velocity </summary>
         public void NormalMove(float xInput)
         {
-            PlayerCommands.Move(xInput, _moveController);
+            _moveController.XMove(xInput);
             OnMoveStart?.Invoke(xInput);
             playerModel.faceDir = xInput;
         }
@@ -162,7 +186,9 @@ namespace Shuile.Gameplay
         {
             if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm) return;
 
-            PlayerCommands.Attack(transform.position, attackRadius, attackPoint);
+            attackCommand.position = transform.position;
+            this.ExecuteCommand<AttackCommand>(attackCommand);
+
             OnWeaponAttack.Invoke(true);
         }
 
@@ -254,6 +280,6 @@ namespace Shuile.Gameplay
             _moveController = GetComponent<SmoothMoveCtrl>();
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

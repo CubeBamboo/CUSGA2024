@@ -16,7 +16,7 @@ namespace Shuile.Rhythm.Runtime
         {
             _playerChartManager.OnFixedUpdate();
         }
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 
     // manage chart of player, convert chart to runtime note object noteContainer
@@ -66,6 +66,6 @@ namespace Shuile.Rhythm.Runtime
             noteContainer.ReleseNote(note);
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

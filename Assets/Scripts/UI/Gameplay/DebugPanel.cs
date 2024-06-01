@@ -64,7 +64,7 @@ namespace Shuile
             gameObject.SetActive(true);
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
 
         public void OnInitData(object data)
         {

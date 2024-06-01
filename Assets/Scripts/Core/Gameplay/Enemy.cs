@@ -8,11 +8,12 @@ using UnityEngine;
 
 using UObject = UnityEngine.Object;
 using Cysharp.Threading.Tasks;
+using Shuile.Core.Framework;
 
 namespace Shuile.Gameplay
 {
     /// <summary> base class for enemy </summary>
-    public abstract class Enemy : MonoBehaviour, IHurtable, IJudgeable
+    public abstract class Enemy : MonoBehaviour, IHurtable, IJudgeable, IEntity
     {
         [SerializeField] protected int MaxHealth = 100;
         protected SmoothMoveCtrl moveController;
@@ -22,11 +23,15 @@ namespace Shuile.Gameplay
         public bool IsAlive => health > 0;
         public SmoothMoveCtrl MoveController => moveController;
 
+        EnemyHurtEvent enemyHurtEvent;
+        public bool SelfEnable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public event Action<int> OnHpChangedEvent = _ => { };
         private HUDHpBarElement hpBarUI;
 
         protected void Awake()
         {
+            enemyHurtEvent = new() { enemy = gameObject };
             health = MaxHealth;
             moveController = GetComponent<SmoothMoveCtrl>();
             //MoveController.Ability = Property.moveAbility;
@@ -50,7 +55,8 @@ namespace Shuile.Gameplay
             var oldVal = health;
             health = Mathf.Max(0, health - attackPoint);
             OnSelfHurt(oldVal, health);
-            EnemyHurtEvent.Trigger(gameObject);
+            //OldEnemyHurtEvent.Trigger(gameObject);
+            this.TriggerEvent<EnemyHurtEvent>(enemyHurtEvent);
 
             if (Health == 0)
             {
@@ -61,11 +67,13 @@ namespace Shuile.Gameplay
         private async void HandleDieEvent()
         {
             await UniTask.WaitUntil(() => !LevelEntityManager.Instance.IsJudging);
-            EnemyDieEvent.Trigger(gameObject);
+            OldEnemyDieEvent.Trigger(gameObject);
         }
         protected abstract void OnSelfHurt(int oldVal, int newVal);
         protected abstract void OnSelfDie();
         public abstract void Judge(int frame, bool force);
+
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 
     /*public abstract class Enemy : BehaviourEntity, IHurtable

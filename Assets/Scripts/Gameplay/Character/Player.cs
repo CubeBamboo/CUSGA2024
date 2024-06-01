@@ -83,7 +83,7 @@ namespace Shuile.Gameplay
             }
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 
     public static class PlayerExtension

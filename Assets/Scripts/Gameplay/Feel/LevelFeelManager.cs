@@ -31,6 +31,6 @@ namespace Shuile
         public void VignettePulse(Color targetColor, float lerpValue = 0.3f)
             => volumeFeelHelper.VignettePulse(targetColor, lerpValue);
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

@@ -65,7 +65,7 @@ namespace Shuile.Gameplay
             MonoAudioCtrl.Instance.PlayOneShot("Level_Fail", 0.6f);
 
             TimingCtrl.Instance
-                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
+                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName))
                 .Start();
             //ActionCtrl.Delay(3f)
             //    .OnComplete(() => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
@@ -81,7 +81,7 @@ namespace Shuile.Gameplay
             MonoAudioCtrl.Instance.PlayOneShot("Level_Win", 0.6f);
 
             TimingCtrl.Instance
-                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.GetCurrentScene().name))
+                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName))
                 .Start();
             //ActionCtrl.Delay(3f)
             //    .OnComplete(() => MonoGameRouter.Instance.ToMenu())
@@ -97,6 +97,6 @@ namespace Shuile.Gameplay
         {
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

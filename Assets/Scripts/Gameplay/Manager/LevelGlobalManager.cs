@@ -28,13 +28,15 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            EnemyDieEvent.Register(GlobalOnEnemyDie);
-            EnemyHurtEvent.Register(GlobalOnEnemyHurt);
+            OldEnemyDieEvent.Register(GlobalOnEnemyDie);
+            this.RegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
+            //OldEnemyHurtEvent.Register(GlobalOnEnemyHurt);
         }
         protected override void OnDestroyOverride()
         {
-            EnemyDieEvent.UnRegister(GlobalOnEnemyDie);
-            EnemyHurtEvent.UnRegister(GlobalOnEnemyHurt);
+            OldEnemyDieEvent.UnRegister(GlobalOnEnemyDie);
+            this.UnRegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
+            //OldEnemyHurtEvent.UnRegister(GlobalOnEnemyHurt);
 
             TimingCtrl.Instance.StopAllTimer();
         }
@@ -55,7 +57,7 @@ namespace Shuile.Gameplay
             DebugUpdate();
         }
 
-        private void GlobalOnEnemyHurt(GameObject @object)
+        private void GlobalOnEnemyHurt(EnemyHurtEvent para)
         {
             _levelFeelManager.CameraShake();
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Hurt");
@@ -77,6 +79,6 @@ namespace Shuile.Gameplay
             }
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

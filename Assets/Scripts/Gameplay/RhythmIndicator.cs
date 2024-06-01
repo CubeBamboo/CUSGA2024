@@ -180,6 +180,6 @@ namespace Shuile.Gameplay
             return uiNoteList.Min();
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }
