@@ -40,9 +40,9 @@ namespace Shuile
 
         private void Start()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
             playerModel = this.GetModel<PlayerModel>();
             levelModel = this.GetModel<LevelModel>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
 
             gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
             {

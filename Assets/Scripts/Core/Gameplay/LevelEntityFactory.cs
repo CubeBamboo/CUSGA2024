@@ -10,6 +10,7 @@ using Shuile.Gameplay.Event;
 using Shuile.Core.Gameplay;
 using Shuile.ResourcesManagement.Loader;
 using CbUtils.Timing;
+using Shuile.Core.Framework;
 
 namespace Shuile
 {
@@ -20,7 +21,6 @@ namespace Shuile
         private GameObject InternalSpawnEnemy(GameObject enemyPrefab, Vector3 pos)
         {
             var enemyObject = UObject.Instantiate(enemyPrefab, pos, Quaternion.identity, LevelEntityManager.Instance.EnemyParent);
-            OldEnemySpawnEvent.Trigger(enemyObject);
             return enemyObject;
         }
 

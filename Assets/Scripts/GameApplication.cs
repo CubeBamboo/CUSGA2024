@@ -20,13 +20,14 @@ namespace Shuile
         {
             // Initialize the game
             Level
+                .AddUtilityImplemenation<LevelFeelManager>(() => new LevelFeelManager())
+
                 .AddModelImplemenation<LevelModel>(() => new LevelModel(Level))
                 .AddModelImplemenation<PlayerModel>(() => new PlayerModel())
-                .AddSystemImplemenation<MusicRhythmManager>(() => new MusicRhythmManager())
+
                 .AddSystemImplemenation<PlayerChartManager>(() => new PlayerChartManager())
                 .AddSystemImplemenation<LevelTimingManager>(() => new LevelTimingManager())
                 .AddSystemImplemenation<AutoPlayChartManager>(() => new AutoPlayChartManager())
-                .AddSystemImplemenation<LevelFeelManager>(() => new LevelFeelManager())
                 .AddSystemImplemenation<LevelStateMachine>(() => new LevelStateMachine())
                 .AddSystemImplemenation<EnemySpawnManager>(() => new EnemySpawnManager());
             

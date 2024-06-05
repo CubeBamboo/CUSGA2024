@@ -4,6 +4,7 @@ namespace Shuile.Framework
 {
     #region GlobalEvent
 
+    [System.Obsolete("use ModuleContainer.TypeEventSystem")]
     public class GlobalEvent<TTarget> where TTarget : GlobalEvent<TTarget>
     {
         static Action _onAction;
@@ -13,6 +14,7 @@ namespace Shuile.Framework
         public static void Clear() => _onAction = null;
     }
 
+    [System.Obsolete("use ModuleContainer.TypeEventSystem")]
     public class GlobalEvent<TTarget, T1> where TTarget : GlobalEvent<TTarget, T1>
     {
         static Action<T1> _onAction;
@@ -22,6 +24,7 @@ namespace Shuile.Framework
         public static void Clear() => _onAction = null;
     }
 
+    [System.Obsolete("use ModuleContainer.TypeEventSystem")]
     public class GlobalEvent<TTarget, T1, T2> where TTarget : GlobalEvent<TTarget, T1, T2>
     {
         static Action<T1, T2> _onAction;
@@ -35,6 +38,7 @@ namespace Shuile.Framework
 
     #region GlobalEvent
 
+    [System.Obsolete("use ModuleContainer.TypeEventSystem")]
     public class GlobalEvent_AutoClear<TTarget> where TTarget : GlobalEvent_AutoClear<TTarget>
     {
         private static Action _onAction;
@@ -44,6 +48,7 @@ namespace Shuile.Framework
         public static void Clear() => _onAction = null;
     }
 
+    [System.Obsolete("use ModuleContainer.TypeEventSystem")]
     public class GlobalEvent_AutoClear<TTarget, T1> where TTarget : GlobalEvent_AutoClear<TTarget, T1>
     {
         private static Action<T1> _onAction;
@@ -53,6 +58,7 @@ namespace Shuile.Framework
         public static void Clear() => _onAction = null;
     }
 
+    [System.Obsolete("use ModuleContainer.TypeEventSystem")]
     public class GlobalEvent_AutoClear<TTarget, T1, T2> where TTarget : GlobalEvent_AutoClear<TTarget, T1, T2>
     {
         private static Action<T1, T2> _onAction;

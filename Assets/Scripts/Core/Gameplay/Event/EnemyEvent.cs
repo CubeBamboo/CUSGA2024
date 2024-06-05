@@ -1,19 +1,19 @@
 using Shuile.Core.Framework;
-using Shuile.Framework;
-
 using UnityEngine;
 
 namespace Shuile.Gameplay.Event
 {
-    public class OldEnemyDieEvent : GlobalEvent<OldEnemyDieEvent, GameObject>
+    internal class EnemySpawnEvent : ITypeEvent
     {
+        public GameObject enemy;
     }
 
-    public class OldEnemySpawnEvent : GlobalEvent<OldEnemySpawnEvent, GameObject>
+    internal class EnemyDieEvent : ITypeEvent
     {
+        public GameObject enemy;
     }
 
-    public class EnemyHurtEvent : ITypeEvent
+    internal class EnemyHurtEvent : ITypeEvent
     {
         public GameObject enemy;
     }

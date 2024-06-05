@@ -54,7 +54,7 @@ namespace Shuile.Gameplay
 
         public LevelStateMachine()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
         }
 
         private void LevelFail()

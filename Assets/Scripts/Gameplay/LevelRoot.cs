@@ -21,7 +21,6 @@ namespace Shuile.Root
         public bool IsStart { get; private set; } = false;
         public bool needHitWithRhythm { get; private set; }
         public LevelContext LevelContext { get; private set; }
-        public bool SelfEnable { get => throw new System.NotSupportedException(); set => throw new System.NotSupportedException(); }
 
         protected override void OnAwake()
         {

@@ -37,7 +37,7 @@ namespace Shuile.Rhythm.Runtime
 
         public void OnStart()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
             chartPlayer = new ChartPlayer(chart);
             chartPlayer.OnNotePlay += (_, _) =>
             {

@@ -2,6 +2,8 @@ using CbUtils;
 using CbUtils.Event;
 using CbUtils.Extension;
 using DG.Tweening;
+using Shuile.Core.Framework;
+using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
 using URandom = UnityEngine.Random;
@@ -32,7 +34,7 @@ namespace Shuile.Gameplay.Entity.Enemies
             patrolBehavior = new(gameObject, moveController, 5f);
             chaseBehavior = new();
             mRenderer = GetComponentInChildren<SpriteRenderer>();
-
+            
             RegisterState(mFsm);
         }
 

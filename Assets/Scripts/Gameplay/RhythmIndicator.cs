@@ -103,8 +103,8 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
             _playerChartManager = this.GetSystem<PlayerChartManager>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
             levelModel = this.GetModel<LevelModel>();
 
             var preciseMusicPlayer = PreciseMusicPlayer.Instance;

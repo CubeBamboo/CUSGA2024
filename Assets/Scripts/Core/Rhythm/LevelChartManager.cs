@@ -19,7 +19,7 @@ namespace Shuile.Rhythm.Runtime
 
         private void Start()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
 
             chart = LevelDataBinder.Instance.ChartData;
             chartPlayer = new ChartPlayer(chart);

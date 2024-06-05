@@ -21,8 +21,6 @@ namespace Shuile.UI
 
         private float playerMaxHp;
 
-        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
         private void Awake()
         {
             this.RegisterUI<PlayingPanel>();

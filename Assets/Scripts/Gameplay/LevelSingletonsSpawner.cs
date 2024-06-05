@@ -16,8 +16,6 @@ namespace Shuile
             dependencyParent = new GameObject($"{nameof(dependencyParent)}").SetParent(transform).transform;
             singletonParent = new GameObject($"{nameof(singletonParent)}").SetParent(transform).transform;
 
-            LevelResourcesLoader.Instance.SyncContext.levelAudioManager.Instantiate().SetParent(singletonParent);
-
             new GameObject($"{nameof(PreciseMusicPlayer)}", typeof(PreciseMusicPlayer)).SetParent(dependencyParent);
 
             new GameObject($"{nameof(AutoPlayChartManagerUpdater)}", typeof(AutoPlayChartManagerUpdater)).SetParent(singletonParent);

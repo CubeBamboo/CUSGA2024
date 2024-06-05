@@ -27,8 +27,6 @@ namespace Shuile
         SpriteRenderer mRenderer;
         private LevelTimingManager timingManager;
 
-        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
         private void Awake()
         {
             timingManager = this.GetSystem<LevelTimingManager>();

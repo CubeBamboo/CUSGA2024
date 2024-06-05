@@ -1,9 +1,9 @@
-using CbUtils;
+using CbUtils.Unity;
 using UnityEngine;
 
 namespace Shuile.Audio
 {
-    public class LevelAudioManager : MonoNotAutoSpawnSingletons<LevelAudioManager>
+    public class LevelAudioManager : MonoSingletons<LevelAudioManager>
     {
         [SerializeField] private AudioSource musicSource;
         [SerializeField] private AudioSource sfxSource;

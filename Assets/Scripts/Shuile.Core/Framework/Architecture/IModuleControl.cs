@@ -11,6 +11,11 @@ namespace Shuile.Core.Framework
 
     public static class ModuleContainerExtension
     {
+        public static ModuleContainer AddUtilityImplemenation<T>(this ModuleContainer module, System.Func<T> implementation) where T : IUtility
+        {
+            module.ServiceLocator.AddUtilityCreator(implementation);
+            return module;
+        }
         public static ModuleContainer AddModelImplemenation<T>(this ModuleContainer module, System.Func<T> implementation) where T : IModel
         {
             module.ServiceLocator.AddModelCreator(implementation);
@@ -20,6 +25,10 @@ namespace Shuile.Core.Framework
         {
             module.ServiceLocator.AddSystemCreator(implementation);
             return module;
+        }
+        public  static T GetUtilityImplemenation<T>(this ModuleContainer module) where T : IUtility
+        {
+            return module.ServiceLocator.GetUtility<T>();
         }
         public static T GetModelImplemenation<T>(this ModuleContainer module) where T : IModel
         {
@@ -60,6 +69,16 @@ namespace Shuile.Core.Framework
     {
         ModuleContainer GetModule();
     }
+
+    public interface ICanGetUtility : IBelongsToModuleControl
+    {
+    }
+    public interface ICanGetModel : IBelongsToModuleControl
+    {
+    }
+    public interface ICanGetSystem : IBelongsToModuleControl
+    {
+    }
     public interface ICanRegisterEvent : IBelongsToModuleControl
     {
     }
@@ -70,44 +89,46 @@ namespace Shuile.Core.Framework
     {
     }
 
+    public interface IUtility
+    {
+    }
+
     // basically store data
-    public interface IModel : IBelongsToModuleControl, ICanTriggerEvent, ICanExecuteCommand
+    public interface IModel : IBelongsToModuleControl, ICanTriggerEvent, ICanExecuteCommand, ICanGetUtility, ICanGetModel
     {
     }
 
     // oprate data, and not response event for better, dont refernce IEntity (like singleton)
-    public interface ISystem : IBelongsToModuleControl, ICanTriggerEvent, ICanExecuteCommand
+    public interface ISystem : IBelongsToModuleControl, ICanTriggerEvent, ICanExecuteCommand,
+        ICanGetUtility, ICanGetModel, ICanGetSystem
     {
     }
 
     // designed for game object, esspesically those who like update you update me update everything and i dont know what and why they update... the "Update()" function is hard to control.
-    public interface IEntity : IBelongsToModuleControl, ICanRegisterEvent, ICanTriggerEvent, ICanExecuteCommand
+    public interface IEntity : IBelongsToModuleControl, ICanRegisterEvent, ICanTriggerEvent, ICanExecuteCommand,
+        ICanGetUtility, ICanGetModel, ICanGetSystem
     {
-        bool SelfEnable { get; set; }
+        bool SelfEnable
+        {
+            get => true;
+            set { }
+        }
         void OnInitData(object data) { }
     }
 
     public static class IModuleExtension // a better way for ServiceLocator
     {
-        public static T GetModel<T>(this IModel model) where T : IModel
+        public static T GetUtility<T>(this ICanGetUtility utility) where T : IUtility
+        {
+            return utility.GetModule().GetUtilityImplemenation<T>();
+        }
+        public static T GetModel<T>(this ICanGetModel model) where T : IModel
         {
             return model.GetModule().GetModelImplemenation<T>();
         }
-        public static T GetModel<T>(this ISystem system) where T : IModel
-        {
-            return system.GetModule().GetModelImplemenation<T>();
-        }
-        public static T GetSystem<T>(this ISystem system) where T : ISystem
+        public static T GetSystem<T>(this ICanGetSystem system) where T : ISystem
         {
             return system.GetModule().GetSystemImplemenation<T>();
-        }
-        public static T GetModel<T>(this IEntity entity) where T : IModel
-        {
-            return entity.GetModule().GetModelImplemenation<T>();
-        }
-        public static T GetSystem<T>(this IEntity entity) where T : ISystem
-        {
-            return entity.GetModule().GetSystemImplemenation<T>();
         }
 
         public static void RegisterEvent<T>(this ICanRegisterEvent entity, System.Action<T> action) where T : ITypeEvent

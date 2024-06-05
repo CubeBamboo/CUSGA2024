@@ -275,9 +275,9 @@ namespace Shuile.Gameplay
         private void ConfigureDependency()
         {
             playerModel = this.GetModel<PlayerModel>();
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
         }
 
         public override ModuleContainer GetModule() => GameApplication.Level;

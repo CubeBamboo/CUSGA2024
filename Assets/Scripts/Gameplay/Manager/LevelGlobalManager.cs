@@ -1,6 +1,6 @@
 using CbUtils.Timing;
+using CbUtils.Unity;
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Gameplay.Event;
 using Shuile.Model;
 using Shuile.Rhythm.Runtime;
@@ -12,31 +12,29 @@ using UInput = UnityEngine.InputSystem;
 namespace Shuile.Gameplay
 {
     // if you dont know where to put the logic, put it here
-    public class LevelGlobalManager : MonoEntity
+    public class LevelGlobalManager : MonoSingletons<LevelGlobalManager>, IEntity
     {
         private LevelModel _levelModel;
         private MusicRhythmManager _musicRhythmManager;
         private LevelFeelManager _levelFeelManager;
         private LevelStateMachine _levelStateMachine;
-        protected override void AwakeOverride()
+        protected override void OnAwake()
         {
+            _levelFeelManager = this.GetUtility<LevelFeelManager>();
             _levelModel = this.GetModel<LevelModel>();
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
-            _levelFeelManager = this.GetSystem<LevelFeelManager>();
             _levelStateMachine = this.GetSystem<LevelStateMachine>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
         }
 
         private void Start()
         {
-            OldEnemyDieEvent.Register(GlobalOnEnemyDie);
+            this.RegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
             this.RegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
-            //OldEnemyHurtEvent.Register(GlobalOnEnemyHurt);
         }
-        protected override void OnDestroyOverride()
+        private void OnDestroy()
         {
-            OldEnemyDieEvent.UnRegister(GlobalOnEnemyDie);
+            this.UnRegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
             this.UnRegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
-            //OldEnemyHurtEvent.UnRegister(GlobalOnEnemyHurt);
 
             TimingCtrl.Instance.StopAllTimer();
         }
@@ -62,7 +60,7 @@ namespace Shuile.Gameplay
             _levelFeelManager.CameraShake();
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Hurt");
         }
-        private void GlobalOnEnemyDie(GameObject go)
+        private void GlobalOnEnemyDie(EnemyDieEvent para)
         {
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Die");
         }
@@ -79,6 +77,6 @@ namespace Shuile.Gameplay
             }
         }
 
-        public override ModuleContainer GetModule() => GameApplication.Level;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

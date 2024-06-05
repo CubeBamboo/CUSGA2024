@@ -21,8 +21,6 @@ namespace Shuile
 
         private float halfShakeDurationCache;
 
-        public bool SelfEnable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         private void Start()
         {
             _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();

@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/GameRelese/MainMenu.unity
     guid: e210010d0d55df34b8e7b50c08c06d20
   - enabled: 1
+    path: Assets/Scenes/GameRelese/LevelRoot.unity
+    guid: 7e57834165a803a489ddd7f3d69a8944
+  - enabled: 1
     path: Assets/Scenes/GameRelese/Level1.unity
     guid: 2425a055bef79ff4d9f8c33896f17fc8
   - enabled: 1

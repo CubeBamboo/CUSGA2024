@@ -33,7 +33,8 @@ namespace Shuile
         private async UniTask InternalLoadLevel(string sceneName)
         {
             LastLevelSceneName = sceneName;
-            await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+            await SceneManager.LoadSceneAsync("LevelRoot", LoadSceneMode.Single);
+            await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             await SceneManager.LoadSceneAsync("LevelChild", LoadSceneMode.Additive); // you can load resources you need in LevelChild scene's GameObjects.
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
 
