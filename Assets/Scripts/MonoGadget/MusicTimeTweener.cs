@@ -1,5 +1,4 @@
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Rhythm.Runtime;
 
 using UnityEngine;

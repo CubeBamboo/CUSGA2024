@@ -8,11 +8,6 @@ using UnityEngine.SceneManagement;
 
 namespace Shuile
 {
-    /* TODO-List:
-     * - implement such two way of manage scene: 
-     * - - 1. scene as a independent module (single load)
-     * - - 2. scene as a child root of other scene. (register dependency relationship and auto load when using)
-     */
     public class MonoGameRouter : MonoSingletons<MonoGameRouter>, IGameRouter
     {
         private IRouterLoadingViewer defaultLoadingViewer;
@@ -33,9 +28,7 @@ namespace Shuile
         private async UniTask InternalLoadLevel(string sceneName)
         {
             LastLevelSceneName = sceneName;
-            await SceneManager.LoadSceneAsync("LevelRoot", LoadSceneMode.Single);
-            await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            await SceneManager.LoadSceneAsync("LevelChild", LoadSceneMode.Additive); // you can load resources you need in LevelChild scene's GameObjects.
+            await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
 
             await UniTask.WaitUntil(() => !TaskBus.Instance.IsBusy);

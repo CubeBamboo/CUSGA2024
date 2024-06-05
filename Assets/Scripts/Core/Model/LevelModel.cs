@@ -1,6 +1,7 @@
 using CbUtils;
 using Shuile.Core.Framework;
 using Shuile.Gameplay;
+using Shuile.Root;
 using System.Collections.Generic;
 
 namespace Shuile.Model
@@ -20,7 +21,7 @@ namespace Shuile.Model
         public LevelModel(ModuleContainer serviceLocator)
         {
             this.serviceLocator = serviceLocator;
-            var currentChart = LevelDataBinder.Instance.ChartData;
+            var currentChart = LevelRoot.LevelContext.ChartData;
             musicBpm = currentChart.time[0].bpm;
             musicOffset = currentChart.time[0].offset;
 

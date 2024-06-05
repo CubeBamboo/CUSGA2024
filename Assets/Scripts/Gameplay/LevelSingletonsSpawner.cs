@@ -16,7 +16,7 @@ namespace Shuile
             dependencyParent = new GameObject($"{nameof(dependencyParent)}").SetParent(transform).transform;
             singletonParent = new GameObject($"{nameof(singletonParent)}").SetParent(transform).transform;
 
-            new GameObject($"{nameof(PreciseMusicPlayer)}", typeof(PreciseMusicPlayer)).SetParent(dependencyParent);
+            //new GameObject($"{nameof(PreciseMusicPlayer)}", typeof(PreciseMusicPlayer)).SetParent(dependencyParent);
 
             new GameObject($"{nameof(AutoPlayChartManagerUpdater)}", typeof(AutoPlayChartManagerUpdater)).SetParent(singletonParent);
             new GameObject($"{nameof(PlayerChartManagerUpdater)}", typeof(PlayerChartManagerUpdater)).SetParent(singletonParent);

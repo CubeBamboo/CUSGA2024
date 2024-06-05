@@ -3,10 +3,9 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Audio;
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
-using Shuile.Rhythm.Runtime;
+using Shuile.Root;
 using System.Threading;
 using UnityEngine;
 
@@ -32,6 +31,11 @@ namespace Shuile
 
             audioPlayer = new SimpleAudioPlayer();
             Restore();
+        }
+
+        private void OnDestroy()
+        {
+            audioPlayer.Stop();
         }
 
         public void FixedUpdate()
@@ -109,7 +113,7 @@ namespace Shuile
         public void ReloadData()
         {
             Restore();
-            LoadClip(LevelDataBinder.Instance.ChartData.audioClip);
+            LoadClip(LevelRoot.LevelContext.ChartData.audioClip);
         }
 
         public void StartPlay(float offset)

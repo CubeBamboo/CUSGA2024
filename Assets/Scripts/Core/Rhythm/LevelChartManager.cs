@@ -1,5 +1,6 @@
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using Shuile.Root;
 using UDebug = UnityEngine.Debug;
 
 namespace Shuile.Rhythm.Runtime
@@ -21,7 +22,7 @@ namespace Shuile.Rhythm.Runtime
         {
             _musicRhythmManager = MusicRhythmManager.Instance;
 
-            chart = LevelDataBinder.Instance.ChartData;
+            chart = LevelRoot.LevelContext.ChartData;
             chartPlayer = new ChartPlayer(chart);
             chartPlayer.OnNotePlay += (note, _) => note.Process();
         }

@@ -6,6 +6,7 @@ using Shuile.Gameplay.Event;
 using Shuile.Core.Framework;
 using Shuile.Model;
 using CbUtils.Unity;
+using Shuile.Root;
 
 namespace Shuile.Rhythm.Runtime
 {
@@ -46,7 +47,7 @@ namespace Shuile.Rhythm.Runtime
 
         public void RefreshData()
         {
-            currentChart = LevelDataBinder.Instance.ChartData;
+            currentChart = LevelRoot.LevelContext.ChartData;
             
             playOnAwake = levelConfig.playOnAwake;
             playTimeScale = levelConfig.playTimeScale;

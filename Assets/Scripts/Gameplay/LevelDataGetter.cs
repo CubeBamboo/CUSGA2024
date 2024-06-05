@@ -17,7 +17,6 @@ namespace Shuile
         }
 
         public CameraParallaxMoveCtrlData cameraParallaxMove;
-        public Transform playerInitPosition;
 
         protected override void OnAwake() => OnInitializeData();
         

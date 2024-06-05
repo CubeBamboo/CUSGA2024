@@ -14,7 +14,7 @@ namespace Shuile.Rhythm.Runtime
         public float rhythmTime;
         public virtual void Process() { }
         public virtual float ToPlayTime()
-            => this.GetRealTime(rhythmTime, LevelRoot.Instance.LevelContext.timingManager);
+            => this.GetRealTime(rhythmTime, LevelRoot.LevelContext.timingManager);
 
         public static BaseNoteData Create(float time)
             => new() { rhythmTime = time };
@@ -34,7 +34,7 @@ namespace Shuile.Rhythm.Runtime
         }
 
         public override float ToPlayTime()
-            => this.GetRealTime(rhythmTime - Laser.InTime, LevelRoot.Instance.LevelContext.timingManager);
+            => this.GetRealTime(rhythmTime - Laser.InTime, LevelRoot.LevelContext.timingManager);
     }
 
     public class SpawnSingleEnemyNoteData : BaseNoteData

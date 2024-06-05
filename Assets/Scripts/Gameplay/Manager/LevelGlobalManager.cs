@@ -18,12 +18,17 @@ namespace Shuile.Gameplay
         private MusicRhythmManager _musicRhythmManager;
         private LevelFeelManager _levelFeelManager;
         private LevelStateMachine _levelStateMachine;
+        private Player _player;
+        private PlayerModel _playerModel;
+
         protected override void OnAwake()
         {
             _levelFeelManager = this.GetUtility<LevelFeelManager>();
             _levelModel = this.GetModel<LevelModel>();
+            _playerModel = this.GetModel<PlayerModel>();
             _levelStateMachine = this.GetSystem<LevelStateMachine>();
             _musicRhythmManager = MusicRhythmManager.Instance;
+            _player = Player.Instance;
         }
 
         private void Start()
@@ -67,13 +72,32 @@ namespace Shuile.Gameplay
 
         private void DebugUpdate()
         {
-            if (UInput.Keyboard.current.zKey.wasPressedThisFrame)
+            var keyboard = UInput.Keyboard.current;
+            
+            if (keyboard.zKey.wasPressedThisFrame)
             {
                 _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime + 5f);
             }
-            if (UInput.Keyboard.current.xKey.wasPressedThisFrame)
+            if (keyboard.xKey.wasPressedThisFrame)
             {
                 _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime - 5f);
+            }
+            
+            if (keyboard.upArrowKey.isPressed && keyboard.downArrowKey.wasPressedThisFrame)
+            {
+                //DebugProperty.Instance.SetInt("PlayerKaiGua", 1);
+                Debug.Log("开挂模式");
+                _player.CurrentHp.Value = 999999;
+            }
+            if (keyboard.upArrowKey.isPressed && keyboard.leftArrowKey.wasPressedThisFrame)
+            {
+                _playerModel.canInviciable = !_playerModel.canInviciable;
+                Debug.Log($"受击无敌变更 -> {_playerModel.canInviciable}");
+            }
+            if (keyboard.bKey.wasPressedThisFrame)
+            {
+                _player.OnHurt(20);
+                _player.OnHurt((int)(_player.CurrentHp.Value * 0.25f));
             }
         }
 

@@ -2,6 +2,7 @@ using Shuile.Core.Framework;
 using Shuile.Core.Gameplay;
 using Shuile.Gameplay;
 using Shuile.Model;
+using Shuile.Root;
 using UnityEngine;
 using URandom = UnityEngine.Random;
 
@@ -19,7 +20,7 @@ namespace Shuile
 
         public EnemySpawnManager()
         {
-            currentEnemyData = LevelDataBinder.Instance.levelEnemyData;
+            currentEnemyData = LevelRoot.LevelContext.levelEnemyData;
             _levelModel = this.GetModel<LevelModel>();
         }
 
