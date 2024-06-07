@@ -29,9 +29,9 @@ namespace Shuile.Gameplay
         {
             _levelModel = this.GetModel<LevelModel>();
             _playerModel = this.GetModel<PlayerModel>();
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
-            _levelFeelManager = this.GetSystem<LevelFeelManager>();
+            _levelFeelManager = this.GetUtility<LevelFeelManager>();
 
+            _musicRhythmManager = MusicRhythmManager.Instance;
             _moveController = GetComponent<SmoothMoveCtrl>();
             player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();
@@ -94,6 +94,6 @@ namespace Shuile.Gameplay
             });
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

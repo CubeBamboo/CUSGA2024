@@ -12,26 +12,25 @@ namespace Shuile
 {
     public static class GameApplication
     {
-        public static LayerableServiceLocator ServiceLocator { get; } = new LayerableServiceLocator();
-        public static LayerableServiceLocator LevelServiceLocator { get; } = new LayerableServiceLocator();
+        public static ModuleContainer Global { get; } = new();
+        public static ModuleContainer Level { get; } = new();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void PreInitialize()
         {
             // Initialize the game
-            LevelServiceLocator
-                .AddModelImplemenation<LevelModel>(() => new LevelModel(LevelServiceLocator))
+            Level
+                .AddUtilityImplemenation<LevelFeelManager>(() => new LevelFeelManager())
+
+                .AddModelImplemenation<LevelModel>(() => new LevelModel(Level))
                 .AddModelImplemenation<PlayerModel>(() => new PlayerModel())
-                .AddSystemImplemenation<MusicRhythmManager>(() => new MusicRhythmManager())
+
                 .AddSystemImplemenation<PlayerChartManager>(() => new PlayerChartManager())
                 .AddSystemImplemenation<LevelTimingManager>(() => new LevelTimingManager())
                 .AddSystemImplemenation<AutoPlayChartManager>(() => new AutoPlayChartManager())
-                .AddSystemImplemenation<LevelFeelManager>(() => new LevelFeelManager())
                 .AddSystemImplemenation<LevelStateMachine>(() => new LevelStateMachine())
                 .AddSystemImplemenation<EnemySpawnManager>(() => new EnemySpawnManager());
-
-            //LevelServiceLocator
-            //    .AddViewToEntityLinking<CameraDrifterController, CameraDrifterView>(c => c.gameObject.AddComponent<CameraDrifterView>());
+            
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

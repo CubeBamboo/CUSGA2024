@@ -21,8 +21,6 @@ namespace Shuile
 
         private float halfShakeDurationCache;
 
-        public bool SelfEnable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         private void Start()
         {
             _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
@@ -47,11 +45,6 @@ namespace Shuile
             });
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
-
-        public void OnInitData(object data)
-        {
-            throw new NotImplementedException();
-        }
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

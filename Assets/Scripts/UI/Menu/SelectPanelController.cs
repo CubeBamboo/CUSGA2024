@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using log4net.Core;
 using Shuile.Core.Gameplay;
 using Shuile.ResourcesManagement.Loader;
+using Shuile.Root;
 using Shuile.UI;
 using TMPro;
 using UnityEngine;
@@ -69,8 +70,11 @@ namespace Shuile
         {
             //var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());
             await TaskBus.Instance.Execute(LoadLevelResources(label));
-
-            LevelDataBinder.Instance.SetLevelData(_level);
+            
+            LevelContext levelContext = new LevelContext();
+            levelContext.LevelData = _level;
+            LevelRoot.RequestStart(levelContext);
+            
             MonoGameRouter.Instance.ToLevelScene(_level.sceneName);
         }
 

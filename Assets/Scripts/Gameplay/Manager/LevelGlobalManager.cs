@@ -1,6 +1,6 @@
 using CbUtils.Timing;
+using CbUtils.Unity;
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Gameplay.Event;
 using Shuile.Model;
 using Shuile.Rhythm.Runtime;
@@ -12,29 +12,34 @@ using UInput = UnityEngine.InputSystem;
 namespace Shuile.Gameplay
 {
     // if you dont know where to put the logic, put it here
-    public class LevelGlobalManager : MonoEntity
+    public class LevelGlobalManager : MonoSingletons<LevelGlobalManager>, IEntity
     {
         private LevelModel _levelModel;
         private MusicRhythmManager _musicRhythmManager;
         private LevelFeelManager _levelFeelManager;
         private LevelStateMachine _levelStateMachine;
-        protected override void AwakeOverride()
+        private Player _player;
+        private PlayerModel _playerModel;
+
+        protected override void OnAwake()
         {
+            _levelFeelManager = this.GetUtility<LevelFeelManager>();
             _levelModel = this.GetModel<LevelModel>();
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
-            _levelFeelManager = this.GetSystem<LevelFeelManager>();
+            _playerModel = this.GetModel<PlayerModel>();
             _levelStateMachine = this.GetSystem<LevelStateMachine>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
+            _player = Player.Instance;
         }
 
         private void Start()
         {
-            EnemyDieEvent.Register(GlobalOnEnemyDie);
-            EnemyHurtEvent.Register(GlobalOnEnemyHurt);
+            this.RegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
+            this.RegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
         }
-        protected override void OnDestroyOverride()
+        private void OnDestroy()
         {
-            EnemyDieEvent.UnRegister(GlobalOnEnemyDie);
-            EnemyHurtEvent.UnRegister(GlobalOnEnemyHurt);
+            this.UnRegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
+            this.UnRegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
 
             TimingCtrl.Instance.StopAllTimer();
         }
@@ -55,28 +60,47 @@ namespace Shuile.Gameplay
             DebugUpdate();
         }
 
-        private void GlobalOnEnemyHurt(GameObject @object)
+        private void GlobalOnEnemyHurt(EnemyHurtEvent para)
         {
             _levelFeelManager.CameraShake();
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Hurt");
         }
-        private void GlobalOnEnemyDie(GameObject go)
+        private void GlobalOnEnemyDie(EnemyDieEvent para)
         {
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Die");
         }
 
         private void DebugUpdate()
         {
-            if (UInput.Keyboard.current.zKey.wasPressedThisFrame)
+            var keyboard = UInput.Keyboard.current;
+            
+            if (keyboard.zKey.wasPressedThisFrame)
             {
                 _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime + 5f);
             }
-            if (UInput.Keyboard.current.xKey.wasPressedThisFrame)
+            if (keyboard.xKey.wasPressedThisFrame)
             {
                 _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime - 5f);
             }
+            
+            if (keyboard.upArrowKey.isPressed && keyboard.downArrowKey.wasPressedThisFrame)
+            {
+                //DebugProperty.Instance.SetInt("PlayerKaiGua", 1);
+                Debug.Log("开挂模式");
+                _player.CurrentHp.Value = 999999;
+            }
+            if (keyboard.upArrowKey.isPressed && keyboard.leftArrowKey.wasPressedThisFrame)
+            {
+                _playerModel.canInviciable = !_playerModel.canInviciable;
+                Debug.Log($"受击无敌变更 -> {_playerModel.canInviciable}");
+            }
+            if (keyboard.bKey.wasPressedThisFrame)
+            {
+                _player.OnHurt(20);
+                _player.OnHurt((int)(_player.CurrentHp.Value * 0.25f));
+            }
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

@@ -1,5 +1,4 @@
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Rhythm.Runtime;
 
 using UnityEngine;
@@ -14,18 +13,9 @@ namespace Shuile.MonoGadget
 
         public float TweenTime => tweenTime;
 
-        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
-
-        public void OnInitData(object data)
-        {
-            throw new System.NotImplementedException();
-        }
-
         protected void Awake()
         {
-            manager = this.GetSystem<MusicRhythmManager>();
+            manager = MusicRhythmManager.Instance;
             tweenTime = lastManagerTime = manager.CurrentTime;
         }
 
@@ -36,5 +26,7 @@ namespace Shuile.MonoGadget
             else
                 tweenTime += Time.deltaTime;
         }
+
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

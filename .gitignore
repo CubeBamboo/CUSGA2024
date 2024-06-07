@@ -4,6 +4,7 @@
 #
 
 .editorconfig
+.idea
 
 /[Ll]ibrary/
 /[Tt]emp/

@@ -1,5 +1,6 @@
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using Shuile.Root;
 using UDebug = UnityEngine.Debug;
 
 namespace Shuile.Rhythm.Runtime
@@ -19,9 +20,9 @@ namespace Shuile.Rhythm.Runtime
 
         private void Start()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
 
-            chart = LevelDataBinder.Instance.ChartData;
+            chart = LevelRoot.LevelContext.ChartData;
             chartPlayer = new ChartPlayer(chart);
             chartPlayer.OnNotePlay += (note, _) => note.Process();
         }
@@ -34,6 +35,6 @@ namespace Shuile.Rhythm.Runtime
             chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

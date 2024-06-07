@@ -1,3 +1,4 @@
+using CbUtils.Unity;
 using UnityEngine;
 
 namespace Shuile.Core.Framework.Unity
@@ -18,7 +19,6 @@ namespace Shuile.Core.Framework.Unity
         protected virtual void AwakeOverride() { }
         protected virtual void OnDestroyOverride() { }
 
-        public abstract LayerableServiceLocator GetLocator();
-        public virtual void OnInitData(object data) { }
+        public abstract ModuleContainer GetModule();
     }
 }

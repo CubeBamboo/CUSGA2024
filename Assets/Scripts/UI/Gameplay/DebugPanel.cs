@@ -31,8 +31,6 @@ namespace Shuile
         private PlayerModel playerModel;
         private LevelModel levelModel;
 
-        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
         private void Awake()
             => this.RegisterUI<DebugPanel>();
         private void OnDestroy()
@@ -40,9 +38,9 @@ namespace Shuile
 
         private void Start()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
             playerModel = this.GetModel<PlayerModel>();
             levelModel = this.GetModel<LevelModel>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
 
             gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
             {
@@ -64,11 +62,6 @@ namespace Shuile
             gameObject.SetActive(true);
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
-
-        public void OnInitData(object data)
-        {
-            throw new System.NotImplementedException();
-        }
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

@@ -2,13 +2,10 @@ using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Audio;
-using Shuile.Core;
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
-using Shuile.Gameplay;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
-using Shuile.Rhythm.Runtime;
+using Shuile.Root;
 using System.Threading;
 using UnityEngine;
 
@@ -18,26 +15,27 @@ namespace Shuile
     /// it provide a async player for lower delay, a timer start from music's specific position
     /// </summary>
     // TODO: it designed for a utils class in the first time, but now it's implemented to be a entity, and it needs to refactor
-    public class PreciseMusicPlayer : MonoEntity
+    public class PreciseMusicPlayer : MonoSingletons<PreciseMusicPlayer>, IEntity
     {
-        public static PreciseMusicPlayer Instance => MonoSingletonProperty<PreciseMusicPlayer>.Instance;
-
         private LevelConfigSO levelConfig;
 
-        private MusicRhythmManager _musicRhythmManager;
         private LevelModel levelModel;
         private AudioPlayerInUnity audioPlayer;
         public AudioPlayerInUnity AudioPlayer => audioPlayer;
-        protected override void AwakeOverride()
+
+        protected override void OnAwake()
         {
             levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
 
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
             levelModel = this.GetModel<LevelModel>();
 
             audioPlayer = new SimpleAudioPlayer();
             Restore();
-            InitializeEvent();
+        }
+
+        private void OnDestroy()
+        {
+            audioPlayer.Stop();
         }
 
         public void FixedUpdate()
@@ -112,28 +110,23 @@ namespace Shuile
             audioPlayer.TargetSource.time = time;
         }
 
-        private void InitializeEvent()
+        public void ReloadData()
         {
-            _musicRhythmManager.OnReloadData.Register(() =>
-            {
-                Restore();
-                LoadClip(LevelDataBinder.Instance.ChartData.audioClip);
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            _musicRhythmManager.OnStartPlay.Register(offset =>
-            {
-                Volume = levelConfig.volume;
-                Play(offset).Forget();
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            _musicRhythmManager.OnStopPlay.Register(Stop)
-              .UnRegisterWhenGameObjectDestroyed(gameObject);
-            _musicRhythmManager.OnFadeOutAndStop.Register(duration =>
-            {
-                AudioPlayer.TargetSource.DOFade(0, duration).OnComplete(() => AudioPlayer.Stop());
-            }).UnRegisterWhenGameObjectDestroyed(gameObject);
-            _musicRhythmManager.OnSetCurrentTime.Register(SetCurrentTime)
-              .UnRegisterWhenGameObjectDestroyed(gameObject);
+            Restore();
+            LoadClip(LevelRoot.LevelContext.ChartData.audioClip);
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public void StartPlay(float offset)
+        {
+            Volume = levelConfig.volume;
+            Play(offset).Forget();
+        }
+
+        public void FadeOutAndStop(float duration)
+        {
+            AudioPlayer.TargetSource.DOFade(0, duration).OnComplete(() => AudioPlayer.Stop());
+        }
+
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

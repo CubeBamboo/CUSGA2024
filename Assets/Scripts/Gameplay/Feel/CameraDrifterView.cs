@@ -61,6 +61,6 @@ namespace Shuile.Gameplay.Feel
             targetPosition.TargetValue = GetUsingTargetValue(_controller.TargetPosition);
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

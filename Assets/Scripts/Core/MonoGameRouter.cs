@@ -1,9 +1,5 @@
-using CbUtils;
-using CbUtils.Kits.Tasks;
 using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
-using Shuile.Gameplay.Event;
-using Shuile.Utils;
 using UnityEngine.SceneManagement;
 
 namespace Shuile
@@ -11,6 +7,7 @@ namespace Shuile
     public class MonoGameRouter : MonoSingletons<MonoGameRouter>, IGameRouter
     {
         private IRouterLoadingViewer defaultLoadingViewer;
+        public string LastLevelSceneName { get; private set; }
 
         protected override void OnAwake()
         {
@@ -18,7 +15,7 @@ namespace Shuile
             defaultLoadingViewer = GlobalTransitionViewer.Instance;
         }
 
-        private async UniTask InternalLoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        private static async UniTask InternalLoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
             await SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
@@ -26,16 +23,19 @@ namespace Shuile
 
         private async UniTask InternalLoadLevel(string sceneName)
         {
-            await InternalLoadScene(sceneName, LoadSceneMode.Single);
-            await InternalLoadScene("LevelChild", LoadSceneMode.Additive); // you can load resources you need in LevelChild scene's GameObjects.
-            await UniTask.WaitUntil(() => !TaskBus.Instance.IsBusy);
-            ExceptionUtils.UnityCatch(() =>
-            {
-                LevelStartEvent_AutoClear.Trigger(sceneName);
-                LevelStartEvent.Trigger(sceneName);
-                LevelLoadEndEvent.Trigger(sceneName); // maybe obsolete in future
-                LevelLoadEndEvent.Clear();
-            });
+            LastLevelSceneName = sceneName;
+            await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+
+            // await UniTask.WaitUntil(() => !TaskBus.Instance.IsBusy);
+            // ExceptionUtils.UnityCatch(() =>
+            // {
+            //     // // maybe obsolete in future
+            //     // LevelStartEvent_AutoClear.Trigger(sceneName);
+            //     // LevelStartEvent.Trigger(sceneName);
+            //     // LevelLoadEndEvent.Trigger(sceneName); 
+            //     // LevelLoadEndEvent.Clear();
+            // });
         }
 
         public void ToLevelScene(string sceneName)

@@ -1,14 +1,15 @@
+using Shuile.Core.Framework;
 using UnityEngine;
 
 namespace Shuile.Gameplay
 {
-    public static class PlayerCommands
+    internal class AttackCommand : ICommand
     {
-        public static void Move(float xInput, IMoveController moveController)
-        {
-            moveController.XMove(xInput);
-        }
-        public static void Attack(Vector2 position, float attackRadius, int attackPoint)
+        public Vector2 position;
+        public float attackRadius;
+        public int attackPoint;
+
+        public void Execute()
         {
             var hits = Physics2D.OverlapCircleAll(position, attackRadius, LayerMask.GetMask("Enemy"));
             foreach (var hit in hits)

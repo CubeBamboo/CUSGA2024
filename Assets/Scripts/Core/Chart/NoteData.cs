@@ -2,7 +2,6 @@ using CbUtils;
 using Cysharp.Threading.Tasks;
 
 using Shuile.Gameplay;
-using Shuile.NoteProduct;
 using Shuile.Rhythm.Runtime;
 using UnityEngine;
 

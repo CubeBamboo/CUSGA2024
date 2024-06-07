@@ -23,6 +23,6 @@ namespace Shuile
             _autoPlayChartManager.OnRhythmHit += _enemySpawnManager.OnRhythmHit;
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

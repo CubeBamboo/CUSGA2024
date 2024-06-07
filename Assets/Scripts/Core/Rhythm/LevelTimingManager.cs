@@ -12,7 +12,7 @@ namespace Shuile.Rhythm
             levelModel = this.GetModel<LevelModel>();
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
 
         public float GetRealTime(float rhythmTime)
         {

@@ -1,29 +1,33 @@
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Root;
+using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
 {
-    class PlayerChartManagerUpdater : MonoEntity
+    class PlayerChartManagerUpdater : MonoBehaviour, IEntity
     {
         private PlayerChartManager _playerChartManager;
-        protected override void AwakeOverride()
+        private MusicRhythmManager _musicRhythmManager;
+
+        private void Awake()
         {
             _playerChartManager = this.GetSystem<PlayerChartManager>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
         }
         private void FixedUpdate()
         {
-            _playerChartManager.OnFixedUpdate();
+            if (!LevelRoot.Instance.IsStart) return;
+
+            _playerChartManager.ChartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
+            _playerChartManager.noteContainer.CheckRelese(_musicRhythmManager.CurrentTime);
         }
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 
     // manage chart of player, convert chart to runtime note object noteContainer
     public class PlayerChartManager : ISystem
     {
-        private MusicRhythmManager _musicRhythmManager;
-
         private System.Lazy<ChartPlayer> chartPlayer;
 
         // chart part
@@ -32,12 +36,11 @@ namespace Shuile.Rhythm.Runtime
         private float notePreShowInterval = 0.4f;
         private LevelConfigSO _levelConfig;
 
-        private NoteContainer noteContainer;
         public event System.Action OnPlayerHitOn;
+        public NoteContainer noteContainer { get; private set;}
 
         public PlayerChartManager()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
             var levelTimingManager = this.GetSystem<LevelTimingManager>();
 
             _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
@@ -47,13 +50,6 @@ namespace Shuile.Rhythm.Runtime
             chartPlayer = new(() => new ChartPlayer(chart,
                 note => note.GetRealTime(levelTimingManager) - notePreShowInterval));
             ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetRealTime(levelTimingManager));
-        }
-        public void OnFixedUpdate()
-        {
-            if (!LevelRoot.Instance.IsStart) return;
-
-            ChartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
-            noteContainer.CheckRelese(_musicRhythmManager.CurrentTime);
         }
 
         public NoteContainer NoteContainer => noteContainer;
@@ -66,6 +62,6 @@ namespace Shuile.Rhythm.Runtime
             noteContainer.ReleseNote(note);
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

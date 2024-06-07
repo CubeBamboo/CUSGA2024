@@ -21,8 +21,6 @@ namespace Shuile.UI
 
         private float playerMaxHp;
 
-        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
         private void Awake()
         {
             this.RegisterUI<PlayingPanel>();
@@ -46,10 +44,6 @@ namespace Shuile.UI
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
-        public void OnInitData(object data)
-        {
-        }
-
         private void UpdateHpUI(int oldHp, int newHp)
         {
             hpFillImage.fillAmount = newHp / playerMaxHp;
@@ -65,7 +59,7 @@ namespace Shuile.UI
             gameObject.SetActive(true);
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
 
     }
 }

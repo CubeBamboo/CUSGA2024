@@ -13,6 +13,6 @@ namespace Shuile
         public bool canInviciable = true;
         public bool isInviciable = false;
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

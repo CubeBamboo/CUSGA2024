@@ -103,8 +103,8 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            _musicRhythmManager = this.GetSystem<MusicRhythmManager>();
             _playerChartManager = this.GetSystem<PlayerChartManager>();
+            _musicRhythmManager = MusicRhythmManager.Instance;
             levelModel = this.GetModel<LevelModel>();
 
             var preciseMusicPlayer = PreciseMusicPlayer.Instance;
@@ -180,6 +180,6 @@ namespace Shuile.Gameplay
             return uiNoteList.Min();
         }
 
-        public override LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
+        public override ModuleContainer GetModule() => GameApplication.Level;
     }
 }

@@ -9,7 +9,7 @@ namespace Shuile
     /// <summary>
     /// manage all about game feeling (like camera shake, particle effects, sound effects)
     /// </summary>
-    public class LevelFeelManager : ISystem
+    public class LevelFeelManager : IUtility
     {
         CameraFeelHelper cameraFeelHelper;
         VolumeFeelHelper volumeFeelHelper;
@@ -30,7 +30,5 @@ namespace Shuile
         public void VignettePulse() => volumeFeelHelper.VignettePulse();
         public void VignettePulse(Color targetColor, float lerpValue = 0.3f)
             => volumeFeelHelper.VignettePulse(targetColor, lerpValue);
-
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
     }
 }

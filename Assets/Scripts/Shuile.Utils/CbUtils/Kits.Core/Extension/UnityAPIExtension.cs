@@ -109,6 +109,17 @@ namespace CbUtils.Extension
         public static void DumpToUnityLogger(this object obj) => Debug.Log(obj);
 
         #endregion
+
+        #region MonoBehaviour
+
+        public static MonoBehaviour SpawnNew(this MonoBehaviour mono)
+        {
+            var go = new GameObject(mono.name);
+            go.AddComponent(mono.GetType());
+            return mono;
+        }
+
+        #endregion
     }
 
     public static class GameObjectExtension

@@ -1,7 +1,5 @@
-using CbUtils;
 using CbUtils.Unity;
 using Shuile.Core.Framework;
-using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Event;
 using Shuile.Model;
 using Shuile.Rhythm.Runtime;
@@ -14,19 +12,13 @@ namespace Shuile.Gameplay
 {
     public class LevelEntityManager : MonoSingletons<LevelEntityManager>, IEntity
     {
-        //[SerializeField] private List<BehaviourEntity> preset = new();
-
         private readonly List<Enemy> enemyList = new();
-        //private readonly List<Gadget> gadgetList = new();
         private readonly List<BehaviourLevelEntity> removeList = new();
 
-        private PrefabConfigSO prefabs;
         private bool judging = false;
         private int frameCounter = 0;
         
         private Transform enemyParent;
-        private Transform gadgetParent;
-        private Transform propParent;
 
         private LevelModel levelModel;
         private AutoPlayChartManager _autoPlayChartManager;
@@ -38,45 +30,41 @@ namespace Shuile.Gameplay
         public int EnemyCount { get; set; }
         public ReadOnlyCollection<Enemy> Enemies => enemyList.AsReadOnly();
 
-        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
-        //public ReadOnlyCollection<Gadget> Gadgets => gadgetList.AsReadOnly();
-
         protected override void Awake()
         {
             base.Awake();
             enemyParent = new GameObject("Enemies").transform;
-            gadgetParent = new GameObject("Gadgets").transform;
-            propParent = new GameObject("Props").transform;
 
             levelModel = this.GetModel<LevelModel>();
         }
 
         private void Start()
         {
-            EnemySpawnEvent.Register(OnEnemySpawn);
-            EnemyDieEvent.Register(OnEnemyDie);
             _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
             _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
+
+            this.RegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
+            this.RegisterEvent<EnemyDieEvent>(OnEnemyDie);
         }
 
         private void OnDestroy()
         {
-            EnemySpawnEvent.UnRegister(OnEnemySpawn);
-            EnemyDieEvent.UnRegister(OnEnemyDie);
+            this.UnRegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
+            this.UnRegisterEvent<EnemyDieEvent>(OnEnemyDie);
+
             _autoPlayChartManager.OnRhythmHit -= OnRhythmHit;
         }
 
-        private void OnEnemySpawn(GameObject go)
+        private void OnEnemySpawn(EnemySpawnEvent evt)
         {
-            if (go.TryGetComponent<Enemy>(out var enemy))
+            if (evt.enemy.TryGetComponent<Enemy>(out var enemy))
                 MarkEnemy(enemy);
             EnemyCount++;
         }
-        private void OnEnemyDie(GameObject go)
+        private void OnEnemyDie(EnemyDieEvent evt)
         {
             levelModel.DangerScore += DangerLevelUtils.GetEnemyKillAddition();
-            if (go.TryGetComponent<Enemy>(out var enemy))
+            if (evt.enemy.TryGetComponent<Enemy>(out var enemy))
                 enemyList.UnorderedRemove(enemy);
             EnemyCount--;
         }
@@ -127,11 +115,6 @@ namespace Shuile.Gameplay
             enemyList.Add(enemy);
         }
 
-        public LayerableServiceLocator GetLocator() => GameApplication.LevelServiceLocator;
-
-        public void OnInitData(object data)
-        {
-            throw new System.NotImplementedException();
-        }
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }
