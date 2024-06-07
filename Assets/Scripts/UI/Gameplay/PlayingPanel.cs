@@ -44,10 +44,6 @@ namespace Shuile.UI
                 .UnRegisterWhenGameObjectDestroyed(gameObject);
         }
 
-        public void OnInitData(object data)
-        {
-        }
-
         private void UpdateHpUI(int oldHp, int newHp)
         {
             hpFillImage.fillAmount = newHp / playerMaxHp;

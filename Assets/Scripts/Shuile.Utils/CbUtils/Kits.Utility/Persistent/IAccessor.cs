@@ -5,22 +5,22 @@ namespace Shuile.Persistent
     public interface IAccessor<T> where T : PersistentData<T>, new()
     {
         /// <summary>
-        /// ÊÇ·ñÖ§³ÖÊ¹ÓÃ<see cref="SaveAsync{TProp}(string, TProp)"/>
+        /// æ˜¯å¦æ”¯æŒä½¿ç”¨<see cref="SaveAsync{TProp}(string, TProp)"/>
         /// </summary>
         public bool IsRandomRWSupported { get; }
 
         /// <summary>
-        /// Òì²½¼ÓÔØ
+        /// å¼‚æ­¥åŠ è½½
         /// </summary>
         public UniTask<T> LoadAsync();
 
         /// <summary>
-        /// Òì²½±£´æÕû¸öÊı¾İÄ£ĞÍ
+        /// å¼‚æ­¥ä¿å­˜æ•´ä¸ªæ•°æ®æ¨¡å‹
         /// </summary>
         public UniTask SaveAsync(T data);
 
         /// <summary>
-        /// Òì²½±£´æµ¥ÌõÊı¾İ£¬ĞèÒª<see cref="IsRandomRWSupported"/>·µ»Øtrue
+        /// å¼‚æ­¥ä¿å­˜å•æ¡æ•°æ®ï¼Œéœ€è¦<see cref="IsRandomRWSupported"/>è¿”å›true
         /// </summary>
         public UniTask SaveAsync<TProp>(string path, TProp propertyValue);
     }

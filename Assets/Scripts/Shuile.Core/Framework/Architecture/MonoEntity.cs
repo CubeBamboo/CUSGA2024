@@ -20,8 +20,5 @@ namespace Shuile.Core.Framework.Unity
         protected virtual void OnDestroyOverride() { }
 
         public abstract ModuleContainer GetModule();
-
-        public virtual void OnInitData(object data) { }
-
     }
 }

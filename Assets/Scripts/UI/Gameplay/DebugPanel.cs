@@ -31,8 +31,6 @@ namespace Shuile
         private PlayerModel playerModel;
         private LevelModel levelModel;
 
-        public bool SelfEnable { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
         private void Awake()
             => this.RegisterUI<DebugPanel>();
         private void OnDestroy()
@@ -65,10 +63,5 @@ namespace Shuile
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;
-
-        public void OnInitData(object data)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

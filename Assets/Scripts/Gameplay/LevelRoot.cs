@@ -24,15 +24,12 @@ namespace Shuile.Root
             needHitWithRhythm = LevelResourcesLoader.Instance.SyncContext.levelConfig.needHitWithRhythm;
             LevelContext.timingManager = this.GetSystem<LevelTimingManager>();
 
-            LevelStartEvent_AutoClear.Register(_ =>
-            {
-                Debug.Log("Level load end, game start");
-                IsStart = true;
-                IsLevelActive = true;
-                EntitySystem.Instance.EnableAllEntities();
-            });
-
             UICtrl.Instance.Create<EndLevelPanel>().Hide();
+            
+            IsStart = true;
+            IsLevelActive = true;
+            EntitySystem.Instance.EnableAllEntities();
+            Debug.Log("Level load end, game start");
         }
         public void OnDestroy()
         {

@@ -1,9 +1,5 @@
-using CbUtils;
-using CbUtils.Kits.Tasks;
 using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
-using Shuile.Gameplay.Event;
-using Shuile.Utils;
 using UnityEngine.SceneManagement;
 
 namespace Shuile
@@ -19,7 +15,7 @@ namespace Shuile
             defaultLoadingViewer = GlobalTransitionViewer.Instance;
         }
 
-        private async UniTask InternalLoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        private static async UniTask InternalLoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
             await SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
@@ -31,15 +27,15 @@ namespace Shuile
             await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
 
-            await UniTask.WaitUntil(() => !TaskBus.Instance.IsBusy);
-            ExceptionUtils.UnityCatch(() =>
-            {
-                // maybe obsolete in future
-                LevelStartEvent_AutoClear.Trigger(sceneName);
-                LevelStartEvent.Trigger(sceneName);
-                LevelLoadEndEvent.Trigger(sceneName); 
-                LevelLoadEndEvent.Clear();
-            });
+            // await UniTask.WaitUntil(() => !TaskBus.Instance.IsBusy);
+            // ExceptionUtils.UnityCatch(() =>
+            // {
+            //     // // maybe obsolete in future
+            //     // LevelStartEvent_AutoClear.Trigger(sceneName);
+            //     // LevelStartEvent.Trigger(sceneName);
+            //     // LevelLoadEndEvent.Trigger(sceneName); 
+            //     // LevelLoadEndEvent.Clear();
+            // });
         }
 
         public void ToLevelScene(string sceneName)

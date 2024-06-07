@@ -2,7 +2,6 @@ using UnityEngine;
 using Shuile.Framework;
 using Shuile.Persistent;
 using Shuile.ResourcesManagement.Loader;
-using Shuile.Gameplay.Event;
 using Shuile.Core.Framework;
 using Shuile.Model;
 using CbUtils.Unity;
@@ -36,13 +35,13 @@ namespace Shuile.Rhythm.Runtime
             _preciseMusicPlayer = PreciseMusicPlayer.Instance;
 
             levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+        }
 
-            LevelStartEvent.Register(name =>
-            {
-                RefreshData();
-                if (playOnAwake)
-                    StartPlay();
-            });
+        private void Start()
+        {
+            RefreshData();
+            if (playOnAwake)
+                StartPlay();
         }
 
         public void RefreshData()

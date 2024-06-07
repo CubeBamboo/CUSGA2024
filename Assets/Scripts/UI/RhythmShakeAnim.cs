@@ -46,10 +46,5 @@ namespace Shuile
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;
-
-        public void OnInitData(object data)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
