@@ -1,6 +1,7 @@
 using CbUtils.Timing;
 using Shuile.Core.Framework;
 using Shuile.Framework;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using Shuile.UI.Gameplay;
 

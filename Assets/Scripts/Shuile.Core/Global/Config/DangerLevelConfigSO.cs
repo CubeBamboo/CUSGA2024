@@ -1,6 +1,4 @@
-using UnityEngine;
-
-namespace Shuile
+namespace Shuile.Core.Global.Config
 {
     // config data by static class...
     public static class DangerLevelConfigClass

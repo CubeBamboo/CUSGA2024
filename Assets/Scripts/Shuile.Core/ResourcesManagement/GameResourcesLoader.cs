@@ -1,5 +1,6 @@
 using CbUtils;
 using Shuile.Core.Gameplay;
+using Shuile.Core.Gameplay.Data;
 using System.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 

@@ -4,8 +4,8 @@ using Shuile.Core.Framework.Unity;
 using Shuile.Framework;
 using Shuile.Gameplay.Move;
 using Shuile.Gameplay.Weapon;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
-using Shuile.Root;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character

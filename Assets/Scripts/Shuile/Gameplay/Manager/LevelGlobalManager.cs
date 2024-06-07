@@ -1,12 +1,13 @@
 using CbUtils.Timing;
 using CbUtils.Unity;
 using Shuile.Core.Framework;
+using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Event;
 using Shuile.Gameplay.Feel;
 using Shuile.Model;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
-using Shuile.Root;
 using UnityEngine;
 using UInput = UnityEngine.InputSystem;
 

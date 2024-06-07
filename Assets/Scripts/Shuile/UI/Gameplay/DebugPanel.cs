@@ -8,6 +8,7 @@ using Shuile.Core.Framework;
 using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Model;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using TMPro;
 using UnityEngine;

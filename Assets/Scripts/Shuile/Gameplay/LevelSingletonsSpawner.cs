@@ -1,5 +1,6 @@
 using CbUtils.Extension;
 using Shuile.Gameplay.Manager;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using UnityEngine;
 

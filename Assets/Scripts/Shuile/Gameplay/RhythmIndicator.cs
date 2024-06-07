@@ -1,12 +1,12 @@
 using CbUtils.Extension;
 using DG.Tweening;
-using Shuile.Core.Configuration;
+using Shuile.Chart;
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using Shuile.Core.Global.Config;
 using Shuile.MonoGadget;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm.Runtime;
-using Shuile.Root;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

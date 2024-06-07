@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Core.Global.Config
 {
     [CreateAssetMenu(fileName = "LevelDebugSettings", menuName = "Config/LevelDebugSettings")]
     public class LevelDebugSettingsSO : ScriptableObject

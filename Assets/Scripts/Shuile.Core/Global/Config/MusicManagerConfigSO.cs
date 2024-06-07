@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Core.Global.Config
 {
     [CreateAssetMenu(fileName = "MusicManagerConfig", menuName = "Config/MusicManagerConfig")]
     public class MusicManagerConfigSO : ScriptableObject

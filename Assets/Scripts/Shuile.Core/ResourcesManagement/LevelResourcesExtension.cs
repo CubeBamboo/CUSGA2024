@@ -1,3 +1,4 @@
+using Shuile.Core.Global;
 using Shuile.ResourcesManagement.Loader;
 using System.Threading.Tasks;
 using UnityEngine;

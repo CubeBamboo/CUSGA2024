@@ -1,8 +1,9 @@
 using CbUtils.Kits.Tasks;
 using Cysharp.Threading.Tasks;
 using Shuile.Core.Gameplay;
+using Shuile.Core.Gameplay.Data;
+using Shuile.Gameplay;
 using Shuile.ResourcesManagement.Loader;
-using Shuile.Root;
 using Shuile.UI.Data;
 using TMPro;
 using UnityEngine;

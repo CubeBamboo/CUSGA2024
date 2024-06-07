@@ -1,13 +1,12 @@
-using Shuile.Framework;
-using Shuile.Gameplay.Event;
-using Shuile.ResourcesManagement.Loader;
-using UnityEngine;
-using Shuile.Core.Framework;
-using Shuile.Rhythm;
 using CbUtils.Unity;
+using Shuile.Core.Framework;
+using Shuile.Framework;
+using Shuile.ResourcesManagement.Loader;
+using Shuile.Rhythm;
 using Shuile.UI.Gameplay;
+using UnityEngine;
 
-namespace Shuile.Root
+namespace Shuile.Gameplay
 {
     public class LevelRoot : MonoSingletons<LevelRoot>, IEntity
     {
@@ -38,7 +37,7 @@ namespace Shuile.Root
             UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
             UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
 
-            GameApplication.Level.ServiceLocator.ClearExsiting();
+            GameApplication.Level.ServiceLocator.ClearExisting();
             IsLevelActive = false;
             Debug.Log("Level dispose end and close");
         }

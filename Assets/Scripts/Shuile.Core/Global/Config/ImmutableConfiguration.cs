@@ -1,7 +1,7 @@
 using CbUtils;
 using Shuile.ResourcesManagement.Loader;
 
-namespace Shuile.Core.Configuration
+namespace Shuile.Core.Global.Config
 {
     public class ImmutableConfiguration : CSharpLazySingletons<ImmutableConfiguration>
     {
