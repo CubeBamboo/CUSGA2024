@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-namespace Shuile
+namespace Shuile.UI.Menu
 {
     [RequireComponent(typeof(MainMenuUIStateMachine))]
     public class MainMenuStateController : MonoBehaviour

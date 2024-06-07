@@ -1,185 +1,201 @@
+using CbUtils.Extension;
+using DG.Tweening;
+using Shuile.Core.Configuration;
+using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using Shuile.MonoGadget;
+using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm.Runtime;
-
+using Shuile.Root;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-
-using UObject = UnityEngine.Object;
-using Shuile.ResourcesManagement.Loader;
-using Shuile.Core.Configuration;
-using System;
-using Shuile.Core.Framework;
-using Shuile.Model;
-using Shuile.Root;
-using Shuile.Core.Framework.Unity;
-using CbUtils.Extension;
 
 namespace Shuile.Gameplay
 {
     public class RhythmIndicator : MonoEntity
     {
-        private class UINote : SingleNote
+        [SerializeField] private float distanceUnit;
+
+        [SerializeField] private float maxNegativeDeltaTime = 0.2f;
+
+        private PlayerChartManager _playerChartManager;
+        private LevelConfigSO _levelConfig;
+
+        private readonly ObjectPool<Graphic> _notePool;
+
+        private Graphic _notePrefab;
+        private float _preDisplayTime;
+
+        private ReadOnlyCollection<SingleNote> _renderNoteList;
+        private Lazy<MusicTimeTweener> _timeTweener;
+        private readonly List<UINote> _uiNoteList;
+
+        public RhythmIndicator()
         {
-            public bool isHit;
-
-            public RectTransform transform;
-            public Graphic graphic;
-
-            public bool isFadeOut = false;
-
-            public UINote(RectTransform transform, Graphic graphic, float targetTime) : base(targetTime)
-            {
-                this.transform = transform;
-                this.graphic = graphic;
-                this.isHit = false;
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void UpdateView(float time, float distanceUnit, float preDisplayTime, float MissTolerance, float maxNegativeDeltaTime = 0.2f)
-            {
-                if (isHit) return;
-                var delta = this.realTime - time;
-                var waitForHit = delta > 0;
-
-                this.transform.localPosition = this.transform.localPosition.With(x: distanceUnit * delta);
-
-                if (!waitForHit && -delta > maxNegativeDeltaTime)
+            _notePool = new ObjectPool<Graphic>(
+                () => Instantiate(_notePrefab.gameObject, transform).GetComponent<Graphic>(),
+                g =>
                 {
-                    this.graphic.enabled = false;
-                    return;
-                }
-
-                float alpha = 1f - Mathf.Clamp01((delta - preDisplayTime + MissTolerance) / MissTolerance);
-                this.graphic.color = Color.white.With(a: alpha);
-                
-                //float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
-            }
-
-            public void DoHitView(System.Action<UINote> onComplete)
-            {
-                isHit = true;
-                this.graphic.DOFade(0, 0.2f).OnComplete(() => onComplete?.Invoke(this));
-            }
+                    g.gameObject.SetActive(true);
+                    g.enabled = true;
+                },
+                g => g.gameObject.SetActive(false),
+                g => Destroy(g.gameObject));
+            _uiNoteList = new List<UINote>(8);
         }
 
-        private ReadOnlyCollection<SingleNote> renderNoteList;
-
-        [SerializeField] private float distanceUnit;
-        [SerializeField] private float maxNegativeDeltaTime = 0.2f;
-        private float preDisplayTime;
-
-        private Graphic notePrefab;
-
-        private ObjectPool<Graphic> notePool;
-        private List<UINote> uiNoteList;
-        //private ChartPlayer chartPlayer;
-
-        private MusicRhythmManager _musicRhythmManager;
-        private PlayerChartManager _playerChartManager;
-        private LevelModel levelModel;
-        private Lazy<MusicTimeTweener> timeTweener;
-        private LevelConfigSO levelConfig;
-
-        public MusicTimeTweener TimeTweener => timeTweener.Value;
+        public MusicTimeTweener TimeTweener => _timeTweener.Value;
 
         private float CurrentTime => TimeTweener.TweenTime;
         private float MissTolerance => ImmutableConfiguration.Instance.MissToleranceInSeconds;
 
-        public RhythmIndicator()
-        {
-            notePool = new ObjectPool<Graphic>(() => Instantiate(notePrefab.gameObject, transform).GetComponent<Graphic>(),
-                g => { g.gameObject.SetActive(true); g.enabled = true; },
-                g => g.gameObject.SetActive(false),
-                g => UObject.Destroy(g.gameObject),
-                8);
-            uiNoteList = new(8);
-        }
-
         private void Start()
         {
             _playerChartManager = this.GetSystem<PlayerChartManager>();
-            _musicRhythmManager = MusicRhythmManager.Instance;
-            levelModel = this.GetModel<LevelModel>();
 
-            var preciseMusicPlayer = PreciseMusicPlayer.Instance;
-            timeTweener = new(() => preciseMusicPlayer.gameObject.GetOrAddComponent<MusicTimeTweener>());
+            PreciseMusicPlayer preciseMusicPlayer = PreciseMusicPlayer.Instance;
+            _timeTweener =
+                new Lazy<MusicTimeTweener>(() => preciseMusicPlayer.gameObject.GetOrAddComponent<MusicTimeTweener>());
 
-            levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
-            //var playerChartManager = GameplayService.Interface.Get<PlayerChartManager>();
-
-            notePrefab = LevelResourcesLoader.Instance.SyncContext.globalPrefabs.noteIndicator;
-            preDisplayTime = levelConfig.playerNotePreShowTime;
+            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+            _notePrefab = LevelResourcesLoader.Instance.SyncContext.globalPrefabs.noteIndicator;
+            _preDisplayTime = _levelConfig.playerNotePreShowTime;
             _playerChartManager.ChartPlayer.OnNotePlay += OnNote;
             _playerChartManager.OnPlayerHitOn += OnPlayerHit;
-            _playerChartManager.NoteContainer.OnNoteAutoRelese += OnNoteNeedRelese;
+            _playerChartManager.NoteContainer.OnNoteAutoRelese += OnNoteNeedRelease;
         }
+
+        private void Update()
+        {
+            for (int i = 0; i < _uiNoteList.Count;)
+            {
+                _uiNoteList[i++].UpdateView(TimeTweener.TweenTime, distanceUnit, _preDisplayTime, MissTolerance,
+                    maxNegativeDeltaTime);
+            }
+        }
+
         protected override void OnDestroyOverride()
         {
             if (LevelRoot.IsLevelActive)
             {
                 _playerChartManager.ChartPlayer.OnNotePlay -= OnNote;
                 _playerChartManager.OnPlayerHitOn -= OnPlayerHit;
-                _playerChartManager.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelese;
+                _playerChartManager.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelease;
             }
 
-            uiNoteList.Clear();
-            notePool.DestroyAll();
+            _uiNoteList.Clear();
+            _notePool.DestroyAll();
         }
 
-        private void Update()
+        private void OnNoteNeedRelease(float time)
         {
-            for (int i = 0; i < uiNoteList.Count;)
+            UINote uiNote = TryGetNearestNote();
+            if (uiNote == null)
             {
-                uiNoteList[i++].UpdateView(TimeTweener.TweenTime, distanceUnit, preDisplayTime, MissTolerance, maxNegativeDeltaTime);
+                return;
             }
-        }
 
-        private void OnNoteNeedRelese(float time)
-        {
-            var uiNote = TryGetNearestNote();
-            if (uiNote == null) return;
-            ReleseNote(uiNote);
+            ReleaseNote(uiNote);
         }
 
         private void OnPlayerHit()
         {
-            if (uiNoteList.Count == 0) return;
+            if (_uiNoteList.Count == 0)
+            {
+                return;
+            }
 
-            var uiNote = TryGetNearestNote();
-            if (uiNote == null) return;
+            UINote uiNote = TryGetNearestNote();
+            if (uiNote == null)
+            {
+                return;
+            }
 
             uiNote.isHit = true;
-            uiNote.DoHitView(n => ReleseNote(n));
+            uiNote.DoHitView(ReleaseNote);
         }
 
         private void OnNote(BaseNoteData noteData, float time)
         {
-            var obj = notePool.Get();
-            var graphic = obj;
+            Graphic obj = _notePool.Get();
+            Graphic graphic = obj;
             graphic.color = graphic.color.With(a: 0f);
-            uiNoteList.Add(new ((RectTransform)obj.transform, graphic, noteData.ToPlayTime()));
+            _uiNoteList.Add(new UINote((RectTransform)obj.transform, graphic, noteData.ToPlayTime()));
         }
 
-        private void ReleseNote(UINote note)
+        private void ReleaseNote(UINote note)
         {
-            notePool.Release(note.graphic);
-            uiNoteList.UnorderedRemove(note);
+            _notePool.Release(note.graphic);
+            _uiNoteList.UnorderedRemove(note);
         }
 
         //private float GetPlayTime(BaseNoteData note) => note.ToPlayTime() - preDisplayTime;
 
         private UINote TryGetNearestNote()
         {
-            if (uiNoteList.Count == 0) return null;
-            return uiNoteList.Min();
+            if (_uiNoteList.Count == 0)
+            {
+                return null;
+            }
+
+            return _uiNoteList.Min();
         }
 
-        public override ModuleContainer GetModule() => GameApplication.Level;
+        public override ModuleContainer GetModule()
+        {
+            return GameApplication.Level;
+        }
+
+        private class UINote : SingleNote
+        {
+            public readonly Graphic graphic;
+            public readonly RectTransform transform;
+
+            public bool isHit;
+
+            public UINote(RectTransform transform, Graphic graphic, float targetTime) : base(targetTime)
+            {
+                this.transform = transform;
+                this.graphic = graphic;
+                isHit = false;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void UpdateView(float time, float distanceUnit, float preDisplayTime, float MissTolerance,
+                float maxNegativeDeltaTime = 0.2f)
+            {
+                if (isHit)
+                {
+                    return;
+                }
+
+                float delta = realTime - time;
+                bool waitForHit = delta > 0;
+
+                transform.localPosition = transform.localPosition.With(distanceUnit * delta);
+
+                if (!waitForHit && -delta > maxNegativeDeltaTime)
+                {
+                    graphic.enabled = false;
+                    return;
+                }
+
+                float alpha = 1f - Mathf.Clamp01((delta - preDisplayTime + MissTolerance) / MissTolerance);
+                graphic.color = Color.white.With(a: alpha);
+
+                //float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);
+            }
+
+            public void DoHitView(Action<UINote> onComplete)
+            {
+                isHit = true;
+                graphic.DOFade(0, 0.2f).OnComplete(() => onComplete?.Invoke(this));
+            }
+        }
     }
 }

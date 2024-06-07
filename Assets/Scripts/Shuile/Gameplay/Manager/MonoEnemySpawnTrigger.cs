@@ -2,7 +2,7 @@ using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
 using Shuile.Rhythm.Runtime;
 
-namespace Shuile
+namespace Shuile.Gameplay.Manager
 {
     public class MonoEnemySpawnTrigger : MonoEntity
     {

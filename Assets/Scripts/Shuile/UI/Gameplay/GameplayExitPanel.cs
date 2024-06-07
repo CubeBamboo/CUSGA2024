@@ -1,8 +1,7 @@
 using Shuile.Framework;
-
 using UnityEngine;
 
-namespace Shuile.UI
+namespace Shuile.UI.Gameplay
 {
     public class GameplayExitPanel : BasePanelWithMono
     {

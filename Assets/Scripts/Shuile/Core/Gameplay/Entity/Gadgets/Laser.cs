@@ -7,6 +7,7 @@ using UnityEngine;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using Shuile.Core.Framework;
+using Shuile.Gameplay.Character;
 using Shuile.Rhythm;
 
 namespace Shuile

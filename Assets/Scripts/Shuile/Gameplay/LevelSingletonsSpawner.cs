@@ -1,34 +1,38 @@
 using CbUtils.Extension;
-using Shuile.Gameplay;
-using Shuile.ResourcesManagement.Loader;
+using Shuile.Gameplay.Manager;
 using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Gameplay
 {
     public class LevelSingletonsSpawner : MonoBehaviour
     {
-        private Transform dependencyParent; // not singleton
-        private Transform singletonParent; // singleton
+        private Transform _dependencyParent; // not singleton
+        private Transform _singletonParent; // singleton
 
         public void Awake()
         {
-            dependencyParent = new GameObject($"{nameof(dependencyParent)}").SetParent(transform).transform;
-            singletonParent = new GameObject($"{nameof(singletonParent)}").SetParent(transform).transform;
+            _dependencyParent = new GameObject($"{nameof(_dependencyParent)}").SetParent(transform).transform;
+            _singletonParent = new GameObject($"{nameof(_singletonParent)}").SetParent(transform).transform;
 
-            //new GameObject($"{nameof(PreciseMusicPlayer)}", typeof(PreciseMusicPlayer)).SetParent(dependencyParent);
-
-            new GameObject($"{nameof(AutoPlayChartManagerUpdater)}", typeof(AutoPlayChartManagerUpdater)).SetParent(singletonParent);
-            new GameObject($"{nameof(PlayerChartManagerUpdater)}", typeof(PlayerChartManagerUpdater)).SetParent(singletonParent);
-            new GameObject($"{nameof(MonoEnemySpawnTrigger)}", typeof(MonoEnemySpawnTrigger)).SetParent(singletonParent);
-            new GameObject($"{nameof(LevelChartManager)}", typeof(LevelChartManager)).SetParent(singletonParent);
-            new GameObject($"{nameof(LevelEntityManager)}", typeof(LevelEntityManager)).SetParent(singletonParent);
-            new GameObject($"{nameof(LevelGlobalManager)}", typeof(LevelGlobalManager)).SetParent(singletonParent);
+            new GameObject($"{nameof(AutoPlayChartManagerUpdater)}", typeof(AutoPlayChartManagerUpdater))
+                .SetParent(_singletonParent);
+            new GameObject($"{nameof(PlayerChartManagerUpdater)}", typeof(PlayerChartManagerUpdater))
+                .SetParent(_singletonParent);
+            new GameObject($"{nameof(MonoEnemySpawnTrigger)}", typeof(MonoEnemySpawnTrigger))
+                .SetParent(_singletonParent);
+            new GameObject($"{nameof(LevelChartManager)}", typeof(LevelChartManager))
+                .SetParent(_singletonParent);
+            new GameObject($"{nameof(LevelEntityManager)}", typeof(LevelEntityManager))
+                .SetParent(_singletonParent);
+            new GameObject($"{nameof(LevelGlobalManager)}", typeof(LevelGlobalManager))
+                .SetParent(_singletonParent);
         }
+
         public void OnDestroy()
         {
-            Destroy(dependencyParent.gameObject);
-            Destroy(singletonParent.gameObject);
+            Destroy(_dependencyParent.gameObject);
+            Destroy(_singletonParent.gameObject);
         }
     }
 }

@@ -2,9 +2,11 @@ using CbUtils;
 using CbUtils.Unity;
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using Shuile.Gameplay.Manager;
+using Shuile.Gameplay.Move;
 using UnityEngine;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Character
 {
     public class Player : MonoEntity, IHurtable
     {

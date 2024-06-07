@@ -1,5 +1,6 @@
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using Shuile.Gameplay.Character;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Feel

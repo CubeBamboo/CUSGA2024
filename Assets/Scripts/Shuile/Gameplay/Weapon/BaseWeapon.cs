@@ -1,11 +1,8 @@
 using CbUtils;
-
 using Shuile.Framework;
-
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Weapon
 {
     public enum WeaponType
     {

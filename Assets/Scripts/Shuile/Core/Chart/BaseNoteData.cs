@@ -4,6 +4,7 @@ using UnityEngine;
 
 using CbUtils.Extension;
 using Shuile.Core.Gameplay;
+using Shuile.Gameplay.Manager;
 using Shuile.Root;
 
 namespace Shuile.Rhythm.Runtime

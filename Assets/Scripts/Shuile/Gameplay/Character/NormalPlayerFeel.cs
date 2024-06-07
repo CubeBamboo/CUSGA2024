@@ -1,12 +1,13 @@
 using CbUtils.ActionKit;
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using Shuile.Gameplay.Feel;
+using Shuile.Gameplay.Move;
 using Shuile.Model;
 using Shuile.Rhythm.Runtime;
-
 using UnityEngine;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Character
 {
     // player feedback and other event
     public class NormalPlayerFeel : MonoEntity

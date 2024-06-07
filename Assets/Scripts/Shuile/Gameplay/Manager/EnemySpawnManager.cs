@@ -1,19 +1,18 @@
 using Shuile.Core.Framework;
 using Shuile.Core.Gameplay;
-using Shuile.Gameplay;
 using Shuile.Model;
 using Shuile.Root;
 using UnityEngine;
 using URandom = UnityEngine.Random;
 
-namespace Shuile
+namespace Shuile.Gameplay.Manager
 {
     public class EnemySpawnManager : ISystem
     {
+        private readonly LevelModel _levelModel;
         [HideInInspector] public LevelEnemySO currentEnemyData;
 
         private int currentRoundIndex = 0;
-        private LevelModel _levelModel;
 
         public int EnemyCount => LevelEntityManager.Instance.EnemyCount;
         public int CurrentRoundIndex => currentRoundIndex;

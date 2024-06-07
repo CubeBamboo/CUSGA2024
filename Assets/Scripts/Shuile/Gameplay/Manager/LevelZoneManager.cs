@@ -1,10 +1,8 @@
 using CbUtils;
 using Shuile.Utils;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Gameplay.Manager
 {
     [RequireComponent(typeof(MarkedZone2D))]
     public class LevelZoneManager : MonoNotAutoSpawnSingletons<LevelZoneManager>

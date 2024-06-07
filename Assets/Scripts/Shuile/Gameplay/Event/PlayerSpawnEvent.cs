@@ -1,4 +1,5 @@
 using Shuile.Core.Framework;
+using Shuile.Gameplay.Character;
 
 namespace Shuile.Gameplay.Event
 {

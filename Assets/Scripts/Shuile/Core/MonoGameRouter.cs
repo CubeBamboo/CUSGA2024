@@ -1,5 +1,6 @@
 using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
+using Shuile.UI;
 using UnityEngine.SceneManagement;
 
 namespace Shuile

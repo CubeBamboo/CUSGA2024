@@ -7,24 +7,24 @@ namespace Shuile.MonoGadget
 {
     public class MusicTimeTweener : MonoBehaviour, IEntity
     {
-        private MusicRhythmManager manager;
-        private float lastManagerTime;
-        private float tweenTime;
+        private MusicRhythmManager _manager;
+        private float _lastManagerTime;
+        private float _tweenTime;
 
-        public float TweenTime => tweenTime;
+        public float TweenTime => _tweenTime;
 
         protected void Awake()
         {
-            manager = MusicRhythmManager.Instance;
-            tweenTime = lastManagerTime = manager.CurrentTime;
+            _manager = MusicRhythmManager.Instance;
+            _tweenTime = _lastManagerTime = _manager.CurrentTime;
         }
 
         private void Update()
         {
-            if (!manager.IsPlaying || lastManagerTime != manager.CurrentTime)
-                tweenTime = lastManagerTime = manager.CurrentTime;
+            if (!_manager.IsPlaying || _lastManagerTime != _manager.CurrentTime)
+                _tweenTime = _lastManagerTime = _manager.CurrentTime;
             else
-                tweenTime += Time.deltaTime;
+                _tweenTime += Time.deltaTime;
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

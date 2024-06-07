@@ -1,16 +1,14 @@
-using Shuile.Framework;
 using CbUtils.Extension;
-
+using Shuile.Framework;
 using UnityEngine;
-using TMPro;
 
-namespace Shuile
+namespace Shuile.UI.Gameplay
 {
     public class EndLevelPanel : BasePanelWithMono
     {
         [SerializeField] private GameObject win, fail;
 
-        public static PanelCreateor Creator = () =>
+        public static PanelCreator Creator = () =>
             Resources.Load<GameObject>("UIDesign/EndLevelPanel").Instantiate().GetComponent<IPanel>();
 
         private void Awake()

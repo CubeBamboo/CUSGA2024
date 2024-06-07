@@ -1,7 +1,7 @@
 using Shuile.Core.Framework;
 using UnityEngine;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Character
 {
     internal class AttackCommand : ICommand
     {

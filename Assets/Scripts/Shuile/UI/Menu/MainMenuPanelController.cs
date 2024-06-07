@@ -1,9 +1,7 @@
-using DG.Tweening;
-
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Shuile
+namespace Shuile.UI.Menu
 {
     public class MainMenuPanelController : MonoBehaviour
     {

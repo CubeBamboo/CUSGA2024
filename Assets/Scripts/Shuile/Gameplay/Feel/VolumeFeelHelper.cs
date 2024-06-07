@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-namespace Shuile
+namespace Shuile.Gameplay.Feel
 {
     public class VolumeFeelHelper
     {

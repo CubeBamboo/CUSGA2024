@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Move
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class SmoothMoveCtrl : MonoBehaviour, IMoveController

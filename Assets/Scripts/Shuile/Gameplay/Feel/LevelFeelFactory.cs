@@ -1,7 +1,7 @@
 using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Gameplay.Feel
 {
     public class LevelFeelFactory
     {

@@ -1,26 +1,23 @@
 using CbUtils;
-using Shuile.Gameplay.Feel;
+using System;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Gameplay
 {
     // shit for data generate in .scene
     public class LevelDataGetter : MonoNotAutoSpawnSingletons<LevelDataGetter>
     {
-        [System.Serializable]
-        public struct CameraParallaxMoveCtrlData
-        {
-            public Transform origin;
-            public float moveScale; // = 0.1f;
-            public float moveSpeed; // = 0.02f;
-            public float moveRadius; // = 0.1f;
-        }
-
         public CameraParallaxMoveCtrlData cameraParallaxMove;
 
-        protected override void OnAwake() => OnInitializeData();
-        
-        private void OnDestroy() => OnDeInitializeData();
+        private void OnDestroy()
+        {
+            OnDeInitializeData();
+        }
+
+        protected override void OnAwake()
+        {
+            OnInitializeData();
+        }
 
         public void OnInitializeData()
         {
@@ -28,6 +25,15 @@ namespace Shuile
 
         public void OnDeInitializeData()
         {
+        }
+
+        [Serializable]
+        public struct CameraParallaxMoveCtrlData
+        {
+            public Transform origin;
+            public float moveScale; // = 0.1f;
+            public float moveSpeed; // = 0.02f;
+            public float moveRadius; // = 0.1f;
         }
     }
 }

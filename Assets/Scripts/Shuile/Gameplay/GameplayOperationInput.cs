@@ -1,5 +1,4 @@
-using Shuile.UI;
-
+using Shuile.UI.Gameplay;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

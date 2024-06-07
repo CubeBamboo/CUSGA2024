@@ -1,17 +1,13 @@
-using UnityEngine;
-using TMPro;
-
-using Shuile.Gameplay;
-using Shuile.Framework;
-using Shuile.Gameplay.Event;
-using UnityEngine.UI;
-using Shuile.Model;
 using Shuile.Core.Framework;
-using System;
-using System.Runtime.Serialization;
+using Shuile.Framework;
+using Shuile.Gameplay;
+using Shuile.Gameplay.Character;
+using Shuile.Model;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
-
-namespace Shuile.UI
+namespace Shuile.UI.Gameplay
 {
     public class PlayingPanel : BasePanelWithMono, IEntity
     {
@@ -19,7 +15,7 @@ namespace Shuile.UI
         [SerializeField] private TextMeshProUGUI dangerLevelText;
         [SerializeField] private Player player; 
 
-        private float playerMaxHp;
+        private float _playerMaxHp;
 
         private void Awake()
         {
@@ -37,7 +33,7 @@ namespace Shuile.UI
             levelModel.OnDangerScoreChange.Register(old =>
                 dangerLevelText.text = levelModel.DangerLevel.ToString())
                .UnRegisterWhenGameObjectDestroyed(gameObject);
-            playerMaxHp = player.Property.maxHealthPoint;
+            _playerMaxHp = player.Property.maxHealthPoint;
 
             UpdateHpUI(int.MinValue, player.CurrentHp.Value);
             player.CurrentHp.Register(UpdateHpUI)
@@ -46,7 +42,7 @@ namespace Shuile.UI
 
         private void UpdateHpUI(int oldHp, int newHp)
         {
-            hpFillImage.fillAmount = newHp / playerMaxHp;
+            hpFillImage.fillAmount = newHp / _playerMaxHp;
         }
 
         public override void Hide()

@@ -2,11 +2,13 @@ using CbUtils;
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
 using Shuile.Framework;
+using Shuile.Gameplay.Move;
+using Shuile.Gameplay.Weapon;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
 using UnityEngine;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Character
 {
     public class NormalPlayerCtrl : MonoEntity
     {

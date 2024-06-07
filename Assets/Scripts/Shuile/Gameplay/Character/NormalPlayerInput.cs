@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Character
 {
     public class NormalPlayerInput : MonoBehaviour
     {

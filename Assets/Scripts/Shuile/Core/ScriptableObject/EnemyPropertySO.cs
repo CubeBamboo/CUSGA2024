@@ -1,5 +1,5 @@
 using Shuile.Gameplay;
-
+using Shuile.Gameplay.Move;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New EnemyProperty", menuName = "Config/Enemy Property")]

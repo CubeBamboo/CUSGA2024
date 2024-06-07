@@ -5,6 +5,7 @@ using Shuile.ResourcesManagement.Loader;
 using Shuile.Core.Framework;
 using Shuile.Model;
 using CbUtils.Unity;
+using Shuile.Core;
 using Shuile.Root;
 
 namespace Shuile.Rhythm.Runtime

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Move
 {
     public class UnmovableMoveCtrl : MonoBehaviour, IMoveController
     {

@@ -2,6 +2,7 @@ using CbUtils;
 using CbUtils.Event;
 
 using DG.Tweening;
+using Shuile.Gameplay.Character;
 using UnityEngine;
 
 using URandom = UnityEngine.Random;

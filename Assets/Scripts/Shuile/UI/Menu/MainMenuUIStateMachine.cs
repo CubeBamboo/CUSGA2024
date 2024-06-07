@@ -1,11 +1,9 @@
 using CbUtils;
-
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Shuile
+namespace Shuile.UI.Menu
 {
     public class MainMenuUIStateMachine : MonoBehaviour
     {

@@ -1,7 +1,8 @@
-using CbUtils.Extension;
 using CbUtils.Kits.Tasks;
 using Shuile.Core.Framework;
 using Shuile.Gameplay;
+using Shuile.Gameplay.Feel;
+using Shuile.Gameplay.Manager;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm;
@@ -37,11 +38,8 @@ namespace Shuile
         public static void PostInitialize()
         {
             // Post initialize the game
-            var globalGO = Object.Instantiate(Resources.Load<GameObject>("GlobalGameObject"))
-                .SetDontDestroyOnLoad();
-            var busyScreen = globalGO.GetChildByPath<IBusyScreen>("GlobalCanvas/TaskBusyScreen");
-            Debug.Log("Use BusyScreen: " + busyScreen);
-            TaskBus.Instance.Initialize(busyScreen);
+            var globalGO = Global.InstantiateGlobalGameObject();
+            TaskBus.Instance.InitializeBusyScreenByGlobalGameObject(globalGO);
 
             _ = GameResourcesLoader.Instance.PreCacheAsync();
         }

@@ -1,11 +1,10 @@
-using CbUtils;
 using CbUtils.Timing;
-using CbUtils.Unity;
 using Shuile.Core.Framework;
 using Shuile.Framework;
 using Shuile.Rhythm.Runtime;
+using Shuile.UI.Gameplay;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Manager
 {
     public class LevelStateMachine : ISystem
     {

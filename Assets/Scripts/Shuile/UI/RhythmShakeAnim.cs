@@ -1,12 +1,9 @@
 using DG.Tweening;
 using Shuile.Core.Framework;
-using Shuile.Gameplay;
 using Shuile.Rhythm.Runtime;
-
-using System;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.UI
 {
     [RequireComponent(typeof(RectTransform))]
     public class RhythmShakeAnim : MonoBehaviour, IEntity

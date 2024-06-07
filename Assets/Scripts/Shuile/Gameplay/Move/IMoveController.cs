@@ -1,8 +1,7 @@
 using System;
-
 using UnityEngine;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Move
 {
     [Flags]
     public enum MoveAbility

@@ -1,15 +1,16 @@
 using CbUtils.Timing;
 using CbUtils.Unity;
 using Shuile.Core.Framework;
+using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Event;
+using Shuile.Gameplay.Feel;
 using Shuile.Model;
 using Shuile.Rhythm.Runtime;
 using Shuile.Root;
 using UnityEngine;
-
 using UInput = UnityEngine.InputSystem;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Manager
 {
     // if you dont know where to put the logic, put it here
     public class LevelGlobalManager : MonoSingletons<LevelGlobalManager>, IEntity

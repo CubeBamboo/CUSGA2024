@@ -5,6 +5,7 @@ using UnityEngine;
 using Shuile.Core.Framework;
 using Shuile.Rhythm;
 using CbUtils.Unity;
+using Shuile.UI.Gameplay;
 
 namespace Shuile.Root
 {

@@ -1,15 +1,14 @@
 using CbUtils.Kits.Tasks;
 using Cysharp.Threading.Tasks;
-using log4net.Core;
 using Shuile.Core.Gameplay;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Root;
-using Shuile.UI;
+using Shuile.UI.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Shuile
+namespace Shuile.UI.Menu
 {
     public class SelectPanelController : MonoBehaviour
     {
@@ -25,7 +24,7 @@ namespace Shuile
         [SerializeField] private MainMenuUIStateMachine stateMachine;
         [SerializeField] private LevelSelectDataSO levelSelectData;
 
-        private int currentIndex = 0;
+        private int _currentIndex = 0;
         private LevelData _level;
 
         private void Awake()
@@ -39,7 +38,7 @@ namespace Shuile
 
         public void Refresh()
         {
-            currentIndex = 0;
+            _currentIndex = 0;
             RefreshSongView();
         }
 
@@ -48,17 +47,17 @@ namespace Shuile
             btn_Return.onClick.AddListener(() => stateMachine.SwitchState(MainMenuUIStateMachine.State.Menu));
             btn_Next.onClick.AddListener(() =>
             {
-                currentIndex++;
-                currentIndex %= levelSelectData.levelData.Length;
+                _currentIndex++;
+                _currentIndex %= levelSelectData.levelData.Length;
                 RefreshSongView();
             });
             btn_Prev.onClick.AddListener(() =>
             {
-                currentIndex--;
-                currentIndex = (currentIndex + levelSelectData.levelData.Length) % levelSelectData.levelData.Length;
+                _currentIndex--;
+                _currentIndex = (_currentIndex + levelSelectData.levelData.Length) % levelSelectData.levelData.Length;
                 RefreshSongView();
             });
-            btn_Play.onClick.AddListener(() => StartLevel(levelSelectData.levelData[currentIndex].levelDataLabel));
+            btn_Play.onClick.AddListener(() => StartLevel(levelSelectData.levelData[_currentIndex].levelDataLabel));
 
             // seealso: GameResources.Instance.levelDataMap.levelDataList
             //btn_level1.onClick.AddListener(() => StartLevel("Break"));
@@ -89,7 +88,7 @@ namespace Shuile
 
         private void RefreshSongView()
         {
-            var curr = levelSelectData.levelData[currentIndex];
+            var curr = levelSelectData.levelData[_currentIndex];
             text_SongName.text = curr.songName;
             text_SongArtist.text = curr.songArtist;
         }

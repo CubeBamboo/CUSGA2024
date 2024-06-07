@@ -1,10 +1,9 @@
-using Shuile.Gameplay;
-using Shuile.MonoGadget;
-
 using DG.Tweening;
+using Shuile.Gameplay.Weapon;
+using Shuile.MonoGadget;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Gameplay.Character
 {
     public class PlayerAnimCtrl
     {

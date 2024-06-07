@@ -1,5 +1,5 @@
 using Shuile.Gameplay;
-
+using Shuile.Gameplay.Character;
 using UnityEngine;
 
 namespace Shuile.MonoGadget

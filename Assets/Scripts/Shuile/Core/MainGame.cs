@@ -1,9 +1,8 @@
 using Cysharp.Threading.Tasks;
-
-using Shuile.Audio;
+using Shuile.Framework;
 using Shuile.Persistent;
 
-namespace Shuile.Framework
+namespace Shuile
 {
     public class MainGame : AbstractLocator<MainGame>
     {

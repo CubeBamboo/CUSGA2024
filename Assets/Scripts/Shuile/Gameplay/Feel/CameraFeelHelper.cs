@@ -2,7 +2,7 @@ using CbUtils.Timing;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Gameplay.Feel
 {
     public class CameraFeelHelper
     {

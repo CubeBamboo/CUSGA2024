@@ -1,11 +1,9 @@
-using CbUtils;
 using CbUtils.Unity;
 using DG.Tweening;
-using Shuile.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Shuile
+namespace Shuile.UI
 {
     public class GlobalTransitionViewer : MonoSingletons<GlobalTransitionViewer>, IRouterLoadingViewer
     {

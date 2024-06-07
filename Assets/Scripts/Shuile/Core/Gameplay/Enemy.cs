@@ -7,6 +7,8 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using Cysharp.Threading.Tasks;
 using Shuile.Core.Framework;
+using Shuile.Gameplay.Move;
+using Shuile.UI.Gameplay;
 
 namespace Shuile.Gameplay
 {

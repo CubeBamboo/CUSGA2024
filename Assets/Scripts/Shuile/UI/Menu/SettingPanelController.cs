@@ -1,14 +1,11 @@
+using Shuile.Core;
 using Shuile.Framework;
 using Shuile.Persistent;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.UI.CanvasScaler;
 
-namespace Shuile
+namespace Shuile.UI.Menu
 {
     public class SettingPanelController : MonoBehaviour
     {
@@ -19,7 +16,7 @@ namespace Shuile
         [SerializeField] private Button btn_LatencyMinus;
         [SerializeField] private TextMeshProUGUI text_Latency;
 
-        private Viewer<Config> configViewer;
+        private Viewer<Config> _configViewer;
 
         private const int LATENCY_LARGE_STEP = 10;
         private const int MAX_LATENCY = 1000;
@@ -32,7 +29,7 @@ namespace Shuile
         }
         private void OnDestroy()
         {
-            configViewer = null;
+            _configViewer = null;
         }
 
         private void Return()
@@ -45,26 +42,26 @@ namespace Shuile
         {
             if (Mathf.Abs(value) > MAX_LATENCY) return;
 
-            configViewer.Data.GlobalDelay = value;
-            text_Latency.text = $"Latency: {configViewer.Data.GlobalDelay} ms";
+            _configViewer.Data.GlobalDelay = value;
+            text_Latency.text = $"Latency: {_configViewer.Data.GlobalDelay} ms";
         }
 
         private void InitializeDependency()
         {
-            configViewer = MainGame.Interface.CreatePersistentDataViewer<Config, MainGame>();
-            configViewer.AutoSave = true;
+            _configViewer = MainGame.Interface.CreatePersistentDataViewer<Config, MainGame>();
+            _configViewer.AutoSave = true;
         }
 
         private void InitializeState()
         {
-            text_Latency.text = $"Latency: {configViewer.Data.GlobalDelay} ms";
+            text_Latency.text = $"Latency: {_configViewer.Data.GlobalDelay} ms";
         }
 
         private void ConfigureButtonEvent()
         {
             btn_Return.onClick.AddListener(Return);
-            btn_LatencyAdd.onClick.AddListener(()=> UpdateLatency(configViewer.Data.GlobalDelay + LATENCY_LARGE_STEP));
-            btn_LatencyMinus.onClick.AddListener(()=> UpdateLatency(configViewer.Data.GlobalDelay - LATENCY_LARGE_STEP));
+            btn_LatencyAdd.onClick.AddListener(()=> UpdateLatency(_configViewer.Data.GlobalDelay + LATENCY_LARGE_STEP));
+            btn_LatencyMinus.onClick.AddListener(()=> UpdateLatency(_configViewer.Data.GlobalDelay - LATENCY_LARGE_STEP));
         }
 
 

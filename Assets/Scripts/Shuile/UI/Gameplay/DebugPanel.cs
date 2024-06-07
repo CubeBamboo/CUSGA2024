@@ -1,21 +1,18 @@
 /* [WARNING]
  * only for debug purpose
- * remove this script in the final relese
+ * remove this script in the final release
  */
 
-using Shuile.Framework;
-using Shuile.Rhythm.Runtime;
-using Shuile.Gameplay;
-using CbUtils.Event;
-
-using UnityEngine;
-using TMPro;
 using CbUtils.Preview.Event;
 using Shuile.Core.Framework;
-using Shuile.Core;
+using Shuile.Framework;
+using Shuile.Gameplay;
 using Shuile.Model;
+using Shuile.Rhythm.Runtime;
+using TMPro;
+using UnityEngine;
 
-namespace Shuile
+namespace Shuile.UI.Gameplay
 {
     // 写成屎了，不过调试用就算了
     public class DebugPanel : BasePanelWithMono, IEntity
@@ -28,8 +25,8 @@ namespace Shuile
         [SerializeField] private TextMeshProUGUI dangerLevelText;
         [SerializeField] private TextMeshProUGUI enemyCountText;
 
-        private PlayerModel playerModel;
-        private LevelModel levelModel;
+        private PlayerModel _playerModel;
+        private LevelModel _levelModel;
 
         private void Awake()
             => this.RegisterUI<DebugPanel>();
@@ -38,16 +35,16 @@ namespace Shuile
 
         private void Start()
         {
-            playerModel = this.GetModel<PlayerModel>();
-            levelModel = this.GetModel<LevelModel>();
+            _playerModel = this.GetModel<PlayerModel>();
+            _levelModel = this.GetModel<LevelModel>();
             _musicRhythmManager = MusicRhythmManager.Instance;
 
             gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
             {
-                hitOffsetText.text = $"HitOffset: {playerModel.currentHitOffset:0.000}";
+                hitOffsetText.text = $"HitOffset: {_playerModel.currentHitOffset:0.000}";
                 playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
-                dangerScoreText.text = $"DangerScore: {levelModel.DangerScore:0.000}";
-                dangerLevelText.text = $"DangerLevel: {levelModel.DangerLevel}";
+                dangerScoreText.text = $"DangerScore: {_levelModel.DangerScore:0.000}";
+                dangerLevelText.text = $"DangerLevel: {_levelModel.DangerLevel}";
                 enemyCountText.text = $"EnemyCount: {LevelEntityManager.Instance.EnemyCount}";
             };
         }
