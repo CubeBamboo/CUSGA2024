@@ -3,6 +3,7 @@ using CbUtils.Unity;
 using Shuile.Core.Framework;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Character;
+using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Event;
 using Shuile.Gameplay.Feel;
 using Shuile.Model;
@@ -22,26 +23,35 @@ namespace Shuile.Gameplay.Manager
         private LevelStateMachine _levelStateMachine;
         private Player _player;
         private PlayerModel _playerModel;
+        private LevelEntityManager _levelEntityManager;
+        private AutoPlayChartManager _autoPlayChartManager;
 
         protected override void OnAwake()
         {
+            var scope = LevelScope.Interface;
+            
             _levelFeelManager = this.GetUtility<LevelFeelManager>();
             _levelModel = this.GetModel<LevelModel>();
             _playerModel = this.GetModel<PlayerModel>();
             _levelStateMachine = this.GetSystem<LevelStateMachine>();
             _musicRhythmManager = MusicRhythmManager.Instance;
             _player = Player.Instance;
+
+            _levelEntityManager = scope.Get<LevelEntityManager>();
+            _autoPlayChartManager = scope.Get<AutoPlayChartManager>();
         }
 
         private void Start()
         {
             this.RegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
             this.RegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
+            _autoPlayChartManager.OnRhythmHit += _levelEntityManager.OnRhythmHit;
         }
         private void OnDestroy()
         {
             this.UnRegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
             this.UnRegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
+            _autoPlayChartManager.OnRhythmHit -= _levelEntityManager.OnRhythmHit;
 
             TimingCtrl.Instance.StopAllTimer();
         }

@@ -1,4 +1,3 @@
-using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Audio;
@@ -11,29 +10,30 @@ using Shuile.ResourcesManagement.Loader;
 using System.Threading;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Rhythm
 {
     /// <summary>
     /// it provides an async player for lower delay, a timer start from music's specific position
     /// </summary>
     public class PreciseMusicPlayer : IEntity, IInitializeable, IFixedTickable, IDestroyable
     {
-        private LevelConfigSO _levelConfig;
+        private readonly LevelConfigSO _levelConfig;
 
-        private LevelAudioManager _levelAudioManager;
-        private LevelModel _levelModel;
+        private readonly LevelAudioManager _levelAudioManager;
+        private readonly LevelModel _levelModel;
         private UnityAudioPlayer _audioPlayer;
         public UnityAudioPlayer AudioPlayer => _audioPlayer;
-        
+
+        public PreciseMusicPlayer(IGetableScope scope)
+        {
+            _levelAudioManager = scope.Get<LevelAudioManager>();
+            var resourcesLoader = LevelResourcesLoader.Instance;
+            _levelConfig = resourcesLoader.SyncContext.levelConfig;
+            _levelModel = this.GetModel<LevelModel>();
+        }
+
         public void Initialize()
         {
-            var sceneLocator = LevelScope.Interface;
-            var resourcesLoader = LevelResourcesLoader.Instance;
-            
-            _levelConfig = resourcesLoader.SyncContext.levelConfig;
-            _levelAudioManager = sceneLocator.Get<LevelAudioManager>();
-            _levelModel = this.GetModel<LevelModel>();
-
             _audioPlayer = new UnityAudioPlayer(_levelAudioManager.MusicSource);
             Restore();
         }

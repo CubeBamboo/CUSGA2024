@@ -15,14 +15,14 @@ namespace Shuile.Gameplay
         
         public override void Configure(LevelScope scope)
         {
-            scope.Register<NoteDataProcessor>(() => new NoteDataProcessor(scope.Get<LevelEntityManager>()));
+            scope.Register<NoteDataProcessor>(() => new NoteDataProcessor(this));
             
             scope.RegisterMonoComponent<LevelAudioManager>(levelAudioManager);
             
-            scope.RegisterEntryPoint<PreciseMusicPlayer>(() => new PreciseMusicPlayer());
-            scope.RegisterEntryPoint<PlayerChartManager>(() => new PlayerChartManager());
-            scope.RegisterEntryPoint<AutoPlayChartManager>(() => new AutoPlayChartManager());
+            scope.RegisterEntryPoint<PreciseMusicPlayer>(() => new PreciseMusicPlayer(this));
+            scope.RegisterEntryPoint<PlayerChartManager>(() => new PlayerChartManager(this));
             scope.RegisterEntryPoint<LevelEntityManager>(() => new LevelEntityManager(this));
+            scope.RegisterEntryPoint<AutoPlayChartManager>(() => new AutoPlayChartManager(this));
             scope.RegisterEntryPoint<EnemySpawnManager>(() => new EnemySpawnManager(this));
             scope.RegisterEntryPoint<LevelChartManager>(() => new LevelChartManager(this));
         }

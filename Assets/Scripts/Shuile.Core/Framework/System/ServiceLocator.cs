@@ -6,35 +6,36 @@ namespace Shuile.Core.Framework
 {
     public class ServiceLocator
     {
+        private static readonly Type objectType = typeof(object);
+        
         private readonly Dictionary<Type, object> _services = new();
         private readonly Dictionary<Type, Func<object>> _serviceCreators = new();
 
-        public void RegisterCreator<T>(Func<T> creator)
+        public void RegisterCreator<T>(Func<T> creator) => RegisterCreator(typeof(T), () => creator());
+        public void RegisterCreator(Type type, Func<object> creator)
         {
-            _serviceCreators[typeof(T)] = () => creator();
+            if (type == objectType) throw new ArgumentException("Registering object type is not allowed.");
+            _serviceCreators[type] = creator;
         }
 
-        public void UnRegisterCreator<T>()
-        {
-            _serviceCreators.Remove(typeof(T));
-        }
-        
-        public void AddServiceDirectly<T>(T service)
-        {
-            _services[typeof(T)] = service;
-        }
+        public void UnRegisterCreator<T>() => UnRegisterCreator(typeof(T));
+        public void UnRegisterCreator(Type type) => _serviceCreators.Remove(type);
+
+        public void AddServiceDirectly<T>(T service) => AddServiceDirectly(typeof(T), service);
+        public void AddServiceDirectly(Type type, object service) => _services[type] = service;
 
         [DebuggerHidden]
-        public T GetService<T>()
+        public T GetService<T>() => (T)GetService(typeof(T));
+        [DebuggerHidden]
+        public object GetService(Type type)
         {
-            Type type = typeof(T);
             if (_services.TryGetValue(type, out var obj))
             {
-                return (T)obj;
+                return obj;
             }
             else if(_serviceCreators.TryGetValue(type, out var cre))
             {
-                var service = (T)cre();
+                var service = cre();
                 _services[type] = service;
                 return service;
             }

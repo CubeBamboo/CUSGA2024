@@ -22,7 +22,6 @@ namespace Shuile.Gameplay.Entity
         private Transform _enemyParent;
 
         private readonly LevelModel _levelModel;
-        private readonly AutoPlayChartManager _autoPlayChartManager;
         private readonly PrefabConfigSO _globalPrefab;
 
         internal LevelEntityFactory EntityFactory { get; private set; }
@@ -36,7 +35,6 @@ namespace Shuile.Gameplay.Entity
 
         public LevelEntityManager(IGetableScope scope)
         {
-            _autoPlayChartManager = scope.Get<AutoPlayChartManager>();
             var resourceLoader = LevelResourcesLoader.Instance;
             _globalPrefab = resourceLoader.SyncContext.globalPrefabs;
             _levelModel = this.GetModel<LevelModel>();
@@ -48,8 +46,6 @@ namespace Shuile.Gameplay.Entity
             
             _enemyParent = new GameObject("Enemies").transform;
             
-            _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
-
             this.RegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
             this.RegisterEvent<EnemyDieEvent>(OnEnemyDie);
         }
@@ -58,8 +54,6 @@ namespace Shuile.Gameplay.Entity
         {
             this.UnRegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
             this.UnRegisterEvent<EnemyDieEvent>(OnEnemyDie);
-
-            _autoPlayChartManager.OnRhythmHit -= OnRhythmHit;
         }
 
         private void OnEnemySpawn(EnemySpawnEvent evt)
@@ -76,7 +70,7 @@ namespace Shuile.Gameplay.Entity
             EnemyCount--;
         }
 
-        private void OnRhythmHit()
+        public void OnRhythmHit()
         {
             _judging = true;
             var version = _frameCounter++;

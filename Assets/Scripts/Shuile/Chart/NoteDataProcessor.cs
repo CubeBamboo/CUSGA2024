@@ -1,4 +1,5 @@
 using CbUtils.Extension;
+using Shuile.Core.Framework.Unity;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Entity;
@@ -12,6 +13,10 @@ namespace Shuile.Chart
     {
         private readonly LevelEntityManager _entityManager;
 
+        public NoteDataProcessor(IGetableScope scope)
+        {
+            _entityManager = scope.Get<LevelEntityManager>();
+        }
         public NoteDataProcessor(LevelEntityManager entityManager)
         {
             _entityManager = entityManager;

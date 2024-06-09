@@ -11,33 +11,35 @@ namespace Shuile.Rhythm.Runtime
     // manage chart of player, convert chart to runtime note object noteContainer
     public class PlayerChartManager : ISystem, IInitializeable, IFixedTickable
     {
-        private System.Lazy<ChartPlayer> chartPlayer;
+        private System.Lazy<ChartPlayer> _chartPlayer;
 
         // chart part
-        private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
+        private readonly ChartData _chart = ChartDataCreator.CreatePlayerDefault();
 
-        private float notePreShowInterval = 0.4f;
-        private LevelConfigSO _levelConfig;
-        private IFixedTickable _fixedTickableImplementation;
-        private MusicRhythmManager _musicRhythmManager;
+        private float _notePreShowInterval = 0.4f;
+        private readonly LevelConfigSO _levelConfig;
+        private readonly MusicRhythmManager _musicRhythmManager;
+        private readonly NoteDataProcessor _noteDataProcessor;
 
         public event System.Action OnPlayerHitOn;
         public NoteContainer noteContainer { get; private set;}
-        
-        public void Initialize()
-        {
-            LevelScope scope = LevelScope.Interface;
 
+        public PlayerChartManager(IGetableScope scope)
+        {
             _musicRhythmManager = MusicRhythmManager.Instance;
             var levelTimingManager = this.GetSystem<LevelTimingManager>();
-
             _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
-            notePreShowInterval = _levelConfig.playerNotePreShowTime;
+            _noteDataProcessor = scope.Get<NoteDataProcessor>();
+        }
+
+        public void Initialize()
+        {
+            _notePreShowInterval = _levelConfig.playerNotePreShowTime;
 
             noteContainer = new();
-            chartPlayer = new(() => new ChartPlayer(chart,
-                note => note.GetNotePlayTime(scope) - notePreShowInterval));
-            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetNotePlayTime(scope));
+            _chartPlayer = new(() => new ChartPlayer(_chart,
+                note => note.GetNotePlayTime(_noteDataProcessor) - _notePreShowInterval));
+            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetNotePlayTime(_noteDataProcessor));
         }
 
         public void FixedTick()
@@ -49,7 +51,7 @@ namespace Shuile.Rhythm.Runtime
         }
 
         public NoteContainer NoteContainer => noteContainer;
-        public ChartPlayer ChartPlayer => chartPlayer.Value;
+        public ChartPlayer ChartPlayer => _chartPlayer.Value;
         public int Count => noteContainer.Count;
         public SingleNote TryGetNearestNote(float currentTime) => noteContainer.TryGetNearestNote(currentTime);
         public void HitNote(SingleNote note)

@@ -8,7 +8,8 @@ namespace Shuile.Rhythm.Runtime
     // manage auto play chart. (for someone like enemy or game ui animation)
     public class AutoPlayChartManager : IStartable, IFixedTickable
     {
-        private MusicRhythmManager _musicRhythmManager;
+        private readonly MusicRhythmManager _musicRhythmManager;
+        private readonly NoteDataProcessor _noteDataProcessor;
 
         // chart part
         private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
@@ -22,11 +23,15 @@ namespace Shuile.Rhythm.Runtime
         public void OnNextRhythm(System.Action action)
             => onNextRhythm += action;
 
+        public AutoPlayChartManager(IGetableScope scope)
+        {
+            _musicRhythmManager = MusicRhythmManager.Instance;
+            _noteDataProcessor = scope.Get<NoteDataProcessor>();
+        }
+
         public void Start()
         {
-            var scope = LevelScope.Interface;
-            _musicRhythmManager = MusicRhythmManager.Instance;
-            chartPlayer = new ChartPlayer(chart, scope);
+            chartPlayer = new ChartPlayer(chart, _noteDataProcessor);
             chartPlayer.OnNotePlay += (_, _) =>
             {
                 OnRhythmHit?.Invoke();

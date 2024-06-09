@@ -5,6 +5,7 @@ using Shuile.Core.Framework;
 using Shuile.Core.Global.Config;
 using Shuile.MonoGadget;
 using Shuile.ResourcesManagement.Loader;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using System;
 using System.Collections.Generic;

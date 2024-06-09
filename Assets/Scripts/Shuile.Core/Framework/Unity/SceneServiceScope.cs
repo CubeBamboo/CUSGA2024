@@ -9,12 +9,12 @@ namespace Shuile.Core.Framework.Unity
         T Get<T>();
     }
     
-    /*TODO: entry point trigger order
-     */
     [DefaultExecutionOrder(-2000)]
     public class SceneServiceScope<TScope> : MonoBehaviour, IGetableScope where TScope : SceneServiceScope<TScope>
     {
         public static TScope Interface { get; private set; }
+        private static HashSet<Type> _getChain = new();
+        public static bool EnableGetChainCheck { get; set; } = true;
         
         private readonly ServiceLocator _serviceLocator = new();
         private readonly Dictionary<System.Type, System.Func<object>> _entryPointCreators = new();
@@ -28,23 +28,32 @@ namespace Shuile.Core.Framework.Unity
             Configure(Interface);
             
             // resolve entry points
-            // PreInitializeEntryPoints();
+            PreInitializeEntryPoints();
             var trigger = gameObject.AddComponent<EntryPointTrigger>();
             trigger.enabled = false;
             trigger.EntryPoints = _entryPoints;
             trigger.enabled = true;
         }
 
-        // private void PreInitializeEntryPoints()
-        // {
-        //     foreach (var creator in _entryPointCreators)
-        //     {
-        //         if (_serviceLocator.ContainsService(creator.Key)) continue;
-        //         var instance = creator.Value;
-        //         _entryPoints.Add(instance);
-        //         _serviceLocator.AddServiceDirectly(instance);
-        //     }
-        // }
+        private void PreInitializeEntryPoints()
+        {
+            // init creator
+            foreach ((Type key, Func<object> value) in _entryPointCreators)
+            {
+                _serviceLocator.RegisterCreator(key, () =>
+                {
+                    var instance = value();
+                    _entryPoints.Add(instance);
+                    return instance;
+                });
+            }
+            
+            // init entry points
+            foreach (var pair in _entryPointCreators)
+            {
+                Get(pair.Key);
+            }
+        }
         
         public void Register<T>(Func<T> implementation)
         {
@@ -56,15 +65,24 @@ namespace Shuile.Core.Framework.Unity
         }
         public void RegisterEntryPoint<T>(Func<T> implementation)
         {
-            // _entryPointCreators.Add(typeof(T), () => implementation());
-            var instance = implementation();
-            _entryPoints.Add(instance);
-            _serviceLocator.AddServiceDirectly(instance);
+            _entryPointCreators.Add(typeof(T), () => implementation());
         }
 
         public T Get<T>()
         {
-            return _serviceLocator.GetService<T>();
+            if(!EnableGetChainCheck) return _serviceLocator.GetService<T>();
+            
+            Type type = typeof(T);
+            if (!_getChain.Add(type))
+                throw new InvalidOperationException($"Circular dependency detected for type {type}, you need to refactor your code.");
+            var res = _serviceLocator.GetService<T>();
+            _getChain.Remove(type);
+            return res;
+        }
+
+        public object Get(Type type)
+        {
+            return _serviceLocator.GetService(type);
         }
 
         public void ClearExisting<T>() => _serviceLocator.ClearAllServices();
