@@ -1,7 +1,7 @@
-using Shuile.Chart;
-
-namespace Shuile.Rhythm.Runtime
+namespace Shuile.Chart
 {
+    // maybe dont need inherit
+    
     public class SpawnLaserNoteData : BaseNoteData
     {
     }

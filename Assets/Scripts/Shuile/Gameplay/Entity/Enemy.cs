@@ -1,17 +1,12 @@
-using Shuile.Gameplay.Event;
-
-using System;
-
-using UnityEngine;
-
-using UObject = UnityEngine.Object;
-using Cysharp.Threading.Tasks;
 using Shuile.Core.Framework;
-using Shuile.Gameplay.Entity;
+using Shuile.Gameplay.Event;
 using Shuile.Gameplay.Move;
 using Shuile.UI.Gameplay;
+using System;
+using UnityEngine;
+using UObject = UnityEngine.Object;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Entity
 {
     /// <summary> base class for enemy </summary>
     public abstract class Enemy : MonoBehaviour, IHurtable, IJudgeable, IEntity

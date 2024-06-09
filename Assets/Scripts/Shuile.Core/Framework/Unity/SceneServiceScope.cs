@@ -1,21 +1,23 @@
-using CbUtils.Extension;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Shuile.Core.Framework.Unity
 {
-    public interface IGetServiceScope
+    public interface IGetableScope
     {
         T Get<T>();
     }
     
+    /*TODO: entry point trigger order
+     */
     [DefaultExecutionOrder(-2000)]
-    public class SceneServiceScope<TScope> : MonoBehaviour, IGetServiceScope where TScope : SceneServiceScope<TScope>
+    public class SceneServiceScope<TScope> : MonoBehaviour, IGetableScope where TScope : SceneServiceScope<TScope>
     {
         public static TScope Interface { get; private set; }
         
         private readonly ServiceLocator _serviceLocator = new();
+        private readonly Dictionary<System.Type, System.Func<object>> _entryPointCreators = new();
         private readonly List<object> _entryPoints = new();
         
         private void Awake()
@@ -25,11 +27,24 @@ namespace Shuile.Core.Framework.Unity
             Interface = this as TScope;
             Configure(Interface);
             
-            var resolver = gameObject.AddComponent<EntryPointTrigger>();
-            resolver.enabled = false;
-            resolver.EntryPoints = _entryPoints;
-            resolver.enabled = true;
+            // resolve entry points
+            // PreInitializeEntryPoints();
+            var trigger = gameObject.AddComponent<EntryPointTrigger>();
+            trigger.enabled = false;
+            trigger.EntryPoints = _entryPoints;
+            trigger.enabled = true;
         }
+
+        // private void PreInitializeEntryPoints()
+        // {
+        //     foreach (var creator in _entryPointCreators)
+        //     {
+        //         if (_serviceLocator.ContainsService(creator.Key)) continue;
+        //         var instance = creator.Value;
+        //         _entryPoints.Add(instance);
+        //         _serviceLocator.AddServiceDirectly(instance);
+        //     }
+        // }
         
         public void Register<T>(Func<T> implementation)
         {
@@ -37,16 +52,21 @@ namespace Shuile.Core.Framework.Unity
         }
         public void RegisterMonoComponent<T>(T instance) where T : MonoBehaviour
         {
-            _serviceLocator.RegisterCreator(() => instance);
+            _serviceLocator.AddServiceDirectly(instance);
         }
         public void RegisterEntryPoint<T>(Func<T> implementation)
         {
+            // _entryPointCreators.Add(typeof(T), () => implementation());
             var instance = implementation();
             _entryPoints.Add(instance);
-            _serviceLocator.RegisterCreator(() => instance);
+            _serviceLocator.AddServiceDirectly(instance);
         }
 
-        public T Get<T>() => _serviceLocator.GetService<T>();
+        public T Get<T>()
+        {
+            return _serviceLocator.GetService<T>();
+        }
+
         public void ClearExisting<T>() => _serviceLocator.ClearAllServices();
         
         public virtual void Configure(TScope locator)

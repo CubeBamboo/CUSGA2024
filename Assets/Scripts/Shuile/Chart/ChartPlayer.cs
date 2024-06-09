@@ -1,5 +1,4 @@
 using Shuile.Core.Framework.Unity;
-using Shuile.Rhythm.Runtime;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -14,8 +13,8 @@ namespace Shuile.Chart
             public int originNoteIndex;
         }
 
-        private readonly ChartData chart;
-        private readonly List<PlayTimeData> playTimeArray;
+        private ChartData chart;
+        private List<PlayTimeData> playTimeArray;
 
         private int nextNoteIndex = 0;
 
@@ -26,10 +25,25 @@ namespace Shuile.Chart
 
         public ReadOnlyCollection<PlayTimeData> PlayTimeArray => playTimeArray.AsReadOnly();
 
-        public ChartPlayer(ChartData chart, IGetServiceScope scope, System.Func<BaseNoteData, float> onPlayTimeConvert = null)
+        public ChartPlayer(ChartData chart, System.Func<BaseNoteData, float> onPlayTimeConvert)
         {
-            onPlayTimeConvert ??= note => note.GetNotePlayTime(scope.Get<NoteDataProcessor>());
+            Init(chart, onPlayTimeConvert);
+        }
+        public ChartPlayer(ChartData chart, NoteDataProcessor noteDataProcessor)
+        {
+            Init(chart, PlayTimeConvert);
+            return;
+            float PlayTimeConvert(BaseNoteData note) => note.GetNotePlayTime(noteDataProcessor);
+        }
+        public ChartPlayer(ChartData chart, IGetableScope scope)
+        {
+            Init(chart, PlayTimeConvert);
+            return;
+            float PlayTimeConvert(BaseNoteData note) => note.GetNotePlayTime(scope.Get<NoteDataProcessor>());
+        }
 
+        private void Init(ChartData chart, System.Func<BaseNoteData, float> onPlayTimeConvert)
+        {
             this.chart = chart;
             // convert target time (music beat) to play time (show in screen)
             playTimeArray = new List<PlayTimeData>(chart.note.Length);

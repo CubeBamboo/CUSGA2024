@@ -35,7 +35,7 @@ namespace Shuile.Rhythm.Runtime
             notePreShowInterval = _levelConfig.playerNotePreShowTime;
 
             noteContainer = new();
-            chartPlayer = new(() => new ChartPlayer(chart, scope,
+            chartPlayer = new(() => new ChartPlayer(chart,
                 note => note.GetNotePlayTime(scope) - notePreShowInterval));
             ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetNotePlayTime(scope));
         }

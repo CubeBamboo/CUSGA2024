@@ -1,6 +1,7 @@
 using CbUtils.Unity;
 using Shuile.Core.Framework;
 using Shuile.Framework;
+using Shuile.Gameplay.Model;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm;
 using Shuile.UI.Gameplay;
@@ -23,7 +24,7 @@ namespace Shuile.Gameplay
             UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
             UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
             needHitWithRhythm = LevelResourcesLoader.Instance.SyncContext.levelConfig.needHitWithRhythm;
-            LevelContext.timingManager = this.GetSystem<LevelTimingManager>();
+            LevelContext.TimingManager = this.GetSystem<LevelTimingManager>();
 
             UICtrl.Instance.Create<EndLevelPanel>().Hide();
             

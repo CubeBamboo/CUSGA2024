@@ -2,9 +2,7 @@ using CbUtils;
 using CbUtils.Event;
 using CbUtils.Extension;
 using DG.Tweening;
-using Shuile.Core.Framework;
 using Shuile.Gameplay.Character;
-using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
 using URandom = UnityEngine.Random;

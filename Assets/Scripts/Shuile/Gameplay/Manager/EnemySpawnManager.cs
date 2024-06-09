@@ -12,24 +12,24 @@ namespace Shuile.Gameplay.Manager
 {
     public class EnemySpawnManager : ISystem, IStartable, IDestroyable
     {
-        private LevelModel _levelModel;
-        [HideInInspector] public LevelEnemySO currentEnemyData;
+        private readonly LevelModel _levelModel;
+        [HideInInspector] public readonly LevelEnemySO currentEnemyData;
 
-        private int currentRoundIndex = 0;
-        private AutoPlayChartManager _autoPlayChartManager;
-        private LevelEntityManager _levelEntityManager;
+        private readonly AutoPlayChartManager _autoPlayChartManager;
+        private readonly LevelEntityManager _levelEntityManager;
 
         public int EnemyCount => _levelEntityManager.EnemyCount;
-        public int CurrentRoundIndex => currentRoundIndex;
+
+        public EnemySpawnManager(IGetableScope scope)
+        {
+            _autoPlayChartManager = scope.Get<AutoPlayChartManager>();
+            _levelEntityManager = scope.Get<LevelEntityManager>();
+            _levelModel = this.GetModel<LevelModel>();
+            currentEnemyData = LevelRoot.LevelContext.LevelEnemyData;
+        }
 
         public void Start()
         {
-            var lifeTimeLocator = LevelScope.Interface;
-            _autoPlayChartManager = lifeTimeLocator.Get<AutoPlayChartManager>();
-            _levelEntityManager = lifeTimeLocator.Get<LevelEntityManager>();
-            currentEnemyData = LevelRoot.LevelContext.levelEnemyData;
-            _levelModel = this.GetModel<LevelModel>();
-            
             _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
         }
         

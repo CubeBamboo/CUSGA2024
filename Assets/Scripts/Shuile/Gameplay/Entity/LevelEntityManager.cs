@@ -1,6 +1,6 @@
-using CbUtils.Unity;
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Event;
 using Shuile.Model;
@@ -14,41 +14,44 @@ namespace Shuile.Gameplay.Entity
 {
     public class LevelEntityManager : IEntity, IStartable, IDestroyable
     {
-        private readonly List<Enemy> enemyList = new();
-        private readonly List<BehaviourLevelEntity> removeList = new();
+        private readonly List<Enemy> _enemyList = new();
 
-        private bool judging = false;
-        private int frameCounter = 0;
+        private bool _judging = false;
+        private int _frameCounter = 0;
         
         private Transform _enemyParent;
 
-        private LevelModel _levelModel;
-        private AutoPlayChartManager _autoPlayChartManager;
+        private readonly LevelModel _levelModel;
+        private readonly AutoPlayChartManager _autoPlayChartManager;
+        private readonly PrefabConfigSO _globalPrefab;
 
         internal LevelEntityFactory EntityFactory { get; private set; }
 
-        public bool IsJudging => judging;
+        public bool IsJudging => _judging;
 
         public Transform EnemyParent => _enemyParent;
 
         public int EnemyCount { get; set; }
-        public ReadOnlyCollection<Enemy> Enemies => enemyList.AsReadOnly();
+        public ReadOnlyCollection<Enemy> Enemies => _enemyList.AsReadOnly();
+
+        public LevelEntityManager(IGetableScope scope)
+        {
+            _autoPlayChartManager = scope.Get<AutoPlayChartManager>();
+            var resourceLoader = LevelResourcesLoader.Instance;
+            _globalPrefab = resourceLoader.SyncContext.globalPrefabs;
+            _levelModel = this.GetModel<LevelModel>();
+        }
 
         public void Start()
         {
-            var scope = LevelScope.Interface;
-            var resourceLoader = LevelResourcesLoader.Instance;
+            EntityFactory = new LevelEntityFactory(this, _globalPrefab);
             
             _enemyParent = new GameObject("Enemies").transform;
-            _levelModel = this.GetModel<LevelModel>();
             
-            _autoPlayChartManager = scope.Get<AutoPlayChartManager>();
             _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
 
             this.RegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
             this.RegisterEvent<EnemyDieEvent>(OnEnemyDie);
-
-            EntityFactory = new LevelEntityFactory(this, resourceLoader.SyncContext.globalPrefabs);
         }
 
         public void OnDestroy()
@@ -69,14 +72,14 @@ namespace Shuile.Gameplay.Entity
         {
             _levelModel.DangerScore += DangerLevelUtils.GetEnemyKillAddition();
             if (evt.enemy.TryGetComponent<Enemy>(out var enemy))
-                enemyList.UnorderedRemove(enemy);
+                _enemyList.UnorderedRemove(enemy);
             EnemyCount--;
         }
 
         private void OnRhythmHit()
         {
-            judging = true;
-            var version = frameCounter++;
+            _judging = true;
+            var version = _frameCounter++;
 
             // common judgeable
             foreach (var judge in _levelModel.JudgeObjects)
@@ -85,38 +88,20 @@ namespace Shuile.Gameplay.Entity
             }
 
             // Judge enemy first
-            foreach (var enemy in enemyList)
+            foreach (var enemy in _enemyList)
                 enemy.Judge(version, false);
-            //foreach (Enemy enemy in removeList)
-            //    RemoveImmediate(enemy);
-            removeList.Clear();
 
-            judging = false;
+            _judging = false;
         }
-
-        public void Remove<T>(T behaviourEntity) where T : BehaviourLevelEntity
-        {
-            if (judging)
-            {
-                removeList.Add(behaviourEntity);
-                return;
-            }
-            RemoveImmediate(behaviourEntity);
-        }
-
-        public void RemoveImmediate<T>(T behaviourEntity) where T : BehaviourLevelEntity
-        {
-            if (behaviourEntity is Enemy enemy)
-                enemyList.UnorderedRemove(enemy);
-        }
+        
         public void RemoveImmediate(Enemy enemy)
         {
-            enemyList.UnorderedRemove(enemy);
+            _enemyList.UnorderedRemove(enemy);
         }
 
         public void MarkEnemy(Enemy enemy)
         {
-            enemyList.Add(enemy);
+            _enemyList.Add(enemy);
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

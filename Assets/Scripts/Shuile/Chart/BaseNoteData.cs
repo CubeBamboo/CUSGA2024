@@ -1,9 +1,6 @@
-using Shuile.Gameplay;
-using Shuile.Rhythm.Runtime;
-
 namespace Shuile.Chart
 {
-    public class BaseNoteData : IRhythmable
+    public class BaseNoteData
     {
         /// <summary> unit: in chart time </summary>
         public float rhythmTime;

@@ -18,25 +18,33 @@ namespace Shuile.Core.Framework
         {
             _serviceCreators.Remove(typeof(T));
         }
+        
+        public void AddServiceDirectly<T>(T service)
+        {
+            _services[typeof(T)] = service;
+        }
 
         [DebuggerHidden]
         public T GetService<T>()
         {
-            if (_services.TryGetValue(typeof(T), out var obj))
+            Type type = typeof(T);
+            if (_services.TryGetValue(type, out var obj))
             {
                 return (T)obj;
             }
-            else if(_serviceCreators.TryGetValue(typeof(T), out var cre))
+            else if(_serviceCreators.TryGetValue(type, out var cre))
             {
                 var service = (T)cre();
-                _services[typeof(T)] = service;
+                _services[type] = service;
                 return service;
             }
 
-            throw new Exception($"Service creator of type {typeof(T)} not found");
+            throw new Exception($"Service creator of type {type} not found");
         }
         public void ClearAllServices() => _services.Clear();
         public void ClearAllServicesCreator() => _serviceCreators.Clear();
         public bool ContainsService(object instance) => _services.ContainsValue(instance);
+        public bool ContainsService<T>() => _services.ContainsKey(typeof(T));
+        public bool ContainsService(System.Type type) => _services.ContainsKey(type);
     }
 }

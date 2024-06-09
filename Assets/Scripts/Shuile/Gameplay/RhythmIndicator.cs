@@ -2,7 +2,6 @@ using CbUtils.Extension;
 using DG.Tweening;
 using Shuile.Chart;
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.MonoGadget;
 using Shuile.ResourcesManagement.Loader;
@@ -17,7 +16,7 @@ using UnityEngine.UI;
 
 namespace Shuile.Gameplay
 {
-    public class RhythmIndicator : MonoEntity
+    public class RhythmIndicator : MonoBehaviour, IEntity
     {
         [SerializeField] private float distanceUnit;
 
@@ -82,7 +81,7 @@ namespace Shuile.Gameplay
             }
         }
 
-        protected override void OnDestroyOverride()
+        private void OnDestroy()
         {
             if (LevelRoot.IsLevelActive)
             {
@@ -149,10 +148,7 @@ namespace Shuile.Gameplay
             return _uiNoteList.Min();
         }
 
-        public override ModuleContainer GetModule()
-        {
-            return GameApplication.Level;
-        }
+        public ModuleContainer GetModule() => GameApplication.Level;
 
         private class UINote : SingleNote
         {

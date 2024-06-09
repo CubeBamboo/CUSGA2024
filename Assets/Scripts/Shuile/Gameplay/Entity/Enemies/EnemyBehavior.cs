@@ -2,7 +2,7 @@ using CbUtils.Extension;
 using Shuile.Gameplay.Move;
 using UnityEngine;
 
-namespace Shuile.Gameplay.Entity
+namespace Shuile.Gameplay.Entity.Enemies
 {
     public interface IBehavior
     {

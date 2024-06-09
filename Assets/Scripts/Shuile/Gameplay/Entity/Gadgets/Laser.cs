@@ -13,7 +13,7 @@ using Shuile.Rhythm;
 namespace Shuile
 {
     // attach to laser GameObject
-    public class Laser : MonoBehaviour, IRhythmable, IEntity
+    public class Laser : MonoBehaviour, IEntity
     {
         [SerializeField] private bool playOnAwake = true;
         [SerializeField] private float attackStayTime = 0.8f;
@@ -46,19 +46,7 @@ namespace Shuile
 
         public void Play()
         {
-            try
-            {
-                InternalPlay().Forget();
-            }
-            catch (System.OperationCanceledException)
-            {
-                // do nothing // TODO: can't catch this exception
-                Debug.Log("Laser play canceled");
-            }
-            catch (System.Exception e)
-            {
-                throw e;
-            }
+            InternalPlay().Forget();
         }
         public async UniTaskVoid InternalPlay()
         {

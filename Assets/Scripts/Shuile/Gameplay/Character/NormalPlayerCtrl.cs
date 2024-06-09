@@ -6,11 +6,12 @@ using Shuile.Gameplay.Move;
 using Shuile.Gameplay.Weapon;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
-    public class NormalPlayerCtrl : MonoEntity
+    public class NormalPlayerCtrl : MonoBehaviour, IEntity
     {
         private enum MainState
         {
@@ -105,7 +106,7 @@ namespace Shuile.Gameplay.Character
         }
         private readonly SimpleDurationTimer holdJumpTimer = new();
 
-        protected override void AwakeOverride()
+        private void Awake()
         {
             ConfigureDependency();
             ConfigureInputEvent();
@@ -125,7 +126,8 @@ namespace Shuile.Gameplay.Character
 
             holdJumpTimer.MaxDuration = jumpMaxDuration;
         }
-        protected override void OnDestroyOverride()
+
+        private void OnDestroy()
         {
             mPlayerInput.ClearAll();
         }
@@ -277,15 +279,15 @@ namespace Shuile.Gameplay.Character
 
         private void ConfigureDependency()
         {
-            var sceneLocator = LevelScope.Interface;
+            var scope = LevelScope.Interface;
             
             _playerModel = this.GetModel<PlayerModel>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
             _musicRhythmManager = MusicRhythmManager.Instance;
-            _playerChartManager = sceneLocator.Get<PlayerChartManager>();
+            _playerChartManager = scope.Get<PlayerChartManager>();
         }
 
-        public override ModuleContainer GetModule() => GameApplication.Level;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

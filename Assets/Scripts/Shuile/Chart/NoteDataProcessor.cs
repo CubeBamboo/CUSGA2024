@@ -3,7 +3,6 @@ using Shuile.Core.Gameplay.Data;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Manager;
-using Shuile.Rhythm.Runtime;
 using System;
 using Random = UnityEngine.Random;
 
@@ -41,9 +40,9 @@ namespace Shuile.Chart
         {
             return noteData switch
             {
-                SpawnLaserNoteData laserNoteData => LevelRoot.LevelContext.timingManager.GetRealTime(noteData.rhythmTime - Laser.InTime),
-                SpawnSingleEnemyNoteData enemyNoteData => LevelRoot.LevelContext.timingManager.GetRealTime(noteData.rhythmTime),
-                not null => LevelRoot.LevelContext.timingManager.GetRealTime(noteData.rhythmTime),
+                SpawnLaserNoteData laserNoteData => LevelRoot.LevelContext.TimingManager.GetRealTime(noteData.rhythmTime - Laser.InTime),
+                SpawnSingleEnemyNoteData enemyNoteData => LevelRoot.LevelContext.TimingManager.GetRealTime(noteData.rhythmTime),
+                not null => LevelRoot.LevelContext.TimingManager.GetRealTime(noteData.rhythmTime),
                 _ => throw new ArgumentException()
             };
         }

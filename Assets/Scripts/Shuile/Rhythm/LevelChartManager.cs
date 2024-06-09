@@ -1,7 +1,6 @@
 using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
 using Shuile.Gameplay;
-using Shuile.Rhythm.Runtime;
 
 namespace Shuile.Rhythm
 {
@@ -13,21 +12,22 @@ namespace Shuile.Rhythm
         private MusicRhythmManager _musicRhythmManager;
         private NoteDataProcessor _noteDataProcessor;
 
-
         public bool isPlay = true;
 
         // chart part
         private ChartData chart;
         private ChartPlayer chartPlayer;
 
+        public LevelChartManager(IGetableScope scope)
+        {
+            _noteDataProcessor = scope.Get<NoteDataProcessor>();
+            chart = LevelRoot.LevelContext.ChartData;
+            _musicRhythmManager = MusicRhythmManager.Instance;
+        }
+
         public void Start()
         {
-            var scope = LevelScope.Interface;
-            _musicRhythmManager = MusicRhythmManager.Instance;
-            _noteDataProcessor = scope.Get<NoteDataProcessor>();
-            
-            chart = LevelRoot.LevelContext.ChartData;
-            chartPlayer = new ChartPlayer(chart, scope);
+            chartPlayer = new ChartPlayer(chart, _noteDataProcessor);
             chartPlayer.OnNotePlay += (note, _) => note.ProcessNote(_noteDataProcessor);
         }
 

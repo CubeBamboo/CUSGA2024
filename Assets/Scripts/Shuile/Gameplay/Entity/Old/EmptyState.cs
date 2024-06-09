@@ -1,4 +1,4 @@
-﻿namespace Shuile.Gameplay.Entity
+﻿/*namespace Shuile.Gameplay.Entity
 {
     public class EmptyState : LevelEntityState
     {
@@ -11,3 +11,4 @@
         public override void Judge() { }
     }
 }
+*/

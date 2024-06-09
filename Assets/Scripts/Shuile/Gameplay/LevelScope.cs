@@ -22,9 +22,9 @@ namespace Shuile.Gameplay
             scope.RegisterEntryPoint<PreciseMusicPlayer>(() => new PreciseMusicPlayer());
             scope.RegisterEntryPoint<PlayerChartManager>(() => new PlayerChartManager());
             scope.RegisterEntryPoint<AutoPlayChartManager>(() => new AutoPlayChartManager());
-            scope.RegisterEntryPoint<EnemySpawnManager>(() => new EnemySpawnManager());
-            scope.RegisterEntryPoint<LevelChartManager>(() => new LevelChartManager());
-            scope.RegisterEntryPoint<LevelEntityManager>(() => new LevelEntityManager());
+            scope.RegisterEntryPoint<LevelEntityManager>(() => new LevelEntityManager(this));
+            scope.RegisterEntryPoint<EnemySpawnManager>(() => new EnemySpawnManager(this));
+            scope.RegisterEntryPoint<LevelChartManager>(() => new LevelChartManager(this));
         }
     }
 }
