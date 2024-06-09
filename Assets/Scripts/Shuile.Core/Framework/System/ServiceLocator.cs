@@ -37,6 +37,6 @@ namespace Shuile.Core.Framework
         }
         public void ClearAllServices() => _services.Clear();
         public void ClearAllServicesCreator() => _serviceCreators.Clear();
-        public void ContainsService(object instance) => _services.ContainsValue(instance);
+        public bool ContainsService(object instance) => _services.ContainsValue(instance);
     }
 }

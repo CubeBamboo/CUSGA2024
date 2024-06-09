@@ -5,16 +5,16 @@ namespace Shuile.Core.Framework
 {
     public class EntitySystem : CSharpLazySingletons<EntitySystem>
     {
-        private readonly List<IEntity> entities = new();
+        private readonly List<IEntity> _entities = new();
 
-        public bool ContainsEntity(IEntity entity) => entities.Contains(entity);
-        public void AddEntity(IEntity entity) => entities.Add(entity);
-        public bool RemoveEntity(IEntity entity) => entities.Remove(entity);
-        public void Clear() => entities.Clear();
+        public bool ContainsEntity(IEntity entity) => _entities.Contains(entity);
+        public void AddEntity(IEntity entity) => _entities.Add(entity);
+        public bool RemoveEntity(IEntity entity) => _entities.Remove(entity);
+        public void Clear() => _entities.Clear();
 
         public void EnableAllEntities()
         {
-            foreach (var entity in entities)
+            foreach (var entity in _entities)
             {
                 entity.SelfEnable = true;
             }
@@ -22,7 +22,7 @@ namespace Shuile.Core.Framework
 
         public T FindEntityOfType<T>() where T : class, IEntity
         {
-            foreach (var entity in entities)
+            foreach (var entity in _entities)
             {
                 if (entity is T t)
                 {

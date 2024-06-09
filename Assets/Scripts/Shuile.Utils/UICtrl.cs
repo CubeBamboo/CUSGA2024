@@ -14,7 +14,7 @@ namespace Shuile.Framework
     {
         #region PanelManage
 
-        protected readonly Dictionary<System.Type, PanelCreateor> _panelCreator = new();
+        protected readonly Dictionary<System.Type, PanelCreator> _panelCreator = new();
         protected readonly Dictionary<System.Type, List<IPanel>> _multiPanels = new();
 
         /* 1. register from MonoBehaviour.Awake()
@@ -37,7 +37,7 @@ namespace Shuile.Framework
         }
 
         /// <summary> register a function to create the panel </summary>
-        public void RegisterCreator<T>(PanelCreateor creator) where T : IPanel, new()
+        public void RegisterCreator<T>(PanelCreator creator) where T : IPanel, new()
         {
             _panelCreator.Add(typeof(T), creator);
         }
@@ -136,7 +136,7 @@ namespace Shuile.Framework
         public abstract void Show();
     }
 
-    public delegate IPanel PanelCreateor(); // Func<IPanel>
+    public delegate IPanel PanelCreator(); // Func<IPanel>
 
     public static class IPanelExt
     {

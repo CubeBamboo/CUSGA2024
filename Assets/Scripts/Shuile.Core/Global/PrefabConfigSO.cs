@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Shuile
+namespace Shuile.Core.Global
 {
     [System.Serializable]
     public struct SpawnEffect

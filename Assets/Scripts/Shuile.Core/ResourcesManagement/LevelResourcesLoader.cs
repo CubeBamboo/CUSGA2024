@@ -1,4 +1,6 @@
 using CbUtils;
+using Shuile.Core.Global;
+using Shuile.Core.Global.Config;
 using Shuile.Utils;
 using System.Threading.Tasks;
 using UnityEngine;

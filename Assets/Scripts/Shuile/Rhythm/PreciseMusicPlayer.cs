@@ -1,0 +1,132 @@
+using CbUtils.Unity;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using Shuile.Audio;
+using Shuile.Core.Framework;
+using Shuile.Core.Global.Config;
+using Shuile.Gameplay;
+using Shuile.Model;
+using Shuile.ResourcesManagement.Loader;
+using System.Threading;
+using UnityEngine;
+
+namespace Shuile
+{
+    /// <summary>
+    /// it provide a async player for lower delay, a timer start from music's specific position
+    /// </summary>
+    // TODO: it designed for a utils class in the first time, but now it's implemented to be a entity, and it needs to refactor
+    public class PreciseMusicPlayer : MonoSingletons<PreciseMusicPlayer>, IEntity
+    {
+        private LevelConfigSO _levelConfig;
+
+        private LevelModel _levelModel;
+        private AudioPlayerInUnity _audioPlayer;
+        public AudioPlayerInUnity AudioPlayer => _audioPlayer;
+
+        protected override void OnAwake()
+        {
+            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+
+            _levelModel = this.GetModel<LevelModel>();
+
+            _audioPlayer = new SimpleAudioPlayer();
+            Restore();
+        }
+
+        private void OnDestroy()
+        {
+            _audioPlayer.Stop();
+        }
+
+        public void FixedUpdate()
+        {
+            if (!IsPlaying) return;
+            CurrentTime += Time.fixedDeltaTime;
+            _levelModel.currentMusicTime = CurrentTime;
+        }
+
+        /// <summary> timer for music playing by play offset </summary>
+        public float CurrentTime { get; private set; } = 0f;
+        public bool IsPlaying { get; set; } = false;
+        public float PlayTimeScale { get; set; } = 1f;
+        public float Volume
+        {
+            get => _audioPlayer.Volume;
+            set => _audioPlayer.Volume = value;
+        }
+
+        private CancellationTokenSource _asyncPlayTokenSource;
+
+        public void LoadClip(AudioClip clip)
+        {
+            _audioPlayer.LoadClip(clip);
+        }
+
+        public async UniTask Play(float offsetInSeconds, float startDelay = 0.5f)
+        {
+            _asyncPlayTokenSource = new();
+            
+            await UniTask.Delay(System.TimeSpan.FromSeconds(startDelay), cancellationToken: _asyncPlayTokenSource.Token);
+            _audioPlayer.Pitch = PlayTimeScale;
+
+            var playAt = AudioSettings.dspTime + 1f;
+            var audioDelta = await _audioPlayer.WaitPlayScheduled(playAt, _asyncPlayTokenSource.Token);
+
+            CurrentTime = -offsetInSeconds + (float)audioDelta;
+            IsPlaying = true; // -> start timing
+        }
+
+        public void PlayImmediately(float offset)
+        {
+            _audioPlayer.Pitch = PlayTimeScale;
+            _audioPlayer.Play();
+            CurrentTime = -offset;
+            IsPlaying = true;
+        }
+
+        public void Stop()
+        {
+            IsPlaying = false;
+            _audioPlayer.Stop();
+            _asyncPlayTokenSource?.Cancel();
+        }
+
+        /// <summary>
+        /// default need to call in FixedUpdate
+        /// </summary>
+        public void Restore()
+        {
+            CurrentTime = 0;
+            IsPlaying = false;
+            _audioPlayer.Reset();
+        }
+
+        public void SetCurrentTime(float time)
+        {
+            time = Mathf.Clamp(time, 0f, _audioPlayer.TargetSource.clip.length);
+
+            CurrentTime = time;
+            _audioPlayer.TargetSource.time = time;
+        }
+
+        public void ReloadData()
+        {
+            Restore();
+            LoadClip(LevelRoot.LevelContext.ChartData.audioClip);
+        }
+
+        public void StartPlay(float offset)
+        {
+            Volume = _levelConfig.volume;
+            Play(offset).Forget();
+        }
+
+        public void FadeOutAndStop(float duration)
+        {
+            AudioPlayer.TargetSource.DOFade(0, duration).OnComplete(() => AudioPlayer.Stop());
+        }
+
+        public ModuleContainer GetModule() => GameApplication.Level;
+    }
+}
