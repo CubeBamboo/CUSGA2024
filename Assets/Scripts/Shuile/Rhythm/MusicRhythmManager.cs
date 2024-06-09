@@ -32,10 +32,13 @@ namespace Shuile.Rhythm
 
         protected override void OnAwake()
         {
+            var sceneLocator = LevelScope.Interface;
+            var resourcesLoader = LevelResourcesLoader.Instance;
+            
             _levelModel = this.GetModel<LevelModel>();
-            _preciseMusicPlayer = PreciseMusicPlayer.Instance;
+            _preciseMusicPlayer = sceneLocator.Get<PreciseMusicPlayer>();
 
-            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+            _levelConfig = resourcesLoader.SyncContext.levelConfig;
         }
 
         private void Start()

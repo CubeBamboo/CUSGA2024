@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay
 {
+    [DefaultExecutionOrder(-4000)]
     public class LevelRoot : MonoSingletons<LevelRoot>, IEntity
     {
         public static bool IsLevelActive { get; private set; } = false;

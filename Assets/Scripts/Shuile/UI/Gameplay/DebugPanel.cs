@@ -7,6 +7,7 @@ using CbUtils.Preview.Event;
 using Shuile.Core.Framework;
 using Shuile.Framework;
 using Shuile.Gameplay;
+using Shuile.Gameplay.Entity;
 using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
@@ -28,6 +29,7 @@ namespace Shuile.UI.Gameplay
 
         private PlayerModel _playerModel;
         private LevelModel _levelModel;
+        private LevelEntityManager _levelEntityManager;
 
         private void Awake()
             => this.RegisterUI<DebugPanel>();
@@ -36,6 +38,8 @@ namespace Shuile.UI.Gameplay
 
         private void Start()
         {
+            var lifeTimeScope = LevelScope.Interface;
+            _levelEntityManager = lifeTimeScope.Get<LevelEntityManager>();
             _playerModel = this.GetModel<PlayerModel>();
             _levelModel = this.GetModel<LevelModel>();
             _musicRhythmManager = MusicRhythmManager.Instance;
@@ -46,7 +50,7 @@ namespace Shuile.UI.Gameplay
                 playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
                 dangerScoreText.text = $"DangerScore: {_levelModel.DangerScore:0.000}";
                 dangerLevelText.text = $"DangerLevel: {_levelModel.DangerLevel}";
-                enemyCountText.text = $"EnemyCount: {LevelEntityManager.Instance.EnemyCount}";
+                enemyCountText.text = $"EnemyCount: {_levelEntityManager.EnemyCount}";
             };
         }
 

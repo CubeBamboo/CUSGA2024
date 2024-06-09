@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Audio;
 using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay;
 using Shuile.Model;
@@ -13,33 +14,34 @@ using UnityEngine;
 namespace Shuile
 {
     /// <summary>
-    /// it provide a async player for lower delay, a timer start from music's specific position
+    /// it provides an async player for lower delay, a timer start from music's specific position
     /// </summary>
-    // TODO: it designed for a utils class in the first time, but now it's implemented to be a entity, and it needs to refactor
-    public class PreciseMusicPlayer : MonoSingletons<PreciseMusicPlayer>, IEntity
+    public class PreciseMusicPlayer : IEntity, IInitializeable, IFixedTickable, IDestroyable
     {
         private LevelConfigSO _levelConfig;
 
+        private LevelAudioManager _levelAudioManager;
         private LevelModel _levelModel;
-        private AudioPlayerInUnity _audioPlayer;
-        public AudioPlayerInUnity AudioPlayer => _audioPlayer;
-
-        protected override void OnAwake()
+        private UnityAudioPlayer _audioPlayer;
+        public UnityAudioPlayer AudioPlayer => _audioPlayer;
+        
+        public void Initialize()
         {
-            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
-
+            var sceneLocator = LevelScope.Interface;
+            var resourcesLoader = LevelResourcesLoader.Instance;
+            
+            _levelConfig = resourcesLoader.SyncContext.levelConfig;
+            _levelAudioManager = sceneLocator.Get<LevelAudioManager>();
             _levelModel = this.GetModel<LevelModel>();
 
-            _audioPlayer = new SimpleAudioPlayer();
+            _audioPlayer = new UnityAudioPlayer(_levelAudioManager.MusicSource);
             Restore();
         }
-
-        private void OnDestroy()
+        public void OnDestroy()
         {
             _audioPlayer.Stop();
         }
-
-        public void FixedUpdate()
+        public void FixedTick()
         {
             if (!IsPlaying) return;
             CurrentTime += Time.fixedDeltaTime;

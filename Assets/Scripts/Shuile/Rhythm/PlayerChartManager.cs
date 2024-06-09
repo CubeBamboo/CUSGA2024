@@ -1,5 +1,6 @@
 using Shuile.Chart;
 using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay;
 using Shuile.ResourcesManagement.Loader;
@@ -7,28 +8,8 @@ using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
 {
-    class PlayerChartManagerUpdater : MonoBehaviour, IEntity
-    {
-        private PlayerChartManager _playerChartManager;
-        private MusicRhythmManager _musicRhythmManager;
-
-        private void Awake()
-        {
-            _playerChartManager = this.GetSystem<PlayerChartManager>();
-            _musicRhythmManager = MusicRhythmManager.Instance;
-        }
-        private void FixedUpdate()
-        {
-            if (!LevelRoot.Instance.IsStart) return;
-
-            _playerChartManager.ChartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
-            _playerChartManager.noteContainer.CheckRelease(_musicRhythmManager.CurrentTime);
-        }
-        public ModuleContainer GetModule() => GameApplication.Level;
-    }
-
     // manage chart of player, convert chart to runtime note object noteContainer
-    public class PlayerChartManager : ISystem
+    public class PlayerChartManager : ISystem, IInitializeable, IFixedTickable
     {
         private System.Lazy<ChartPlayer> chartPlayer;
 
@@ -37,21 +18,34 @@ namespace Shuile.Rhythm.Runtime
 
         private float notePreShowInterval = 0.4f;
         private LevelConfigSO _levelConfig;
+        private IFixedTickable _fixedTickableImplementation;
+        private MusicRhythmManager _musicRhythmManager;
 
         public event System.Action OnPlayerHitOn;
         public NoteContainer noteContainer { get; private set;}
-
-        public PlayerChartManager()
+        
+        public void Initialize()
         {
+            LevelScope scope = LevelScope.Interface;
+
+            _musicRhythmManager = MusicRhythmManager.Instance;
             var levelTimingManager = this.GetSystem<LevelTimingManager>();
 
             _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
             notePreShowInterval = _levelConfig.playerNotePreShowTime;
 
             noteContainer = new();
-            chartPlayer = new(() => new ChartPlayer(chart,
-                note => note.GetRealTime(levelTimingManager) - notePreShowInterval));
-            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetRealTime(levelTimingManager));
+            chartPlayer = new(() => new ChartPlayer(chart, scope,
+                note => note.GetNotePlayTime(scope) - notePreShowInterval));
+            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetNotePlayTime(scope));
+        }
+
+        public void FixedTick()
+        {
+            if (!LevelRoot.Instance.IsStart) return;
+
+            ChartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
+            noteContainer.CheckRelease(_musicRhythmManager.CurrentTime);
         }
 
         public NoteContainer NoteContainer => noteContainer;

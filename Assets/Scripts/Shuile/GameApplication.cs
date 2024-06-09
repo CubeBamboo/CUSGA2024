@@ -26,12 +26,8 @@ namespace Shuile
                 .AddModelImplemenation<LevelModel>(() => new LevelModel(Level))
                 .AddModelImplemenation<PlayerModel>(() => new PlayerModel())
 
-                .AddSystemImplemenation<PlayerChartManager>(() => new PlayerChartManager())
                 .AddSystemImplemenation<LevelTimingManager>(() => new LevelTimingManager())
-                .AddSystemImplemenation<AutoPlayChartManager>(() => new AutoPlayChartManager())
-                .AddSystemImplemenation<LevelStateMachine>(() => new LevelStateMachine())
-                .AddSystemImplemenation<EnemySpawnManager>(() => new EnemySpawnManager());
-            
+                .AddSystemImplemenation<LevelStateMachine>(() => new LevelStateMachine());
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

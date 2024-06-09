@@ -1,17 +1,18 @@
 using CbUtils.Unity;
 using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Event;
 using Shuile.Model;
+using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm.Runtime;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
 using UnityEngine;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Entity
 {
-    public class LevelEntityManager : MonoSingletons<LevelEntityManager>, IEntity
+    public class LevelEntityManager : IEntity, IStartable, IDestroyable
     {
         private readonly List<Enemy> enemyList = new();
         private readonly List<BehaviourLevelEntity> removeList = new();
@@ -24,6 +25,8 @@ namespace Shuile.Gameplay
         private LevelModel _levelModel;
         private AutoPlayChartManager _autoPlayChartManager;
 
+        internal LevelEntityFactory EntityFactory { get; private set; }
+
         public bool IsJudging => judging;
 
         public Transform EnemyParent => _enemyParent;
@@ -31,24 +34,24 @@ namespace Shuile.Gameplay
         public int EnemyCount { get; set; }
         public ReadOnlyCollection<Enemy> Enemies => enemyList.AsReadOnly();
 
-        protected override void Awake()
+        public void Start()
         {
-            base.Awake();
+            var scope = LevelScope.Interface;
+            var resourceLoader = LevelResourcesLoader.Instance;
+            
             _enemyParent = new GameObject("Enemies").transform;
-
             _levelModel = this.GetModel<LevelModel>();
-        }
-
-        private void Start()
-        {
-            _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
+            
+            _autoPlayChartManager = scope.Get<AutoPlayChartManager>();
             _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
 
             this.RegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
             this.RegisterEvent<EnemyDieEvent>(OnEnemyDie);
+
+            EntityFactory = new LevelEntityFactory(this, resourceLoader.SyncContext.globalPrefabs);
         }
 
-        private void OnDestroy()
+        public void OnDestroy()
         {
             this.UnRegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
             this.UnRegisterEvent<EnemyDieEvent>(OnEnemyDie);
@@ -75,7 +78,7 @@ namespace Shuile.Gameplay
             judging = true;
             var version = frameCounter++;
 
-            // common judeable
+            // common judgeable
             foreach (var judge in _levelModel.JudgeObjects)
             {
                 judge.Judge(version, false);

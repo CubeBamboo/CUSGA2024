@@ -116,8 +116,8 @@ namespace Shuile
 
             if (useRhythmTime)
             {
-                usingInTime = this.GetRealTime(InTime, timingManager);
-                attackStayTime = this.GetRealTime(attackStayTime, timingManager);
+                usingInTime = timingManager.GetRealTime(InTime);
+                attackStayTime = timingManager.GetRealTime(attackStayTime);
             }
         }
 

@@ -7,6 +7,7 @@ using UnityEngine;
 using UObject = UnityEngine.Object;
 using Cysharp.Threading.Tasks;
 using Shuile.Core.Framework;
+using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Move;
 using Shuile.UI.Gameplay;
 
@@ -60,9 +61,8 @@ namespace Shuile.Gameplay
                 HandleDieEvent();
             }
         }
-        private async void HandleDieEvent()
+        private void HandleDieEvent()
         {
-            await UniTask.WaitUntil(() => !LevelEntityManager.Instance.IsJudging);
             this.TriggerEvent<EnemyDieEvent>(new() { enemy = gameObject });
         }
         protected abstract void OnSelfHurt(int oldVal, int newVal);

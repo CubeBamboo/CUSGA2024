@@ -60,9 +60,10 @@ namespace Shuile.Gameplay.Character
         private bool attackingLock;
 
         private MusicRhythmManager _musicRhythmManager;
-        private PlayerModel playerModel;
+        private PlayerChartManager _playerChartManager;
+        private PlayerModel _playerModel;
 
-        private AttackCommand attackCommand;
+        private AttackCommand _attackCommand;
 
         public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
@@ -98,7 +99,7 @@ namespace Shuile.Gameplay.Character
             {
                 hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
                 this.ExecuteCommand<TryHitNoteCommand>(hitNoteCommand);
-                playerModel.currentHitOffset = hitNoteCommand.result.hitOffset;
+                _playerModel.currentHitOffset = hitNoteCommand.result.hitOffset;
                 return hitNoteCommand.result.isHitOn;
             }
         }
@@ -109,7 +110,7 @@ namespace Shuile.Gameplay.Character
             ConfigureDependency();
             ConfigureInputEvent();
 
-            attackCommand = new()
+            _attackCommand = new()
             {
                 position = transform.position,
                 attackRadius = attackRadius,
@@ -118,7 +119,7 @@ namespace Shuile.Gameplay.Character
             hitNoteCommand = new()
             {
                 musicRhythmManager = _musicRhythmManager,
-                playerChartManager = this.GetSystem<PlayerChartManager>(),
+                playerChartManager = _playerChartManager,
                 inputTime = _musicRhythmManager.CurrentTime
             };
 
@@ -152,7 +153,7 @@ namespace Shuile.Gameplay.Character
         {
             _moveController.XMove(xInput);
             OnMoveStart?.Invoke(xInput);
-            playerModel.faceDir = xInput;
+            _playerModel.faceDir = xInput;
         }
 
         public void JumpPress()
@@ -188,8 +189,8 @@ namespace Shuile.Gameplay.Character
         {
             if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm) return;
 
-            attackCommand.position = transform.position;
-            this.ExecuteCommand<AttackCommand>(attackCommand);
+            _attackCommand.position = transform.position;
+            this.ExecuteCommand<AttackCommand>(_attackCommand);
 
             OnWeaponAttack.Invoke(true);
         }
@@ -276,10 +277,13 @@ namespace Shuile.Gameplay.Character
 
         private void ConfigureDependency()
         {
-            playerModel = this.GetModel<PlayerModel>();
+            var sceneLocator = LevelScope.Interface;
+            
+            _playerModel = this.GetModel<PlayerModel>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
             _musicRhythmManager = MusicRhythmManager.Instance;
+            _playerChartManager = sceneLocator.Get<PlayerChartManager>();
         }
 
         public override ModuleContainer GetModule() => GameApplication.Level;

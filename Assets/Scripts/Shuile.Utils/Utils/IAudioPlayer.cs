@@ -40,7 +40,62 @@ namespace Shuile.Audio
         float Pitch { get; set; }
         double AudioSystemTime { get; }
     }
+    
+    public class UnityAudioPlayer : IAudioPlayer
+    {
+        public UnityAudioPlayer(AudioSource targetSource)
+        {
+            if(targetSource == null)
+                throw new System.ArgumentNullException(nameof(targetSource));
+            TargetSource = targetSource;
+        }
 
+        public AudioSource TargetSource { get; set; }
+        public float Time
+        {
+            get => TargetSource.time;
+            set => TargetSource.time = value;
+        }
+        public float Volume
+        {
+            get => TargetSource.volume;
+            set => TargetSource.volume = value;
+        }
+        public float Pitch
+        {
+            get => TargetSource.pitch;
+            set => TargetSource.pitch = value;
+        }
+        public double AudioSystemTime => AudioSettings.dspTime;
+
+        public void LoadClip(AudioClip clip)
+        {
+            TargetSource.clip = clip;
+        }
+        public void Play()
+        {
+            TargetSource.Play();
+        }
+        public void PlayScheduled(double time)
+        {
+            TargetSource.PlayScheduled(time);
+        }
+        public void Pause()
+        {
+            TargetSource.Pause();
+        }
+        public void Stop()
+        {
+            TargetSource.Stop();
+        }
+        public void Reset()
+        {
+            TargetSource.Stop();
+            TargetSource.time = 0;
+        }
+    }
+
+    [System.Obsolete("Use UnityAudioPlayer instead.")]
     public abstract class AudioPlayerInUnity : IAudioPlayer
     {
         public abstract AudioSource TargetSource { get;}
