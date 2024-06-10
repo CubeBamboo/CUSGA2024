@@ -22,7 +22,7 @@ namespace Shuile.UI
         private void Start()
         {
             var lifeTimeLocator = LevelScope.Interface;
-            _autoPlayChartManager = lifeTimeLocator.Get<AutoPlayChartManager>();
+            _autoPlayChartManager = lifeTimeLocator.GetImplementation<AutoPlayChartManager>();
             rectTransform = GetComponent<RectTransform>();
 
             InitScale = rectTransform.localScale;

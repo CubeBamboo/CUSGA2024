@@ -29,7 +29,7 @@ namespace Shuile.Rhythm.Runtime
             _musicRhythmManager = MusicRhythmManager.Instance;
             var levelTimingManager = this.GetSystem<LevelTimingManager>();
             _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
-            _noteDataProcessor = scope.Get<NoteDataProcessor>();
+            _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
         }
 
         public void Initialize()

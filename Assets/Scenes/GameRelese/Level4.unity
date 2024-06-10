@@ -3221,6 +3221,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1390576550798531529, guid: 5cece953557fb6a46b00fe5f8a808b77, type: 3}
   m_PrefabInstance: {fileID: 381357261}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &381357263 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5349702657299354425, guid: 5cece953557fb6a46b00fe5f8a808b77, type: 3}
+  m_PrefabInstance: {fileID: 381357261}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8238dfd048441742b0939ef4caee50a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &597344484
 GameObject:
   m_ObjectHideFlags: 0
@@ -3295,6 +3306,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2126869024058730763, guid: af46d6df72279264ea7eb72a93db42c3, type: 3}
+      propertyPath: markedZone
+      value: 
+      objectReference: {fileID: 381357263}
     - target: {fileID: 3867265148498414738, guid: af46d6df72279264ea7eb72a93db42c3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3386,7 +3401,6 @@ MonoBehaviour:
     moveScale: 0.1
     moveSpeed: 0.02
     moveRadius: 0.3
-  playerInitPosition: {fileID: 2058337058}
 --- !u!4 &1129486223
 Transform:
   m_ObjectHideFlags: 0

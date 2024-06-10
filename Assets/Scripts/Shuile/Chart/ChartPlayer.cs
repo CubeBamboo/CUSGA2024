@@ -35,12 +35,6 @@ namespace Shuile.Chart
             return;
             float PlayTimeConvert(BaseNoteData note) => note.GetNotePlayTime(noteDataProcessor);
         }
-        public ChartPlayer(ChartData chart, IGetableScope scope)
-        {
-            Init(chart, PlayTimeConvert);
-            return;
-            float PlayTimeConvert(BaseNoteData note) => note.GetNotePlayTime(scope.Get<NoteDataProcessor>());
-        }
 
         private void Init(ChartData chart, System.Func<BaseNoteData, float> onPlayTimeConvert)
         {

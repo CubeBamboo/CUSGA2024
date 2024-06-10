@@ -36,7 +36,7 @@ namespace Shuile.Rhythm
             var resourcesLoader = LevelResourcesLoader.Instance;
             
             _levelModel = this.GetModel<LevelModel>();
-            _preciseMusicPlayer = sceneLocator.Get<PreciseMusicPlayer>();
+            _preciseMusicPlayer = sceneLocator.GetImplementation<PreciseMusicPlayer>();
 
             _levelConfig = resourcesLoader.SyncContext.levelConfig;
         }

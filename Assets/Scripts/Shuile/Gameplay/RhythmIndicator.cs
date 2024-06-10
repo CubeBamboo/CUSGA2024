@@ -59,9 +59,9 @@ namespace Shuile.Gameplay
             var resourcesLoader = LevelResourcesLoader.Instance;
             var sceneLocator = LevelScope.Interface;
             
-            _playerChartManager = sceneLocator.Get<PlayerChartManager>();
+            _playerChartManager = sceneLocator.GetImplementation<PlayerChartManager>();
             
-            PreciseMusicPlayer preciseMusicPlayer = sceneLocator.Get<PreciseMusicPlayer>();
+            PreciseMusicPlayer preciseMusicPlayer = sceneLocator.GetImplementation<PreciseMusicPlayer>();
             _timeTweener =
                 new Lazy<MusicTimeTweener>(() => preciseMusicPlayer.AudioPlayer.TargetSource.gameObject.GetOrAddComponent<MusicTimeTweener>());
 

@@ -1,16 +1,26 @@
+using CbUtils.Extension;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Shuile.Core.Framework.Unity
 {
     public interface IGetableScope
     {
-        T Get<T>();
+        T GetImplementation<T>();
+        object GetImplementation(Type type);
+    }
+    
+    public interface IRegisterableScope
+    {
+        void Register<T>(Func<T> implementation);
+        void RegisterMonoComponent<T>(T instance) where T : MonoBehaviour;
+        void RegisterEntryPoint<T>(Func<T> implementation);
     }
     
     [DefaultExecutionOrder(-2000)]
-    public class SceneServiceScope<TScope> : MonoBehaviour, IGetableScope where TScope : SceneServiceScope<TScope>
+    public class SceneServiceScope<TScope> : MonoBehaviour, IRegisterableScope, IGetableScope where TScope : SceneServiceScope<TScope>
     {
         public static TScope Interface { get; private set; }
         private static HashSet<Type> _getChain = new();
@@ -51,7 +61,7 @@ namespace Shuile.Core.Framework.Unity
             // init entry points
             foreach (var pair in _entryPointCreators)
             {
-                Get(pair.Key);
+                GetImplementation(pair.Key);
             }
         }
         
@@ -68,26 +78,25 @@ namespace Shuile.Core.Framework.Unity
             _entryPointCreators.Add(typeof(T), () => implementation());
         }
 
-        public T Get<T>()
+        public T GetImplementation<T>() => (T)GetImplementation(typeof(T));
+        public object GetImplementation(Type type)
         {
-            if(!EnableGetChainCheck) return _serviceLocator.GetService<T>();
+            if(!EnableGetChainCheck) return _serviceLocator.GetService(type);
             
-            Type type = typeof(T);
             if (!_getChain.Add(type))
-                throw new InvalidOperationException($"Circular dependency detected for type {type}, you need to refactor your code.");
-            var res = _serviceLocator.GetService<T>();
+            {
+                string log = _getChain.IEnumerableToString(x => "-> " + x.FullName, "", " ") + "->" + _getChain.First().FullName;
+                _getChain.Clear();
+                throw new InvalidOperationException($"Circular dependency detected, you need to refactor your code: {log}");
+            }
+            var res = _serviceLocator.GetService(type);
             _getChain.Remove(type);
             return res;
         }
 
-        public object Get(Type type)
-        {
-            return _serviceLocator.GetService(type);
-        }
-
         public void ClearExisting<T>() => _serviceLocator.ClearAllServices();
         
-        public virtual void Configure(TScope locator)
+        public virtual void Configure(IRegisterableScope scope)
         {
         }
     }

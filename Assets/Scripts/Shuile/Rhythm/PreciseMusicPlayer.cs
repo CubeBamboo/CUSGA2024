@@ -26,7 +26,7 @@ namespace Shuile.Rhythm
 
         public PreciseMusicPlayer(IGetableScope scope)
         {
-            _levelAudioManager = scope.Get<LevelAudioManager>();
+            _levelAudioManager = scope.GetImplementation<LevelAudioManager>();
             var resourcesLoader = LevelResourcesLoader.Instance;
             _levelConfig = resourcesLoader.SyncContext.levelConfig;
             _levelModel = this.GetModel<LevelModel>();

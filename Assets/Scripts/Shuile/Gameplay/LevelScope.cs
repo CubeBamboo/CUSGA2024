@@ -12,12 +12,14 @@ namespace Shuile.Gameplay
     public class LevelScope: SceneServiceScope<LevelScope>
     {
         [SerializeField] private LevelAudioManager levelAudioManager;
+        [SerializeField] private LevelZoneManager levelZoneManager;
         
-        public override void Configure(LevelScope scope)
+        public override void Configure(IRegisterableScope scope)
         {
             scope.Register<NoteDataProcessor>(() => new NoteDataProcessor(this));
             
             scope.RegisterMonoComponent<LevelAudioManager>(levelAudioManager);
+            scope.RegisterMonoComponent<LevelZoneManager>(levelZoneManager);
             
             scope.RegisterEntryPoint<PreciseMusicPlayer>(() => new PreciseMusicPlayer(this));
             scope.RegisterEntryPoint<PlayerChartManager>(() => new PlayerChartManager(this));

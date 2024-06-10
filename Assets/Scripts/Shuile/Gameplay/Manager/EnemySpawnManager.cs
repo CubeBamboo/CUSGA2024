@@ -17,13 +17,15 @@ namespace Shuile.Gameplay.Manager
 
         private readonly AutoPlayChartManager _autoPlayChartManager;
         private readonly LevelEntityManager _levelEntityManager;
+        private LevelZoneManager _levelZoneManager;
 
         public int EnemyCount => _levelEntityManager.EnemyCount;
 
         public EnemySpawnManager(IGetableScope scope)
         {
-            _autoPlayChartManager = scope.Get<AutoPlayChartManager>();
-            _levelEntityManager = scope.Get<LevelEntityManager>();
+            _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
+            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
+            _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
             _levelModel = this.GetModel<LevelModel>();
             currentEnemyData = LevelRoot.LevelContext.LevelEnemyData;
         }
@@ -55,7 +57,7 @@ namespace Shuile.Gameplay.Manager
             var useIndex = level <= length - 1 ? level : length-1;
             var useEnemies = currentEnemyData.enemies[useIndex].enemyList;
             int index = URandom.Range(0, useEnemies.Length);
-            _levelEntityManager.EntityFactory.SpawnEnemyWithEffectDelay(useEnemies[index], LevelZoneManager.Instance.RandomValidPosition());
+            _levelEntityManager.EntityFactory.SpawnEnemyWithEffectDelay(useEnemies[index], _levelZoneManager.RandomValidPosition());
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

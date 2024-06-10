@@ -39,7 +39,7 @@ namespace Shuile.UI.Gameplay
         private void Start()
         {
             var lifeTimeScope = LevelScope.Interface;
-            _levelEntityManager = lifeTimeScope.Get<LevelEntityManager>();
+            _levelEntityManager = lifeTimeScope.GetImplementation<LevelEntityManager>();
             _playerModel = this.GetModel<PlayerModel>();
             _levelModel = this.GetModel<LevelModel>();
             _musicRhythmManager = MusicRhythmManager.Instance;

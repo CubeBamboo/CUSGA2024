@@ -285,7 +285,7 @@ namespace Shuile.Gameplay.Character
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
             _musicRhythmManager = MusicRhythmManager.Instance;
-            _playerChartManager = scope.Get<PlayerChartManager>();
+            _playerChartManager = scope.GetImplementation<PlayerChartManager>();
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;
