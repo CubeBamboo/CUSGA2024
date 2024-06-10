@@ -7,14 +7,16 @@ namespace Shuile.Gameplay.Feel
 {
     public class CameraDrifterController : MonoBehaviour, IEntity
     {
-        private Transform player;
+        private Transform _player;
 
-        public bool HasTargetPosition => player != null;
-        public Vector2 TargetPosition => player.position;
+        public bool HasTargetPosition => _player != null;
+        public Vector2 TargetPosition => _player.position;
 
         private void Start()
         {
-            player = Player.Instance.transform;
+            var scope = LevelScope.Interface;
+            var player = scope.GetImplementation<Player>();
+            this._player = player.transform;
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

@@ -33,18 +33,12 @@ namespace Shuile.Gameplay
 
             GameApplication.Level.ServiceLocator.ClearExisting();
             IsLevelActive = false;
-            End();
             Debug.Log("Level dispose end and close");
         }
 
         public static void RequestStart(LevelContext levelContext)
         {
             LevelContext = levelContext;
-        }
-
-        public static void End()
-        {
-            LevelContext = null;
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

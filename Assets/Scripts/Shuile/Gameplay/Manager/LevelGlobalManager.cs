@@ -36,8 +36,8 @@ namespace Shuile.Gameplay.Manager
             _levelModel = this.GetModel<LevelModel>();
             _playerModel = this.GetModel<PlayerModel>();
             _musicRhythmManager = MusicRhythmManager.Instance;
-            _player = Player.Instance;
 
+            _player = scope.GetImplementation<Player>();
             _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
             _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();

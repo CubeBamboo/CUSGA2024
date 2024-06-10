@@ -11,32 +11,36 @@ namespace Shuile.Gameplay.Entity.Enemies
 {
     public class ZakoMachine : Enemy
     {
-        private FSM<DefaultEnemyState> mFsm = new();
+        private Player _player;
+        private readonly FSM<DefaultEnemyState> _mFsm = new();
 
-        ZakoPatrolBehavior patrolBehavior;
-        ZakoChaseBehavior chaseBehavior;
+        ZakoPatrolBehavior _patrolBehavior;
+        ZakoChaseBehavior _chaseBehavior;
 
         [SerializeField] private float checkPlayerRange = 5f;
         [SerializeField] private float checkAttackRange = 1.2f;
         [SerializeField] private float attackRange = 2f;
         [SerializeField] private int attackPoint = 80;
 
-        private SpriteRenderer mRenderer;
+        private SpriteRenderer _mRenderer;
 
-        private float faceDir;
+        private float _faceDir;
 
         protected override void OnAwake()
         {
-            patrolBehavior = new(gameObject, moveController, 5f);
-            chaseBehavior = new();
-            RegisterState(mFsm);
+            var scope = LevelScope.Interface;
+            _player = scope.GetImplementation<Player>();
+            
+            _patrolBehavior = new(gameObject, moveController, 5f);
+            _chaseBehavior = new();
+            RegisterState(_mFsm);
 
-            mRenderer = GetComponentInChildren<SpriteRenderer>();
+            _mRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
         protected override void OnSelfDie()
         {
-            mFsm.SwitchState(DefaultEnemyState.Dead);
+            _mFsm.SwitchState(DefaultEnemyState.Dead);
             moveController.IsFrozen = true;
 
             transform.DOScale(Vector3.zero, 0.1f)
@@ -58,42 +62,42 @@ namespace Shuile.Gameplay.Entity.Enemies
             mFsm.NewEventState(DefaultEnemyState.Patrol)
                 .OnFixedUpdate(() =>
                 {
-                    patrolBehavior.Do();
-                    faceDir = patrolBehavior.FaceDir;
-                    if (EnemyBehaviorAction.XRayCastPlayer(transform.position, faceDir, checkPlayerRange))
+                    _patrolBehavior.Do();
+                    _faceDir = _patrolBehavior.FaceDir;
+                    if (EnemyBehaviorAction.XRayCastPlayer(transform.position, _faceDir, checkPlayerRange))
                         mFsm.SwitchState(DefaultEnemyState.Chase);
 
-                    EnemyBehaviorAction.CheckWallAndJump(moveController, faceDir);
+                    EnemyBehaviorAction.CheckWallAndJump(moveController, _faceDir);
                 });
 
             mFsm.NewEventState(DefaultEnemyState.Chase)
                 .OnEnter(() =>
                 {
-                    chaseBehavior.Bind(Player.Instance.gameObject, moveController);
+                    _chaseBehavior.Bind(_player.gameObject, moveController);
                 })
                 .OnFixedUpdate(() =>
                 {
-                    if (!EnemyBehaviorAction.XRayCastPlayer(transform.position, faceDir, checkPlayerRange))
+                    if (!EnemyBehaviorAction.XRayCastPlayer(transform.position, _faceDir, checkPlayerRange))
                         mFsm.SwitchState(DefaultEnemyState.Patrol);
                     //UnityAPIExt.DebugLineForRayCast2D(transform.position, Vector2.right * faceDir, checkPlayerRange, LayerMask.GetMask("Player"));
 
-                    faceDir = chaseBehavior.FaceDir;
-                    chaseBehavior.Do();
+                    _faceDir = _chaseBehavior.FaceDir;
+                    _chaseBehavior.Do();
 
-                    if (chaseBehavior.XCloseEnoughToTarget(checkAttackRange)) // can attack
+                    if (_chaseBehavior.XCloseEnoughToTarget(checkAttackRange)) // can attack
                         mFsm.SwitchState(DefaultEnemyState.Attack);
 
-                    EnemyBehaviorAction.CheckWallAndJump(moveController, faceDir, 0.8f);
+                    EnemyBehaviorAction.CheckWallAndJump(moveController, _faceDir, 0.8f);
                 });
 
             mFsm.NewEventState(DefaultEnemyState.Attack)
-                .OnCustom(() => Attack(Player.Instance))
+                .OnCustom(() => Attack(_player))
                 .OnFixedUpdate(() =>
                 {
-                    if (!chaseBehavior.XCloseEnoughToTarget(checkAttackRange)) // can attack
+                    if (!_chaseBehavior.XCloseEnoughToTarget(checkAttackRange)) // can attack
                         mFsm.SwitchState(DefaultEnemyState.Chase);
 
-                    EnemyBehaviorAction.CheckWallAndJump(moveController, faceDir, 0.8f);
+                    EnemyBehaviorAction.CheckWallAndJump(moveController, _faceDir, 0.8f);
                 });
 
             mFsm.NewEventState(DefaultEnemyState.Dead);
@@ -103,22 +107,22 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         protected override void OnSelfHurt(int oldVal, int newVal)
         {
-            mRenderer.color = Color.white;
-            mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f)
-                     .OnComplete(() => mRenderer.DOColor(Color.white, 0.2f));
+            _mRenderer.color = Color.white;
+            _mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f)
+                     .OnComplete(() => _mRenderer.DOColor(Color.white, 0.2f));
             var initPos = transform.position;
             transform.DOShakePosition(0.2f, strength: 0.2f)
                      .OnComplete(() => transform.position = initPos);
-            gameObject.SetOnDestroy(() => mRenderer.DOKill(), "mRenderer");
+            gameObject.SetOnDestroy(() => _mRenderer.DOKill(), "mRenderer");
             gameObject.SetOnDestroy(() => transform.DOKill(), "transform");
         }
 
         public override void Judge(int frame, bool force)
-            => mFsm.Custom();
+            => _mFsm.Custom();
         private void Update()
-            => mFsm.Update();
+            => _mFsm.Update();
         private void FixedUpdate()
-            => mFsm.FixedUpdate();
+            => _mFsm.FixedUpdate();
     }
 
     /*public class ZakoMachine : MonoBaseEnemy

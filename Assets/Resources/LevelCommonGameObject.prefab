@@ -47,6 +47,7 @@ MonoBehaviour:
   levelAudioManager: {fileID: 7276062682042202717}
   levelZoneManager: {fileID: 2126869024058730763}
   endLevelPanel: {fileID: 678913754241128194}
+  player: {fileID: 888734764693625756}
 --- !u!1 &2845726619159077925
 GameObject:
   m_ObjectHideFlags: 0

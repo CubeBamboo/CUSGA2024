@@ -11,8 +11,6 @@ namespace Shuile.Gameplay.Character
 {
     public class Player : MonoBehaviour, IEntity, IHurtable
     {
-        public static Player Instance => MonoSingletonProperty<Player>.Instance;
-
         private PlayerModel _playerModel;
         private LevelStateMachine _levelStateMachine;
 
@@ -28,8 +26,6 @@ namespace Shuile.Gameplay.Character
         private void Awake()
         {
             var scope = LevelScope.Interface;
-            MonoSingletonProperty<Player>.InitSingleton(this);
-            MonoSingletonProperty<Player>.EnableAutoSpawn = false;
             _playerModel = this.GetModel<PlayerModel>();
             _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
             _playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
