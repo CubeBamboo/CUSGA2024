@@ -9,6 +9,7 @@ using Shuile.Gameplay.Feel;
 using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
+using Shuile.UI.Gameplay;
 using UnityEngine;
 using UInput = UnityEngine.InputSystem;
 
@@ -25,6 +26,7 @@ namespace Shuile.Gameplay.Manager
         private PlayerModel _playerModel;
         private LevelEntityManager _levelEntityManager;
         private AutoPlayChartManager _autoPlayChartManager;
+        private EndLevelPanel _endLevelPanel;
 
         protected override void OnAwake()
         {
@@ -33,12 +35,13 @@ namespace Shuile.Gameplay.Manager
             _levelFeelManager = this.GetUtility<LevelFeelManager>();
             _levelModel = this.GetModel<LevelModel>();
             _playerModel = this.GetModel<PlayerModel>();
-            _levelStateMachine = this.GetSystem<LevelStateMachine>();
             _musicRhythmManager = MusicRhythmManager.Instance;
             _player = Player.Instance;
 
+            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
             _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
+            _endLevelPanel = scope.GetImplementation<EndLevelPanel>();
         }
 
         private void Start()
@@ -46,12 +49,16 @@ namespace Shuile.Gameplay.Manager
             this.RegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
             this.RegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
             _autoPlayChartManager.OnRhythmHit += _levelEntityManager.OnRhythmHit;
+            _levelStateMachine.OnWin += LevelWin;
+            _levelStateMachine.OnFail += LevelFail;
         }
         private void OnDestroy()
         {
             this.UnRegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
             this.UnRegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
             _autoPlayChartManager.OnRhythmHit -= _levelEntityManager.OnRhythmHit;
+            _levelStateMachine.OnWin -= LevelWin;
+            _levelStateMachine.OnFail -= LevelFail;
 
             TimingCtrl.Instance.StopAllTimer();
         }
@@ -80,6 +87,28 @@ namespace Shuile.Gameplay.Manager
         private void GlobalOnEnemyDie(EnemyDieEvent para)
         {
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Die");
+        }
+        private void LevelFail()
+        {
+            _endLevelPanel.SetState(false);
+            _endLevelPanel.Show();
+            MonoAudioCtrl.Instance.PlayOneShot("Level_Fail", 0.6f);
+
+            TimingCtrl.Instance
+                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName))
+                .Start();
+        }
+        private void LevelWin()
+        {
+            _endLevelPanel.SetState(true);
+            _endLevelPanel.Show();
+
+            _musicRhythmManager.FadeOutAndStop(); // 当前音乐淡出 music fade out
+            MonoAudioCtrl.Instance.PlayOneShot("Level_Win", 0.6f);
+
+            TimingCtrl.Instance
+                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName))
+                .Start();
         }
 
         private void DebugUpdate()

@@ -1,10 +1,8 @@
 using CbUtils.Unity;
 using Shuile.Core.Framework;
-using Shuile.Framework;
 using Shuile.Gameplay.Model;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm;
-using Shuile.UI.Gameplay;
 using UnityEngine;
 
 namespace Shuile.Gameplay
@@ -21,13 +19,9 @@ namespace Shuile.Gameplay
         {
             Debug.Log("Level awake and is initializing");
 
-            UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
-            UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
             needHitWithRhythm = LevelResourcesLoader.Instance.SyncContext.levelConfig.needHitWithRhythm;
             LevelContext.TimingManager = this.GetSystem<LevelTimingManager>();
 
-            UICtrl.Instance.Create<EndLevelPanel>().Hide();
-            
             IsStart = true;
             IsLevelActive = true;
             EntitySystem.Instance.EnableAllEntities();
@@ -36,11 +30,10 @@ namespace Shuile.Gameplay
         public void OnDestroy()
         {
             Debug.Log("Level end and is disposing");
-            UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
-            UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
 
             GameApplication.Level.ServiceLocator.ClearExisting();
             IsLevelActive = false;
+            End();
             Debug.Log("Level dispose end and close");
         }
 

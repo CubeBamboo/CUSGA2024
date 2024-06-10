@@ -17,7 +17,7 @@ using UnityEngine;
 namespace Shuile.UI.Gameplay
 {
     // 写成屎了，不过调试用就算了
-    public class DebugPanel : BasePanelWithMono, IEntity
+    public class DebugPanel : MonoBehaviour, IEntity
     {
         private MusicRhythmManager _musicRhythmManager;
 
@@ -30,11 +30,6 @@ namespace Shuile.UI.Gameplay
         private PlayerModel _playerModel;
         private LevelModel _levelModel;
         private LevelEntityManager _levelEntityManager;
-
-        private void Awake()
-            => this.RegisterUI<DebugPanel>();
-        private void OnDestroy()
-            => this.UnRegisterUI<DebugPanel>();
 
         private void Start()
         {
@@ -54,12 +49,12 @@ namespace Shuile.UI.Gameplay
             };
         }
 
-        public override void Hide()
+        public void Hide()
         {
             gameObject.SetActive(false);
         }
 
-        public override void Show()
+        public void Show()
         {
             gameObject.SetActive(true);
         }

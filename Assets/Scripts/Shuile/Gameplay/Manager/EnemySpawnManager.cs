@@ -4,6 +4,7 @@ using Shuile.Core.Gameplay.Data;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Entity;
 using Shuile.Model;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using UnityEngine;
 using URandom = UnityEngine.Random;

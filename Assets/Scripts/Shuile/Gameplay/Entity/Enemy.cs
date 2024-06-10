@@ -22,7 +22,6 @@ namespace Shuile.Gameplay.Entity
         EnemyHurtEvent enemyHurtEvent;
 
         public event Action<int> OnHpChangedEvent = _ => { };
-        private HUDHpBarElement hpBarUI;
 
         protected void Awake()
         {
@@ -32,11 +31,6 @@ namespace Shuile.Gameplay.Entity
             moveController = GetComponent<SmoothMoveCtrl>();
 
             OnAwake();
-        }
-
-        protected virtual void OnDestroy()
-        {
-            if (hpBarUI) UObject.Destroy(hpBarUI.gameObject);
         }
 
         protected virtual void OnAwake() { }

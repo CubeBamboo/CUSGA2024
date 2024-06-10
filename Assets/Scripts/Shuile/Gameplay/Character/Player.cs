@@ -27,10 +27,11 @@ namespace Shuile.Gameplay.Character
 
         private void Awake()
         {
+            var scope = LevelScope.Interface;
             MonoSingletonProperty<Player>.InitSingleton(this);
             MonoSingletonProperty<Player>.EnableAutoSpawn = false;
             _playerModel = this.GetModel<PlayerModel>();
-            _levelStateMachine = this.GetSystem<LevelStateMachine>();
+            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
             _playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
         }
         private void Start()

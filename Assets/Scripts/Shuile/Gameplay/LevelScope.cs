@@ -5,6 +5,7 @@ using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Manager;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
+using Shuile.UI.Gameplay;
 using UnityEngine;
 
 namespace Shuile.Gameplay
@@ -13,13 +14,16 @@ namespace Shuile.Gameplay
     {
         [SerializeField] private LevelAudioManager levelAudioManager;
         [SerializeField] private LevelZoneManager levelZoneManager;
+        [SerializeField] private EndLevelPanel endLevelPanel;
         
         public override void Configure(IRegisterableScope scope)
         {
             scope.Register<NoteDataProcessor>(() => new NoteDataProcessor(this));
+            scope.Register<LevelStateMachine>(() => new LevelStateMachine());
             
             scope.RegisterMonoComponent<LevelAudioManager>(levelAudioManager);
             scope.RegisterMonoComponent<LevelZoneManager>(levelZoneManager);
+            scope.RegisterMonoComponent<EndLevelPanel>(endLevelPanel);
             
             scope.RegisterEntryPoint<PreciseMusicPlayer>(() => new PreciseMusicPlayer(this));
             scope.RegisterEntryPoint<PlayerChartManager>(() => new PlayerChartManager(this));

@@ -3,21 +3,16 @@ using UnityEngine;
 
 namespace Shuile.UI.Gameplay
 {
-    public class GameplayExitPanel : BasePanelWithMono
+    public class GameplayExitPanel : MonoBehaviour
     {
         [SerializeField] private Animator exitBarAnimator;
 
-        private void Awake()
-            => this.RegisterUI();
-        private void OnDestroy()
-            => this.UnRegisterUI();
-
-        public override void Hide()
+        public void Hide()
         {
             exitBarAnimator.SetFloat("Speed", -1f);
         }
 
-        public override void Show()
+        public void Show()
         {
             exitBarAnimator.SetFloat("Speed", 1f);
         }

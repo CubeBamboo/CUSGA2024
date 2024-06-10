@@ -24,8 +24,8 @@ namespace Shuile
                 .AddModelImplemenation<LevelModel>(() => new LevelModel(Level))
                 .AddModelImplemenation<PlayerModel>(() => new PlayerModel())
 
-                .AddSystemImplemenation<LevelTimingManager>(() => new LevelTimingManager())
-                .AddSystemImplemenation<LevelStateMachine>(() => new LevelStateMachine());
+                .AddSystemImplemenation<LevelTimingManager>(() => new LevelTimingManager());
+            // .AddSystemImplemenation<LevelStateMachine>(() => new LevelStateMachine());
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

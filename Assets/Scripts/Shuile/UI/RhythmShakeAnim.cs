@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Shuile.Core.Framework;
 using Shuile.Gameplay;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
