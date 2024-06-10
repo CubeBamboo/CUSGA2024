@@ -1,30 +1,27 @@
-using CbUtils;
 using Shuile.Chart;
-using Shuile.Core.Gameplay;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Rhythm;
-using Shuile.Rhythm.Runtime;
 
-namespace Shuile
+namespace Shuile.Gameplay.Model
 {
     public class LevelContext
     {
-        public LevelTimingManager timingManager;
+        public LevelTimingManager TimingManager;
         public LevelData LevelData { get; set; }
         
-        private ChartData chartData;
+        private ChartData _chartData;
         
-        public ChartSO chartFiles => LevelData.chartFiles;
-        public LevelEnemySO levelEnemyData => LevelData.enemyData;
-        public ChartData ChartData => chartData ??= ChartUtils.LoadChartSync(chartFiles);
+        public ChartSO ChartFiles => LevelData.chartFiles;
+        public LevelEnemySO LevelEnemyData => LevelData.enemyData;
+        public ChartData ChartData => _chartData ??= ChartUtils.LoadChartSync(ChartFiles);
         
         public void Initialize()
         {
-            chartData = ChartUtils.LoadChartSync(chartFiles);
+            _chartData = ChartUtils.LoadChartSync(ChartFiles);
         }
         public void DeInitialize()
         {
-            chartData = null;
+            _chartData = null;
         }
     }
 }

@@ -17,10 +17,6 @@ namespace Shuile.ResourcesManagement.Loader
         public PrefabConfigSO globalPrefabs;
         public static readonly System.Func<Task<PrefabConfigSO>> globalPrefabsFactory =
             () => Resources.LoadAsync<PrefabConfigSO>("GlobalPrefabConfig").AsTask<PrefabConfigSO>();
-
-        public GameObject levelAudioManager;
-        public static readonly System.Func<Task<GameObject>> levelAudioManagerFactory =
-            () => Resources.LoadAsync<GameObject>("LevelPrefab/LevelAudioManager").AsTask<GameObject>();
     }
 
     public class LevelResourcesLoader : CSharpLazySingletons<LevelResourcesLoader>
@@ -34,7 +30,6 @@ namespace Shuile.ResourcesManagement.Loader
             {
                 levelConfig = syncContext.levelConfig ? syncContext.levelConfig : await LevelResourcesContent.levelConfigFactory(),
                 globalPrefabs = syncContext.globalPrefabs ? syncContext.globalPrefabs : await LevelResourcesContent.globalPrefabsFactory(),
-                levelAudioManager = syncContext.levelAudioManager ? syncContext.levelAudioManager : await LevelResourcesContent.levelAudioManagerFactory(),
             };
         }
 

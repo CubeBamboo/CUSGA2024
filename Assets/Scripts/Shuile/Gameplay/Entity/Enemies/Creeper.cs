@@ -2,9 +2,7 @@ using CbUtils;
 using CbUtils.Event;
 using CbUtils.Extension;
 using DG.Tweening;
-using Shuile.Core.Framework;
 using Shuile.Gameplay.Character;
-using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
 using URandom = UnityEngine.Random;
@@ -13,11 +11,11 @@ namespace Shuile.Gameplay.Entity.Enemies
 {
     public class Creeper : Enemy
     {
-        private FSM<DefaultEnemyState> mFsm = new();
-        private Player player;
+        private readonly FSM<DefaultEnemyState> _mFsm = new();
+        private Player _player;
 
-        ZakoPatrolBehavior patrolBehavior;
-        ZakoChaseBehavior chaseBehavior;
+        ZakoPatrolBehavior _patrolBehavior;
+        ZakoChaseBehavior _chaseBehavior;
 
         [SerializeField] private float jumpVel = 10f;
         [SerializeField] private float xMaxSpeed = 5f;
@@ -25,28 +23,29 @@ namespace Shuile.Gameplay.Entity.Enemies
         [SerializeField] private float checkAttackRange = 1.2f;
         [SerializeField] private float attackRange = 2f;
 
-        float faceDir = 1f;
-        private SpriteRenderer mRenderer;
+        private SpriteRenderer _mRenderer;
+        float _faceDir = 1f;
 
         protected override void OnAwake()
         {
             moveController.JumpVelocity = jumpVel;
             moveController.XMaxSpeed = xMaxSpeed;
-            patrolBehavior = new(gameObject, moveController, 5f);
-            chaseBehavior = new();
-            mRenderer = GetComponentInChildren<SpriteRenderer>();
+            _patrolBehavior = new(gameObject, moveController, 5f);
+            _chaseBehavior = new();
+            _mRenderer = GetComponentInChildren<SpriteRenderer>();
             
-            RegisterState(mFsm);
+            RegisterState(_mFsm);
         }
 
         private void Start()
         {
-            player = Player.Instance;
+            var scope = LevelScope.Interface;
+            _player = scope.GetImplementation<Player>();
         }
 
         protected override void OnSelfDie()
         {
-            mFsm.SwitchState(DefaultEnemyState.Dead);
+            _mFsm.SwitchState(DefaultEnemyState.Dead);
             moveController.IsFrozen = true;
             transform.DOScale(Vector3.zero, 0.1f)
                 .OnComplete(() => gameObject.Destroy());
@@ -57,30 +56,30 @@ namespace Shuile.Gameplay.Entity.Enemies
             mFsm.NewEventState(DefaultEnemyState.Patrol)
                 .OnFixedUpdate(() =>
                 {
-                    patrolBehavior.Do();
-                    faceDir = patrolBehavior.FaceDir;
-                    if (EnemyBehaviorAction.XRayCastPlayer(transform.position, faceDir, checkPlayerRange))
+                    _patrolBehavior.Do();
+                    _faceDir = _patrolBehavior.FaceDir;
+                    if (EnemyBehaviorAction.XRayCastPlayer(transform.position, _faceDir, checkPlayerRange))
                         mFsm.SwitchState(DefaultEnemyState.Chase);
 
-                    EnemyBehaviorAction.CheckWallAndJump(moveController, faceDir);
+                    EnemyBehaviorAction.CheckWallAndJump(moveController, _faceDir);
                 });
             mFsm.NewEventState(DefaultEnemyState.Chase)
                 .OnEnter(() =>
                 {
-                    chaseBehavior.Bind(player.gameObject, moveController);
+                    _chaseBehavior.Bind(_player.gameObject, moveController);
                 })
                 .OnFixedUpdate(() =>
                 {
-                    if (!EnemyBehaviorAction.XRayCastPlayer(transform.position, faceDir, checkPlayerRange))
+                    if (!EnemyBehaviorAction.XRayCastPlayer(transform.position, _faceDir, checkPlayerRange))
                         mFsm.SwitchState(DefaultEnemyState.Patrol);
-                    UnityAPIExtension.DebugLineForRayCast2D(transform.position, Vector2.right * faceDir, checkPlayerRange, LayerMask.GetMask("Player"));
+                    UnityAPIExtension.DebugLineForRayCast2D(transform.position, Vector2.right * _faceDir, checkPlayerRange, LayerMask.GetMask("Player"));
 
-                    faceDir = chaseBehavior.FaceDir;
-                    chaseBehavior.Do();
+                    _faceDir = _chaseBehavior.FaceDir;
+                    _chaseBehavior.Do();
 
-                    if(chaseBehavior.XCloseEnoughToTarget(checkAttackRange))
+                    if(_chaseBehavior.XCloseEnoughToTarget(checkAttackRange))
                         mFsm.SwitchState(DefaultEnemyState.Attack);
-                    EnemyBehaviorAction.CheckWallAndJump(moveController, faceDir);
+                    EnemyBehaviorAction.CheckWallAndJump(moveController, _faceDir);
                 });
             mFsm.NewEventState(DefaultEnemyState.Attack)
                 .OnCustom(() => Attack());
@@ -92,33 +91,31 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         private bool Attack()
         {
-            var player = Player.Instance;
+            if (Vector3.Distance(_player.transform.position, MoveController.Position) <= attackRange)
+                _player.OnHurt((int)(_player.Property.maxHealthPoint * 0.6f));
 
-            if (Vector3.Distance(player.transform.position, MoveController.Position) <= attackRange)
-                player.OnHurt((int)(player.Property.maxHealthPoint * 0.6f));
-
-            mFsm.SwitchState(DefaultEnemyState.Dead);
+            _mFsm.SwitchState(DefaultEnemyState.Dead);
             return true;
         }
 
         protected override void OnSelfHurt(int oldVal, int newVal)
         {
-            mRenderer.color = Color.white;
-            mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f)
-                     .OnComplete(() => mRenderer.DOColor(Color.white, 0.2f));
+            _mRenderer.color = Color.white;
+            _mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f)
+                     .OnComplete(() => _mRenderer.DOColor(Color.white, 0.2f));
             var initPos = transform.position;
             transform.DOShakePosition(0.2f, strength: 0.2f)
                      .OnComplete(() => transform.position = initPos);
-            gameObject.SetOnDestroy(() => mRenderer.DOKill(), "mRenderer");
+            gameObject.SetOnDestroy(() => _mRenderer.DOKill(), "mRenderer");
             gameObject.SetOnDestroy(() => transform.DOKill(), "transform");
         }
 
         public override void Judge(int frame, bool force)
-            => mFsm.Custom();
+            => _mFsm.Custom();
         private void Update()
-            => mFsm.Update();
+            => _mFsm.Update();
         private void FixedUpdate()
-            => mFsm.FixedUpdate();
+            => _mFsm.FixedUpdate();
     }
 
     //protected void RegisterState(FSM<DefaultEnemyState> mFsm)

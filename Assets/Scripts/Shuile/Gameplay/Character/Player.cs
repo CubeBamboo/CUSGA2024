@@ -4,14 +4,13 @@ using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
 using Shuile.Gameplay.Manager;
 using Shuile.Gameplay.Move;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
-    public class Player : MonoEntity, IHurtable
+    public class Player : MonoBehaviour, IEntity, IHurtable
     {
-        public static Player Instance => MonoSingletonProperty<Player>.Instance;
-
         private PlayerModel _playerModel;
         private LevelStateMachine _levelStateMachine;
 
@@ -23,13 +22,12 @@ namespace Shuile.Gameplay.Character
 
         [SerializeField] private PlayerPropertySO property;
         public PlayerPropertySO Property => property;
-        
-        protected override void AwakeOverride()
+
+        private void Awake()
         {
-            MonoSingletonProperty<Player>.InitSingleton(this);
-            MonoSingletonProperty<Player>.EnableAutoSpawn = false;
+            var scope = LevelScope.Interface;
             _playerModel = this.GetModel<PlayerModel>();
-            _levelStateMachine = this.GetSystem<LevelStateMachine>();
+            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
             _playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
         }
         private void Start()
@@ -57,7 +55,7 @@ namespace Shuile.Gameplay.Character
             }
         }
 
-        public override ModuleContainer GetModule() => GameApplication.Level;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 
     public static class PlayerExtension

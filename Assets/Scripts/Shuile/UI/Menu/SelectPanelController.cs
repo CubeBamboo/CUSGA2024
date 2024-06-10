@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Shuile.Core.Gameplay;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Gameplay;
+using Shuile.Gameplay.Model;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.UI.Data;
 using TMPro;

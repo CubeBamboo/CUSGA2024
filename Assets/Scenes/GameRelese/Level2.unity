@@ -197,6 +197,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2126869024058730763, guid: af46d6df72279264ea7eb72a93db42c3, type: 3}
+      propertyPath: markedZone
+      value: 
+      objectReference: {fileID: 4647796678771957705}
     - target: {fileID: 3867265148498414738, guid: af46d6df72279264ea7eb72a93db42c3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -288,7 +292,6 @@ MonoBehaviour:
     moveScale: 0.1
     moveSpeed: 0.02
     moveRadius: 0.3
-  playerInitPosition: {fileID: 1952762365}
 --- !u!4 &1129486223
 Transform:
   m_ObjectHideFlags: 0
@@ -1231,6 +1234,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3d0a850263f4a343af988dcb2f9ab96, type: 3}
+--- !u!114 &4647796678771957705 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6639484484260599082, guid: c3d0a850263f4a343af988dcb2f9ab96, type: 3}
+  m_PrefabInstance: {fileID: 4647796678771957704}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8238dfd048441742b0939ef4caee50a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &9118368483937222134 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7974141968800701149, guid: c3d0a850263f4a343af988dcb2f9ab96, type: 3}

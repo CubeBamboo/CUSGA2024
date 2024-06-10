@@ -1,13 +1,13 @@
 using CbUtils.Unity;
 using Shuile.Core.Framework;
-using Shuile.Framework;
+using Shuile.Gameplay.Model;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm;
-using Shuile.UI.Gameplay;
 using UnityEngine;
 
 namespace Shuile.Gameplay
 {
+    [DefaultExecutionOrder(-4000)]
     public class LevelRoot : MonoSingletons<LevelRoot>, IEntity
     {
         public static bool IsLevelActive { get; private set; } = false;
@@ -19,13 +19,9 @@ namespace Shuile.Gameplay
         {
             Debug.Log("Level awake and is initializing");
 
-            UICtrl.Instance.RegisterCreator<EndLevelPanel>(EndLevelPanel.Creator);
-            UICtrl.Instance.RegisterCreator<HUDHpBarElement>(HUDHpBarElement.Creator);
             needHitWithRhythm = LevelResourcesLoader.Instance.SyncContext.levelConfig.needHitWithRhythm;
-            LevelContext.timingManager = this.GetSystem<LevelTimingManager>();
+            LevelContext.TimingManager = this.GetSystem<LevelTimingManager>();
 
-            UICtrl.Instance.Create<EndLevelPanel>().Hide();
-            
             IsStart = true;
             IsLevelActive = true;
             EntitySystem.Instance.EnableAllEntities();
@@ -34,8 +30,6 @@ namespace Shuile.Gameplay
         public void OnDestroy()
         {
             Debug.Log("Level end and is disposing");
-            UICtrl.Instance.UnRegisterCreator<EndLevelPanel>();
-            UICtrl.Instance.UnRegisterCreator<HUDHpBarElement>();
 
             GameApplication.Level.ServiceLocator.ClearExisting();
             IsLevelActive = false;
@@ -45,11 +39,6 @@ namespace Shuile.Gameplay
         public static void RequestStart(LevelContext levelContext)
         {
             LevelContext = levelContext;
-        }
-
-        public static void End()
-        {
-            LevelContext = null;
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

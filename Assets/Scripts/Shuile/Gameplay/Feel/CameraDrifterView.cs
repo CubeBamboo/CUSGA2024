@@ -1,11 +1,12 @@
 using CbUtils.Extension;
 using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
 {
-    public class CameraDrifterView : MonoEntity
+    public class CameraDrifterView : MonoBehaviour, IEntity
     {
         private CameraDrifterController _controller;
 
@@ -16,7 +17,7 @@ namespace Shuile.Gameplay.Feel
         public float moveSpeed { get; set; } = 0.01f;
         public float moveRadius { get; set; } = 0.1f;
 
-        protected override void AwakeOverride()
+        private void Awake()
         {
             _controller = gameObject.GetOrAddComponent<CameraDrifterController>();
 
@@ -61,6 +62,6 @@ namespace Shuile.Gameplay.Feel
             targetPosition.TargetValue = GetUsingTargetValue(_controller.TargetPosition);
         }
 
-        public override ModuleContainer GetModule() => GameApplication.Level;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

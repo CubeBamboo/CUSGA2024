@@ -1,28 +1,44 @@
 using Shuile.Core.Framework;
-using Shuile.Core.Gameplay;
+using Shuile.Core.Framework.Unity;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Entity;
 using Shuile.Model;
+using Shuile.Rhythm;
+using Shuile.Rhythm.Runtime;
 using UnityEngine;
 using URandom = UnityEngine.Random;
 
 namespace Shuile.Gameplay.Manager
 {
-    public class EnemySpawnManager : ISystem
+    public class EnemySpawnManager : ISystem, IStartable, IDestroyable
     {
         private readonly LevelModel _levelModel;
-        [HideInInspector] public LevelEnemySO currentEnemyData;
+        [HideInInspector] public readonly LevelEnemySO currentEnemyData;
 
-        private int currentRoundIndex = 0;
+        private readonly AutoPlayChartManager _autoPlayChartManager;
+        private readonly LevelEntityManager _levelEntityManager;
+        private LevelZoneManager _levelZoneManager;
 
-        public int EnemyCount => LevelEntityManager.Instance.EnemyCount;
-        public int CurrentRoundIndex => currentRoundIndex;
+        public int EnemyCount => _levelEntityManager.EnemyCount;
 
-        public EnemySpawnManager()
+        public EnemySpawnManager(IGetableScope scope)
         {
-            currentEnemyData = LevelRoot.LevelContext.levelEnemyData;
+            _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
+            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
+            _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
             _levelModel = this.GetModel<LevelModel>();
+            currentEnemyData = LevelRoot.LevelContext.LevelEnemyData;
+        }
+
+        public void Start()
+        {
+            _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
+        }
+        
+        public void OnDestroy()
+        {
+            _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
         }
 
         public void OnRhythmHit()
@@ -42,7 +58,7 @@ namespace Shuile.Gameplay.Manager
             var useIndex = level <= length - 1 ? level : length-1;
             var useEnemies = currentEnemyData.enemies[useIndex].enemyList;
             int index = URandom.Range(0, useEnemies.Length);
-            LevelEntityFactory.Instance.SpawnEnemyWithEffectDelay(useEnemies[index], LevelZoneManager.Instance.RandomValidPosition());
+            _levelEntityManager.EntityFactory.SpawnEnemyWithEffectDelay(useEnemies[index], _levelZoneManager.RandomValidPosition());
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

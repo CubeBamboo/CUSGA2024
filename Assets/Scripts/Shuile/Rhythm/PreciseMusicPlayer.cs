@@ -1,8 +1,8 @@
-using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Audio;
 using Shuile.Core.Framework;
+using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay;
 using Shuile.Model;
@@ -10,36 +10,38 @@ using Shuile.ResourcesManagement.Loader;
 using System.Threading;
 using UnityEngine;
 
-namespace Shuile
+namespace Shuile.Rhythm
 {
     /// <summary>
-    /// it provide a async player for lower delay, a timer start from music's specific position
+    /// it provides an async player for lower delay, a timer start from music's specific position
     /// </summary>
-    // TODO: it designed for a utils class in the first time, but now it's implemented to be a entity, and it needs to refactor
-    public class PreciseMusicPlayer : MonoSingletons<PreciseMusicPlayer>, IEntity
+    public class PreciseMusicPlayer : IEntity, IInitializeable, IFixedTickable, IDestroyable
     {
-        private LevelConfigSO _levelConfig;
+        private readonly LevelConfigSO _levelConfig;
 
-        private LevelModel _levelModel;
-        private AudioPlayerInUnity _audioPlayer;
-        public AudioPlayerInUnity AudioPlayer => _audioPlayer;
+        private readonly LevelAudioManager _levelAudioManager;
+        private readonly LevelModel _levelModel;
+        private UnityAudioPlayer _audioPlayer;
+        public UnityAudioPlayer AudioPlayer => _audioPlayer;
 
-        protected override void OnAwake()
+        public PreciseMusicPlayer(IGetableScope scope)
         {
-            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
-
+            _levelAudioManager = scope.GetImplementation<LevelAudioManager>();
+            var resourcesLoader = LevelResourcesLoader.Instance;
+            _levelConfig = resourcesLoader.SyncContext.levelConfig;
             _levelModel = this.GetModel<LevelModel>();
-
-            _audioPlayer = new SimpleAudioPlayer();
-            Restore();
         }
 
-        private void OnDestroy()
+        public void Initialize()
+        {
+            _audioPlayer = new UnityAudioPlayer(_levelAudioManager.MusicSource);
+            Restore();
+        }
+        public void OnDestroy()
         {
             _audioPlayer.Stop();
         }
-
-        public void FixedUpdate()
+        public void FixedTick()
         {
             if (!IsPlaying) return;
             CurrentTime += Time.fixedDeltaTime;

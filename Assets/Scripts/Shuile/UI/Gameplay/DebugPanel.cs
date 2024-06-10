@@ -7,6 +7,7 @@ using CbUtils.Preview.Event;
 using Shuile.Core.Framework;
 using Shuile.Framework;
 using Shuile.Gameplay;
+using Shuile.Gameplay.Entity;
 using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
@@ -16,7 +17,7 @@ using UnityEngine;
 namespace Shuile.UI.Gameplay
 {
     // 写成屎了，不过调试用就算了
-    public class DebugPanel : BasePanelWithMono, IEntity
+    public class DebugPanel : MonoBehaviour, IEntity
     {
         private MusicRhythmManager _musicRhythmManager;
 
@@ -28,14 +29,12 @@ namespace Shuile.UI.Gameplay
 
         private PlayerModel _playerModel;
         private LevelModel _levelModel;
-
-        private void Awake()
-            => this.RegisterUI<DebugPanel>();
-        private void OnDestroy()
-            => this.UnRegisterUI<DebugPanel>();
+        private LevelEntityManager _levelEntityManager;
 
         private void Start()
         {
+            var lifeTimeScope = LevelScope.Interface;
+            _levelEntityManager = lifeTimeScope.GetImplementation<LevelEntityManager>();
             _playerModel = this.GetModel<PlayerModel>();
             _levelModel = this.GetModel<LevelModel>();
             _musicRhythmManager = MusicRhythmManager.Instance;
@@ -46,16 +45,16 @@ namespace Shuile.UI.Gameplay
                 playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
                 dangerScoreText.text = $"DangerScore: {_levelModel.DangerScore:0.000}";
                 dangerLevelText.text = $"DangerLevel: {_levelModel.DangerLevel}";
-                enemyCountText.text = $"EnemyCount: {LevelEntityManager.Instance.EnemyCount}";
+                enemyCountText.text = $"EnemyCount: {_levelEntityManager.EnemyCount}";
             };
         }
 
-        public override void Hide()
+        public void Hide()
         {
             gameObject.SetActive(false);
         }
 
-        public override void Show()
+        public void Show()
         {
             gameObject.SetActive(true);
         }

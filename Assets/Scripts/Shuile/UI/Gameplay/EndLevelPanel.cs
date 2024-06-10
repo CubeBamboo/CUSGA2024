@@ -1,25 +1,11 @@
-using CbUtils.Extension;
-using Shuile.Framework;
 using UnityEngine;
 
 namespace Shuile.UI.Gameplay
 {
-    public class EndLevelPanel : BasePanelWithMono
+    public class EndLevelPanel : MonoBehaviour
     {
         [SerializeField] private GameObject win, fail;
-
-        public static PanelCreator Creator = () =>
-            Resources.Load<GameObject>("UIDesign/EndLevelPanel").Instantiate().GetComponent<IPanel>();
-
-        private void Awake()
-        {
-            this.RegisterUI<EndLevelPanel>();
-            this.SetParent(UICtrl.Instance.OverlayCanvas.transform);
-        }
-
-        private void OnDestroy()
-            => this.UnRegisterUI<EndLevelPanel>();
-
+        
         public void SetState(bool isWin)
         {
             win.SetActive(false);
@@ -29,12 +15,12 @@ namespace Shuile.UI.Gameplay
             else fail.SetActive(true);
         }
 
-        public override void Show()
+        public void Show()
         {
             gameObject.SetActive(true);
         }
 
-        public override void Hide()
+        public void Hide()
         {
             gameObject.SetActive(false);
         }

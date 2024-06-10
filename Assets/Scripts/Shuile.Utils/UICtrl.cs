@@ -1,25 +1,16 @@
-/* [WIP]
- * UICtrl: to provide global ui container to access the certain ui object
- * IPanel: base interface, and provide methods to register ui and ui operation
- * BasePanelWithMono: use monobehaviour
- */
-
-using CbUtils;
+/*using CbUtils;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Shuile.Framework
 {
+    [System.Obsolete("use LevelScope")]
     public class UICtrl : CSharpHungrySingletons<UICtrl>
     {
         #region PanelManage
 
         protected readonly Dictionary<System.Type, PanelCreator> _panelCreator = new();
         protected readonly Dictionary<System.Type, List<IPanel>> _multiPanels = new();
-
-        /* 1. register from MonoBehaviour.Awake()
-         * 2. register from Script
-         */
 
         /// <summary> register a existing object </summary>
         /// <param name="index"> specific an index. add to back if index less than 0 </param>
@@ -113,6 +104,7 @@ namespace Shuile.Framework
 
     }
 
+    [System.Obsolete("use LevelScope")]
     public interface IPanel
     {
         void Show();
@@ -124,10 +116,7 @@ namespace Shuile.Framework
         void DeInit();
     }
 
-    /// <summary>
-    /// derived from monobehaviour, you are recommended to call this.RegisterUI() on Awake(). 
-    /// if it need a runtime load, recommeded to implement a "public static PanelCreateor Creator" and register it to UICtrl.creator otherwhere.
-    /// </summary>
+    [System.Obsolete("use LevelScope")]
     public abstract class BasePanelWithMono : MonoBehaviour, IPanel
     {
         public virtual void Init() { }
@@ -140,14 +129,10 @@ namespace Shuile.Framework
 
     public static class IPanelExt
     {
-        public static int RegisterUI<T>(this T panel) where T : IPanel
-            => UICtrl.Instance.Register<T>(panel);
-        public static void UnRegisterUI<T>(this T panel) where T : IPanel
-            => UICtrl.Instance.UnRegister<T>(panel);
-
         public static void SetParent(this BasePanelWithMono panel, Transform canvas)
         {
             panel.transform.SetParent(canvas, false);
         }
     }
 }
+*/

@@ -2,10 +2,10 @@ using CbUtils.Extension;
 using DG.Tweening;
 using Shuile.Chart;
 using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.MonoGadget;
 using Shuile.ResourcesManagement.Loader;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ using UnityEngine.UI;
 
 namespace Shuile.Gameplay
 {
-    public class RhythmIndicator : MonoEntity
+    public class RhythmIndicator : MonoBehaviour, IEntity
     {
         [SerializeField] private float distanceUnit;
 
@@ -56,14 +56,17 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            _playerChartManager = this.GetSystem<PlayerChartManager>();
-
-            PreciseMusicPlayer preciseMusicPlayer = PreciseMusicPlayer.Instance;
+            var resourcesLoader = LevelResourcesLoader.Instance;
+            var sceneLocator = LevelScope.Interface;
+            
+            _playerChartManager = sceneLocator.GetImplementation<PlayerChartManager>();
+            
+            PreciseMusicPlayer preciseMusicPlayer = sceneLocator.GetImplementation<PreciseMusicPlayer>();
             _timeTweener =
-                new Lazy<MusicTimeTweener>(() => preciseMusicPlayer.gameObject.GetOrAddComponent<MusicTimeTweener>());
+                new Lazy<MusicTimeTweener>(() => preciseMusicPlayer.AudioPlayer.TargetSource.gameObject.GetOrAddComponent<MusicTimeTweener>());
 
-            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
-            _notePrefab = LevelResourcesLoader.Instance.SyncContext.globalPrefabs.noteIndicator;
+            _levelConfig = resourcesLoader.SyncContext.levelConfig;
+            _notePrefab = resourcesLoader.SyncContext.globalPrefabs.noteIndicator;
             _preDisplayTime = _levelConfig.playerNotePreShowTime;
             _playerChartManager.ChartPlayer.OnNotePlay += OnNote;
             _playerChartManager.OnPlayerHitOn += OnPlayerHit;
@@ -79,7 +82,7 @@ namespace Shuile.Gameplay
             }
         }
 
-        protected override void OnDestroyOverride()
+        private void OnDestroy()
         {
             if (LevelRoot.IsLevelActive)
             {
@@ -125,7 +128,7 @@ namespace Shuile.Gameplay
             Graphic obj = _notePool.Get();
             Graphic graphic = obj;
             graphic.color = graphic.color.With(a: 0f);
-            _uiNoteList.Add(new UINote((RectTransform)obj.transform, graphic, noteData.ToPlayTime()));
+            _uiNoteList.Add(new UINote((RectTransform)obj.transform, graphic, noteData.GetNotePlayTime(LevelScope.Interface)));
         }
 
         private void ReleaseNote(UINote note)
@@ -146,10 +149,7 @@ namespace Shuile.Gameplay
             return _uiNoteList.Min();
         }
 
-        public override ModuleContainer GetModule()
-        {
-            return GameApplication.Level;
-        }
+        public ModuleContainer GetModule() => GameApplication.Level;
 
         private class UINote : SingleNote
         {

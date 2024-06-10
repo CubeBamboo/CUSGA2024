@@ -1,16 +1,12 @@
-using Shuile.Gameplay.Event;
-
-using System;
-
-using UnityEngine;
-
-using UObject = UnityEngine.Object;
-using Cysharp.Threading.Tasks;
 using Shuile.Core.Framework;
+using Shuile.Gameplay.Event;
 using Shuile.Gameplay.Move;
 using Shuile.UI.Gameplay;
+using System;
+using UnityEngine;
+using UObject = UnityEngine.Object;
 
-namespace Shuile.Gameplay
+namespace Shuile.Gameplay.Entity
 {
     /// <summary> base class for enemy </summary>
     public abstract class Enemy : MonoBehaviour, IHurtable, IJudgeable, IEntity
@@ -26,7 +22,6 @@ namespace Shuile.Gameplay
         EnemyHurtEvent enemyHurtEvent;
 
         public event Action<int> OnHpChangedEvent = _ => { };
-        private HUDHpBarElement hpBarUI;
 
         protected void Awake()
         {
@@ -36,11 +31,6 @@ namespace Shuile.Gameplay
             moveController = GetComponent<SmoothMoveCtrl>();
 
             OnAwake();
-        }
-
-        protected virtual void OnDestroy()
-        {
-            if (hpBarUI) UObject.Destroy(hpBarUI.gameObject);
         }
 
         protected virtual void OnAwake() { }
@@ -60,9 +50,8 @@ namespace Shuile.Gameplay
                 HandleDieEvent();
             }
         }
-        private async void HandleDieEvent()
+        private void HandleDieEvent()
         {
-            await UniTask.WaitUntil(() => !LevelEntityManager.Instance.IsJudging);
             this.TriggerEvent<EnemyDieEvent>(new() { enemy = gameObject });
         }
         protected abstract void OnSelfHurt(int oldVal, int newVal);

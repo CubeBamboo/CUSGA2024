@@ -7,12 +7,13 @@ using Shuile.Gameplay.Move;
 using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
     // player feedback and other event
-    public class NormalPlayerFeel : MonoEntity
+    public class NormalPlayerFeel : MonoBehaviour, IEntity
     {
         private LevelModel _levelModel;
         private PlayerModel _playerModel;
@@ -28,7 +29,7 @@ namespace Shuile.Gameplay.Character
         private const float HurtXForce = 6f;
         private const float HurtYForce = 0.2f;
 
-        protected override void AwakeOverride()
+        private void Awake()
         {
             _levelModel = this.GetModel<LevelModel>();
             _playerModel = this.GetModel<PlayerModel>();
@@ -97,6 +98,6 @@ namespace Shuile.Gameplay.Character
             });
         }
 
-        public override ModuleContainer GetModule() => GameApplication.Level;
+        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

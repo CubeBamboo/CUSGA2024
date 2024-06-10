@@ -1,8 +1,8 @@
-using CbUtils.Unity;
 using UnityEngine;
 
 namespace Shuile.Core.Framework.Unity
 {
+    [System.Obsolete("it is recommended to use the IEntity interface instead of MonoEntity")]
     public abstract class MonoEntity : MonoBehaviour, IEntity
     {
         public virtual bool SelfEnable { get => this.enabled; set => this.enabled = value; }

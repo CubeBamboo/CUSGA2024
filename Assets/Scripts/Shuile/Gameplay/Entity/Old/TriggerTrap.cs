@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -38,3 +38,4 @@ namespace Shuile.Gameplay
         public abstract void OnExit(GameObject other);
     }
 }
+*/

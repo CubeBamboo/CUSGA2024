@@ -1,5 +1,7 @@
 using DG.Tweening;
 using Shuile.Core.Framework;
+using Shuile.Gameplay;
+using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
@@ -20,7 +22,8 @@ namespace Shuile.UI
 
         private void Start()
         {
-            _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
+            var lifeTimeLocator = LevelScope.Interface;
+            _autoPlayChartManager = lifeTimeLocator.GetImplementation<AutoPlayChartManager>();
             rectTransform = GetComponent<RectTransform>();
 
             InitScale = rectTransform.localScale;

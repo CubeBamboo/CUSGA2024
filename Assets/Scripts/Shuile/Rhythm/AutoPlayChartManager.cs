@@ -1,32 +1,17 @@
 using Shuile.Chart;
-using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
 
-namespace Shuile.Rhythm.Runtime
+namespace Shuile.Rhythm
 {
-    public class AutoPlayChartManagerUpdater : MonoEntity
-    {
-        private AutoPlayChartManager _autoPlayChartManager;
-        private void Start()
-        {
-            _autoPlayChartManager = this.GetSystem<AutoPlayChartManager>();
-            _autoPlayChartManager.OnStart();
-        }
-        private void FixedUpdate()
-        {
-            _autoPlayChartManager.OnFixedUpdate();
-        }
-        public override ModuleContainer GetModule() => GameApplication.Level;
-    }
-
     // manage auto play chart. (for someone like enemy or game ui animation)
-    public class AutoPlayChartManager : ISystem
+    public class AutoPlayChartManager : IStartable, IFixedTickable
     {
-        private MusicRhythmManager _musicRhythmManager;
+        private readonly MusicRhythmManager _musicRhythmManager;
+        private readonly NoteDataProcessor _noteDataProcessor;
 
         // chart part
-        private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
-        private ChartPlayer chartPlayer;
+        private readonly ChartData _chart = ChartDataCreator.CreatePlayerDefault();
+        private ChartPlayer _chartPlayer;
 
         /// <summary> call when a beat is hit </summary>
         public event System.Action OnRhythmHit;
@@ -36,11 +21,16 @@ namespace Shuile.Rhythm.Runtime
         public void OnNextRhythm(System.Action action)
             => onNextRhythm += action;
 
-        public void OnStart()
+        public AutoPlayChartManager(IGetableScope scope)
         {
             _musicRhythmManager = MusicRhythmManager.Instance;
-            chartPlayer = new ChartPlayer(chart);
-            chartPlayer.OnNotePlay += (_, _) =>
+            _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
+        }
+
+        public void Start()
+        {
+            _chartPlayer = new ChartPlayer(_chart, _noteDataProcessor);
+            _chartPlayer.OnNotePlay += (_, _) =>
             {
                 OnRhythmHit?.Invoke();
 
@@ -49,11 +39,9 @@ namespace Shuile.Rhythm.Runtime
             };
         }
 
-        public void OnFixedUpdate()
+        public void FixedTick()
         {
-            chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
+            _chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

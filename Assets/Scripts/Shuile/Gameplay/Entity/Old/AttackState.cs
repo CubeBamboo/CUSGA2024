@@ -1,14 +1,6 @@
-using DG.Tweening;
-
-using System;
-
-using UnityEngine;
-
-using UObject = UnityEngine.Object;
-
-namespace Shuile.Gameplay.Entity.States
+/*namespace Shuile.Gameplay.Entity.States
 {
-    /*public class AttackState : EntityState
+    public class AttackState : EntityState
     {
         private PlayerController playerCtrl;
         private EntityState nextState = new PostAttackState();
@@ -39,8 +31,8 @@ namespace Shuile.Gameplay.Entity.States
         {
             base.Rebind(newEnemy);
 
-            playerCtrl = UObject.FindObjectOfType<PlayerController>();  // TODO: 暂时这样获取
+            playerCtrl = UObject.FindObjectOfType<PlayerController>();
             nextState.Rebind(newEnemy);
         }
-    }*/
-}
+    }
+}*/

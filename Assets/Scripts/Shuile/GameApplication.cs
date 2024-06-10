@@ -1,12 +1,10 @@
 using CbUtils.Kits.Tasks;
 using Shuile.Core.Framework;
-using Shuile.Gameplay;
 using Shuile.Gameplay.Feel;
 using Shuile.Gameplay.Manager;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm;
-using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
 namespace Shuile
@@ -26,12 +24,7 @@ namespace Shuile
                 .AddModelImplemenation<LevelModel>(() => new LevelModel(Level))
                 .AddModelImplemenation<PlayerModel>(() => new PlayerModel())
 
-                .AddSystemImplemenation<PlayerChartManager>(() => new PlayerChartManager())
-                .AddSystemImplemenation<LevelTimingManager>(() => new LevelTimingManager())
-                .AddSystemImplemenation<AutoPlayChartManager>(() => new AutoPlayChartManager())
-                .AddSystemImplemenation<LevelStateMachine>(() => new LevelStateMachine())
-                .AddSystemImplemenation<EnemySpawnManager>(() => new EnemySpawnManager());
-            
+                .AddSystemImplemenation<LevelTimingManager>(() => new LevelTimingManager());
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
