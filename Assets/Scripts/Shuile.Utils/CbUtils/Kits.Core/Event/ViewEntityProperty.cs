@@ -1,8 +1,6 @@
 namespace Shuile.Gameplay.Feel
 {
-    /// <summary>
-    /// a "using for stored view data" version of view model property (or named HearableProperty in this project)
-    /// </summary>
+    [System.Obsolete("dont use")]
     public class ViewEntityProperty<T>
     {
         private bool _isDirty;

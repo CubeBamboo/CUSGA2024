@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
 {
-    public class LevelFeelFactory
+    public static class LevelFeelFactory
     {
         public static GameObject CreateParticle(string name, Vector3 position, Vector3 direction, Transform parent = null)
         {

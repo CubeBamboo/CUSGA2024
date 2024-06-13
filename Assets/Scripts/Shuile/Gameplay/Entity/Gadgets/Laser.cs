@@ -30,7 +30,8 @@ namespace Shuile
 
         private void Awake()
         {
-            timingManager = this.GetSystem<LevelTimingManager>();
+            var scope = LevelScope.Interface;
+            timingManager = scope.GetImplementation<LevelTimingManager>();
             mRenderer = GetComponent<SpriteRenderer>();
             gameObject.SetOnDestroy(() => mRenderer.DOKill(), "renderer");
             targetScaleX = transform.localScale.x;

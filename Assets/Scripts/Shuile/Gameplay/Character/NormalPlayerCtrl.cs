@@ -65,6 +65,7 @@ namespace Shuile.Gameplay.Character
         private PlayerModel _playerModel;
 
         private AttackCommand _attackCommand;
+        private TryHitNoteCommand _hitNoteCommand;
 
         public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
@@ -92,51 +93,49 @@ namespace Shuile.Gameplay.Character
             }
         }
 
-        private TryHitNoteCommand hitNoteCommand;
-
         public bool CheckRhythm
         {
             get
             {
-                hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
-                this.ExecuteCommand<TryHitNoteCommand>(hitNoteCommand);
-                _playerModel.currentHitOffset = hitNoteCommand.result.hitOffset;
-                return hitNoteCommand.result.isHitOn;
+                _hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
+                this.ExecuteCommand<TryHitNoteCommand>(_hitNoteCommand);
+                _playerModel.currentHitOffset = _hitNoteCommand.result.hitOffset;
+                return _hitNoteCommand.result.isHitOn;
             }
         }
-        private readonly SimpleDurationTimer holdJumpTimer = new();
+        private readonly SimpleDurationTimer _holdJumpTimer = new();
 
         private void Awake()
         {
             ConfigureDependency();
             ConfigureInputEvent();
 
+            _holdJumpTimer.MaxDuration = jumpMaxDuration;
+        }
+        
+        private void Start()
+        {
             _attackCommand = new()
             {
                 position = transform.position,
                 attackRadius = attackRadius,
                 attackPoint = attackPoint
             };
-            hitNoteCommand = new()
+            _hitNoteCommand = new()
             {
                 musicRhythmManager = _musicRhythmManager,
                 playerChartManager = _playerChartManager,
                 inputTime = _musicRhythmManager.CurrentTime
             };
 
-            holdJumpTimer.MaxDuration = jumpMaxDuration;
+            InitializeMainFSM();
+            InitializeOtherFSM();
+            RefreshParameter();
         }
 
         private void OnDestroy()
         {
             mPlayerInput.ClearAll();
-        }
-
-        private void Start()
-        {
-            InitializeMainFSM();
-            InitializeOtherFSM();
-            RefreshParameter();
         }
 
         private void FixedUpdate()
@@ -163,7 +162,7 @@ namespace Shuile.Gameplay.Character
             if (mainFsm.CurrentStateId != MainState.Normal) return;
 
             _moveController.Velocity = _moveController.Velocity.With(y: jumpStartVel);
-            holdJumpTimer.StartTime = Time.time;
+            _holdJumpTimer.StartTime = Time.time;
             mainFsm.SwitchState(MainState.JumpUpAndInputHoldOn);
             OnJumpStart.Invoke();
         }
@@ -175,7 +174,7 @@ namespace Shuile.Gameplay.Character
             _moveController.Velocity += new Vector2(0, holdJumpVelAdd);
             var hitWall = Mathf.Abs(_moveController.Velocity.y) < 1e-4; // ...
 
-            if (holdJumpTimer.HasReachTime(Time.time) || hitWall)
+            if (_holdJumpTimer.HasReachTime(Time.time) || hitWall)
             {
                 //Debug.Log("Stop Jump Hold On Acceleration"); // end timer
                 mainFsm.SwitchState(MainState.JumpUpAndInputHoldOff);
@@ -213,7 +212,7 @@ namespace Shuile.Gameplay.Character
             _moveController.Deceleration = deAcc;
             _moveController.XMaxSpeed = xMaxSpeed;
 
-            holdJumpTimer.MaxDuration = jumpMaxDuration;
+            _holdJumpTimer.MaxDuration = jumpMaxDuration;
         }
 
         private void InitializeMainFSM()
@@ -280,12 +279,12 @@ namespace Shuile.Gameplay.Character
         private void ConfigureDependency()
         {
             var scope = LevelScope.Interface;
+            _playerModel = scope.GetImplementation<PlayerModel>();
+            _playerChartManager = scope.GetImplementation<PlayerChartManager>();
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
             
-            _playerModel = this.GetModel<PlayerModel>();
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
-            _musicRhythmManager = MusicRhythmManager.Instance;
-            _playerChartManager = scope.GetImplementation<PlayerChartManager>();
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

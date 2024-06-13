@@ -21,8 +21,8 @@ namespace Shuile.Rhythm
         public LevelChartManager(IGetableScope scope)
         {
             _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();;
             chart = LevelRoot.LevelContext.ChartData;
-            _musicRhythmManager = MusicRhythmManager.Instance;
         }
 
         public void Start()

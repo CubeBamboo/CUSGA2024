@@ -1,5 +1,38 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &946429494771103224
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2019643474797262622}
+  m_Layer: 0
+  m_Name: '[UI]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2019643474797262622
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946429494771103224}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6446092067310511289}
+  - {fileID: 5577017971462864588}
+  m_Father: {fileID: 3867265148498414738}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2797515176761612827
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,6 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3c0e55b384e4133ab55dfde06e83c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicRhythmManager: {fileID: 8549199178753110100}
   levelAudioManager: {fileID: 7276062682042202717}
   levelZoneManager: {fileID: 2126869024058730763}
   endLevelPanel: {fileID: 678913754241128194}
@@ -82,7 +116,7 @@ RectTransform:
   - {fileID: 8163563487002730230}
   - {fileID: 93754216932927770}
   - {fileID: 8771393395762874970}
-  m_Father: {fileID: 3867265148498414738}
+  m_Father: {fileID: 2019643474797262622}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -198,6 +232,7 @@ GameObject:
   - component: {fileID: 6610220639947406905}
   - component: {fileID: 6613085797331183080}
   - component: {fileID: 96901222003265985}
+  - component: {fileID: 4764469126542904878}
   - component: {fileID: 852075677405773479}
   m_Layer: 0
   m_Name: Main Camera
@@ -324,6 +359,18 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &4764469126542904878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3811245285440476380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20dfe162dc31ddb45b54c6a80e966acc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &852075677405773479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,7 +458,7 @@ RectTransform:
   m_LocalScale: {x: 0.013944445, y: 0.013944445, z: 0.013944445}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3867265148498414738}
+  m_Father: {fileID: 2019643474797262622}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -492,8 +539,9 @@ GameObject:
   - component: {fileID: 2293695585844617511}
   - component: {fileID: 5885612231794023484}
   - component: {fileID: 2126869024058730763}
+  - component: {fileID: 8549199178753110100}
   m_Layer: 0
-  m_Name: '[Singletons]'
+  m_Name: '[Singletons/PreLoadl]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -539,6 +587,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   markedZone: {fileID: 0}
+--- !u!114 &8549199178753110100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4272487870367572366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6575e4e836ac9f40832d6a78f20a338, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playOnAwake: 1
+  playTimeScale: 1
+  volume: 0.4
 --- !u!1 &5478187366657937597
 GameObject:
   m_ObjectHideFlags: 0
@@ -601,11 +664,10 @@ Transform:
   m_Children:
   - {fileID: 7885167636829402756}
   - {fileID: 2293695585844617511}
+  - {fileID: 2019643474797262622}
   - {fileID: 6297459168359723800}
   - {fileID: 72666885838454027}
   - {fileID: 2982893155815747144}
-  - {fileID: 6446092067310511289}
-  - {fileID: 5577017971462864588}
   - {fileID: 7163252838033775576}
   - {fileID: 3134676315639176747}
   - {fileID: 8650736336350916334}

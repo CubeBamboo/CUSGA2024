@@ -3,7 +3,9 @@ using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
 using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Entity;
+using Shuile.Gameplay.Feel;
 using Shuile.Gameplay.Manager;
+using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using Shuile.UI.Gameplay;
@@ -17,16 +19,23 @@ namespace Shuile.Gameplay
         [SerializeField] private LevelZoneManager levelZoneManager;
         [SerializeField] private EndLevelPanel endLevelPanel;
         [SerializeField] private Player player;
+        [SerializeField] private MusicRhythmManager musicRhythmManager;
         
         public override void Configure(IRegisterableScope scope)
         {
+            scope.Register<PlayerModel>(() => new PlayerModel());
+            scope.Register<LevelModel>(() => new LevelModel());
+            
+            scope.Register<LevelFeelManager>(() => new LevelFeelManager());
+            scope.Register<LevelTimingManager>(() => new LevelTimingManager(this));
             scope.Register<NoteDataProcessor>(() => new NoteDataProcessor(this));
-            scope.Register<LevelStateMachine>(() => new LevelStateMachine());
+            scope.Register<LevelStateMachine>(() => new LevelStateMachine(this));
             
             scope.RegisterMonoComponent<LevelAudioManager>(levelAudioManager);
             scope.RegisterMonoComponent<LevelZoneManager>(levelZoneManager);
             scope.RegisterMonoComponent<EndLevelPanel>(endLevelPanel);
             scope.RegisterMonoComponent<Player>(player);
+            scope.RegisterMonoComponent<MusicRhythmManager>(musicRhythmManager);
             
             scope.RegisterEntryPoint<PreciseMusicPlayer>(() => new PreciseMusicPlayer(this));
             scope.RegisterEntryPoint<PlayerChartManager>(() => new PlayerChartManager(this));

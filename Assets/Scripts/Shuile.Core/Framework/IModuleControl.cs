@@ -2,6 +2,7 @@ namespace Shuile.Core.Framework
 {
     #region ModuleContainer
 
+    // maybe replace with SceneServiceScope<T> and ApplicationServiceScope<T> in the future
     public class ModuleContainer
     {
         public LayerableServiceLocator ServiceLocator { get; } = new();
@@ -11,30 +12,30 @@ namespace Shuile.Core.Framework
 
     public static class ModuleContainerExtension
     {
-        public static ModuleContainer AddUtilityImplemenation<T>(this ModuleContainer module, System.Func<T> implementation) where T : IUtility
+        public static ModuleContainer AddUtilityImplementation<T>(this ModuleContainer module, System.Func<T> implementation) where T : IUtility
         {
             module.ServiceLocator.AddUtilityCreator(implementation);
             return module;
         }
-        public static ModuleContainer AddModelImplemenation<T>(this ModuleContainer module, System.Func<T> implementation) where T : IModel
+        public static ModuleContainer AddModelImplementation<T>(this ModuleContainer module, System.Func<T> implementation) where T : IModel
         {
             module.ServiceLocator.AddModelCreator(implementation);
             return module;
         }
-        public static ModuleContainer AddSystemImplemenation<T>(this ModuleContainer module, System.Func<T> implementation) where T : ISystem
+        public static ModuleContainer AddSystemImplementation<T>(this ModuleContainer module, System.Func<T> implementation) where T : ISystem
         {
             module.ServiceLocator.AddSystemCreator(implementation);
             return module;
         }
-        public  static T GetUtilityImplemenation<T>(this ModuleContainer module) where T : IUtility
+        public  static T GetUtilityImplementation<T>(this ModuleContainer module) where T : IUtility
         {
             return module.ServiceLocator.GetUtility<T>();
         }
-        public static T GetModelImplemenation<T>(this ModuleContainer module) where T : IModel
+        public static T GetModelImplementation<T>(this ModuleContainer module) where T : IModel
         {
             return module.ServiceLocator.GetModel<T>();
         }
-        public static T GetSystemImplemenation<T>(this ModuleContainer module) where T : ISystem
+        public static T GetSystemImplementation<T>(this ModuleContainer module) where T : ISystem
         {
             return module.ServiceLocator.GetSystem<T>();
         }
@@ -98,13 +99,13 @@ namespace Shuile.Core.Framework
     {
     }
 
-    // oprate data, and not response event for better, dont refernce IEntity (like singleton)
+    // operate data, and not response event for better, dont reference IEntity (like singleton)
     public interface ISystem : IBelongsToModuleControl, ICanTriggerEvent, ICanExecuteCommand,
         ICanGetUtility, ICanGetModel, ICanGetSystem
     {
     }
 
-    // designed for game object, esspesically those who like update you update me update everything and i dont know what and why they update... the "Update()" function is hard to control.
+    // designed for game object, especially those who like update you update me update everything and i don't know what and why they update... the "Update()" function is hard to control.
     public interface IEntity : IBelongsToModuleControl, ICanRegisterEvent, ICanTriggerEvent, ICanExecuteCommand,
         ICanGetUtility, ICanGetModel, ICanGetSystem
     {
@@ -120,15 +121,15 @@ namespace Shuile.Core.Framework
     {
         public static T GetUtility<T>(this ICanGetUtility utility) where T : IUtility
         {
-            return utility.GetModule().GetUtilityImplemenation<T>();
+            return utility.GetModule().GetUtilityImplementation<T>();
         }
         public static T GetModel<T>(this ICanGetModel model) where T : IModel
         {
-            return model.GetModule().GetModelImplemenation<T>();
+            return model.GetModule().GetModelImplementation<T>();
         }
         public static T GetSystem<T>(this ICanGetSystem system) where T : ISystem
         {
-            return system.GetModule().GetSystemImplemenation<T>();
+            return system.GetModule().GetSystemImplementation<T>();
         }
 
         public static void RegisterEvent<T>(this ICanRegisterEvent entity, System.Action<T> action) where T : ITypeEvent

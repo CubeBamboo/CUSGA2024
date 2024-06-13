@@ -20,7 +20,7 @@ namespace Shuile.Chart
         {
             _entityManager = scope.GetImplementation<LevelEntityManager>();
             _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
-            _timingManager = LevelRoot.LevelContext.TimingManager;
+            _timingManager = scope.GetImplementation<LevelTimingManager>();
         }
         public void ProcessNote(BaseNoteData noteData)
         {

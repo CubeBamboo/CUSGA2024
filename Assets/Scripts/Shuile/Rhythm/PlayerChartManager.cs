@@ -4,7 +4,6 @@ using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay;
 using Shuile.ResourcesManagement.Loader;
-using UnityEngine;
 
 namespace Shuile.Rhythm.Runtime
 {
@@ -26,10 +25,10 @@ namespace Shuile.Rhythm.Runtime
 
         public PlayerChartManager(IGetableScope scope)
         {
-            _musicRhythmManager = MusicRhythmManager.Instance;
-            var levelTimingManager = this.GetSystem<LevelTimingManager>();
-            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();;
             _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
+         
+            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
         }
 
         public void Initialize()

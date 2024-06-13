@@ -27,9 +27,9 @@ namespace Shuile.Rhythm
         public PreciseMusicPlayer(IGetableScope scope)
         {
             _levelAudioManager = scope.GetImplementation<LevelAudioManager>();
+            _levelModel = scope.GetImplementation<LevelModel>();
             var resourcesLoader = LevelResourcesLoader.Instance;
             _levelConfig = resourcesLoader.SyncContext.levelConfig;
-            _levelModel = this.GetModel<LevelModel>();
         }
 
         public void Initialize()
@@ -45,7 +45,7 @@ namespace Shuile.Rhythm
         {
             if (!IsPlaying) return;
             CurrentTime += Time.fixedDeltaTime;
-            _levelModel.currentMusicTime = CurrentTime;
+            _levelModel.CurrentMusicTime = CurrentTime;
         }
 
         /// <summary> timer for music playing by play offset </summary>

@@ -4,7 +4,7 @@ using Shuile.Persistent;
 
 namespace Shuile
 {
-    public class MainGame : AbstractLocator<MainGame>
+    public class MainGame : AbstractLocator<MainGame>  // nearly obsolete, use GameApplication.Global instead
     {
         public override bool InitOnApplicationAwake => true;
 

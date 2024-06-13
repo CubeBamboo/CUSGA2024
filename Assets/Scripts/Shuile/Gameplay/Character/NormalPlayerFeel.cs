@@ -31,11 +31,12 @@ namespace Shuile.Gameplay.Character
 
         private void Awake()
         {
-            _levelModel = this.GetModel<LevelModel>();
-            _playerModel = this.GetModel<PlayerModel>();
-            _levelFeelManager = this.GetUtility<LevelFeelManager>();
-
-            _musicRhythmManager = MusicRhythmManager.Instance;
+            var scope = LevelScope.Interface;
+            _levelModel = scope.GetImplementation<LevelModel>();
+            _playerModel = scope.GetImplementation<PlayerModel>();
+            _levelFeelManager = scope.GetImplementation<LevelFeelManager>();
+            
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
             _moveController = GetComponent<SmoothMoveCtrl>();
             player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();

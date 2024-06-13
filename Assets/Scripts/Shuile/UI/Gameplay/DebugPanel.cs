@@ -11,6 +11,7 @@ using Shuile.Gameplay.Entity;
 using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -33,20 +34,22 @@ namespace Shuile.UI.Gameplay
 
         private void Start()
         {
-            var lifeTimeScope = LevelScope.Interface;
-            _levelEntityManager = lifeTimeScope.GetImplementation<LevelEntityManager>();
-            _playerModel = this.GetModel<PlayerModel>();
-            _levelModel = this.GetModel<LevelModel>();
-            _musicRhythmManager = MusicRhythmManager.Instance;
+            var scope = LevelScope.Interface;
+            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
+            _playerModel = scope.GetImplementation<PlayerModel>();
+            _levelModel = scope.GetImplementation<LevelModel>();
+            
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
+        }
 
-            gameObject.AddComponent<UpdateEventMono>().OnFixedUpdate += () => //TODO: not a good way
-            {
-                hitOffsetText.text = $"HitOffset: {_playerModel.currentHitOffset:0.000}";
-                playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
-                dangerScoreText.text = $"DangerScore: {_levelModel.DangerScore:0.000}";
-                dangerLevelText.text = $"DangerLevel: {_levelModel.DangerLevel}";
-                enemyCountText.text = $"EnemyCount: {_levelEntityManager.EnemyCount}";
-            };
+        private void FixedUpdate()
+        {
+            //TODO: not a good way
+            hitOffsetText.text = $"HitOffset: {_playerModel.currentHitOffset:0.000}";
+            playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
+            dangerScoreText.text = $"DangerScore: {_levelModel.DangerScore:0.000}";
+            dangerLevelText.text = $"DangerLevel: {_levelModel.DangerLevel}";
+            enemyCountText.text = $"EnemyCount: {_levelEntityManager.EnemyCount}";
         }
 
         public void Hide()

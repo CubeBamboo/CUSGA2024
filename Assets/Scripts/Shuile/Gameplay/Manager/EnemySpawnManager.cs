@@ -27,7 +27,7 @@ namespace Shuile.Gameplay.Manager
             _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
             _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
-            _levelModel = this.GetModel<LevelModel>();
+            _levelModel = scope.GetImplementation<LevelModel>();
             currentEnemyData = LevelRoot.LevelContext.LevelEnemyData;
         }
 

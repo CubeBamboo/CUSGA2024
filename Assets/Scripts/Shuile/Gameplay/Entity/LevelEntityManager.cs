@@ -37,7 +37,7 @@ namespace Shuile.Gameplay.Entity
         {
             var resourceLoader = LevelResourcesLoader.Instance;
             _globalPrefab = resourceLoader.SyncContext.globalPrefabs;
-            _levelModel = this.GetModel<LevelModel>();
+            _levelModel = scope.GetImplementation<LevelModel>();
         }
 
         public void Start()

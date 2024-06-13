@@ -23,7 +23,7 @@ namespace Shuile.Rhythm
 
         public AutoPlayChartManager(IGetableScope scope)
         {
-            _musicRhythmManager = MusicRhythmManager.Instance;
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
             _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
         }
 

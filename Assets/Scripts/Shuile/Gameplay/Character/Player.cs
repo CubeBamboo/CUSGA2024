@@ -26,8 +26,9 @@ namespace Shuile.Gameplay.Character
         private void Awake()
         {
             var scope = LevelScope.Interface;
-            _playerModel = this.GetModel<PlayerModel>();
+            _playerModel = scope.GetImplementation<PlayerModel>();
             _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
+            
             _playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
         }
         private void Start()

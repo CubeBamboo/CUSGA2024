@@ -6,7 +6,7 @@ namespace Shuile.Gameplay.Feel
     /// <summary>
     /// manage all about game feeling (like camera shake, particle effects, sound effects)
     /// </summary>
-    public class LevelFeelManager : IUtility
+    public class LevelFeelManager
     {
         readonly CameraFeelHelper _cameraFeelHelper = new();
         readonly VolumeFeelHelper _volumeFeelHelper = new();

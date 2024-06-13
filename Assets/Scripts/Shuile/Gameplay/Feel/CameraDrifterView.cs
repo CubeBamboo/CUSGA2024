@@ -10,7 +10,8 @@ namespace Shuile.Gameplay.Feel
     {
         private CameraDrifterController _controller;
 
-        private readonly ViewEntityProperty<Vector2> targetPosition = new();
+        private Vector2 _targetPosition = new();
+        private Vector2 _rawPosition;
 
         public Vector2 originPosition { get; set; }
         public float moveScale { get; set; } = 0.1f;
@@ -20,9 +21,6 @@ namespace Shuile.Gameplay.Feel
         private void Awake()
         {
             _controller = gameObject.GetOrAddComponent<CameraDrifterController>();
-
-            targetPosition.DirtyCheck = (a, b) => (a - b).sqrMagnitude > 1e-12f;
-            targetPosition.OnValueDirty(OnValueDirty);
 
             originPosition = transform.position;
         }
@@ -34,10 +32,6 @@ namespace Shuile.Gameplay.Feel
             originPosition = data.origin.position;
             moveScale = data.moveScale;
             moveRadius = data.moveRadius;
-        }
-        private Vector2 OnValueDirty(Vector2 target)
-        {
-            return Vector2.Lerp(transform.position, target, moveSpeed);
         }
 
         public Vector2 GetUsingTargetValue(Vector2 target)
@@ -55,11 +49,13 @@ namespace Shuile.Gameplay.Feel
 
         private void LateUpdate()
         {
-            targetPosition.TryUpdateDirtValue();
-            transform.position = new Vector3(targetPosition.RawValue.x, targetPosition.RawValue.y, transform.position.z);
-
             if (!_controller.HasTargetPosition) return;
-            targetPosition.TargetValue = GetUsingTargetValue(_controller.TargetPosition);
+            _targetPosition = GetUsingTargetValue(_controller.TargetPosition);
+            
+            if ((_targetPosition - _rawPosition).sqrMagnitude < 1e-12f) return;
+            _rawPosition = Vector2.Lerp(transform.position, _targetPosition, moveSpeed);
+            
+            transform.position = new Vector3(_rawPosition.x, _rawPosition.y, transform.position.z);
         }
 
         public ModuleContainer GetModule() => GameApplication.Level;

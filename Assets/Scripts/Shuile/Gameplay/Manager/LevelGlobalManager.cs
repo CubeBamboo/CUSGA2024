@@ -32,16 +32,15 @@ namespace Shuile.Gameplay.Manager
         {
             var scope = LevelScope.Interface;
             
-            _levelFeelManager = this.GetUtility<LevelFeelManager>();
-            _levelModel = this.GetModel<LevelModel>();
-            _playerModel = this.GetModel<PlayerModel>();
-            _musicRhythmManager = MusicRhythmManager.Instance;
-
-            _player = scope.GetImplementation<Player>();
-            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
-            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
             _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
+            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
+            _levelFeelManager = scope.GetImplementation<LevelFeelManager>();
+            _playerModel = scope.GetImplementation<PlayerModel>();
+            _player = scope.GetImplementation<Player>();
+            _levelModel = scope.GetImplementation<LevelModel>();
             _endLevelPanel = scope.GetImplementation<EndLevelPanel>();
+            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
         }
 
         private void Start()

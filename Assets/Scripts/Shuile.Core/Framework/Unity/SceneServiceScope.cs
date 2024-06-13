@@ -17,23 +17,24 @@ namespace Shuile.Core.Framework.Unity
         void Register<T>(Func<T> implementation);
         void RegisterMonoComponent<T>(T instance) where T : MonoBehaviour;
         void RegisterEntryPoint<T>(Func<T> implementation);
+        public void ClearExisting();
     }
     
     [DefaultExecutionOrder(-2000)]
     public class SceneServiceScope<TScope> : MonoBehaviour, IRegisterableScope, IGetableScope where TScope : SceneServiceScope<TScope>
     {
         public static TScope Interface { get; private set; }
-        private static HashSet<Type> _getChain = new();
-        public static bool EnableGetChainCheck { get; set; } = true;
+        private readonly HashSet<Type> _getChain = new();
+        public bool EnableGetChainCheck { get; set; } = true;
         
         private readonly ServiceLocator _serviceLocator = new();
-        private readonly Dictionary<System.Type, System.Func<object>> _entryPointCreators = new();
+        private readonly Dictionary<Type, Func<object>> _entryPointCreators = new();
         private readonly List<object> _entryPoints = new();
         
         private void Awake()
         {
             if (Interface != null)
-                throw new InvalidOperationException("MonoSceneServiceLocator is a singleton and may only be initialized once.");
+                throw new InvalidOperationException("MonoSceneServiceLocator is a singleton and can only be initialized once.");
             Interface = this as TScope;
             Configure(Interface);
             
@@ -61,7 +62,7 @@ namespace Shuile.Core.Framework.Unity
             // init entry points
             foreach (var pair in _entryPointCreators)
             {
-                GetImplementation(pair.Key);
+                this.GetImplementation(pair.Key);
             }
         }
         
@@ -94,7 +95,7 @@ namespace Shuile.Core.Framework.Unity
             return res;
         }
 
-        public void ClearExisting<T>() => _serviceLocator.ClearAllServices();
+        public void ClearExisting() => _serviceLocator.ClearAllServices();
         
         public virtual void Configure(IRegisterableScope scope)
         {

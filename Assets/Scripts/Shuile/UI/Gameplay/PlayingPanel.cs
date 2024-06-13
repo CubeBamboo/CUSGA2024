@@ -1,4 +1,5 @@
 using Shuile.Core.Framework;
+using Shuile.Gameplay;
 using Shuile.Gameplay.Character;
 using Shuile.Model;
 using TMPro;
@@ -17,7 +18,8 @@ namespace Shuile.UI.Gameplay
 
         private void Start()
         {
-            var levelModel = this.GetModel<LevelModel>();
+            var scope = LevelScope.Interface;
+            var levelModel = scope.GetImplementation<LevelModel>();
             levelModel.OnDangerScoreChange.Register(old =>
                 dangerLevelText.text = levelModel.DangerLevel.ToString())
                .UnRegisterWhenGameObjectDestroyed(gameObject);

@@ -1,22 +1,19 @@
-using Shuile.Core.Framework;
-using Shuile.Gameplay;
+using Shuile.Core.Framework.Unity;
 using Shuile.Model;
 
 namespace Shuile.Rhythm
 {
-    public class LevelTimingManager : ISystem
+    public class LevelTimingManager
     {
-        private readonly LevelModel levelModel;
-        public LevelTimingManager()
+        private readonly LevelModel _levelModel;
+        public LevelTimingManager(IGetableScope scope)
         {
-            levelModel = this.GetModel<LevelModel>();
+            _levelModel = scope.GetImplementation<LevelModel>();
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
 
         public float GetRealTime(float rhythmTime)
         {
-            return levelModel.BpmIntervalInSeconds * rhythmTime;
+            return _levelModel.BpmIntervalInSeconds * rhythmTime;
         }
     }
 }

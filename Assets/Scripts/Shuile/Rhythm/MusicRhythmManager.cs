@@ -1,18 +1,17 @@
 using CbUtils.Unity;
 using Shuile.Chart;
-using Shuile.Core.Framework;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay;
 using Shuile.Model;
 using Shuile.Persistent;
 using Shuile.ResourcesManagement.Loader;
-using Shuile.Rhythm.Runtime;
+using System;
 using UnityEngine;
 
 namespace Shuile.Rhythm
 {
     //control the music play and music time progress, manage the rhythm check
-    public class MusicRhythmManager : MonoSingletons<MusicRhythmManager>, IEntity
+    public class MusicRhythmManager : MonoBehaviour
     {
         private LevelModel _levelModel;
 
@@ -26,18 +25,17 @@ namespace Shuile.Rhythm
         public float volume = 0.4f;
 
         public bool IsPlaying { get; private set; } = false;
-        public float CurrentTime => _levelModel.currentMusicTime;
+        public float CurrentTime => _levelModel.CurrentMusicTime;
         public float MusicLength => _currentChart.musicLength;
         public bool IsMusicEnd => CurrentTime >= MusicLength;
 
-        protected override void OnAwake()
+        private void Awake()
         {
-            var sceneLocator = LevelScope.Interface;
-            var resourcesLoader = LevelResourcesLoader.Instance;
-            
-            _levelModel = this.GetModel<LevelModel>();
-            _preciseMusicPlayer = sceneLocator.GetImplementation<PreciseMusicPlayer>();
+            var scope = LevelScope.Interface;
+            _levelModel = scope.GetImplementation<LevelModel>();
+            _preciseMusicPlayer = scope.GetImplementation<PreciseMusicPlayer>();
 
+            var resourcesLoader = LevelResourcesLoader.Instance;
             _levelConfig = resourcesLoader.SyncContext.levelConfig;
         }
 
@@ -78,7 +76,5 @@ namespace Shuile.Rhythm
         public void FadeOutAndStop(float duration = 0.8f) => _preciseMusicPlayer.FadeOutAndStop(duration);
 
         public void SetCurrentTime(float time) => _preciseMusicPlayer.SetCurrentTime(time);
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

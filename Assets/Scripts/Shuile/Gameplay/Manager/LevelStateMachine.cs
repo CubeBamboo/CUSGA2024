@@ -1,3 +1,4 @@
+using Shuile.Core.Framework.Unity;
 using Shuile.Rhythm;
 using System;
 
@@ -12,13 +13,10 @@ namespace Shuile.Gameplay.Manager
             Win
         }
 
-        private readonly MusicRhythmManager _musicRhythmManager;
         private LevelState state;
 
-        public LevelStateMachine()
+        public LevelStateMachine(IGetableScope scope)
         {
-            _musicRhythmManager = MusicRhythmManager.Instance;
-
             Initialize();
         }
 

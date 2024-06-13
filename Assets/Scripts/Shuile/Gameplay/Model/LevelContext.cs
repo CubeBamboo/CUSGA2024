@@ -6,7 +6,6 @@ namespace Shuile.Gameplay.Model
 {
     public class LevelContext
     {
-        public LevelTimingManager TimingManager;
         public LevelData LevelData { get; set; }
         
         private ChartData _chartData;

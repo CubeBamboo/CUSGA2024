@@ -4,7 +4,7 @@ using Shuile.Gameplay.Move;
 
 namespace Shuile
 {
-    public class PlayerModel : IModel
+    public class PlayerModel
     {
         public float currentHitOffset;
 
@@ -13,7 +13,5 @@ namespace Shuile
 
         public bool canInviciable = true;
         public bool isInviciable = false;
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

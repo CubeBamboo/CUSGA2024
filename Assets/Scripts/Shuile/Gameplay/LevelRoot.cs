@@ -20,7 +20,8 @@ namespace Shuile.Gameplay
             Debug.Log("Level awake and is initializing");
 
             needHitWithRhythm = LevelResourcesLoader.Instance.SyncContext.levelConfig.needHitWithRhythm;
-            LevelContext.TimingManager = this.GetSystem<LevelTimingManager>();
+            // var scope = LevelScope.Interface;
+            // LevelContext.TimingManager = scope.GetImplementation<LevelTimingManager>();
 
             IsStart = true;
             IsLevelActive = true;

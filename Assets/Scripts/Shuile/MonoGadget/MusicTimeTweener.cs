@@ -1,4 +1,5 @@
 using Shuile.Core.Framework;
+using Shuile.Gameplay;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 
@@ -16,7 +17,8 @@ namespace Shuile.MonoGadget
 
         protected void Awake()
         {
-            _manager = MusicRhythmManager.Instance;
+            var scope = LevelScope.Interface;
+            _manager = scope.GetImplementation<MusicRhythmManager>();;
             _tweenTime = _lastManagerTime = _manager.CurrentTime;
         }
 
