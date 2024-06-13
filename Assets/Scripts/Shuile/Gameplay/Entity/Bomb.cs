@@ -2,7 +2,7 @@ using CbUtils.ActionKit;
 using CbUtils.Event;
 using CbUtils.Extension;
 using DG.Tweening;
-
+using Shuile.Core.Gameplay.Common;
 using System.Linq;
 
 using UnityEngine;

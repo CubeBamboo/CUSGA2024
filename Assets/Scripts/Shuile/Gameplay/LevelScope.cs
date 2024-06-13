@@ -1,6 +1,7 @@
 using Shuile.Audio;
 using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
+using Shuile.Core.Gameplay;
 using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Feel;

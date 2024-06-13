@@ -1,4 +1,5 @@
 using Shuile.Core.Framework;
+using Shuile.Core.Gameplay.Common;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character

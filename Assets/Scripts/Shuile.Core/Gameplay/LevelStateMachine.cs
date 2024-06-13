@@ -1,8 +1,7 @@
 using Shuile.Core.Framework.Unity;
-using Shuile.Rhythm;
 using System;
 
-namespace Shuile.Gameplay.Manager
+namespace Shuile.Core.Gameplay
 {
     public class LevelStateMachine
     {
@@ -13,7 +12,7 @@ namespace Shuile.Gameplay.Manager
             Win
         }
 
-        private LevelState state;
+        private LevelState _state;
 
         public LevelStateMachine(IGetableScope scope)
         {
@@ -22,22 +21,22 @@ namespace Shuile.Gameplay.Manager
 
         private void Initialize()
         {
-            state = LevelState.Playing;
+            _state = LevelState.Playing;
             TriggerEvent(LevelState.Playing);
         }
 
         public LevelState State
         {
-            get => state;
+            get => _state;
             set
             {
-                if (state == value)
+                if (_state == value)
                 {
                     return;
                 }
 
-                state = value;
-                TriggerEvent(state);
+                _state = value;
+                TriggerEvent(_state);
             }
         }
         

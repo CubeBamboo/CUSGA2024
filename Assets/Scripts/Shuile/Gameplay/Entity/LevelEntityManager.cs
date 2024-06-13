@@ -35,9 +35,10 @@ namespace Shuile.Gameplay.Entity
 
         public LevelEntityManager(IGetableScope scope)
         {
+            _levelModel = scope.GetImplementation<LevelModel>();
+            
             var resourceLoader = LevelResourcesLoader.Instance;
             _globalPrefab = resourceLoader.SyncContext.globalPrefabs;
-            _levelModel = scope.GetImplementation<LevelModel>();
         }
 
         public void Start()

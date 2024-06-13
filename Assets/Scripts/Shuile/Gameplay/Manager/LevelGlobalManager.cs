@@ -1,6 +1,7 @@
 using CbUtils.Timing;
 using CbUtils.Unity;
 using Shuile.Core.Framework;
+using Shuile.Core.Gameplay;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Entity;

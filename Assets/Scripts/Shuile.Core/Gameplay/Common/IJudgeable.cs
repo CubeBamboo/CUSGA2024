@@ -1,4 +1,4 @@
-namespace Shuile.Gameplay
+namespace Shuile.Core.Gameplay.Common
 {
     public interface IJudgeable
     {
