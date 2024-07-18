@@ -20,8 +20,7 @@ namespace CbUtils.Kits.Tasks
 
         // if you can call Execute() to solve, don't use this event.
         public event System.Action OnTaskComplete;
-        public event System.Action OnTaskComplete_AutoClear;
-
+        
         public bool IsBusy
         {
             get => isBusy;
@@ -32,8 +31,6 @@ namespace CbUtils.Kits.Tasks
                 isBusy = value;
 
                 OnTaskComplete?.Invoke();
-                OnTaskComplete_AutoClear?.Invoke();
-                OnTaskComplete_AutoClear = null;
 
                 if(isBusy && busyScreen != null)
                     busyScreen.Show();
@@ -47,7 +44,7 @@ namespace CbUtils.Kits.Tasks
             this.busyScreen = busyScreen;
         }
 
-        public void ExecuteVoid(Task task)
+        public void Execute(Task task)
         {
             IsBusy = true;
             taskCount++;
@@ -55,9 +52,9 @@ namespace CbUtils.Kits.Tasks
                 HandleTaskComplete();
             else
                 task.ConfigureAwait(false)
-                    .GetAwaiter().OnCompleted(() => HandleTaskComplete());
+                    .GetAwaiter().OnCompleted(HandleTaskComplete);
         }
-        public Task Execute(Task task)
+        public Task Run(Task task)
         {
             IsBusy = true;
             taskCount++;
@@ -65,10 +62,10 @@ namespace CbUtils.Kits.Tasks
                 HandleTaskComplete();
             else
                 task.ConfigureAwait(false)
-                    .GetAwaiter().OnCompleted(() => HandleTaskComplete());
+                    .GetAwaiter().OnCompleted(HandleTaskComplete);
             return task;
         }
-        public Task<T> Execute<T>(Task<T> task)
+        public Task<T> Run<T>(Task<T> task)
         {
             IsBusy = true;
             taskCount++;
@@ -76,20 +73,20 @@ namespace CbUtils.Kits.Tasks
                 HandleTaskComplete();
             else
                 task.ConfigureAwait(false)
-                    .GetAwaiter().OnCompleted(() => HandleTaskComplete());
+                    .GetAwaiter().OnCompleted(HandleTaskComplete);
             return task;
         }
 
-        public void ExecuteVoid(UniTask unitask)
+        public void Execute(UniTask unitask)
         {
             IsBusy = true;
             taskCount++;
             if (unitask.Status.IsCompleted())
                 HandleTaskComplete();
             else
-                unitask.ContinueWith(() => HandleTaskComplete());
+                unitask.ContinueWith(HandleTaskComplete);
         }
-        public UniTask Execute(UniTask unitask)
+        public UniTask Run(UniTask unitask)
         {
             IsBusy = true;
             taskCount++;
@@ -100,12 +97,12 @@ namespace CbUtils.Kits.Tasks
             }
             else
             {
-                var ret = unitask.ContinueWith(() => HandleTaskComplete());
+                var ret = unitask.ContinueWith(HandleTaskComplete);
                 return ret;
             }
         }
         /// <summary> [warning]: With GC </summary>
-        public UniTask<T> Execute<T>(UniTask<T> unitask)
+        public UniTask<T> Run<T>(UniTask<T> unitask)
         {
             IsBusy = true;
             taskCount++;

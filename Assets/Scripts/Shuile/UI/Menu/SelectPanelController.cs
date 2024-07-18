@@ -70,7 +70,7 @@ namespace Shuile.UI.Menu
         public async void StartLevel(string label)
         {
             //var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());
-            await TaskBus.Instance.Execute(LoadLevelResources(label));
+            await TaskBus.Instance.Run(LoadLevelResources(label));
             
             LevelContext levelContext = new LevelContext();
             levelContext.LevelData = _level;
