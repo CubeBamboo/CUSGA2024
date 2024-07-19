@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
 {
-    public class CameraDrifterController : MonoBehaviour, IEntity
+    public class CameraDrifterController : MonoBehaviour
     {
         private Transform _player;
 
@@ -18,7 +18,5 @@ namespace Shuile.Gameplay.Feel
             var player = scope.GetImplementation<Player>();
             this._player = player.transform;
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

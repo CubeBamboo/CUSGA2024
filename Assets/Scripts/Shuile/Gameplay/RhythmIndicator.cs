@@ -17,7 +17,7 @@ using UnityEngine.UI;
 
 namespace Shuile.Gameplay
 {
-    public class RhythmIndicator : MonoBehaviour, IEntity
+    public class RhythmIndicator : MonoBehaviour
     {
         [SerializeField] private float distanceUnit;
 
@@ -148,9 +148,7 @@ namespace Shuile.Gameplay
 
             return _uiNoteList.Min();
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
-
+        
         private class UINote : SingleNote
         {
             public readonly Graphic graphic;

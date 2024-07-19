@@ -13,7 +13,7 @@ using Shuile.Rhythm;
 namespace Shuile
 {
     // attach to laser GameObject
-    public class Laser : MonoBehaviour, IEntity
+    public class Laser : MonoBehaviour
     {
         [SerializeField] private bool playOnAwake = true;
         [SerializeField] private float attackStayTime = 0.8f;
@@ -109,7 +109,5 @@ namespace Shuile
                 attackStayTime = timingManager.GetRealTime(attackStayTime);
             }
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

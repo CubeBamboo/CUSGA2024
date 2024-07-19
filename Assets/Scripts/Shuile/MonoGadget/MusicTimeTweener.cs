@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Shuile.MonoGadget
 {
-    public class MusicTimeTweener : MonoBehaviour, IEntity
+    public class MusicTimeTweener : MonoBehaviour
     {
         private MusicRhythmManager _manager;
         private float _lastManagerTime;
@@ -29,7 +29,5 @@ namespace Shuile.MonoGadget
             else
                 _tweenTime += Time.deltaTime;
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

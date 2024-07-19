@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Shuile.UI
 {
     [RequireComponent(typeof(RectTransform))]
-    public class RhythmShakeAnim : MonoBehaviour, IEntity
+    public class RhythmShakeAnim : MonoBehaviour
     {
         private AutoPlayChartManager _autoPlayChartManager;
 
@@ -44,7 +44,5 @@ namespace Shuile.UI
                 rectTransform.DOScale(InitScale, halfShakeDurationCache);
             });
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

@@ -10,7 +10,7 @@ using UObject = UnityEngine.Object;
 namespace Shuile.Gameplay.Entity
 {
     /// <summary> base class for enemy </summary>
-    public abstract class Enemy : MonoBehaviour, IHurtable, IJudgeable, IEntity
+    public abstract class Enemy : MonoBehaviour, IHurtable, IJudgeable
     {
         [SerializeField] protected int MaxHealth = 100;
         protected SmoothMoveCtrl moveController;
@@ -26,7 +26,7 @@ namespace Shuile.Gameplay.Entity
 
         protected void Awake()
         {
-            this.TriggerEvent<EnemySpawnEvent>(new() { enemy = gameObject });
+            TypeEventSystem.Global.Trigger<EnemySpawnEvent>(new() { enemy = gameObject });
             enemyHurtEvent = new() { enemy = gameObject };
             health = MaxHealth;
             moveController = GetComponent<SmoothMoveCtrl>();
@@ -43,7 +43,7 @@ namespace Shuile.Gameplay.Entity
             var oldVal = health;
             health = Mathf.Max(0, health - attackPoint);
             OnSelfHurt(oldVal, health);
-            this.TriggerEvent<EnemyHurtEvent>(enemyHurtEvent);
+            TypeEventSystem.Global.Trigger(enemyHurtEvent);
 
             if (Health == 0)
             {
@@ -53,12 +53,10 @@ namespace Shuile.Gameplay.Entity
         }
         private void HandleDieEvent()
         {
-            this.TriggerEvent<EnemyDieEvent>(new() { enemy = gameObject });
+            TypeEventSystem.Global.Trigger<EnemyDieEvent>(new() { enemy = gameObject });
         }
         protected abstract void OnSelfHurt(int oldVal, int newVal);
         protected abstract void OnSelfDie();
         public abstract void Judge(int frame, bool force);
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

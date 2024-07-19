@@ -8,7 +8,6 @@ namespace Shuile
     public static class GameApplication
     {
         public static ModuleContainer Global { get; } = new();
-        public static ModuleContainer Level { get; } = new(); // nearly obsolete, use LevelScope instead
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void PreInitialize()

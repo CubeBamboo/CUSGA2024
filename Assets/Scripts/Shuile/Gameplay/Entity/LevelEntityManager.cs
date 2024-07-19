@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Entity
 {
-    public class LevelEntityManager : IEntity, IStartable, IDestroyable
+    public class LevelEntityManager : IStartable, IDestroyable
     {
         private readonly List<Enemy> _enemyList = new();
 
@@ -47,14 +47,14 @@ namespace Shuile.Gameplay.Entity
             
             _enemyParent = new GameObject("Enemies").transform;
             
-            this.RegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
-            this.RegisterEvent<EnemyDieEvent>(OnEnemyDie);
+            TypeEventSystem.Global.Register<EnemySpawnEvent>(OnEnemySpawn);
+            TypeEventSystem.Global.Register<EnemyDieEvent>(OnEnemyDie);
         }
 
         public void OnDestroy()
         {
-            this.UnRegisterEvent<EnemySpawnEvent>(OnEnemySpawn);
-            this.UnRegisterEvent<EnemyDieEvent>(OnEnemyDie);
+            TypeEventSystem.Global.UnRegister<EnemySpawnEvent>(OnEnemySpawn);
+            TypeEventSystem.Global.UnRegister<EnemyDieEvent>(OnEnemyDie);
         }
 
         private void OnEnemySpawn(EnemySpawnEvent evt)
@@ -98,7 +98,5 @@ namespace Shuile.Gameplay.Entity
         {
             _enemyList.Add(enemy);
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

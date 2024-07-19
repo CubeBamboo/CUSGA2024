@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Shuile.Gameplay
 {
     [DefaultExecutionOrder(-4000)]
-    public class LevelRoot : MonoSingletons<LevelRoot>, IEntity
+    public class LevelRoot : MonoSingletons<LevelRoot>
     {
         public static bool IsLevelActive { get; private set; } = false;
         public bool IsStart { get; private set; } = false;
@@ -28,8 +28,6 @@ namespace Shuile.Gameplay
         public void OnDestroy()
         {
             Debug.Log("Level end and is disposing");
-
-            GameApplication.Level.ServiceLocator.ClearExisting();
             IsLevelActive = false;
             Debug.Log("Level dispose end and close");
         }
@@ -38,7 +36,5 @@ namespace Shuile.Gameplay
         {
             LevelContext = levelContext;
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

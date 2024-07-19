@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
-    public class NormalPlayerCtrl : MonoBehaviour, IEntity
+    public class NormalPlayerCtrl : MonoBehaviour
     {
         private enum MainState
         {
@@ -98,7 +98,7 @@ namespace Shuile.Gameplay.Character
             get
             {
                 _hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
-                this.ExecuteCommand<TryHitNoteCommand>(_hitNoteCommand);
+                _hitNoteCommand.Execute();
                 _playerModel.currentHitOffset = _hitNoteCommand.result.hitOffset;
                 return _hitNoteCommand.result.isHitOn;
             }
@@ -191,7 +191,7 @@ namespace Shuile.Gameplay.Character
             if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm) return;
 
             _attackCommand.position = transform.position;
-            this.ExecuteCommand<AttackCommand>(_attackCommand);
+            _attackCommand.Execute();
 
             OnWeaponAttack.Invoke(true);
         }
@@ -286,7 +286,5 @@ namespace Shuile.Gameplay.Character
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

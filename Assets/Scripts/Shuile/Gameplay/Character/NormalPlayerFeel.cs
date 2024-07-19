@@ -13,7 +13,7 @@ using UnityEngine;
 namespace Shuile.Gameplay.Character
 {
     // player feedback and other event
-    public class NormalPlayerFeel : MonoBehaviour, IEntity
+    public class NormalPlayerFeel : MonoBehaviour
     {
         private LevelModel _levelModel;
         private PlayerModel _playerModel;
@@ -98,7 +98,5 @@ namespace Shuile.Gameplay.Character
                 animCtrl.FlipX = v < 0;
             });
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

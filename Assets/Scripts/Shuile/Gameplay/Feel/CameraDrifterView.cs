@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
 {
-    public class CameraDrifterView : MonoBehaviour, IEntity
+    public class CameraDrifterView : MonoBehaviour
     {
         private CameraDrifterController _controller;
 
@@ -57,7 +57,5 @@ namespace Shuile.Gameplay.Feel
             
             transform.position = new Vector3(_rawPosition.x, _rawPosition.y, transform.position.z);
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

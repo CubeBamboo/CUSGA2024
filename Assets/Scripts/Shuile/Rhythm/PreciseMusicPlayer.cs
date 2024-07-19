@@ -15,7 +15,7 @@ namespace Shuile.Rhythm
     /// <summary>
     /// it provides an async player for lower delay, a timer start from music's specific position
     /// </summary>
-    public class PreciseMusicPlayer : IEntity, IInitializeable, IFixedTickable, IDestroyable
+    public class PreciseMusicPlayer : IInitializeable, IFixedTickable, IDestroyable
     {
         private readonly LevelConfigSO _levelConfig;
 
@@ -128,7 +128,5 @@ namespace Shuile.Rhythm
         {
             AudioPlayer.TargetSource.DOFade(0, duration).OnComplete(() => AudioPlayer.Stop());
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

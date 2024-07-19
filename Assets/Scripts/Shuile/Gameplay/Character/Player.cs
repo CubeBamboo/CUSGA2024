@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
-    public class Player : MonoBehaviour, IEntity, IHurtable
+    public class Player : MonoBehaviour, IHurtable
     {
         private PlayerModel _playerModel;
         private LevelStateMachine _levelStateMachine;
@@ -57,8 +57,6 @@ namespace Shuile.Gameplay.Character
                 _levelStateMachine.State = LevelStateMachine.LevelState.Fail;
             }
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 
     public static class PlayerExtension

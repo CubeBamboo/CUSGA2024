@@ -11,7 +11,7 @@ using URandom = UnityEngine.Random;
 
 namespace Shuile.Gameplay.Manager
 {
-    public class EnemySpawnManager : ISystem, IStartable, IDestroyable
+    public class EnemySpawnManager : IStartable, IDestroyable
     {
         private readonly LevelModel _levelModel;
         [HideInInspector] public readonly LevelEnemySO currentEnemyData;
@@ -60,7 +60,5 @@ namespace Shuile.Gameplay.Manager
             int index = URandom.Range(0, useEnemies.Length);
             _levelEntityManager.EntityFactory.SpawnEnemyWithEffectDelay(useEnemies[index], _levelZoneManager.RandomValidPosition());
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

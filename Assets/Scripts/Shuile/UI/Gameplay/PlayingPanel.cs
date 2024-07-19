@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Shuile.UI.Gameplay
 {
-    public class PlayingPanel : MonoBehaviour, IEntity
+    public class PlayingPanel : MonoBehaviour
     {
         [SerializeField] private Image hpFillImage;
         [SerializeField] private TextMeshProUGUI dangerLevelText;
@@ -44,8 +44,5 @@ namespace Shuile.UI.Gameplay
         {
             gameObject.SetActive(true);
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
-
     }
 }

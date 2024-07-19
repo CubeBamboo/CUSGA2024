@@ -8,7 +8,7 @@ using Shuile.ResourcesManagement.Loader;
 namespace Shuile.Rhythm.Runtime
 {
     // manage chart of player, convert chart to runtime note object noteContainer
-    public class PlayerChartManager : ISystem, IInitializeable, IFixedTickable
+    public class PlayerChartManager : IInitializeable, IFixedTickable
     {
         private System.Lazy<ChartPlayer> _chartPlayer;
 
@@ -58,7 +58,5 @@ namespace Shuile.Rhythm.Runtime
             OnPlayerHitOn?.Invoke();
             noteContainer.ReleaseNote(note);
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

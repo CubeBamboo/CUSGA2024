@@ -17,7 +17,7 @@ using UInput = UnityEngine.InputSystem;
 namespace Shuile.Gameplay.Manager
 {
     // if you dont know where to put the logic, put it here
-    public class LevelGlobalManager : MonoSingletons<LevelGlobalManager>, IEntity
+    public class LevelGlobalManager : MonoSingletons<LevelGlobalManager>
     {
         private LevelModel _levelModel;
         private MusicRhythmManager _musicRhythmManager;
@@ -46,16 +46,16 @@ namespace Shuile.Gameplay.Manager
 
         private void Start()
         {
-            this.RegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
-            this.RegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
+            TypeEventSystem.Global.Register<EnemyDieEvent>(GlobalOnEnemyDie);
+            TypeEventSystem.Global.Register<EnemyHurtEvent>(GlobalOnEnemyHurt);
             _autoPlayChartManager.OnRhythmHit += _levelEntityManager.OnRhythmHit;
             _levelStateMachine.OnWin += LevelWin;
             _levelStateMachine.OnFail += LevelFail;
         }
         private void OnDestroy()
         {
-            this.UnRegisterEvent<EnemyDieEvent>(GlobalOnEnemyDie);
-            this.UnRegisterEvent<EnemyHurtEvent>(GlobalOnEnemyHurt);
+            TypeEventSystem.Global.UnRegister<EnemyDieEvent>(GlobalOnEnemyDie);
+            TypeEventSystem.Global.UnRegister<EnemyHurtEvent>(GlobalOnEnemyHurt);
             _autoPlayChartManager.OnRhythmHit -= _levelEntityManager.OnRhythmHit;
             _levelStateMachine.OnWin -= LevelWin;
             _levelStateMachine.OnFail -= LevelFail;
@@ -141,7 +141,5 @@ namespace Shuile.Gameplay.Manager
                 _player.OnHurt((int)(_player.CurrentHp.Value * 0.25f));
             }
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }

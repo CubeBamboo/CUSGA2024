@@ -18,7 +18,7 @@ using UnityEngine;
 namespace Shuile.UI.Gameplay
 {
     // 写成屎了，不过调试用就算了
-    public class DebugPanel : MonoBehaviour, IEntity
+    public class DebugPanel : MonoBehaviour
     {
         private MusicRhythmManager _musicRhythmManager;
 
@@ -61,7 +61,5 @@ namespace Shuile.UI.Gameplay
         {
             gameObject.SetActive(true);
         }
-
-        public ModuleContainer GetModule() => GameApplication.Level;
     }
 }
