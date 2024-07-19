@@ -1,3 +1,5 @@
+using System;
+
 namespace Shuile.Core.Framework
 {
     #region ModuleContainer
@@ -12,29 +14,37 @@ namespace Shuile.Core.Framework
 
     public static class ModuleContainerExtension
     {
-        public static ModuleContainer AddUtilityImplementation<T>(this ModuleContainer module, System.Func<T> implementation) where T : IUtility
+        public static ModuleContainer AddUtilityImplementation<T>(this ModuleContainer module, Func<T> implementation)
+            where T : IUtility
         {
             module.ServiceLocator.AddUtilityCreator(implementation);
             return module;
         }
-        public static ModuleContainer AddModelImplementation<T>(this ModuleContainer module, System.Func<T> implementation) where T : IModel
+
+        public static ModuleContainer AddModelImplementation<T>(this ModuleContainer module, Func<T> implementation)
+            where T : IModel
         {
             module.ServiceLocator.AddModelCreator(implementation);
             return module;
         }
-        public static ModuleContainer AddSystemImplementation<T>(this ModuleContainer module, System.Func<T> implementation) where T : ISystem
+
+        public static ModuleContainer AddSystemImplementation<T>(this ModuleContainer module, Func<T> implementation)
+            where T : ISystem
         {
             module.ServiceLocator.AddSystemCreator(implementation);
             return module;
         }
-        public  static T GetUtilityImplementation<T>(this ModuleContainer module) where T : IUtility
+
+        public static T GetUtilityImplementation<T>(this ModuleContainer module) where T : IUtility
         {
             return module.ServiceLocator.GetUtility<T>();
         }
+
         public static T GetModelImplementation<T>(this ModuleContainer module) where T : IModel
         {
             return module.ServiceLocator.GetModel<T>();
         }
+
         public static T GetSystemImplementation<T>(this ModuleContainer module) where T : ISystem
         {
             return module.ServiceLocator.GetSystem<T>();
@@ -44,18 +54,22 @@ namespace Shuile.Core.Framework
         {
             module.CommandSystem.Execute(command);
         }
-        public static void RegisterEvent<T>(this ModuleContainer module, System.Action<T> action) where T : ITypeEvent
+
+        public static void RegisterEvent<T>(this ModuleContainer module, Action<T> action) where T : ITypeEvent
         {
             module.TypeEventSystem.Register(action);
         }
-        public static void UnRegisterEvent<T>(this ModuleContainer module, System.Action<T> action) where T : ITypeEvent
+
+        public static void UnRegisterEvent<T>(this ModuleContainer module, Action<T> action) where T : ITypeEvent
         {
             module.TypeEventSystem.UnRegister(action);
         }
+
         public static void ClearEventOf<T>(this ModuleContainer module) where T : ITypeEvent
         {
             module.TypeEventSystem.ClearEventOf<T>();
         }
+
         public static void TriggerEvent<T>(this ModuleContainer module, T para) where T : ITypeEvent
         {
             module.TypeEventSystem.Trigger(para);
@@ -74,18 +88,23 @@ namespace Shuile.Core.Framework
     public interface ICanGetUtility : IBelongsToModuleControl
     {
     }
+
     public interface ICanGetModel : IBelongsToModuleControl
     {
     }
+
     public interface ICanGetSystem : IBelongsToModuleControl
     {
     }
+
     public interface ICanRegisterEvent : IBelongsToModuleControl
     {
     }
+
     public interface ICanTriggerEvent : IBelongsToModuleControl
     {
     }
+
     public interface ICanExecuteCommand : IBelongsToModuleControl
     {
     }
@@ -95,7 +114,8 @@ namespace Shuile.Core.Framework
     }
 
     // basically store data
-    public interface IModel : IBelongsToModuleControl, ICanTriggerEvent, ICanExecuteCommand, ICanGetUtility, ICanGetModel
+    public interface IModel : IBelongsToModuleControl, ICanTriggerEvent, ICanExecuteCommand, ICanGetUtility,
+        ICanGetModel
     {
     }
 
@@ -114,6 +134,7 @@ namespace Shuile.Core.Framework
             get => true;
             set { }
         }
+
         void OnInitData(object data) { }
     }
 
@@ -123,23 +144,27 @@ namespace Shuile.Core.Framework
         {
             return utility.GetModule().GetUtilityImplementation<T>();
         }
+
         public static T GetModel<T>(this ICanGetModel model) where T : IModel
         {
             return model.GetModule().GetModelImplementation<T>();
         }
+
         public static T GetSystem<T>(this ICanGetSystem system) where T : ISystem
         {
             return system.GetModule().GetSystemImplementation<T>();
         }
 
-        public static void RegisterEvent<T>(this ICanRegisterEvent entity, System.Action<T> action) where T : ITypeEvent
+        public static void RegisterEvent<T>(this ICanRegisterEvent entity, Action<T> action) where T : ITypeEvent
         {
             entity.GetModule().RegisterEvent(action);
         }
-        public static void UnRegisterEvent<T>(this ICanRegisterEvent entity, System.Action<T> action) where T : ITypeEvent
+
+        public static void UnRegisterEvent<T>(this ICanRegisterEvent entity, Action<T> action) where T : ITypeEvent
         {
             entity.GetModule().UnRegisterEvent(action);
         }
+
         public static void TriggerEvent<T>(this ICanTriggerEvent entity, T para) where T : ITypeEvent
         {
             entity.GetModule().TriggerEvent(para);

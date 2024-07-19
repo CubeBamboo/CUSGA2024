@@ -1,7 +1,6 @@
 using CbUtils.Extension;
 using DG.Tweening;
 using Shuile.Chart;
-using Shuile.Core.Framework;
 using Shuile.Core.Global.Config;
 using Shuile.MonoGadget;
 using Shuile.ResourcesManagement.Loader;
@@ -23,17 +22,17 @@ namespace Shuile.Gameplay
 
         [SerializeField] private float maxNegativeDeltaTime = 0.2f;
 
-        private PlayerChartManager _playerChartManager;
+        private readonly ObjectPool<Graphic> _notePool;
+        private readonly List<UINote> _uiNoteList;
         private LevelConfigSO _levelConfig;
 
-        private readonly ObjectPool<Graphic> _notePool;
-
         private Graphic _notePrefab;
+
+        private PlayerChartManager _playerChartManager;
         private float _preDisplayTime;
 
         private ReadOnlyCollection<SingleNote> _renderNoteList;
         private Lazy<MusicTimeTweener> _timeTweener;
-        private readonly List<UINote> _uiNoteList;
 
         public RhythmIndicator()
         {
@@ -58,12 +57,13 @@ namespace Shuile.Gameplay
         {
             var resourcesLoader = LevelResourcesLoader.Instance;
             var sceneLocator = LevelScope.Interface;
-            
+
             _playerChartManager = sceneLocator.GetImplementation<PlayerChartManager>();
-            
-            PreciseMusicPlayer preciseMusicPlayer = sceneLocator.GetImplementation<PreciseMusicPlayer>();
+
+            var preciseMusicPlayer = sceneLocator.GetImplementation<PreciseMusicPlayer>();
             _timeTweener =
-                new Lazy<MusicTimeTweener>(() => preciseMusicPlayer.AudioPlayer.TargetSource.gameObject.GetOrAddComponent<MusicTimeTweener>());
+                new Lazy<MusicTimeTweener>(() =>
+                    preciseMusicPlayer.AudioPlayer.TargetSource.gameObject.GetOrAddComponent<MusicTimeTweener>());
 
             _levelConfig = resourcesLoader.SyncContext.levelConfig;
             _notePrefab = resourcesLoader.SyncContext.globalPrefabs.noteIndicator;
@@ -75,7 +75,7 @@ namespace Shuile.Gameplay
 
         private void Update()
         {
-            for (int i = 0; i < _uiNoteList.Count;)
+            for (var i = 0; i < _uiNoteList.Count;)
             {
                 _uiNoteList[i++].UpdateView(TimeTweener.TweenTime, distanceUnit, _preDisplayTime, MissTolerance,
                     maxNegativeDeltaTime);
@@ -97,7 +97,7 @@ namespace Shuile.Gameplay
 
         private void OnNoteNeedRelease(float time)
         {
-            UINote uiNote = TryGetNearestNote();
+            var uiNote = TryGetNearestNote();
             if (uiNote == null)
             {
                 return;
@@ -113,7 +113,7 @@ namespace Shuile.Gameplay
                 return;
             }
 
-            UINote uiNote = TryGetNearestNote();
+            var uiNote = TryGetNearestNote();
             if (uiNote == null)
             {
                 return;
@@ -125,10 +125,11 @@ namespace Shuile.Gameplay
 
         private void OnNote(BaseNoteData noteData, float time)
         {
-            Graphic obj = _notePool.Get();
-            Graphic graphic = obj;
+            var obj = _notePool.Get();
+            var graphic = obj;
             graphic.color = graphic.color.With(a: 0f);
-            _uiNoteList.Add(new UINote((RectTransform)obj.transform, graphic, noteData.GetNotePlayTime(LevelScope.Interface)));
+            _uiNoteList.Add(new UINote((RectTransform)obj.transform, graphic,
+                noteData.GetNotePlayTime(LevelScope.Interface)));
         }
 
         private void ReleaseNote(UINote note)
@@ -148,7 +149,7 @@ namespace Shuile.Gameplay
 
             return _uiNoteList.Min();
         }
-        
+
         private class UINote : SingleNote
         {
             public readonly Graphic graphic;
@@ -172,8 +173,8 @@ namespace Shuile.Gameplay
                     return;
                 }
 
-                float delta = realTime - time;
-                bool waitForHit = delta > 0;
+                var delta = realTime - time;
+                var waitForHit = delta > 0;
 
                 transform.localPosition = transform.localPosition.With(distanceUnit * delta);
 
@@ -183,7 +184,7 @@ namespace Shuile.Gameplay
                     return;
                 }
 
-                float alpha = 1f - Mathf.Clamp01((delta - preDisplayTime + MissTolerance) / MissTolerance);
+                var alpha = 1f - Mathf.Clamp01((delta - preDisplayTime + MissTolerance) / MissTolerance);
                 graphic.color = Color.white.With(a: alpha);
 
                 //float alpha = 1f - Mathf.Clamp01((delta < 0 ? -delta : delta - preDisplayTime + MissTolerance) / MissTolerance);

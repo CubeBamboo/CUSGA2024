@@ -19,12 +19,6 @@ namespace Shuile.Core.Gameplay
             Initialize();
         }
 
-        private void Initialize()
-        {
-            _state = LevelState.Playing;
-            TriggerEvent(LevelState.Playing);
-        }
-
         public LevelState State
         {
             get => _state;
@@ -39,7 +33,13 @@ namespace Shuile.Core.Gameplay
                 TriggerEvent(_state);
             }
         }
-        
+
+        private void Initialize()
+        {
+            _state = LevelState.Playing;
+            TriggerEvent(LevelState.Playing);
+        }
+
         public event Action OnStart, OnFail, OnWin;
 
         private void TriggerEvent(LevelState state)

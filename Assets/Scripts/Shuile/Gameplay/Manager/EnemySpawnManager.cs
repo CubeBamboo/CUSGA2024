@@ -1,11 +1,9 @@
-using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Entity;
 using Shuile.Model;
 using Shuile.Rhythm;
-using Shuile.Rhythm.Runtime;
 using UnityEngine;
 using URandom = UnityEngine.Random;
 
@@ -13,14 +11,11 @@ namespace Shuile.Gameplay.Manager
 {
     public class EnemySpawnManager : IStartable, IDestroyable
     {
-        private readonly LevelModel _levelModel;
-        [HideInInspector] public readonly LevelEnemySO currentEnemyData;
-
         private readonly AutoPlayChartManager _autoPlayChartManager;
         private readonly LevelEntityManager _levelEntityManager;
-        private LevelZoneManager _levelZoneManager;
-
-        public int EnemyCount => _levelEntityManager.EnemyCount;
+        private readonly LevelModel _levelModel;
+        [HideInInspector] public readonly LevelEnemySO currentEnemyData;
+        private readonly LevelZoneManager _levelZoneManager;
 
         public EnemySpawnManager(IGetableScope scope)
         {
@@ -31,12 +26,14 @@ namespace Shuile.Gameplay.Manager
             currentEnemyData = LevelRoot.LevelContext.LevelEnemyData;
         }
 
-        public void Start()
+        public int EnemyCount => _levelEntityManager.EnemyCount;
+
+        public void OnDestroy()
         {
             _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
         }
-        
-        public void OnDestroy()
+
+        public void Start()
         {
             _autoPlayChartManager.OnRhythmHit += OnRhythmHit;
         }
@@ -55,10 +52,11 @@ namespace Shuile.Gameplay.Manager
         private void SpawnSingleEnemy(int level)
         {
             var length = currentEnemyData.enemies.Length;
-            var useIndex = level <= length - 1 ? level : length-1;
+            var useIndex = level <= length - 1 ? level : length - 1;
             var useEnemies = currentEnemyData.enemies[useIndex].enemyList;
-            int index = URandom.Range(0, useEnemies.Length);
-            _levelEntityManager.EntityFactory.SpawnEnemyWithEffectDelay(useEnemies[index], _levelZoneManager.RandomValidPosition());
+            var index = URandom.Range(0, useEnemies.Length);
+            _levelEntityManager.EntityFactory.SpawnEnemyWithEffectDelay(useEnemies[index],
+                _levelZoneManager.RandomValidPosition());
         }
     }
 }

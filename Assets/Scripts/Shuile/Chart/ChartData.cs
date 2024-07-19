@@ -1,27 +1,22 @@
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Shuile.Chart
 {
-    /* supported chart type: 
+    /* supported chart type:
      * 1. fixed bpm timing
      */
     public class ChartData
     {
-        #region InternalClass
-        public class TimingPoint
-        {
-            public float bpm;
-            /// <summary> (unit: millionseconds) </summary>
-            public float offset;
-        }
-        #endregion
+        public AudioClip audioClip;
 
         public float musicLength;
-        public UnityEngine.AudioClip audioClip;
-        public TimingPoint[] time;
+
         /// <summary> (unit: music bar) </summary>
         public BaseNoteData[] note;
+
+        public TimingPoint[] time;
 
         public override string ToString()
         {
@@ -37,9 +32,22 @@ namespace Shuile.Chart
                 sb.Append(singleNote);
                 sb.Append("\n");
             }
+
             sb.Append("\n");
             return sb.ToString();
         }
+
+        #region InternalClass
+
+        public class TimingPoint
+        {
+            public float bpm;
+
+            /// <summary> (unit: millionseconds) </summary>
+            public float offset;
+        }
+
+        #endregion
     }
 
     public static class ChartDataCreator
@@ -47,23 +55,21 @@ namespace Shuile.Chart
         public static ChartData CreatePlayerDefault()
         {
             const int size = 10000;
-            var chart = new ChartData()
+            var chart = new ChartData { note = new BaseNoteData[size] };
+            for (var i = 0; i < size; i++)
             {
-                note = new BaseNoteData[size]
-            };
-            for (int i = 0; i < size; i++)
-            {
-                chart.note[i] = BaseNoteData.Create(i + 0f / 4f);
+                chart.note[i] = BaseNoteData.Create(i + (0f / 4f));
             }
+
             return chart;
         }
 
         public static ChartData CreateLatencyTestDefault()
         {
             const int size = 8;
-            return new ChartData()
+            return new ChartData
             {
-                note = Enumerable.Range(1, size).Select(i => BaseNoteData.Create(i * 2 + 0f / 4f)).ToArray()
+                note = Enumerable.Range(1, size).Select(i => BaseNoteData.Create((i * 2) + (0f / 4f))).ToArray()
             };
         }
 
@@ -97,12 +103,13 @@ namespace Shuile.Chart
         /// <summary>convert chart time from beat time to absolute time</summary>
         public static float[] BeatTime2AbsoluteTimeChart(ChartData chart, float bpmInterval)
         {
-            float[] absoluteTimeChartLoopPart = new float[chart.note.Length];
-            for (int i = 0; i < chart.note.Length; i++)
+            var absoluteTimeChartLoopPart = new float[chart.note.Length];
+            for (var i = 0; i < chart.note.Length; i++)
             {
                 absoluteTimeChartLoopPart[i] = chart.note[i].rhythmTime * bpmInterval;
                 //absoluteTimeChartLoopPart[i] = BeatTime2AbsoluteTime(chart.chartLoopPart[i].targetTime, bpmInterval);
             }
+
             return absoluteTimeChartLoopPart;
         }
 
@@ -114,5 +121,4 @@ namespace Shuile.Chart
             return (countInMusicBar + timeInBeatSnap) * bpmIntervalInMS;
         }
     }
-
 }

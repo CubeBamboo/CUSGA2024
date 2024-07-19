@@ -7,31 +7,26 @@ using UnityEngine;
 namespace Shuile
 {
     /// <summary>
-    /// recommend to use in fast-development stage
+    ///     recommend to use in fast-development stage
     /// </summary>
     public class MonoAudioCtrl : MonoSingletons<MonoAudioCtrl>
     {
-        [Serializable]
-        private class ClipData
-        {
-            public string id;
-            public AudioClip clip;
-        }
-
         public enum AudioChannel
         {
             Bgm, SFX, Voice
         }
 
         [SerializeField] private List<ClipData> clipList;
-        private Dictionary<string, AudioClip> clipDictionary = new();
+        private readonly Dictionary<string, AudioClip> clipDictionary = new();
 
         protected override void OnAwake()
         {
-            foreach (ClipData data in clipList)
+            foreach (var data in clipList)
             {
                 if (!clipDictionary.TryAdd(data.id, data.clip))
+                {
                     Debug.LogWarning($"{data.id} has already add to AudioCtrl");
+                }
             }
         }
 
@@ -51,11 +46,13 @@ namespace Shuile
                         EasyAudioManager.Instance.PlayVoice(clip);
                         break;
                 }
+
                 return;
             }
 
             Debug.LogError($"audio with id \"{id}\" was not found");
         }
+
         public void PlayOneShot(string id, float volumeScale = 1)
         {
             if (clipDictionary.TryGetValue(id, out var clip))
@@ -63,13 +60,25 @@ namespace Shuile
                 EasyAudioManager.Instance.PlayOneShot(clip, volumeScale);
                 return;
             }
+
             Debug.LogError($"audio with id \"{id}\" was not found");
         }
 
         public AudioClip Get(string id)
-            => clipDictionary[id];
+        {
+            return clipDictionary[id];
+        }
 
-        public void PlaySFX(string id) => Play(id, AudioChannel.SFX);
+        public void PlaySFX(string id)
+        {
+            Play(id, AudioChannel.SFX);
+        }
+
+        [Serializable]
+        private class ClipData
+        {
+            public string id;
+            public AudioClip clip;
+        }
     }
-
 }

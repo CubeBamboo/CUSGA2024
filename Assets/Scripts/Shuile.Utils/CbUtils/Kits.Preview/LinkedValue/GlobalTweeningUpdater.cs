@@ -5,27 +5,29 @@ namespace CbUtils
 {
     public class GlobalTweeningUpdater : MonoSingletons<GlobalTweeningUpdater>
     {
-        private readonly List<ILinkedValue> mTweeningOnUpdate = new();
         private readonly List<ILinkedValue> mTweeningOnFixedUpdate = new();
         private readonly List<ILinkedValue> mTweeningOnLateUpdate = new();
+        private readonly List<ILinkedValue> mTweeningOnUpdate = new();
 
         private void Update()
         {
-            for (int i = 0; i < mTweeningOnUpdate.Count; i++)
+            for (var i = 0; i < mTweeningOnUpdate.Count; i++)
             {
                 mTweeningOnUpdate[i].OnUpdate();
             }
         }
+
         private void FixedUpdate()
         {
-            for (int i = 0; i < mTweeningOnFixedUpdate.Count; i++)
+            for (var i = 0; i < mTweeningOnFixedUpdate.Count; i++)
             {
                 mTweeningOnFixedUpdate[i].OnUpdate();
             }
         }
+
         private void LateUpdate()
         {
-            for (int i = 0; i < mTweeningOnLateUpdate.Count; i++)
+            for (var i = 0; i < mTweeningOnLateUpdate.Count; i++)
             {
                 mTweeningOnLateUpdate[i].OnUpdate();
             }
@@ -46,6 +48,7 @@ namespace CbUtils
                     break;
             }
         }
+
         public void Remove(ILinkedValue tweeningValue, UpdateType updateType)
         {
             switch (updateType)

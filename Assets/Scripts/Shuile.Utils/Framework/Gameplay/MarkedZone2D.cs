@@ -6,9 +6,10 @@ namespace Shuile.Utils
 {
     public class MarkedZone2D : MonoBehaviour
     {
-        private Collider2D[] colliders;
-        private Bounds[] bounds;
         public bool autoDestroyCollider = true;
+        private Collider2D[] colliders;
+
+        public Bounds[] MarkedBounds { get; private set; }
 
         private void Awake()
         {
@@ -17,26 +18,32 @@ namespace Shuile.Utils
 
             foreach (var coll in colliders)
             {
-                if(autoDestroyCollider) coll.Destroy();
+                if (autoDestroyCollider)
+                {
+                    coll.Destroy();
+                }
             }
         }
-
-        public Bounds[] MarkedBounds => bounds;
 
         public void RefreshBoundsList()
         {
-            bounds = new Bounds[colliders.Length];
-            for (int i = 0; i < colliders.Length; i++)
+            MarkedBounds = new Bounds[colliders.Length];
+            for (var i = 0; i < colliders.Length; i++)
             {
-                bounds[i] = colliders[i].bounds;
+                MarkedBounds[i] = colliders[i].bounds;
             }
         }
+
         public Vector2 RandomPosition()
         {
-            if (bounds.Length == 0) return Vector2.zero;
-            var randomItem = bounds[URandom.Range(0, bounds.Length)];
+            if (MarkedBounds.Length == 0)
+            {
+                return Vector2.zero;
+            }
+
+            var randomItem = MarkedBounds[URandom.Range(0, MarkedBounds.Length)];
             return new Vector2(URandom.Range(randomItem.min.x, randomItem.max.x),
-                               URandom.Range(randomItem.min.y, randomItem.max.y));
+                URandom.Range(randomItem.min.y, randomItem.max.y));
         }
     }
 }

@@ -6,8 +6,8 @@ namespace Shuile.Gameplay.Feel
 {
     public class CameraFeelHelper
     {
-        private Camera mCamera;
         private bool isCameraShake;
+        private readonly Camera mCamera;
 
         public CameraFeelHelper()
         {
@@ -16,7 +16,10 @@ namespace Shuile.Gameplay.Feel
 
         public void CameraShake(float duration = 0.2f, float strength = 0.1f)
         {
-            if (isCameraShake) return;
+            if (isCameraShake)
+            {
+                return;
+            }
 
             isCameraShake = true;
             var initPos = mCamera.transform.position;

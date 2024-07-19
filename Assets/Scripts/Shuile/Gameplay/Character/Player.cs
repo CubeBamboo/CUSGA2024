@@ -1,28 +1,22 @@
 using CbUtils;
-using CbUtils.Unity;
-using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Core.Gameplay;
 using Shuile.Core.Gameplay.Common;
-using Shuile.Gameplay.Manager;
 using Shuile.Gameplay.Move;
-using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
     public class Player : MonoBehaviour, IHurtable
     {
-        private PlayerModel _playerModel;
+        [SerializeField] private PlayerPropertySO property;
         private LevelStateMachine _levelStateMachine;
+        private PlayerModel _playerModel;
 
-        public HearableProperty<int> CurrentHp { get; private set; } = new();
+        private bool isDie;
         public EasyEvent OnDie = new();
         public EasyEvent OnHurted = new();
 
-        private bool isDie;
-
-        [SerializeField] private PlayerPropertySO property;
+        public HearableProperty<int> CurrentHp { get; } = new();
         public PlayerPropertySO Property => property;
 
         private void Awake()
@@ -30,9 +24,10 @@ namespace Shuile.Gameplay.Character
             var scope = LevelScope.Interface;
             _playerModel = scope.GetImplementation<PlayerModel>();
             _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
-            
+
             _playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
         }
+
         private void Start()
         {
             isDie = false;
@@ -41,12 +36,17 @@ namespace Shuile.Gameplay.Character
 
         public void OnHurt(int attackPoint)
         {
-            if (isDie || _playerModel.isInviciable) return;
+            if (isDie || _playerModel.isInviciable)
+            {
+                return;
+            }
 
             OnHurted.Invoke();
             CurrentHp.Value -= attackPoint;
             if (CurrentHp.Value < 0)
+            {
                 CurrentHp.Value = 0;
+            }
 
             // check die
             if (CurrentHp.Value <= 0)
@@ -62,6 +62,8 @@ namespace Shuile.Gameplay.Character
     public static class PlayerExtension
     {
         public static void ForceDie(this Player player)
-            => player.OnHurt(player.Property.maxHealthPoint + 1);
+        {
+            player.OnHurt(player.Property.maxHealthPoint + 1);
+        }
     }
 }

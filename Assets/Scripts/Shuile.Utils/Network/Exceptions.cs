@@ -6,7 +6,8 @@ namespace Shuile.Network
     {
         public readonly string connectionString;
 
-        public ConnectionStringFormatInvalidException(string connectionString) : base($"The connection string \"{connectionString}\" is invalid")
+        public ConnectionStringFormatInvalidException(string connectionString) : base(
+            $"The connection string \"{connectionString}\" is invalid")
         {
             this.connectionString = connectionString;
         }

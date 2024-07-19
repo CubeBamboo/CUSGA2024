@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Shuile
 {
     /// <summary>
@@ -21,7 +17,7 @@ namespace Shuile
 
         public void Relese(TId id)
         {
-            
+
         }
 
         public AudioClip Get(TId id) => mContainer[id];

@@ -1,7 +1,4 @@
 using CbUtils.Extension;
-using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
-using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
@@ -9,9 +6,9 @@ namespace Shuile.Gameplay.Feel
     public class CameraDrifterView : MonoBehaviour
     {
         private CameraDrifterController _controller;
-
-        private Vector2 _targetPosition = new();
         private Vector2 _rawPosition;
+
+        private Vector2 _targetPosition;
 
         public Vector2 originPosition { get; set; }
         public float moveScale { get; set; } = 0.1f;
@@ -24,6 +21,7 @@ namespace Shuile.Gameplay.Feel
 
             originPosition = transform.position;
         }
+
         private void Start()
         {
             // params
@@ -32,6 +30,25 @@ namespace Shuile.Gameplay.Feel
             originPosition = data.origin.position;
             moveScale = data.moveScale;
             moveRadius = data.moveRadius;
+        }
+
+        private void LateUpdate()
+        {
+            if (!_controller.HasTargetPosition)
+            {
+                return;
+            }
+
+            _targetPosition = GetUsingTargetValue(_controller.TargetPosition);
+
+            if ((_targetPosition - _rawPosition).sqrMagnitude < 1e-12f)
+            {
+                return;
+            }
+
+            _rawPosition = Vector2.Lerp(transform.position, _targetPosition, moveSpeed);
+
+            transform.position = new Vector3(_rawPosition.x, _rawPosition.y, transform.position.z);
         }
 
         public Vector2 GetUsingTargetValue(Vector2 target)
@@ -43,19 +60,11 @@ namespace Shuile.Gameplay.Feel
 
             var useOffset = offset;
             if (offset.sqrMagnitude > moveRadius * moveRadius)
+            {
                 useOffset = useOffset.normalized * moveRadius;
-            return originPos + useOffset;
-        }
+            }
 
-        private void LateUpdate()
-        {
-            if (!_controller.HasTargetPosition) return;
-            _targetPosition = GetUsingTargetValue(_controller.TargetPosition);
-            
-            if ((_targetPosition - _rawPosition).sqrMagnitude < 1e-12f) return;
-            _rawPosition = Vector2.Lerp(transform.position, _targetPosition, moveSpeed);
-            
-            transform.position = new Vector3(_rawPosition.x, _rawPosition.y, transform.position.z);
+            return originPos + useOffset;
         }
     }
 }

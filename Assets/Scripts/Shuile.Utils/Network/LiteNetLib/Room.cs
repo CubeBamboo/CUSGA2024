@@ -1,10 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
-
 using LiteNetLib;
 using LiteNetLib.Utils;
-
 using Shuile.Network.Packets;
-
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -13,14 +10,11 @@ namespace Shuile.Network.LiteNetLib
 {
     public class Room : IRoom
     {
-        private NetPacketProcessor processor;
-        private EventBasedNetListener listener;
-        private NetManager client;
-        private IPEndPoint hostEndpoint;
+        private readonly NetManager client;
+        private readonly IPEndPoint hostEndpoint;
         private NetPeer hostPeer;
-
-        public IReadOnlyList<int> Actors { get; }
-        public bool IsJoined => hostPeer != null && hostPeer.ConnectionState == ConnectionState.Connected;
+        private readonly EventBasedNetListener listener;
+        private NetPacketProcessor processor;
 
         public Room(IPEndPoint hostEndpoint)
         {
@@ -29,10 +23,15 @@ namespace Shuile.Network.LiteNetLib
             this.hostEndpoint = hostEndpoint;
         }
 
+        public IReadOnlyList<int> Actors { get; }
+        public bool IsJoined => hostPeer != null && hostPeer.ConnectionState == ConnectionState.Connected;
+
         public void SendToHost<T>(T packet) where T : Packet, new()
         {
             if (!IsJoined)
+            {
                 throw new Exception("Not connected");
+            }
 
             var writer = new NetDataWriter();
             processor.Write(writer, packet);
@@ -42,7 +41,9 @@ namespace Shuile.Network.LiteNetLib
         public async UniTask Join()
         {
             if (IsJoined || (hostPeer != null && hostPeer.ConnectionState == ConnectionState.Outgoing))
+            {
                 return;
+            }
 
             await UniTask.RunOnThreadPool(async () =>
             {

@@ -1,8 +1,8 @@
-using Shuile.Gameplay;
+using System;
 
 namespace Shuile.Rhythm.Runtime
 {
-    [System.Obsolete("dont use")]
+    [Obsolete("dont use")]
     public interface IRhythmable
     {
     }

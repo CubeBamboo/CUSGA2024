@@ -1,7 +1,5 @@
 using Shuile.Core.Gameplay.Common;
 using Shuile.Gameplay.Character;
-using System.Linq;
-
 using UnityEngine;
 
 namespace Shuile.Gameplay.Weapon
@@ -16,14 +14,37 @@ namespace Shuile.Gameplay.Weapon
 
         public override WeaponType Type => WeaponType.Sword;
 
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            //Debug.Log(collision.name);
+            if (!playerCtrl.AttackingLock || collision.CompareTag("Player")) // 防止紫砂
+            {
+                return;
+            }
+
+            var hurtable = collision.GetComponent<IHurtable>();
+            if (hurtable != null)
+            {
+                hurtable.OnHurt(IsHypermode ? hyperAttackPoint : attackPoint);
+            }
+
+            OnHit.Invoke(new WeaponHitData(this, hurtable));
+        }
+
         protected override void OnAttack(WeaponCommandData data)
         {
-            if (playerCtrl != null) playerCtrl.AttackingLock = true;
+            if (playerCtrl != null)
+            {
+                playerCtrl.AttackingLock = true;
+            }
         }
 
         protected override void OnAttackFinish(WeaponCommandData data)
         {
-            if (playerCtrl != null) playerCtrl.AttackingLock = false;
+            if (playerCtrl != null)
+            {
+                playerCtrl.AttackingLock = false;
+            }
         }
 
         protected override void OnTransformRebind(Transform target)
@@ -43,18 +64,6 @@ namespace Shuile.Gameplay.Weapon
                 attackRange.enabled = true;
                 hyperAttackRange.enabled = false;
             }
-        }
-
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            //Debug.Log(collision.name);
-            if (!playerCtrl.AttackingLock || collision.CompareTag("Player"))  // 防止紫砂
-                return;
-
-            var hurtable = collision.GetComponent<IHurtable>();
-            if (hurtable != null)
-                hurtable.OnHurt(IsHypermode ? hyperAttackPoint : attackPoint);
-            OnHit.Invoke(new WeaponHitData(this, hurtable));
         }
     }
 }

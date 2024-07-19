@@ -4,10 +4,41 @@ namespace CbUtils.Extension
 {
     public static class UnityAPIExtension
     {
+        #region Color
+
+        public static Color With(this Color self, float? r = null, float? g = null, float? b = null, float? a = null)
+        {
+            return new Color(r ?? self.r, g ?? self.g, b ?? self.b, a ?? self.a);
+        }
+
+        #endregion
+
+        #region Log
+
+        public static void DumpToUnityLogger(this object obj)
+        {
+            Debug.Log(obj);
+        }
+
+        #endregion
+
+        #region MonoBehaviour
+
+        public static MonoBehaviour SpawnNew(this MonoBehaviour mono)
+        {
+            var go = new GameObject(mono.name);
+            go.AddComponent(mono.GetType());
+            return mono;
+        }
+
+        #endregion
+
         #region UnityEngine.GameObject
 
         public static T Instantiate<T>(this T go) where T : Object
-            => Object.Instantiate(go);
+        {
+            return Object.Instantiate(go);
+        }
 
         public static GameObject SetPosition(this GameObject go, Vector3 pos)
         {
@@ -39,18 +70,26 @@ namespace CbUtils.Extension
             return go;
         }
 
-        public static void Destroy(this Object go) => Object.Destroy(go);
+        public static void Destroy(this Object go)
+        {
+            Object.Destroy(go);
+        }
 
         public static void DestroySafe(this Object go)
         {
             if (go)
+            {
                 Object.Destroy(go);
+            }
         }
 
         public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
         {
             if (!gameObject.TryGetComponent<T>(out var component))
+            {
                 component = gameObject.AddComponent<T>();
+            }
+
             return component;
         }
 
@@ -59,6 +98,7 @@ namespace CbUtils.Extension
             var child = go.transform.Find(namePath);
             return child == null ? null : child.gameObject;
         }
+
         public static T GetChildByPath<T>(this GameObject go, string namePath)
         {
             var child = go.transform.Find(namePath);
@@ -76,25 +116,20 @@ namespace CbUtils.Extension
 
         #region Transform
 
-
-        #endregion
-
-        #region Color
-
-        public static Color With(this Color self, float? r = null, float? g = null, float? b = null, float? a = null)
-            => new Color(r ?? self.r, g ?? self.g, b ?? self.b, a ?? self.a);
-
         #endregion
 
         #region Physics
 
-        public static RaycastHit2D DebugLineForRayCast2D(Vector2 origin, Vector2 direction, float distance = Mathf.Infinity, int layerMask = Physics2D.DefaultRaycastLayers)
+        public static RaycastHit2D DebugLineForRayCast2D(Vector2 origin, Vector2 direction,
+            float distance = Mathf.Infinity, int layerMask = Physics2D.DefaultRaycastLayers)
         {
             var hit = Physics2D.Raycast(origin, direction, distance, layerMask);
-            Debug.DrawLine(origin, origin + direction * distance, hit ? Color.red : Color.green, 0.1f);
+            Debug.DrawLine(origin, origin + (direction * distance), hit ? Color.red : Color.green, 0.1f);
             return hit;
         }
-        public static Collider2D GizmosSphereForOverlapCircle2D(Vector2 origin, float radius, int layerMask = Physics2D.DefaultRaycastLayers)
+
+        public static Collider2D GizmosSphereForOverlapCircle2D(Vector2 origin, float radius,
+            int layerMask = Physics2D.DefaultRaycastLayers)
         {
             var hit = Physics2D.OverlapCircle(origin, radius, layerMask);
             Gizmos.color = hit ? Color.red : Color.yellow;
@@ -103,27 +138,9 @@ namespace CbUtils.Extension
         }
 
         #endregion
-
-        #region Log
-
-        public static void DumpToUnityLogger(this object obj) => Debug.Log(obj);
-
-        #endregion
-
-        #region MonoBehaviour
-
-        public static MonoBehaviour SpawnNew(this MonoBehaviour mono)
-        {
-            var go = new GameObject(mono.name);
-            go.AddComponent(mono.GetType());
-            return mono;
-        }
-
-        #endregion
     }
 
     public static class GameObjectExtension
     {
-
     }
 }

@@ -1,16 +1,17 @@
+using System;
 using UnityEngine;
 
 namespace Shuile.Core.Gameplay.Data
 {
     /// <summary> data of single round </summary>
-    [System.Serializable]
+    [Serializable]
     public class LevelEnemyData
     {
         public EnemyType[] enemyList; // index -> danger level
     }
 
     /// <summary>
-    /// define every round's data
+    ///     define every round's data
     /// </summary>
     [CreateAssetMenu(fileName = "EnemyRoundSO", menuName = "Config/EnemyRoundSO")]
     public class LevelEnemySO : ScriptableObject

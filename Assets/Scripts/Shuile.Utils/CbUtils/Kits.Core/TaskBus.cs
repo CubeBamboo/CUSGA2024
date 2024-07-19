@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Threading.Tasks;
 
 namespace CbUtils.Kits.Tasks
@@ -11,33 +12,40 @@ namespace CbUtils.Kits.Tasks
 
     public class TaskBus
     {
-        private static readonly System.Lazy<TaskBus> instance = new();
-        public static TaskBus Instance => instance.Value;
+        private static readonly Lazy<TaskBus> instance = new();
 
         private IBusyScreen busyScreen;
-        private int taskCount = 0;
         private bool isBusy;
+        private int taskCount;
+        public static TaskBus Instance => instance.Value;
 
-        // if you can call Execute() to solve, don't use this event.
-        public event System.Action OnTaskComplete;
-        
         public bool IsBusy
         {
             get => isBusy;
             private set
             {
                 if (isBusy == value)
+                {
                     return;
+                }
+
                 isBusy = value;
 
                 OnTaskComplete?.Invoke();
 
-                if(isBusy && busyScreen != null)
+                if (isBusy && busyScreen != null)
+                {
                     busyScreen.Show();
+                }
                 else
+                {
                     busyScreen.Hide();
+                }
             }
         }
+
+        // if you can call Execute() to solve, don't use this event.
+        public event Action OnTaskComplete;
 
         public void Initialize(IBusyScreen busyScreen)
         {
@@ -49,31 +57,47 @@ namespace CbUtils.Kits.Tasks
             IsBusy = true;
             taskCount++;
             if (task.IsCompleted)
+            {
                 HandleTaskComplete();
+            }
             else
+            {
                 task.ConfigureAwait(false)
                     .GetAwaiter().OnCompleted(HandleTaskComplete);
+            }
         }
+
         public Task Run(Task task)
         {
             IsBusy = true;
             taskCount++;
-            if(task.IsCompleted)
+            if (task.IsCompleted)
+            {
                 HandleTaskComplete();
+            }
             else
+            {
                 task.ConfigureAwait(false)
                     .GetAwaiter().OnCompleted(HandleTaskComplete);
+            }
+
             return task;
         }
+
         public Task<T> Run<T>(Task<T> task)
         {
             IsBusy = true;
             taskCount++;
             if (task.IsCompleted)
+            {
                 HandleTaskComplete();
+            }
             else
+            {
                 task.ConfigureAwait(false)
                     .GetAwaiter().OnCompleted(HandleTaskComplete);
+            }
+
             return task;
         }
 
@@ -82,10 +106,15 @@ namespace CbUtils.Kits.Tasks
             IsBusy = true;
             taskCount++;
             if (unitask.Status.IsCompleted())
+            {
                 HandleTaskComplete();
+            }
             else
+            {
                 unitask.ContinueWith(HandleTaskComplete);
+            }
         }
+
         public UniTask Run(UniTask unitask)
         {
             IsBusy = true;
@@ -95,12 +124,11 @@ namespace CbUtils.Kits.Tasks
                 HandleTaskComplete();
                 return unitask;
             }
-            else
-            {
-                var ret = unitask.ContinueWith(HandleTaskComplete);
-                return ret;
-            }
+
+            var ret = unitask.ContinueWith(HandleTaskComplete);
+            return ret;
         }
+
         /// <summary> [warning]: With GC </summary>
         public UniTask<T> Run<T>(UniTask<T> unitask)
         {
@@ -108,37 +136,47 @@ namespace CbUtils.Kits.Tasks
             taskCount++;
 
             var tcs = new UniTaskCompletionSource<T>();
-            
+
             if (unitask.Status.IsCompleted())
             {
                 HandleTaskComplete();
                 return unitask;
             }
-            else
+
+            unitask.ContinueWith(res =>
             {
-                unitask.ContinueWith(res =>
-                {
-                    HandleTaskComplete();
-                    tcs.TrySetResult(res);
-                });
-                return tcs.Task;
-            }
+                HandleTaskComplete();
+                tcs.TrySetResult(res);
+            });
+            return tcs.Task;
         }
 
-        private void HandleTaskComplete() => HandleTaskCompleteWithCount();
-        private void HandleTaskComplete(Task task) => HandleTaskCompleteWithCount();
-        private void HandleTaskComplete(UniTask unitask) => HandleTaskCompleteWithCount();
+        private void HandleTaskComplete()
+        {
+            HandleTaskCompleteWithCount();
+        }
+
+        private void HandleTaskComplete(Task task)
+        {
+            HandleTaskCompleteWithCount();
+        }
+
+        private void HandleTaskComplete(UniTask unitask)
+        {
+            HandleTaskCompleteWithCount();
+        }
 
         private void HandleTaskCompleteWithCount()
         {
             taskCount--;
             if (taskCount < 0)
-                throw new System.Exception($"[{nameof(TaskBus)}] Task count can't be negative.");
+            {
+                throw new Exception($"[{nameof(TaskBus)}] Task count can't be negative.");
+            }
 
             if (taskCount == 0)
             {
                 IsBusy = false;
-                return;
             }
         }
     }

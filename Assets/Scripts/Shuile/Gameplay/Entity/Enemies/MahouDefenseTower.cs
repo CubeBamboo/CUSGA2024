@@ -4,23 +4,20 @@ using Shuile.Gameplay.Manager;
 using System.Collections.Generic;
 using UnityEngine;
 
-using URandom = UnityEngine.Random;
-
 namespace Shuile.Gameplay.Entity.Enemies
 {
     public class MahouDefenseTower : Enemy
     {
+        private static Transform bombParent;
         [SerializeField] private int attackPoint = 150;
 
         [SerializeField] private GameObject bombPrefab;
         [SerializeField] private int explosionDelay = 4;
         [SerializeField] private int bombCount = 3;
         [SerializeField] private float explodeRadius = 4f;
+        private readonly List<Bomb> bombs = new();
 
-        private static Transform bombParent;
-        private List<Bomb> bombs = new();
-
-        private int counter = 0;
+        private int counter;
 
         private SpriteRenderer mRenderer;
 
@@ -30,16 +27,19 @@ namespace Shuile.Gameplay.Entity.Enemies
             set => explosionDelay = value;
         }
 
-        public static Transform BombParent => bombParent != null ? bombParent : bombParent = new GameObject("Bombs").transform;
+        public static Transform BombParent =>
+            bombParent != null ? bombParent : bombParent = new GameObject("Bombs").transform;
+
         public bool IsDie { get; private set; }
+
+        private void Start()
+        {
+            moveController.IsFrozen = true;
+        }
 
         protected override void OnAwake()
         {
             mRenderer = GetComponentInChildren<SpriteRenderer>();
-        }
-        private void Start()
-        {
-            moveController.IsFrozen = true;
         }
 
         public override void Judge(int frame, bool force)
@@ -54,11 +54,16 @@ namespace Shuile.Gameplay.Entity.Enemies
             {
                 SpawnBombs();
             }
+
             if (counter < explosionDelay)
+            {
                 return;
+            }
 
             foreach (var bomb in bombs)
+            {
                 bomb.Explode(attackPoint, explodeRadius);
+            }
 
             bombs.Clear();
             counter = -1;
@@ -77,7 +82,10 @@ namespace Shuile.Gameplay.Entity.Enemies
         private void InterruptAttack()
         {
             foreach (var bomb in bombs)
+            {
                 bomb.Interrupt();
+            }
+
             bombs.Clear();
         }
 
@@ -87,17 +95,17 @@ namespace Shuile.Gameplay.Entity.Enemies
             InterruptAttack();
 
             transform.DOScale(Vector3.zero, 0.1f)
-                .OnComplete(() => Object.Destroy(gameObject));
+                .OnComplete(() => Destroy(gameObject));
         }
 
         protected override void OnSelfHurt(int oldVal, int newVal)
         {
             mRenderer.color = Color.white;
             mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f)
-                     .OnComplete(() => mRenderer.DOColor(Color.white, 0.2f));
+                .OnComplete(() => mRenderer.DOColor(Color.white, 0.2f));
             var initPos = transform.position;
-            transform.DOShakePosition(0.2f, strength: 0.2f)
-                     .OnComplete(() => transform.position = initPos);
+            transform.DOShakePosition(0.2f, 0.2f)
+                .OnComplete(() => transform.position = initPos);
             gameObject.SetOnDestroy(() => mRenderer.DOKill(), "mRenderer");
             gameObject.SetOnDestroy(() => transform.DOKill(), "transform");
         }

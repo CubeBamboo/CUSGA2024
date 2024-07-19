@@ -1,19 +1,24 @@
+using System;
+
 namespace Shuile.Gameplay.Feel
 {
-    [System.Obsolete("dont use")]
+    [Obsolete("dont use")]
     public class ViewEntityProperty<T>
     {
         private bool _isDirty;
-        private bool InternalCheckDirty(T RawValue, T TargetValue) => EnableDirtyCheck && DirtyCheck(RawValue, TargetValue);
-        private System.Func<T, T> onValueDirty = v => v;
+        private Func<T, T> onValueDirty = v => v;
         private T targetValue;
 
-        public bool EnableDirtyCheck { get; set; } = true;
-        public System.Func<T, T, bool> DirtyCheck { get; set; } = (a, b) => !a.Equals(b);
-        /// <summary> "recive T as target value, return T as new Target Value" </summary>
-        public void OnValueDirty(System.Func<T, T> func) => onValueDirty = func;
+        public ViewEntityProperty(T value = default)
+        {
+            RawValue = value;
+        }
 
-        public T RawValue { get; private set; } = default;
+        public bool EnableDirtyCheck { get; set; } = true;
+        public Func<T, T, bool> DirtyCheck { get; set; } = (a, b) => !a.Equals(b);
+
+        public T RawValue { get; private set; }
+
         public T TargetValue
         {
             get => targetValue;
@@ -28,16 +33,32 @@ namespace Shuile.Gameplay.Feel
             }
         }
 
+        private bool InternalCheckDirty(T RawValue, T TargetValue)
+        {
+            return EnableDirtyCheck && DirtyCheck(RawValue, TargetValue);
+        }
+
+        /// <summary> "recive T as target value, return T as new Target Value" </summary>
+        public void OnValueDirty(Func<T, T> func)
+        {
+            onValueDirty = func;
+        }
+
         public bool TryUpdateDirtValue()
         {
-            if (!_isDirty) return false;
+            if (!_isDirty)
+            {
+                return false;
+            }
+
             RawValue = onValueDirty(TargetValue);
             _isDirty = InternalCheckDirty(RawValue, TargetValue);
             return true;
         }
 
-        public override string ToString() => RawValue.ToString();
-        public ViewEntityProperty(T value = default) => RawValue = value;
-
+        public override string ToString()
+        {
+            return RawValue.ToString();
+        }
     }
 }

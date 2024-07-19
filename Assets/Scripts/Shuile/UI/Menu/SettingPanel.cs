@@ -1,6 +1,4 @@
 using Cysharp.Threading.Tasks;
-using Shuile.Core;
-using Shuile.Framework;
 using Shuile.Persistent;
 using TMPro;
 using UnityEngine;
@@ -18,12 +16,12 @@ namespace Shuile.UI.Menu
         [SerializeField] private TMP_Text delayText;
         [SerializeField] private Toggle vibrationFeelToggle;
 
-        [Header("Other")]
-        [SerializeField] private Button btn_Return;
+        [Header("Other")] [SerializeField] private Button btn_Return;
+
+        [SerializeField] private MainMenuUIStateMachine stateMachine;
 
         private Viewer<Config> _configViewer;
 
-        [SerializeField] private MainMenuUIStateMachine stateMachine;
         private void Awake()
         {
             ConfigEventListener();
@@ -60,13 +58,24 @@ namespace Shuile.UI.Menu
 
         // TODO: change logic // TODO: use settings when enter the game.
         private void OnBgAudioVolumeSliderValueChanged(float value)
-            => _configViewer.Data.BgAudioVolume = (int)value;
+        {
+            _configViewer.Data.BgAudioVolume = (int)value;
+        }
+
         private void OnFxAudioVolumeSliderValueChanged(float value)
-            => _configViewer.Data.FxAudioVolume = (int)value;
+        {
+            _configViewer.Data.FxAudioVolume = (int)value;
+        }
+
         private void OnGlobalDelaySliderValueChanged(float value)
-            => _configViewer.Data.GlobalDelay = (int)value;
+        {
+            _configViewer.Data.GlobalDelay = (int)value;
+        }
+
         private void OnVibrationFeelToggleValueChanged(bool value)
-            => _configViewer.Data.VibrationFeel = value;
+        {
+            _configViewer.Data.VibrationFeel = value;
+        }
 
         private void OnConfigPropertyChanged(object value, string path)
         {
@@ -89,7 +98,6 @@ namespace Shuile.UI.Menu
             {
                 vibrationFeelToggle.isOn = (bool)value;
             }
-
         }
 
         private void ConfigEventListener()

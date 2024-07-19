@@ -1,22 +1,28 @@
 using System;
 using System.Threading.Tasks;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Shuile.Utils
 {
     public static class Utils
     {
-        public static bool IsNull(this object obj) => obj == null;
+        public static bool IsNull(this object obj)
+        {
+            return obj == null;
+        }
     }
 
     public static class UnityUtils
     {
-        public static Task<UnityEngine.Object> AsTask(this UnityEngine.ResourceRequest op)
+        public static Task<Object> AsTask(this ResourceRequest op)
         {
-            var tcs = new TaskCompletionSource<UnityEngine.Object>();
+            var tcs = new TaskCompletionSource<Object>();
             op.completed += operation => tcs.TrySetResult(op.asset);
             return tcs.Task;
         }
-        public static Task<T> AsTask<T>(this UnityEngine.ResourceRequest op) where T : UnityEngine.Object
+
+        public static Task<T> AsTask<T>(this ResourceRequest op) where T : Object
         {
             var tcs = new TaskCompletionSource<T>();
             op.completed += operation => tcs.TrySetResult(op.asset as T);
@@ -34,11 +40,11 @@ namespace Shuile.Utils
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError($"Some exception were captured: {e}");
+                Debug.LogError($"Some exception were captured: {e}");
             }
         }
 
-        public static Task Catch(this Task task, System.Action<Exception> action)
+        public static Task Catch(this Task task, Action<Exception> action)
         {
             task.ContinueWith(t =>
             {
@@ -49,6 +55,5 @@ namespace Shuile.Utils
             });
             return task;
         }
-
     }
 }

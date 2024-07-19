@@ -4,29 +4,29 @@ using Shuile.Persistent;
 
 namespace Shuile
 {
-    public class MainGame : AbstractLocator<MainGame>  // nearly obsolete, use GameApplication.Global instead
+    public class MainGame : AbstractLocator<MainGame> // nearly obsolete, use GameApplication.Global instead
     {
         public override bool InitOnApplicationAwake => true;
 
         public override void OnInit()
         {
             var localConfigAccessor = new PlayerPrefsAccessor<Config>("Config");
-            this.Register<IAccessor<Config>>(localConfigAccessor);
-            this.Register<PlayerPrefsAccessor<Config>>(localConfigAccessor);
+            Register<IAccessor<Config>>(localConfigAccessor);
+            Register(localConfigAccessor);
 
             AsyncServiceLoader().Forget();
         }
 
         public override void OnDeInit()
         {
-            this.UnRegister<IAccessor<Config>>();
-            this.UnRegister<PlayerPrefsAccessor<Config>>();
-            this.UnRegister<Config>();
+            UnRegister<IAccessor<Config>>();
+            UnRegister<PlayerPrefsAccessor<Config>>();
+            UnRegister<Config>();
         }
 
         private async UniTask AsyncServiceLoader()
         {
-            var configLoaderTask = this.Get<IAccessor<Config>>().LoadAsync().ContinueWith(config => this.Register(config));
+            var configLoaderTask = Get<IAccessor<Config>>().LoadAsync().ContinueWith(config => Register(config));
 
             await UniTask.WhenAll(configLoaderTask);
         }

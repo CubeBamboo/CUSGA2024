@@ -1,27 +1,37 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
 
 namespace CbUtils.Extension
 {
     public static class CSharpAPIExtension
     {
-        public static string IEnumerableToString<T>(this IEnumerable<T> self, System.Func<T, string> formatter = null, string title = null, string separator = "\n")
+        public static string IEnumerableToString<T>(this IEnumerable<T> self, Func<T, string> formatter = null,
+            string title = null, string separator = "\n")
         {
             title ??= typeof(T).Name + ":\n";
-            formatter ??= (item) => item.ToString();
-            System.Text.StringBuilder sb = new($"{title}");
+            formatter ??= item => item.ToString();
+            StringBuilder sb = new($"{title}");
             foreach (var item in self)
             {
                 sb.Append($"{formatter(item)}{separator}");
             }
+
             return sb.ToString();
         }
 
-        public static void SafeInvoke(this System.Action self, System.Action<System.Exception> onCatch = null)
+        public static void SafeInvoke(this Action self, Action<Exception> onCatch = null)
         {
-            if (self == null) return;
-            try { self(); } catch (System.Exception e)
+            if (self == null)
             {
-                UnityEngine.Debug.LogException(e);
+                return;
+            }
+
+            try { self(); }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
                 onCatch?.Invoke(e);
             }
         }
@@ -29,7 +39,10 @@ namespace CbUtils.Extension
 
     public static class MathUtils
     {
-        public static int RoundToInt(float value) => (int)System.Math.Round(value);
+        public static int RoundToInt(float value)
+        {
+            return (int)Math.Round(value);
+        }
     }
 
     public static class CollectionsExtension

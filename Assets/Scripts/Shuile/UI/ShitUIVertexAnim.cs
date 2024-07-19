@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,9 +25,14 @@ namespace Shuile.UI
         {
             vh.Clear();
             foreach (var vert in vertices)
+            {
                 vh.AddVert(vert.localPosition, color, Vector4.zero);
+            }
+
             foreach (var t in triangles)
+            {
                 vh.AddTriangle(t.x, t.y, t.z);
+            }
         }
     }
 }

@@ -1,21 +1,29 @@
 using System;
-
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Shuile
 {
     public static class ObjectPoolFuncStore
     {
         public static Func<GameObject> GameObjectCreate(GameObject prefab, Transform transform = null)
-            => () => GameObject.Instantiate(prefab, transform);
+        {
+            return () => Object.Instantiate(prefab, transform);
+        }
 
         public static void GameObjectGet(GameObject obj)
-            => obj.SetActive(true);
+        {
+            obj.SetActive(true);
+        }
 
         public static void GameObjectRelease(GameObject obj)
-            => obj.SetActive(false);
+        {
+            obj.SetActive(false);
+        }
 
         public static void GameObjectDestroy(GameObject obj)
-            => GameObject.Destroy(obj);
+        {
+            Object.Destroy(obj);
+        }
     }
 }

@@ -6,11 +6,11 @@ namespace CbUtils
 {
     public class EasyAudioManager : MonoSingletons<EasyAudioManager>
     {
-        private AudioSource bgmSource, sfxSource, voiceSource, otherSource;
-        private AudioSource oneShotSource;
+        private AudioSource bgmSource, sfxSource, voiceSource;
 
-        public AudioSource OneShotSource => oneShotSource;
-        public AudioSource OtherSource => otherSource;
+        public AudioSource OneShotSource { get; private set; }
+
+        public AudioSource OtherSource { get; private set; }
 
         protected override void Awake()
         {
@@ -27,15 +27,15 @@ namespace CbUtils
             sfxSource.playOnAwake = false;
             voiceSource = gameObject.AddComponent<AudioSource>();
             voiceSource.playOnAwake = false;
-            otherSource = gameObject.AddComponent<AudioSource>();
-            otherSource.playOnAwake = false;
-            oneShotSource = gameObject.AddComponent<AudioSource>();
-            oneShotSource.playOnAwake = false;
+            OtherSource = gameObject.AddComponent<AudioSource>();
+            OtherSource.playOnAwake = false;
+            OneShotSource = gameObject.AddComponent<AudioSource>();
+            OneShotSource.playOnAwake = false;
         }
 
         public void SetAudioMixer(AudioMixerGroup mixer)
         {
-            otherSource.outputAudioMixerGroup = mixer;
+            OtherSource.outputAudioMixerGroup = mixer;
         }
 
         #region PlayAudio
@@ -62,13 +62,13 @@ namespace CbUtils
 
         public void PlayOther(AudioClip clip)
         {
-            otherSource.clip = clip;
-            otherSource.Play();
+            OtherSource.clip = clip;
+            OtherSource.Play();
         }
 
         public void PlayOneShot(AudioClip clip, float volumeScale)
         {
-            oneShotSource.PlayOneShot(clip, volumeScale);
+            OneShotSource.PlayOneShot(clip, volumeScale);
         }
 
         #endregion

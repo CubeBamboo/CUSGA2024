@@ -6,6 +6,7 @@ namespace Shuile.Rhythm
     public class LevelTimingManager
     {
         private readonly LevelModel _levelModel;
+
         public LevelTimingManager(IGetableScope scope)
         {
             _levelModel = scope.GetImplementation<LevelModel>();

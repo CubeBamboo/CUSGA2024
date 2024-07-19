@@ -5,36 +5,36 @@ namespace Shuile.Network
     public interface IMultiPlayerService
     {
         /// <summary>
-        /// ÊÇ·ñÒÑÁ¬½Óµ½·þÎñ
+        ///     æ˜¯å¦å·²è¿žæŽ¥åˆ°æœåŠ¡
         /// </summary>
         public bool IsConnected { get; }
 
         /// <summary>
-        /// ³õÊ¼»¯·þÎñ£¬Ê¹ÓÃ±ðµÄ¹¦ÄÜÇ°±ØÐëµ÷ÓÃ
+        ///     åˆå§‹åŒ–æœåŠ¡ï¼Œä½¿ç”¨åˆ«çš„åŠŸèƒ½å‰å¿…é¡»è°ƒç”¨
         /// </summary>
         public UniTask Init();
 
         /// <summary>
-        /// ´´½¨Ö÷»ú·¿¼ä
+        ///     åˆ›å»ºä¸»æœºæˆ¿é—´
         /// </summary>
-        /// <param name="initDescription">·¿¼äÔ¤¶¨ÒåÐÅÏ¢</param>
-        /// <returns>Ö÷»ú·¿¼ä¶ÔÏó</returns>
-        /// <exception cref="ConnectionStringFormatInvalidException">Á¬½Ó×Ö·û´®¸ñÊ½ÎÞÐ§</exception>
+        /// <param name="initDescription">æˆ¿é—´é¢„å®šä¹‰ä¿¡æ¯</param>
+        /// <returns>ä¸»æœºæˆ¿é—´å¯¹è±¡</returns>
+        /// <exception cref="ConnectionStringFormatInvalidException">è¿žæŽ¥å­—ç¬¦ä¸²æ ¼å¼æ— æ•ˆ</exception>
         public UniTask<IHost> CreateRoom(string initDescription = null);
-        
+
         /// <summary>
-        /// ¼ÓÈë·¿¼ä
+        ///     åŠ å…¥æˆ¿é—´
         /// </summary>
-        /// <param name="connectionString">Í¨¹ý<see cref="IHost.ConnectionString"/>»ñÈ¡</param>
-        /// <returns>·¿¼ä¶ÔÏó£¨×÷Îª¿Í»ú£©</returns>
-        /// <exception cref="ConnectionStringFormatInvalidException">Á¬½Ó×Ö·û´®¸ñÊ½ÎÞÐ§</exception>
+        /// <param name="connectionString">é€šè¿‡<see cref="IHost.ConnectionString" />èŽ·å–</param>
+        /// <returns>æˆ¿é—´å¯¹è±¡ï¼ˆä½œä¸ºå®¢æœºï¼‰</returns>
+        /// <exception cref="ConnectionStringFormatInvalidException">è¿žæŽ¥å­—ç¬¦ä¸²æ ¼å¼æ— æ•ˆ</exception>
         public UniTask<IRoom> JoinRoomAsync(string connectionString);
     }
 }
 
-// TapSDKÖÐ£¬Á´½Ó¾ùÀ´×ÔTapServerÖ»ÓÐÒ»¸öÁ¬½Ó£¬ÄÜÄÃµ½µÄÐÅÏ¢Ö»ÓÐActorId£¬·¢°üÈËµÄIdÊÇÎ¨Ò»¿ÉÐÅµÄ
-// LiteNetLibÖÐ£¬Á´½ÓÀ´×Ô¸÷¸ö¿Í»§¶Ë£¬¿ÉÒÔÈ·±£°üÊÇË­·¢µÄ
+// TapSDKä¸­ï¼Œé“¾æŽ¥å‡æ¥è‡ªTapServeråªæœ‰ä¸€ä¸ªè¿žæŽ¥ï¼Œèƒ½æ‹¿åˆ°çš„ä¿¡æ¯åªæœ‰ActorIdï¼Œå‘åŒ…äººçš„Idæ˜¯å”¯ä¸€å¯ä¿¡çš„
+// LiteNetLibä¸­ï¼Œé“¾æŽ¥æ¥è‡ªå„ä¸ªå®¢æˆ·ç«¯ï¼Œå¯ä»¥ç¡®ä¿åŒ…æ˜¯è°å‘çš„
 
-// TapSDKÖÐ£¬ÓÉMasterClient¿ÉÒÔ±»×ªÒÆ£¬LiteNetLibÖÐÐèÒªÊÖ¶¯ÊµÏÖ´Ë¹¦ÄÜ£¨²»×öÕâ¸ö¹¦ÄÜÁË£©
+// TapSDKä¸­ï¼Œç”±MasterClientå¯ä»¥è¢«è½¬ç§»ï¼ŒLiteNetLibä¸­éœ€è¦æ‰‹åŠ¨å®žçŽ°æ­¤åŠŸèƒ½ï¼ˆä¸åšè¿™ä¸ªåŠŸèƒ½äº†ï¼‰
 
-// MasterClientÖ÷ÒªÌåÏÖÔÚÓÎÏ·Âß¼­ÉÏ
+// MasterClientä¸»è¦ä½“çŽ°åœ¨æ¸¸æˆé€»è¾‘ä¸Š

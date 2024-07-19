@@ -1,38 +1,44 @@
 using CbUtils;
 using CbUtils.Event;
-
 using DG.Tweening;
 using Shuile.Gameplay.Character;
 using UnityEngine;
-
-using URandom = UnityEngine.Random;
 
 namespace Shuile.Gameplay.Entity.Enemies
 {
     public class ZakoMachine : Enemy
     {
-        private Player _player;
-        private readonly FSM<DefaultEnemyState> _mFsm = new();
-
-        ZakoPatrolBehavior _patrolBehavior;
-        ZakoChaseBehavior _chaseBehavior;
-
         [SerializeField] private float checkPlayerRange = 5f;
         [SerializeField] private float checkAttackRange = 1.2f;
         [SerializeField] private float attackRange = 2f;
         [SerializeField] private int attackPoint = 80;
+        private readonly FSM<DefaultEnemyState> _mFsm = new();
+        private ZakoChaseBehavior _chaseBehavior;
+
+        private float _faceDir;
 
         private SpriteRenderer _mRenderer;
 
-        private float _faceDir;
+        private ZakoPatrolBehavior _patrolBehavior;
+        private Player _player;
+
+        private void Update()
+        {
+            _mFsm.Update();
+        }
+
+        private void FixedUpdate()
+        {
+            _mFsm.FixedUpdate();
+        }
 
         protected override void OnAwake()
         {
             var scope = LevelScope.Interface;
             _player = scope.GetImplementation<Player>();
-            
-            _patrolBehavior = new(gameObject, moveController, 5f);
-            _chaseBehavior = new();
+
+            _patrolBehavior = new ZakoPatrolBehavior(gameObject, moveController, 5f);
+            _chaseBehavior = new ZakoChaseBehavior();
             RegisterState(_mFsm);
 
             _mRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -44,13 +50,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             moveController.IsFrozen = true;
 
             transform.DOScale(Vector3.zero, 0.1f)
-                .OnComplete(() => Object.Destroy(gameObject));
+                .OnComplete(() => Destroy(gameObject));
         }
 
         private void Attack(Player target)
         {
             var targetPos = target.transform.position;
-            if((targetPos - transform.position).sqrMagnitude < attackRange * attackRange)
+            if ((targetPos - transform.position).sqrMagnitude < attackRange * attackRange)
             {
                 moveController.XMove(10f);
                 target.OnHurt(attackPoint);
@@ -65,7 +71,9 @@ namespace Shuile.Gameplay.Entity.Enemies
                     _patrolBehavior.Do();
                     _faceDir = _patrolBehavior.FaceDir;
                     if (EnemyBehaviorAction.XRayCastPlayer(transform.position, _faceDir, checkPlayerRange))
+                    {
                         mFsm.SwitchState(DefaultEnemyState.Chase);
+                    }
 
                     EnemyBehaviorAction.CheckWallAndJump(moveController, _faceDir);
                 });
@@ -78,14 +86,18 @@ namespace Shuile.Gameplay.Entity.Enemies
                 .OnFixedUpdate(() =>
                 {
                     if (!EnemyBehaviorAction.XRayCastPlayer(transform.position, _faceDir, checkPlayerRange))
+                    {
                         mFsm.SwitchState(DefaultEnemyState.Patrol);
+                    }
                     //UnityAPIExt.DebugLineForRayCast2D(transform.position, Vector2.right * faceDir, checkPlayerRange, LayerMask.GetMask("Player"));
 
                     _faceDir = _chaseBehavior.FaceDir;
                     _chaseBehavior.Do();
 
                     if (_chaseBehavior.XCloseEnoughToTarget(checkAttackRange)) // can attack
+                    {
                         mFsm.SwitchState(DefaultEnemyState.Attack);
+                    }
 
                     EnemyBehaviorAction.CheckWallAndJump(moveController, _faceDir, 0.8f);
                 });
@@ -95,7 +107,9 @@ namespace Shuile.Gameplay.Entity.Enemies
                 .OnFixedUpdate(() =>
                 {
                     if (!_chaseBehavior.XCloseEnoughToTarget(checkAttackRange)) // can attack
+                    {
                         mFsm.SwitchState(DefaultEnemyState.Chase);
+                    }
 
                     EnemyBehaviorAction.CheckWallAndJump(moveController, _faceDir, 0.8f);
                 });
@@ -109,20 +123,18 @@ namespace Shuile.Gameplay.Entity.Enemies
         {
             _mRenderer.color = Color.white;
             _mRenderer.DOColor(new Color(230f / 255f, 73f / 255f, 73f / 255f), 0.2f)
-                     .OnComplete(() => _mRenderer.DOColor(Color.white, 0.2f));
+                .OnComplete(() => _mRenderer.DOColor(Color.white, 0.2f));
             var initPos = transform.position;
-            transform.DOShakePosition(0.2f, strength: 0.2f)
-                     .OnComplete(() => transform.position = initPos);
+            transform.DOShakePosition(0.2f, 0.2f)
+                .OnComplete(() => transform.position = initPos);
             gameObject.SetOnDestroy(() => _mRenderer.DOKill(), "mRenderer");
             gameObject.SetOnDestroy(() => transform.DOKill(), "transform");
         }
 
         public override void Judge(int frame, bool force)
-            => _mFsm.Custom();
-        private void Update()
-            => _mFsm.Update();
-        private void FixedUpdate()
-            => _mFsm.FixedUpdate();
+        {
+            _mFsm.Custom();
+        }
     }
 
     /*public class ZakoMachine : MonoBaseEnemy

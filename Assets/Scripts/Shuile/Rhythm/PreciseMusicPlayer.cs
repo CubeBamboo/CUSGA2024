@@ -1,28 +1,27 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Audio;
-using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
+using System;
 using System.Threading;
 using UnityEngine;
 
 namespace Shuile.Rhythm
 {
     /// <summary>
-    /// it provides an async player for lower delay, a timer start from music's specific position
+    ///     it provides an async player for lower delay, a timer start from music's specific position
     /// </summary>
     public class PreciseMusicPlayer : IInitializeable, IFixedTickable, IDestroyable
     {
-        private readonly LevelConfigSO _levelConfig;
-
         private readonly LevelAudioManager _levelAudioManager;
+        private readonly LevelConfigSO _levelConfig;
         private readonly LevelModel _levelModel;
-        private UnityAudioPlayer _audioPlayer;
-        public UnityAudioPlayer AudioPlayer => _audioPlayer;
+
+        private CancellationTokenSource _asyncPlayTokenSource;
 
         public PreciseMusicPlayer(IGetableScope scope)
         {
@@ -32,48 +31,56 @@ namespace Shuile.Rhythm
             _levelConfig = resourcesLoader.SyncContext.levelConfig;
         }
 
-        public void Initialize()
+        public UnityAudioPlayer AudioPlayer { get; private set; }
+
+        /// <summary> timer for music playing by play offset </summary>
+        public float CurrentTime { get; private set; }
+
+        public bool IsPlaying { get; set; }
+        public float PlayTimeScale { get; set; } = 1f;
+
+        public float Volume
         {
-            _audioPlayer = new UnityAudioPlayer(_levelAudioManager.MusicSource);
-            Restore();
+            get => AudioPlayer.Volume;
+            set => AudioPlayer.Volume = value;
         }
+
         public void OnDestroy()
         {
-            _audioPlayer.Stop();
+            AudioPlayer.Stop();
         }
+
         public void FixedTick()
         {
-            if (!IsPlaying) return;
+            if (!IsPlaying)
+            {
+                return;
+            }
+
             CurrentTime += Time.fixedDeltaTime;
             _levelModel.CurrentMusicTime = CurrentTime;
         }
 
-        /// <summary> timer for music playing by play offset </summary>
-        public float CurrentTime { get; private set; } = 0f;
-        public bool IsPlaying { get; set; } = false;
-        public float PlayTimeScale { get; set; } = 1f;
-        public float Volume
+        public void Initialize()
         {
-            get => _audioPlayer.Volume;
-            set => _audioPlayer.Volume = value;
+            AudioPlayer = new UnityAudioPlayer(_levelAudioManager.MusicSource);
+            Restore();
         }
-
-        private CancellationTokenSource _asyncPlayTokenSource;
 
         public void LoadClip(AudioClip clip)
         {
-            _audioPlayer.LoadClip(clip);
+            AudioPlayer.LoadClip(clip);
         }
 
         public async UniTask Play(float offsetInSeconds, float startDelay = 0.5f)
         {
-            _asyncPlayTokenSource = new();
-            
-            await UniTask.Delay(System.TimeSpan.FromSeconds(startDelay), cancellationToken: _asyncPlayTokenSource.Token);
-            _audioPlayer.Pitch = PlayTimeScale;
+            _asyncPlayTokenSource = new CancellationTokenSource();
+
+            await UniTask.Delay(TimeSpan.FromSeconds(startDelay), cancellationToken: _asyncPlayTokenSource.Token);
+            AudioPlayer.Pitch = PlayTimeScale;
 
             var playAt = AudioSettings.dspTime + 1f;
-            var audioDelta = await _audioPlayer.WaitPlayScheduled(playAt, _asyncPlayTokenSource.Token);
+            var audioDelta = await AudioPlayer.WaitPlayScheduled(playAt, _asyncPlayTokenSource.Token);
 
             CurrentTime = -offsetInSeconds + (float)audioDelta;
             IsPlaying = true; // -> start timing
@@ -81,8 +88,8 @@ namespace Shuile.Rhythm
 
         public void PlayImmediately(float offset)
         {
-            _audioPlayer.Pitch = PlayTimeScale;
-            _audioPlayer.Play();
+            AudioPlayer.Pitch = PlayTimeScale;
+            AudioPlayer.Play();
             CurrentTime = -offset;
             IsPlaying = true;
         }
@@ -90,26 +97,26 @@ namespace Shuile.Rhythm
         public void Stop()
         {
             IsPlaying = false;
-            _audioPlayer.Stop();
+            AudioPlayer.Stop();
             _asyncPlayTokenSource?.Cancel();
         }
 
         /// <summary>
-        /// default need to call in FixedUpdate
+        ///     default need to call in FixedUpdate
         /// </summary>
         public void Restore()
         {
             CurrentTime = 0;
             IsPlaying = false;
-            _audioPlayer.Reset();
+            AudioPlayer.Reset();
         }
 
         public void SetCurrentTime(float time)
         {
-            time = Mathf.Clamp(time, 0f, _audioPlayer.TargetSource.clip.length);
+            time = Mathf.Clamp(time, 0f, AudioPlayer.TargetSource.clip.length);
 
             CurrentTime = time;
-            _audioPlayer.TargetSource.time = time;
+            AudioPlayer.TargetSource.time = time;
         }
 
         public void ReloadData()

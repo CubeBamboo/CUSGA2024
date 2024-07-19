@@ -1,7 +1,5 @@
 using Cysharp.Threading.Tasks;
-
 using Shuile.Network.Packets;
-
 using System.Collections.Generic;
 
 namespace Shuile.Network
@@ -9,24 +7,24 @@ namespace Shuile.Network
     public interface IRoom
     {
         /// <summary>
-        /// µ±Ç°ÒÑÁ¬½ÓµÄËùÓĞ½ÇÉ«µÄId
+        ///     å½“å‰å·²è¿æ¥çš„æ‰€æœ‰è§’è‰²çš„Id
         /// </summary>
         public IReadOnlyList<int> Actors { get; }
 
         /// <summary>
-        /// ÊÇ·ñÒÑ¾­½øÈë·¿¼ä
+        ///     æ˜¯å¦å·²ç»è¿›å…¥æˆ¿é—´
         /// </summary>
         public bool IsJoined { get; }
-        
+
         /// <summary>
-        /// ·¢ËÍÊı¾İ°üµ½Ö÷»ú£¨¼ÓÈëµ½´ı·¢ËÍ¶ÓÁĞ°ÕÁË£©
+        ///     å‘é€æ•°æ®åŒ…åˆ°ä¸»æœºï¼ˆåŠ å…¥åˆ°å¾…å‘é€é˜Ÿåˆ—ç½¢äº†ï¼‰
         /// </summary>
-        /// <typeparam name="T">Êı¾İ°üÀàĞÍ</typeparam>
-        /// <param name="packet">Êı¾İ°ü</param>
+        /// <typeparam name="T">æ•°æ®åŒ…ç±»å‹</typeparam>
+        /// <param name="packet">æ•°æ®åŒ…</param>
         public void SendToHost<T>(T packet) where T : Packet, new();
 
         /// <summary>
-        /// ÊÔÍ¼¼ÓÈë·¿¼ä£¨Èç¹ûÒÑ¾­Á¬½ÓÔòÎŞÊÂ·¢Éú£©
+        ///     è¯•å›¾åŠ å…¥æˆ¿é—´ï¼ˆå¦‚æœå·²ç»è¿æ¥åˆ™æ— äº‹å‘ç”Ÿï¼‰
         /// </summary>
         public UniTask Join();
     }

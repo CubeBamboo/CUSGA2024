@@ -1,18 +1,22 @@
+using System;
+
 namespace Shuile.Core.Framework
 {
     public class LayerableServiceLocator
     {
-        private readonly ServiceLocator _serviceLocator = new ();
+        private readonly ServiceLocator _serviceLocator = new();
 
-        public void AddUtilityCreator<T>(System.Func<T> creator) where T : IUtility
+        public void AddUtilityCreator<T>(Func<T> creator) where T : IUtility
         {
             _serviceLocator.RegisterCreator(creator);
         }
-        public void AddModelCreator<T>(System.Func<T> creator) where T : IModel
+
+        public void AddModelCreator<T>(Func<T> creator) where T : IModel
         {
             _serviceLocator.RegisterCreator(creator);
         }
-        public void AddSystemCreator<T>(System.Func<T> creator) where T : ISystem
+
+        public void AddSystemCreator<T>(Func<T> creator) where T : ISystem
         {
             _serviceLocator.RegisterCreator(creator);
         }
@@ -21,15 +25,20 @@ namespace Shuile.Core.Framework
         {
             return _serviceLocator.GetService<T>();
         }
+
         public T GetModel<T>() where T : IModel
         {
             return _serviceLocator.GetService<T>();
         }
+
         public T GetSystem<T>() where T : ISystem
         {
             return _serviceLocator.GetService<T>();
         }
 
-        public void ClearExisting() => _serviceLocator.ClearAllServices();
+        public void ClearExisting()
+        {
+            _serviceLocator.ClearAllServices();
+        }
     }
 }

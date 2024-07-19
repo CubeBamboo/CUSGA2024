@@ -1,22 +1,22 @@
 using CbUtils;
-
 using Shuile.Framework;
-
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Shuile.Gameplay.Weapon
 {
     public sealed class NoWeapon : IWeapon
     {
-        private Transform transform;  // To debug
+        private Transform transform; // To debug
 
         private Transform Transform
         {
             get
             {
                 if (transform == null)
+                {
                     transform = new GameObject($"{nameof(NoWeapon)}").transform;
+                }
+
                 return transform;
             }
         }

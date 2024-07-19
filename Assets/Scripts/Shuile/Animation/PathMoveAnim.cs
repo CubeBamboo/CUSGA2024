@@ -1,6 +1,5 @@
-using System.Linq;
-
 using DG.Tweening;
+using System.Linq;
 using UnityEngine;
 
 namespace Shuile
@@ -11,9 +10,9 @@ namespace Shuile
         [SerializeField] private Transform[] pointObjects;
         [SerializeField] private float speed = 4f;
 
-        private Vector3[] positions;
-        
         public bool autoDestroyPointObjects = true;
+
+        private Vector3[] positions;
 
         private void Start()
         {
@@ -35,12 +34,17 @@ namespace Shuile
             transform.position = pointObjects[0].position;
 
             if (autoDestroyPointObjects)
+            {
                 pointObjects.ToList().ForEach(p => Destroy(p.gameObject));
+            }
         }
 
         private void Play()
         {
-            if (positions.Length == 0) return;
+            if (positions.Length == 0)
+            {
+                return;
+            }
 
             transform.DOLocalPath(positions, speed, PathType.CatmullRom, PathMode.Ignore, 10, Color.green)
                 .SetSpeedBased(true)

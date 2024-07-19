@@ -21,7 +21,7 @@ namespace Shuile.Gameplay
             AttackFinishCommand = new DelegateCommand<WeaponCommandData>(WeaponAttackFinishWrapper);
         }
 
-        
+
         public bool FlipX { get; set; }
         public bool CheckRhythm =>
             MusicRhythmManager.Instance.CheckBeatRhythm(
@@ -73,3 +73,5 @@ namespace Shuile.Gameplay
         public BaseCommand<WeaponCommandData> AttackFinishCommand { get; private set; }
     }
 }*/
+
+

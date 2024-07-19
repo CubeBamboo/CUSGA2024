@@ -1,3 +1,5 @@
+using System;
+
 namespace CbUtils.ActionKit
 {
     public interface IAction
@@ -6,17 +8,14 @@ namespace CbUtils.ActionKit
     }
 
     /// <summary>
-    /// control timing sequence logic
+    ///     control timing sequence logic
     /// </summary>
-    [System.Obsolete("use TimingCtrl instead")]
-    public class ActionCtrl: CSharpLazySingletons<ActionCtrl>
+    [Obsolete("use TimingCtrl instead")]
+    public class ActionCtrl : CSharpLazySingletons<ActionCtrl>
     {
         public static OldDelayAction Delay(float durationInSeconds)
         {
-            var delay = new OldDelayAction
-            {
-                delayDuration = durationInSeconds
-            };
+            var delay = new OldDelayAction { delayDuration = durationInSeconds };
             return delay;
         }
     }

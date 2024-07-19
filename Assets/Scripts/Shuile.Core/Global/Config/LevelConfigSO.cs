@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Shuile.Core.Global.Config
 {
     /// <summary>
-    /// level data config (fixed in game)
+    ///     level data config (fixed in game)
     /// </summary>
     [CreateAssetMenu(fileName = "New LevelConfig", menuName = "Config/Level Config")]
     public class LevelConfigSO : ScriptableObject
@@ -14,13 +14,13 @@ namespace Shuile.Core.Global.Config
 
         public int playerNotePreShowTime = 2;
 
-        [Header("MusicManager")]
-        public bool playOnAwake = true;
+        [Header("MusicManager")] public bool playOnAwake = true;
+
         public float playTimeScale = 1f;
         public float volume = 0.4f;
 
         [Header("PlayerSettingsConfig (Obsolete)")]
-        public float globalOffset = 0f;
+        public float globalOffset;
 
         [Header("LevelDebugSettings (for debug)")]
         public bool needHitWithRhythm = true;

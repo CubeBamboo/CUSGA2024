@@ -1,16 +1,14 @@
+using System;
+
 namespace Shuile.Framework
 {
     public class SimpleDeltaTimer
     {
-        protected enum State
-        {
-            Sleep, Running
-        }
+        private float duration;
+        private Action onComplete;
 
         private State state = State.Sleep;
-        private float timer = 0f;
-        private float duration = 0f;
-        private System.Action onComplete;
+        private float timer;
 
         public float Duration
         {
@@ -29,30 +27,38 @@ namespace Shuile.Framework
             Duration = duration;
             return this;
         }
-        public SimpleDeltaTimer RegisterComplete(System.Action onComplete)
+
+        public SimpleDeltaTimer RegisterComplete(Action onComplete)
         {
             this.onComplete += onComplete;
             return this;
         }
-        public SimpleDeltaTimer UnRegisterComplete(System.Action onComplete)
+
+        public SimpleDeltaTimer UnRegisterComplete(Action onComplete)
         {
             this.onComplete -= onComplete;
             return this;
         }
+
         public void RestartTick()
         {
             timer = 0f;
             state = State.Running;
         }
+
         public void Reset()
         {
             Duration = 0f;
             onComplete = null;
             state = State.Sleep;
         }
+
         public void Tick(float deltaTime)
         {
-            if (state == State.Sleep) return;
+            if (state == State.Sleep)
+            {
+                return;
+            }
 
             LastDeltaTime = deltaTime;
 
@@ -67,10 +73,12 @@ namespace Shuile.Framework
         {
             state = State.Running;
         }
+
         public void ForceSleep()
         {
             state = State.Sleep;
         }
+
         public void ForceComplete()
         {
             EndTiming();
@@ -81,12 +89,21 @@ namespace Shuile.Framework
             onComplete?.Invoke();
             state = State.Sleep;
         }
+
+        protected enum State
+        {
+            Sleep, Running
+        }
     }
 
     public class SimpleDurationTimer
     {
         public float StartTime { get; set; }
         public float MaxDuration { get; set; }
-        public bool HasReachTime(float time) => time - StartTime > MaxDuration;
+
+        public bool HasReachTime(float time)
+        {
+            return time - StartTime > MaxDuration;
+        }
     }
 }

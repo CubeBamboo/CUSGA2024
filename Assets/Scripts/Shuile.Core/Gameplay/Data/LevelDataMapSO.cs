@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace Shuile.Core.Gameplay.Data
 {
-    [System.Serializable]
+    [Serializable]
     public class LevelData
     {
         public string label;
@@ -28,6 +29,7 @@ namespace Shuile.Core.Gameplay.Data
                     return levelData;
                 }
             }
+
             return null;
         }
     }

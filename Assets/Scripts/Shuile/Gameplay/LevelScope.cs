@@ -14,36 +14,36 @@ using UnityEngine;
 
 namespace Shuile.Gameplay
 {
-    public class LevelScope: SceneServiceScope<LevelScope>
+    public class LevelScope : SceneServiceScope<LevelScope>
     {
         [SerializeField] private LevelAudioManager levelAudioManager;
         [SerializeField] private LevelZoneManager levelZoneManager;
         [SerializeField] private EndLevelPanel endLevelPanel;
         [SerializeField] private Player player;
         [SerializeField] private MusicRhythmManager musicRhythmManager;
-        
+
         public override void Configure(IRegisterableScope scope)
         {
-            scope.Register<PlayerModel>(() => new PlayerModel());
-            scope.Register<LevelModel>(() => new LevelModel());
-            
-            scope.Register<LevelFeelManager>(() => new LevelFeelManager());
-            scope.Register<LevelTimingManager>(() => new LevelTimingManager(this));
-            scope.Register<NoteDataProcessor>(() => new NoteDataProcessor(this));
-            scope.Register<LevelStateMachine>(() => new LevelStateMachine(this));
-            
-            scope.RegisterMonoComponent<LevelAudioManager>(levelAudioManager);
-            scope.RegisterMonoComponent<LevelZoneManager>(levelZoneManager);
-            scope.RegisterMonoComponent<EndLevelPanel>(endLevelPanel);
-            scope.RegisterMonoComponent<Player>(player);
-            scope.RegisterMonoComponent<MusicRhythmManager>(musicRhythmManager);
-            
-            scope.RegisterEntryPoint<PreciseMusicPlayer>(() => new PreciseMusicPlayer(this));
-            scope.RegisterEntryPoint<PlayerChartManager>(() => new PlayerChartManager(this));
-            scope.RegisterEntryPoint<LevelEntityManager>(() => new LevelEntityManager(this));
-            scope.RegisterEntryPoint<AutoPlayChartManager>(() => new AutoPlayChartManager(this));
-            scope.RegisterEntryPoint<EnemySpawnManager>(() => new EnemySpawnManager(this));
-            scope.RegisterEntryPoint<LevelChartManager>(() => new LevelChartManager(this));
+            scope.Register(() => new PlayerModel());
+            scope.Register(() => new LevelModel());
+
+            scope.Register(() => new LevelFeelManager());
+            scope.Register(() => new LevelTimingManager(this));
+            scope.Register(() => new NoteDataProcessor(this));
+            scope.Register(() => new LevelStateMachine(this));
+
+            scope.RegisterMonoComponent(levelAudioManager);
+            scope.RegisterMonoComponent(levelZoneManager);
+            scope.RegisterMonoComponent(endLevelPanel);
+            scope.RegisterMonoComponent(player);
+            scope.RegisterMonoComponent(musicRhythmManager);
+
+            scope.RegisterEntryPoint(() => new PreciseMusicPlayer(this));
+            scope.RegisterEntryPoint(() => new PlayerChartManager(this));
+            scope.RegisterEntryPoint(() => new LevelEntityManager(this));
+            scope.RegisterEntryPoint(() => new AutoPlayChartManager(this));
+            scope.RegisterEntryPoint(() => new EnemySpawnManager(this));
+            scope.RegisterEntryPoint(() => new LevelChartManager(this));
         }
     }
 }

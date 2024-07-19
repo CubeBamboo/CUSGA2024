@@ -6,7 +6,9 @@ namespace Shuile.Chart
         public float rhythmTime;
 
         public static BaseNoteData Create(float time)
-            => new() { rhythmTime = time };
+        {
+            return new BaseNoteData { rhythmTime = time };
+        }
 
         public override string ToString()
         {

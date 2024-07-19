@@ -2,10 +2,8 @@ using LiteNetLib.Utils;
 
 namespace Shuile.Network.Packets
 {
-    public abstract class Packet : INetSerializable  // ÆÆ»µÁË³éÏóĞĞÎª£¬µ«ÊÇdemo¾ÍËãÁË
+    public abstract class Packet : INetSerializable // ç ´åäº†æŠ½è±¡è¡Œä¸ºï¼Œä½†æ˜¯demoå°±ç®—äº†
     {
-        public Packet() { }
-
         public abstract void Deserialize(NetDataReader reader);
 
         public abstract void Serialize(NetDataWriter writer);

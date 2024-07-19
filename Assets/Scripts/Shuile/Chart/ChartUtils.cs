@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using Shuile.Core.Gameplay.Data;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -20,7 +21,7 @@ namespace Shuile.Chart
             var op1 = Addressables.LoadAssetAsync<TextAsset>($"Chart/{chartName}");
             var res = op1.WaitForCompletion();
 
-            ChartData chartData = InternalLoadChartWithoutResourceLoad(res.text, out var songKey);
+            var chartData = InternalLoadChartWithoutResourceLoad(res.text, out var songKey);
             var op2 = Addressables.LoadAssetAsync<AudioClip>(songKey);
             chartData.audioClip = op2.WaitForCompletion();
             return chartData;
@@ -31,7 +32,7 @@ namespace Shuile.Chart
             var op1 = Addressables.LoadAssetAsync<TextAsset>(assetReference);
             var res = op1.WaitForCompletion();
 
-            ChartData chartData = InternalLoadChartWithoutResourceLoad(res.text, out var songKey);
+            var chartData = InternalLoadChartWithoutResourceLoad(res.text, out var songKey);
             var op2 = Addressables.LoadAssetAsync<AudioClip>(songKey);
             chartData.audioClip = op2.WaitForCompletion();
             return chartData;
@@ -39,7 +40,7 @@ namespace Shuile.Chart
 
         public static ChartData LoadChartSync(ChartSO chartSO)
         {
-            ChartData chartData = InternalLoadChartWithoutResourceLoad(chartSO.chartFile.text, out var songKey);
+            var chartData = InternalLoadChartWithoutResourceLoad(chartSO.chartFile.text, out var songKey);
             chartData.audioClip = chartSO.clip;
             chartData.musicLength = chartSO.musicLength;
             return chartData;
@@ -48,48 +49,50 @@ namespace Shuile.Chart
         private static ChartData InternalLoadChartWithoutResourceLoad(string json, out string songAssetsKey)
         {
             // to NoteData
-            JObject jobj = JObject.Parse(json); // the json is based on Chart_MC.Root
+            var jobj = JObject.Parse(json); // the json is based on Chart_MC.Root
             ChartData chartData = new();
 
             // timing (only record first timing point)
-            float bpm = jobj["time"][0]["bpm"].ToObject<float>();
-            JToken lastNote = jobj["note"].Last;
-            float offset = lastNote["offset"] != null ? lastNote["offset"].ToObject<float>() : 0;
-            chartData.time = new ChartData.TimingPoint[1]
-            {
-                new ChartData.TimingPoint
-                {
-                    bpm = bpm,
-                    offset = offset,
-                }
-            };
+            var bpm = jobj["time"][0]["bpm"].ToObject<float>();
+            var lastNote = jobj["note"].Last;
+            var offset = lastNote["offset"] != null ? lastNote["offset"].ToObject<float>() : 0;
+            chartData.time = new ChartData.TimingPoint[1] { new() { bpm = bpm, offset = offset } };
 
             // song
-            string songName = lastNote["sound"].ToObject<string>();
+            var songName = lastNote["sound"].ToObject<string>();
             songAssetsKey = $"Song/{songName}";
 
             // note
             List<BaseNoteData> tempList = new();
-            JToken notes = jobj["note"];
-            foreach (JToken note in notes)
+            var notes = jobj["note"];
+            foreach (var note in notes)
             {
-                int[] beat = note["beat"].ToObject<int[]>();
+                var beat = note["beat"].ToObject<int[]>();
 
-                if (note["column"] == null) continue; // TODO: ...
-                int column = note["column"].ToObject<int>();
+                if (note["column"] == null)
+                {
+                    continue; // TODO: ...
+                }
+
+                var column = note["column"].ToObject<int>();
 
                 BaseNoteData noteData;
-                if (column != 0) continue;
+                if (column != 0)
+                {
+                    continue;
+                }
+
                 noteData = column switch
                 {
                     //1 => new SpawnSingleEnemyNoteData(),
                     0 => new SpawnLaserNoteData(),
-                    _ => throw new System.Exception("invalid column data"),
+                    _ => throw new Exception("invalid column data")
                 };
 
-                noteData.rhythmTime = beat[0] + (float)beat[1] / beat[2];
+                noteData.rhythmTime = beat[0] + ((float)beat[1] / beat[2]);
                 tempList.Add(noteData);
             }
+
             chartData.note = tempList.ToArray();
 
             return chartData;
@@ -97,7 +100,7 @@ namespace Shuile.Chart
 
         public static string Chart2Text(Chart_MC.Root chart)
         {
-            string res = JsonUtility.ToJson(chart);
+            var res = JsonUtility.ToJson(chart);
             return res;
         }
     }

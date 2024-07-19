@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace CbUtils
 {
     public interface ILinkedValue
@@ -9,15 +7,8 @@ namespace CbUtils
 
     public abstract class TweeningValue<T> : ILinkedValue
     {
-        private T _Value;
-        public T Value
-        {
-            get => _Value;
-            set
-            {
-                _Value = value;
-            }
-        }
+        public T Value { get; set; }
+
         public T TweenResult { get; set; }
 
         public virtual void OnUpdate()

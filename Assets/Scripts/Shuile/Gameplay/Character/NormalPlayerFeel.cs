@@ -1,13 +1,9 @@
 using CbUtils.ActionKit;
-using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Feel;
 using Shuile.Gameplay.Move;
 using Shuile.Model;
 using Shuile.Rhythm;
-using Shuile.Rhythm.Runtime;
-using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
@@ -15,19 +11,19 @@ namespace Shuile.Gameplay.Character
     // player feedback and other event
     public class NormalPlayerFeel : MonoBehaviour
     {
-        private LevelModel _levelModel;
-        private PlayerModel _playerModel;
-        private MusicRhythmManager _musicRhythmManager;
+        private const float HurtXForce = 6f;
+        private const float HurtYForce = 0.2f;
         private LevelFeelManager _levelFeelManager;
+        private LevelModel _levelModel;
+
+        private SmoothMoveCtrl _moveController;
+        private MusicRhythmManager _musicRhythmManager;
+        private PlayerModel _playerModel;
+        private Rigidbody2D _rb;
+        private PlayerAnimCtrl animCtrl;
 
         private Player player;
         private NormalPlayerCtrl playerCtrl;
-        private PlayerAnimCtrl animCtrl;
-        private Rigidbody2D _rb;
-
-        private SmoothMoveCtrl _moveController;
-        private const float HurtXForce = 6f;
-        private const float HurtYForce = 0.2f;
 
         private void Awake()
         {
@@ -35,14 +31,14 @@ namespace Shuile.Gameplay.Character
             _levelModel = scope.GetImplementation<LevelModel>();
             _playerModel = scope.GetImplementation<PlayerModel>();
             _levelFeelManager = scope.GetImplementation<LevelFeelManager>();
-            
+
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
             _moveController = GetComponent<SmoothMoveCtrl>();
             player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();
             _rb = GetComponent<Rigidbody2D>();
 
-            animCtrl = new(gameObject, _playerModel);
+            animCtrl = new PlayerAnimCtrl(gameObject, _playerModel);
             ConfigureFeelEvent();
         }
 
@@ -74,12 +70,12 @@ namespace Shuile.Gameplay.Character
                     animCtrl.Inviciable = true;
 
                     ActionCtrl.Delay(1.5f).OnComplete(() =>
-                    {
-                        animCtrl.Inviciable = false;
-                        _playerModel.isInviciable = false;
-                    })
-                    .SetDebounce("PlayerHurt")
-                    .Start(gameObject);
+                        {
+                            animCtrl.Inviciable = false;
+                            _playerModel.isInviciable = false;
+                        })
+                        .SetDebounce("PlayerHurt")
+                        .Start(gameObject);
                 }
 
                 _levelFeelManager.VignettePulse();
@@ -89,8 +85,16 @@ namespace Shuile.Gameplay.Character
             {
                 //animCtrl.TriggerAttackWithType(enable, playerCtrl.CurrentWeapon.Type);
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Run);
-                if (enable) _levelFeelManager.PlayParticle("SwordSlash", transform.position, new Vector2(_playerModel.faceDir, 0), transform);
-                if (enable) _levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
+                if (enable)
+                {
+                    _levelFeelManager.PlayParticle("SwordSlash", transform.position,
+                        new Vector2(_playerModel.faceDir, 0), transform);
+                }
+
+                if (enable)
+                {
+                    _levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
+                }
             });
 
             playerCtrl.OnMoveStart.Register(v =>

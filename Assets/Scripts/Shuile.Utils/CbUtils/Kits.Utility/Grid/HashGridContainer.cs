@@ -5,25 +5,25 @@ using UnityEngine;
 
 namespace CbUtils.Collections
 {
-
     /// <typeparam name="T">content type</typeparam>
     public class HashGridContainer<T> : IPositionGrid, IContainerGrid<T>
     {
+        public Vector3 cellGap;
+
         // settings
         public Vector3 cellSize;
-        public Vector3 cellGap;
+
+        /// <summary>
+        ///     not recommend to access directly, you'll lose the bounds check.
+        /// </summary>
+        public Dictionary<Vector3Int, T> contents = new();
+
         public Vector3 originPosition;
 
         public int width, height;
 
-        /// <summary>
-        /// not recommend to access directly, you'll lose the bounds check.
-        /// </summary>
-        public Dictionary<Vector3Int, T> contents = new();
-
-        public event System.Action<Vector3Int, T> OnAdd, OnModify, OnRemove;
-
-        public HashGridContainer(Vector3 originPosition, Vector3 cellSize, Vector3 cellGap, int width = -1, int height = -1)
+        public HashGridContainer(Vector3 originPosition, Vector3 cellSize, Vector3 cellGap, int width = -1,
+            int height = -1)
         {
             this.width = width;
             this.height = height;
@@ -36,19 +36,19 @@ namespace CbUtils.Collections
         {
             this.width = width;
             this.height = height;
-            this.originPosition = grid.transform.position;
-            this.cellSize = grid.cellSize;
-            this.cellGap = grid.cellGap;
+            originPosition = grid.transform.position;
+            cellSize = grid.cellSize;
+            cellGap = grid.cellGap;
         }
 
-        public Vector3 OriginPosition => originPosition;
+        public T this[int x, int y]
+        {
+            get => Get(new Vector3Int(x, y));
+            set => Modify(new Vector3Int(x, y), value);
+        }
+
         public int Width => width;
         public int Height => height;
-        public Vector3 CellSize => cellSize;
-        public Vector3 CellGap => cellGap;
-
-        public Vector3Int WorldToCell(Vector3 pos) => this.DefaultWorldToCell(pos);
-        public Vector3 CellToWorld(Vector3Int pos) => this.DefaultCellToWorld(pos);
 
         public T Get(Vector3Int pos)
         {
@@ -64,7 +64,9 @@ namespace CbUtils.Collections
         public bool Modify(Vector3Int pos, T newContent)
         {
             if (IsOutOfBound(pos))
+            {
                 throw new IndexOutOfRangeException($"Grid IndexOutOfRange: {pos}");
+            }
 
             if (!contents.ContainsKey(pos))
             {
@@ -77,7 +79,7 @@ namespace CbUtils.Collections
             return true;
         }
 
-        public void Clear(System.Action<Vector3Int, T> OnDo = null)
+        public void Clear(Action<Vector3Int, T> OnDo = null)
         {
             foreach (var item in contents)
             {
@@ -134,15 +136,32 @@ namespace CbUtils.Collections
         }
 
         public bool IsValidCell(Vector3Int pos)
-            => !IsOutOfBound(pos);
+        {
+            return !IsOutOfBound(pos);
+        }
+
+        public Vector3 OriginPosition => originPosition;
+        public Vector3 CellSize => cellSize;
+        public Vector3 CellGap => cellGap;
+
+        public Vector3Int WorldToCell(Vector3 pos)
+        {
+            return this.DefaultWorldToCell(pos);
+        }
+
+        public Vector3 CellToWorld(Vector3Int pos)
+        {
+            return this.DefaultCellToWorld(pos);
+        }
+
+        public event Action<Vector3Int, T> OnAdd, OnModify, OnRemove;
 
         // custom
-        public bool IsOutOfBound(Vector3Int pos) => this.DefaultIsOutOfBound(pos);
-        public T this[int x, int y]
+        public bool IsOutOfBound(Vector3Int pos)
         {
-            get => Get(new Vector3Int(x, y));
-            set => Modify(new Vector3Int(x, y), value);
+            return this.DefaultIsOutOfBound(pos);
         }
+
         public bool HasContent(Vector3Int pos)
         {
             if (IsOutOfBound(pos))
@@ -179,9 +198,12 @@ namespace CbUtils.Collections
 #if UNITY_EDITOR
         public static void OnDrawGizmosSelected<T>(this HashGridContainer<T> self) where T : class
         {
-            if (!EditorApplication.isPlaying) return;
+            if (!EditorApplication.isPlaying)
+            {
+                return;
+            }
 
-            foreach(var item in self.contents)
+            foreach (var item in self.contents)
             {
                 var pos = self.CellToWorld(item.Key);
                 Gizmos.color = Color.red;
@@ -189,6 +211,5 @@ namespace CbUtils.Collections
             }
         }
 #endif
-
     }
 }

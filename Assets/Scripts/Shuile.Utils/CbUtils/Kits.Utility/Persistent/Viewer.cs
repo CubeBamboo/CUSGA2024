@@ -6,33 +6,36 @@ namespace Shuile.Persistent
     {
         public delegate void BoolStateChangedHandler(bool value);
 
-        private T data;
-        private IAccessor<T> accessor;
         private bool _isDirty;
-        
-        public event BoolStateChangedHandler OnDirtyStateChanged;
+        private readonly IAccessor<T> accessor;
 
         public Viewer(T data, IAccessor<T> accessor)
         {
-            this.data = data;
+            Data = data;
             this.accessor = accessor;
-            this.data.OnTreePropertyChanged += OnTreePropertyChanged;
+            Data.OnTreePropertyChanged += OnTreePropertyChanged;
         }
 
-        public T Data => data;
+        public T Data { get; }
+
         public bool IsDirty
         {
             get => _isDirty;
             set
             {
                 if (_isDirty == value)
+                {
                     return;
+                }
 
                 _isDirty = value;
                 OnDirtyStateChanged?.Invoke(IsDirty);
             }
         }
+
         public bool AutoSave { get; set; } = false;
+
+        public event BoolStateChangedHandler OnDirtyStateChanged;
 
         private async void OnTreePropertyChanged(object value, string path)
         {
@@ -47,7 +50,7 @@ namespace Shuile.Persistent
 
         public async UniTask SaveAsync()
         {
-            await accessor.SaveAsync(data);
+            await accessor.SaveAsync(Data);
             IsDirty = false;
         }
     }

@@ -1,6 +1,5 @@
 using CbUtils.Kits.Tasks;
 using Cysharp.Threading.Tasks;
-using Shuile.Core.Gameplay;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Model;
@@ -26,13 +25,14 @@ namespace Shuile.UI.Menu
         [SerializeField] private MainMenuUIStateMachine stateMachine;
         [SerializeField] private LevelSelectDataSO levelSelectData;
 
-        private int _currentIndex = 0;
+        private int _currentIndex;
         private LevelData _level;
 
         private void Awake()
         {
             ConfigureButtonEvent();
         }
+
         private void Start()
         {
             Refresh();
@@ -71,11 +71,11 @@ namespace Shuile.UI.Menu
         {
             //var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());
             await TaskBus.Instance.Run(LoadLevelResources(label));
-            
-            LevelContext levelContext = new LevelContext();
+
+            var levelContext = new LevelContext();
             levelContext.LevelData = _level;
             LevelRoot.RequestStart(levelContext);
-            
+
             MonoGameRouter.Instance.ToLevelScene(_level.sceneName);
         }
 

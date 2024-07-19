@@ -23,15 +23,6 @@ namespace Shuile.Gameplay.Weapon
 
     public abstract class BaseWeapon : MonoBehaviour, IWeapon
     {
-        //private bool attacking = false;
-
-        public BaseCommand<WeaponCommandData> AttackCommand { get; private set; }
-        public BaseCommand<WeaponCommandData> AttackFinishCommand { get; private set; }
-        public BaseCommand<bool> HypermodeSwitchCommand { get; private set; }
-        public EasyEvent<WeaponHitData> OnHit { get; } = new();
-        public bool IsHypermode { get; private set; }
-        public abstract WeaponType Type { get; }
-
         public BaseWeapon()
         {
             AttackCommand = new DelegateCommand<WeaponCommandData>(OnAttack);
@@ -39,10 +30,14 @@ namespace Shuile.Gameplay.Weapon
             HypermodeSwitchCommand = new DelegateCommand<bool>(OnHypermodeSwitch);
         }
 
-        protected abstract void OnAttack(WeaponCommandData data);
-        protected abstract void OnAttackFinish(WeaponCommandData data);
-        protected abstract void OnHypermodeSwitch(bool enabled);
-        protected virtual void OnTransformRebind(Transform target) { }
+        public bool IsHypermode { get; }
+        //private bool attacking = false;
+
+        public BaseCommand<WeaponCommandData> AttackCommand { get; }
+        public BaseCommand<WeaponCommandData> AttackFinishCommand { get; }
+        public BaseCommand<bool> HypermodeSwitchCommand { get; }
+        public EasyEvent<WeaponHitData> OnHit { get; } = new();
+        public abstract WeaponType Type { get; }
 
         public void BindToTransform(Transform target)
         {
@@ -50,6 +45,11 @@ namespace Shuile.Gameplay.Weapon
             gameObject.SetActive(target != null);
             OnTransformRebind(target);
         }
+
+        protected abstract void OnAttack(WeaponCommandData data);
+        protected abstract void OnAttackFinish(WeaponCommandData data);
+        protected abstract void OnHypermodeSwitch(bool enabled);
+        protected virtual void OnTransformRebind(Transform target) { }
     }
 
     public struct WeaponCommandData

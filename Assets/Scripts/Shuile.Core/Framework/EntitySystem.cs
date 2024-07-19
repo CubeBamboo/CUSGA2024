@@ -1,5 +1,9 @@
+#region
+
 using CbUtils;
 using System.Collections.Generic;
+
+#endregion
 
 namespace Shuile.Core.Framework
 {
@@ -7,10 +11,25 @@ namespace Shuile.Core.Framework
     {
         private readonly List<IEntity> _entities = new();
 
-        public bool ContainsEntity(IEntity entity) => _entities.Contains(entity);
-        public void AddEntity(IEntity entity) => _entities.Add(entity);
-        public bool RemoveEntity(IEntity entity) => _entities.Remove(entity);
-        public void Clear() => _entities.Clear();
+        public bool ContainsEntity(IEntity entity)
+        {
+            return _entities.Contains(entity);
+        }
+
+        public void AddEntity(IEntity entity)
+        {
+            _entities.Add(entity);
+        }
+
+        public bool RemoveEntity(IEntity entity)
+        {
+            return _entities.Remove(entity);
+        }
+
+        public void Clear()
+        {
+            _entities.Clear();
+        }
 
         public void EnableAllEntities()
         {
@@ -29,6 +48,7 @@ namespace Shuile.Core.Framework
                     return t;
                 }
             }
+
             return null;
         }
     }

@@ -1,9 +1,7 @@
 using CbUtils.Extension;
-using CbUtils.ActionKit;
-
+using CbUtils.Timing;
 using DG.Tweening;
 using UnityEngine;
-using CbUtils.Timing;
 
 namespace Shuile
 {
@@ -16,24 +14,26 @@ namespace Shuile
             DoNothing
         }
 
-        private SpriteRenderer _renderer;
         public float fadeOutDuration = 1.0f;
         public float duration = 5.0f;
         public EndType endType = EndType.Destroy;
         public bool waitUtilFadeOut = true;
+
+        private SpriteRenderer _renderer;
+
         protected override void OnAwake()
         {
             _renderer = GetComponent<SpriteRenderer>();
         }
+
         protected override void OnPlayAnimation()
         {
             var targetAlpha = _renderer.color.a;
-            _renderer.color = _renderer.color.With(a : 0);
+            _renderer.color = _renderer.color.With(a: 0);
             _renderer.DOFade(targetAlpha, fadeOutDuration).SetLoops(-1, LoopType.Yoyo);
 
             var unit = 2 * fadeOutDuration;
-            var waitTime = !waitUtilFadeOut ?
-                duration : ((int)(duration / unit) + 1) * unit;
+            var waitTime = !waitUtilFadeOut ? duration : ((int)(duration / unit) + 1) * unit;
 
             TimingCtrl.Instance.Timer(waitTime, HandleEnd).Start();
             //ActionCtrl.Delay(waitTime)

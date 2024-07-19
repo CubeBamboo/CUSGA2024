@@ -7,25 +7,51 @@ namespace Shuile.Core.Framework
     public class ServiceLocator
     {
         private static readonly Type objectType = typeof(object);
-        
-        private readonly Dictionary<Type, object> _services = new();
         private readonly Dictionary<Type, Func<object>> _serviceCreators = new();
 
-        public void RegisterCreator<T>(Func<T> creator) => RegisterCreator(typeof(T), () => creator());
+        private readonly Dictionary<Type, object> _services = new();
+
+        public void RegisterCreator<T>(Func<T> creator)
+        {
+            RegisterCreator(typeof(T), () => creator());
+        }
+
         public void RegisterCreator(Type type, Func<object> creator)
         {
-            if (type == objectType) throw new ArgumentException("Registering object type is not allowed.");
+            if (type == objectType)
+            {
+                throw new ArgumentException("Registering object type is not allowed.");
+            }
+
             _serviceCreators[type] = creator;
         }
 
-        public void UnRegisterCreator<T>() => UnRegisterCreator(typeof(T));
-        public void UnRegisterCreator(Type type) => _serviceCreators.Remove(type);
+        public void UnRegisterCreator<T>()
+        {
+            UnRegisterCreator(typeof(T));
+        }
 
-        public void AddServiceDirectly<T>(T service) => AddServiceDirectly(typeof(T), service);
-        public void AddServiceDirectly(Type type, object service) => _services[type] = service;
+        public void UnRegisterCreator(Type type)
+        {
+            _serviceCreators.Remove(type);
+        }
+
+        public void AddServiceDirectly<T>(T service)
+        {
+            AddServiceDirectly(typeof(T), service);
+        }
+
+        public void AddServiceDirectly(Type type, object service)
+        {
+            _services[type] = service;
+        }
 
         [DebuggerHidden]
-        public T GetService<T>() => (T)GetService(typeof(T));
+        public T GetService<T>()
+        {
+            return (T)GetService(typeof(T));
+        }
+
         [DebuggerHidden]
         public object GetService(Type type)
         {
@@ -33,7 +59,8 @@ namespace Shuile.Core.Framework
             {
                 return obj;
             }
-            else if(_serviceCreators.TryGetValue(type, out var cre))
+
+            if (_serviceCreators.TryGetValue(type, out var cre))
             {
                 var service = cre();
                 _services[type] = service;
@@ -42,10 +69,30 @@ namespace Shuile.Core.Framework
 
             throw new Exception($"Service creator of type {type} not found");
         }
-        public void ClearAllServices() => _services.Clear();
-        public void ClearAllServicesCreator() => _serviceCreators.Clear();
-        public bool ContainsService(object instance) => _services.ContainsValue(instance);
-        public bool ContainsService<T>() => _services.ContainsKey(typeof(T));
-        public bool ContainsService(System.Type type) => _services.ContainsKey(type);
+
+        public void ClearAllServices()
+        {
+            _services.Clear();
+        }
+
+        public void ClearAllServicesCreator()
+        {
+            _serviceCreators.Clear();
+        }
+
+        public bool ContainsService(object instance)
+        {
+            return _services.ContainsValue(instance);
+        }
+
+        public bool ContainsService<T>()
+        {
+            return _services.ContainsKey(typeof(T));
+        }
+
+        public bool ContainsService(Type type)
+        {
+            return _services.ContainsKey(type);
+        }
     }
 }

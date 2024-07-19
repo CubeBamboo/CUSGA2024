@@ -11,7 +11,7 @@ namespace Shuile.Model
     {
         private readonly float _musicBpm;
         private readonly float _musicOffset;
-        private float _dangerScore = 0f;
+        private float _dangerScore;
 
         public LevelModel()
         {
@@ -27,10 +27,10 @@ namespace Shuile.Model
         public int DangerLevel => DangerLevelUtils.GetDangerLevelUnClamped(DangerScore);
         public List<IJudgeable> JudgeObjects { get; set; } = new();
         public float CurrentMusicTime { get; set; }
-        
+
         /// <summary> float - old value </summary>
         public EasyEvent<float> OnDangerScoreChange { get; } = new();
-        
+
         public float DangerScore
         {
             get => _dangerScore;
@@ -38,7 +38,10 @@ namespace Shuile.Model
             {
                 var oldVal = _dangerScore;
                 _dangerScore = value < 0 ? 0 : value;
-                if (oldVal != _dangerScore) OnDangerScoreChange.Invoke(oldVal);
+                if (oldVal != _dangerScore)
+                {
+                    OnDangerScoreChange.Invoke(oldVal);
+                }
             }
         }
     }

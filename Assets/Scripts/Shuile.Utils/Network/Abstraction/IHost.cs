@@ -1,5 +1,4 @@
 using Shuile.Network.Packets;
-
 using System.Collections.Generic;
 
 namespace Shuile.Network
@@ -7,30 +6,30 @@ namespace Shuile.Network
     public interface IHost
     {
         /// <summary>
-        /// µ±Ç°ÒÑÁ¬½ÓµÄËùÓĞ½ÇÉ«µÄId
+        ///     å½“å‰å·²è¿æ¥çš„æ‰€æœ‰è§’è‰²çš„Id
         /// </summary>
         public IReadOnlyList<int> Actors { get; }
 
         /// <summary>
-        /// Á¬½Óµ½´Ë·¿¼äÓÃµ½µÄÁ¬½Ó×Ö·û´®
+        ///     è¿æ¥åˆ°æ­¤æˆ¿é—´ç”¨åˆ°çš„è¿æ¥å­—ç¬¦ä¸²
         /// </summary>
         public string ConnectionString { get; }
-        
+
         /// <summary>
-        /// ÊÇ·ñ¿ÉÒÔ¼ÓÈë·¿¼ä
+        ///     æ˜¯å¦å¯ä»¥åŠ å…¥æˆ¿é—´
         /// </summary>
         public bool CanJoin { get; set; }
 
         /// <summary>
-        /// ·¢ËÍ¸øÄ³¸ö½ÇÉ«
+        ///     å‘é€ç»™æŸä¸ªè§’è‰²
         /// </summary>
-        /// <typeparam name="T">Êı¾İ°üÀàĞÍ</typeparam>
-        /// <param name="actorId">½ÇÉ«µÄid</param>
-        /// <param name="packet">Êı¾İ°ü</param>
+        /// <typeparam name="T">æ•°æ®åŒ…ç±»å‹</typeparam>
+        /// <param name="actorId">è§’è‰²çš„id</param>
+        /// <param name="packet">æ•°æ®åŒ…</param>
         public void SendTo<T>(int actorId, T packet) where T : Packet, new();
 
         /// <summary>
-        /// ´¦ÀíÊı¾İ°ü£¬ÔÚUnityÖ÷Ïß³Ìµ÷ÓÃ
+        ///     å¤„ç†æ•°æ®åŒ…ï¼Œåœ¨Unityä¸»çº¿ç¨‹è°ƒç”¨
         /// </summary>
         public void PollEvents();
     }

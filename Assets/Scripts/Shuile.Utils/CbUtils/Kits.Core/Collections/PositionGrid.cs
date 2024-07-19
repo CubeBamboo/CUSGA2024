@@ -4,25 +4,40 @@ namespace CbUtils.Collections
 {
     public class GlobalPositionGrid : IPositionGrid
     {
-        private static GlobalPositionGrid instance = new();
+        private static readonly GlobalPositionGrid instance = new();
 
-        private Vector3 originPosition = Vector3.zero;
-        private Vector3 cellSize = Vector3.one;
-        private Vector3 cellGap = Vector3.zero;
+        public Vector3 OriginPosition { get; private set; } = Vector3.zero;
+
+        public Vector3 CellSize { get; private set; } = Vector3.one;
+
+        public Vector3 CellGap { get; private set; } = Vector3.zero;
 
         public static void SetValue(Vector3? originPosition = null, Vector3? cellSize = null, Vector3? cellGap = null)
         {
-            if(originPosition != null) instance.originPosition = originPosition.Value;
-            if (cellSize != null) instance.cellSize = cellSize.Value;
-            if (cellGap != null) instance.cellGap = cellGap.Value;
+            if (originPosition != null)
+            {
+                instance.OriginPosition = originPosition.Value;
+            }
+
+            if (cellSize != null)
+            {
+                instance.CellSize = cellSize.Value;
+            }
+
+            if (cellGap != null)
+            {
+                instance.CellGap = cellGap.Value;
+            }
         }
 
-        public static Vector3Int WorldToCell(Vector3 pos) => instance.DefaultWorldToCell(pos);
-        public static Vector3 CellToWorld(Vector3Int pos) => instance.DefaultCellToWorld(pos);
+        public static Vector3Int WorldToCell(Vector3 pos)
+        {
+            return instance.DefaultWorldToCell(pos);
+        }
 
-        public Vector3 OriginPosition => originPosition;
-        public Vector3 CellSize => cellSize;
-        public Vector3 CellGap => cellGap;
+        public static Vector3 CellToWorld(Vector3Int pos)
+        {
+            return instance.DefaultCellToWorld(pos);
+        }
     }
-
 }

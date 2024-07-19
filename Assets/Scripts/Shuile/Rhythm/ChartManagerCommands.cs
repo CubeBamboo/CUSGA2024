@@ -1,4 +1,3 @@
-using Shuile.Chart;
 using Shuile.Core.Framework;
 using Shuile.Core.Global.Config;
 using UnityEngine;
@@ -7,12 +6,6 @@ namespace Shuile.Rhythm.Runtime
 {
     internal class TryHitNoteCommand : ICommand
     {
-        internal struct Result
-        {
-            public float hitOffset;
-            public bool isHitOn;
-        }
-
         public float inputTime;
         public MusicRhythmManager musicRhythmManager;
         public PlayerChartManager playerChartManager;
@@ -22,26 +15,32 @@ namespace Shuile.Rhythm.Runtime
         public void Execute()
         {
             Result result = new();
-            float missTolerance = ImmutableConfiguration.Instance.MissToleranceInSeconds;
+            var missTolerance = ImmutableConfiguration.Instance.MissToleranceInSeconds;
 
             // get the nearest note's time and judge
             result.hitOffset = float.NaN;
-            SingleNote targetNote = playerChartManager.TryGetNearestNote(musicRhythmManager.CurrentTime);
+            var targetNote = playerChartManager.TryGetNearestNote(musicRhythmManager.CurrentTime);
             if (targetNote == null)
             {
                 result.isHitOn = false;
                 return;
             }
 
-            bool ret = Mathf.Abs(inputTime - targetNote.realTime) < missTolerance;
+            var ret = Mathf.Abs(inputTime - targetNote.realTime) < missTolerance;
             if (ret)
             {
                 playerChartManager.HitNote(targetNote);
                 result.hitOffset = inputTime - targetNote.realTime;
             }
+
             result.isHitOn = ret;
             this.result = result;
-            return;
+        }
+
+        internal struct Result
+        {
+            public float hitOffset;
+            public bool isHitOn;
         }
     }
 

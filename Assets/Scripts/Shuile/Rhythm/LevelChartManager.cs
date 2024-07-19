@@ -9,34 +9,38 @@ namespace Shuile.Rhythm
     // it will auto play.
     public class LevelChartManager : IStartable, IFixedTickable
     {
-        private MusicRhythmManager _musicRhythmManager;
-        private NoteDataProcessor _noteDataProcessor;
-
-        public bool isPlay = true;
+        private readonly MusicRhythmManager _musicRhythmManager;
+        private readonly NoteDataProcessor _noteDataProcessor;
 
         // chart part
-        private ChartData chart;
+        private readonly ChartData chart;
         private ChartPlayer chartPlayer;
+
+        public bool isPlay = true;
 
         public LevelChartManager(IGetableScope scope)
         {
             _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
-            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();;
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
+            ;
             chart = LevelRoot.LevelContext.ChartData;
+        }
+
+        public void FixedTick()
+        {
+#if UNITY_EDITOR
+            if (!isPlay)
+            {
+                return;
+            }
+#endif
+            chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
         }
 
         public void Start()
         {
             chartPlayer = new ChartPlayer(chart, _noteDataProcessor);
             chartPlayer.OnNotePlay += (note, _) => note.ProcessNote(_noteDataProcessor);
-        }
-
-        public void FixedTick()
-        {
-#if UNITY_EDITOR
-            if (!isPlay) return;
-#endif
-            chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
         }
     }
 }

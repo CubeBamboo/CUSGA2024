@@ -1,90 +1,102 @@
+using System;
 using System.Collections.Generic;
 
 namespace Shuile.Chart
 {
     #region Chart_MC
+
     public class Chart_MC
     {
-        [System.Serializable]
+        [Serializable]
         public class Root
         {
             /// <summary>
-            /// record the chart's information (song name, mode, length...)
+            ///     record the chart's information (song name, mode, length...)
             /// </summary>
             public Meta meta;
+
             /// <summary>
-            /// timing settings
+            ///     timing settings
             /// </summary>
             public List<Time> time;
+
             /// <summary>
-            /// notes
+            ///     notes
             /// </summary>
             public List<object> note;
+
             /// <summary>
-            /// other (user settings)
+            ///     other (user settings)
             /// </summary>
             public Extra extra;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class Meta
         {
             /// <summary>
-            /// default 0
+            ///     default 0
             /// </summary>
             public int ver;
+
             /// <summary>
-            /// chart name
+            ///     chart name
             /// </summary>
             public string version;
+
             /// <summary>
-            /// id in database (default 0)
+            ///     id in database (default 0)
             /// </summary>
             public int id;
+
             /// <summary>
-            /// chart length
+            ///     chart length
             /// </summary>
             public int time;
+
             /// <summary>
-            /// song data
+            ///     song data
             /// </summary>
             public Song song;
+
             /// <summary>
-            /// about chart mode (column and start bar)
+            ///     about chart mode (column and start bar)
             /// </summary>
             public Mode_ext mode_ext;
         }
 
         /// <summary>
-        /// single timing
+        ///     single timing
         /// </summary>
-        [System.Serializable]
+        [Serializable]
         public class Time
         {
             /// <summary>
-            /// [a, b, c] to represent beat in bar: (a + b / c), which means A bar's B/C progress
+            ///     [a, b, c] to represent beat in bar: (a + b / c), which means A bar's B/C progress
             /// </summary>
             public List<int> beat;
+
             /// <summary>
-            /// bpm data in this note
+            ///     bpm data in this note
             /// </summary>
             public int bpm;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class SingleNote
         {
             /// <summary>
-            /// time data, [a, b, c] to represent beat in bar: (a + b / c), which means A bar's B/C progress
+            ///     time data, [a, b, c] to represent beat in bar: (a + b / c), which means A bar's B/C progress
             /// </summary>
             public List<int> beat;
+
             /// <summary>
-            /// column data, we may use a switch-case to convert it to other data type
+            ///     column data, we may use a switch-case to convert it to other data type
             /// </summary>
             public int column;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class LongNote
         {
             public List<int> beat;
@@ -92,31 +104,33 @@ namespace Shuile.Chart
             public int column;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class Song
         {
             public string title;
             public string artist;
+
             /// <summary>
-            /// id in database (default 0)
+            ///     id in database (default 0)
             /// </summary>
             public int id;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class Mode_ext
         {
             /// <summary>
-            /// column count
+            ///     column count
             /// </summary>
             public int column;
+
             /// <summary>
-            /// default 0
+            ///     default 0
             /// </summary>
             public int start_bar;
         }
 
-        [System.Serializable]
+        [Serializable]
         public class Extra
         {
             //public Test test;
@@ -126,23 +140,23 @@ namespace Shuile.Chart
         /*public class Test
         {
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public int divide;
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public int speed;
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public int save;
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public int @lock;
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public int edit_mode;
         }*/

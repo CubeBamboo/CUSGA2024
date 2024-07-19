@@ -11,7 +11,7 @@ namespace Shuile
         {
             return
                 Object.Instantiate(Resources.Load<GameObject>("GlobalGameObject"))
-                .SetDontDestroyOnLoad();
+                    .SetDontDestroyOnLoad();
         }
 
         public static void InitializeBusyScreenByGlobalGameObject(this TaskBus taskBus, GameObject globalGameObject)

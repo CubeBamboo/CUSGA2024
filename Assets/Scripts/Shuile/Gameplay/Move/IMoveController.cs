@@ -20,6 +20,7 @@ namespace Shuile.Gameplay.Move
         public Vector3 Position { get; set; }
         public Vector2 Velocity { get; set; }
         public bool IsOnGround { get; }
+
         /// <param name="dir"> lower than 0: left, higher than 0: right </param>
         public void XMove(float dir);
     }

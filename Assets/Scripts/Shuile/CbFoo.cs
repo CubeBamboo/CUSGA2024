@@ -1,4 +1,3 @@
-using CbUtils.Collections;
 using UnityEngine;
 
 namespace CbUtils
@@ -7,10 +6,9 @@ namespace CbUtils
     {
         private void Start()
         {
-
         }
     }
-    
+
     /*[CustomEditor(typeof(CbFoo))]
     public class InspectorExtExample : Editor
     {
@@ -42,4 +40,3 @@ namespace CbUtils
         }
     }*/
 }
-

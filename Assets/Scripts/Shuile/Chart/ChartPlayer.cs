@@ -1,4 +1,4 @@
-using Shuile.Core.Framework.Unity;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -7,49 +7,48 @@ namespace Shuile.Chart
     /// <summary> provide play interface and then use monobehavior to update its time </summary>
     public class ChartPlayer
     {
-        public struct PlayTimeData
-        {
-            public float playTime;
-            public int originNoteIndex;
-        }
-
         private ChartData chart;
+
+        private int nextNoteIndex;
         private List<PlayTimeData> playTimeArray;
 
-        private int nextNoteIndex = 0;
-
-        /// <summary>
-        /// call when it's time to play the note
-        /// </summary>
-        public event System.Action<BaseNoteData, float> OnNotePlay = (_, _) => { };
-
-        public ReadOnlyCollection<PlayTimeData> PlayTimeArray => playTimeArray.AsReadOnly();
-
-        public ChartPlayer(ChartData chart, System.Func<BaseNoteData, float> onPlayTimeConvert)
+        public ChartPlayer(ChartData chart, Func<BaseNoteData, float> onPlayTimeConvert)
         {
             Init(chart, onPlayTimeConvert);
         }
+
         public ChartPlayer(ChartData chart, NoteDataProcessor noteDataProcessor)
         {
             Init(chart, PlayTimeConvert);
             return;
-            float PlayTimeConvert(BaseNoteData note) => note.GetNotePlayTime(noteDataProcessor);
+
+            float PlayTimeConvert(BaseNoteData note)
+            {
+                return note.GetNotePlayTime(noteDataProcessor);
+            }
         }
 
-        private void Init(ChartData chart, System.Func<BaseNoteData, float> onPlayTimeConvert)
+        public ReadOnlyCollection<PlayTimeData> PlayTimeArray => playTimeArray.AsReadOnly();
+
+        /// <summary>
+        ///     call when it's time to play the note
+        /// </summary>
+        public event Action<BaseNoteData, float> OnNotePlay = (_, _) => { };
+
+        private void Init(ChartData chart, Func<BaseNoteData, float> onPlayTimeConvert)
         {
             this.chart = chart;
             // convert target time (music beat) to play time (show in screen)
             playTimeArray = new List<PlayTimeData>(chart.note.Length);
             playTimeArray.Clear();
-            for (int i = 0; i < chart.note.Length; i++)
+            for (var i = 0; i < chart.note.Length; i++)
             {
-                playTimeArray.Add(new PlayTimeData()
+                playTimeArray.Add(new PlayTimeData
                 {
-                    playTime = onPlayTimeConvert.Invoke(chart.note[i]),
-                    originNoteIndex = i
+                    playTime = onPlayTimeConvert.Invoke(chart.note[i]), originNoteIndex = i
                 });
             }
+
             playTimeArray.Sort((a, b) => a.playTime.CompareTo(b.playTime));
         }
 
@@ -57,15 +56,24 @@ namespace Shuile.Chart
         /// <param name="time">update note state with it</param>
         public void PlayUpdate(float time)
         {
-            if (nextNoteIndex >= playTimeArray.Count) return;
+            if (nextNoteIndex >= playTimeArray.Count)
+            {
+                return;
+            }
 
             // if next note time is less than current time, add note to noteContainer and trigger some event
-            float nextNoteTime = playTimeArray[nextNoteIndex].playTime;
+            var nextNoteTime = playTimeArray[nextNoteIndex].playTime;
             if (time > nextNoteTime)
             {
                 OnNotePlay.Invoke(chart.note[playTimeArray[nextNoteIndex].originNoteIndex], time);
                 nextNoteIndex++;
             }
+        }
+
+        public struct PlayTimeData
+        {
+            public float playTime;
+            public int originNoteIndex;
         }
     }
 

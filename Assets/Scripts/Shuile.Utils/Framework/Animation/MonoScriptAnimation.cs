@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace Shuile
@@ -7,9 +6,10 @@ namespace Shuile
     public abstract class MonoScriptAnimation : MonoBehaviour
     {
         public bool PlayOnAwake = true;
-        public bool Loop = false;
+        public bool Loop;
 
         private bool _completed;
+
         public bool IsCompleted
         {
             get => _completed;
@@ -17,34 +17,49 @@ namespace Shuile
             {
                 _completed = value;
                 if (_completed)
+                {
                     OnComplete?.Invoke();
+                }
             }
         }
-        public event System.Action OnComplete;
 
         protected void Awake()
         {
             if (Loop)
-                OnComplete += () => { StopAnimation(); Play(); };
+            {
+                OnComplete += () =>
+                {
+                    StopAnimation();
+                    Play();
+                };
+            }
 
             OnAwake();
         }
+
+        protected void Start()
+        {
+            if (PlayOnAwake)
+            {
+                Play();
+            }
+        }
+
         protected void OnDestroy()
         {
             StopAnimation();
             OnComplete = null;
         }
-        protected void Start()
-        {
-            if (PlayOnAwake)
-                Play();
-        }
+
+        public event Action OnComplete;
 
         protected virtual void OnAwake() { }
 
-        /// <summary> set <seealso cref="IsCompleted"/> to true to specify when the animation is completed </summary>
+        /// <summary> set <seealso cref="IsCompleted" /> to true to specify when the animation is completed </summary>
         protected abstract void OnPlayAnimation();
+
         protected abstract void StopAnimation();
+
         public void Play()
         {
             OnPlayAnimation();

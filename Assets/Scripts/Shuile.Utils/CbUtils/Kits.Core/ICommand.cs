@@ -1,5 +1,4 @@
 using CbUtils;
-
 using System;
 
 namespace Shuile.Framework
@@ -10,11 +9,12 @@ namespace Shuile.Framework
     }
 
     /// <summary>
-    /// a command canbe add listener before and after execute
+    ///     a command canbe add listener before and after execute
     /// </summary>
     public abstract class HearableCommand : ICommand
     {
-        System.Action _beforeCommand, _afterCommand;
+        private Action _beforeCommand, _afterCommand;
+
         public void Execute()
         {
             _beforeCommand?.Invoke();
@@ -22,38 +22,49 @@ namespace Shuile.Framework
             _afterCommand?.Invoke();
         }
 
-        public void OnCommandBefore(System.Action action)
-            => _beforeCommand += action;
-        public void OnCommandAfter(System.Action action)
-            => _afterCommand += action;
+        public void OnCommandBefore(Action action)
+        {
+            _beforeCommand += action;
+        }
+
+        public void OnCommandAfter(Action action)
+        {
+            _afterCommand += action;
+        }
 
         public abstract void OnExecute();
     }
 
     public abstract class EasyHearableCommand
     {
-        readonly EasyEvent _beforeCommand = new(), _afterCommand = new();
+        private readonly EasyEvent _beforeCommand = new(), _afterCommand = new();
+
         public void Execute()
         {
             _beforeCommand?.Invoke();
             OnExecute();
             _afterCommand?.Invoke();
         }
-        
+
         public abstract void OnExecute();
-        public ICustomUnRegister OnCommandBefore(System.Action action)
-            => _beforeCommand.Register(action);
-        public ICustomUnRegister OnCommandAfter(System.Action action)
-            => _afterCommand.Register(action);
+
+        public ICustomUnRegister OnCommandBefore(Action action)
+        {
+            return _beforeCommand.Register(action);
+        }
+
+        public ICustomUnRegister OnCommandAfter(Action action)
+        {
+            return _afterCommand.Register(action);
+        }
     }
 
 
     public abstract class BaseCommand<TData> : ICommand where TData : struct
     {
+        private readonly EasyEvent _beforeCommand = new(), _afterCommand = new();
         public TData state { get; protected set; }
 
-        readonly EasyEvent _beforeCommand = new(), _afterCommand = new();
-        
         public void Execute()
         {
             _beforeCommand?.Invoke();
@@ -63,24 +74,36 @@ namespace Shuile.Framework
 
         public BaseCommand<TData> Bind(TData data)
         {
-            this.state = data;
+            state = data;
             return this;
         }
 
         public abstract void OnExecute();
-        public ICustomUnRegister RegisterCommandBefore(System.Action action)
-            => _beforeCommand.Register(action);
-        public void UnRegisterBefore(System.Action action)
-            => _beforeCommand.UnRegister(action);
-        public ICustomUnRegister RegisterCommandAfter(System.Action action)
-            => _afterCommand.Register(action);
-        public void UnRegisterAfter(System.Action action)
-            => _afterCommand.UnRegister(action);
+
+        public ICustomUnRegister RegisterCommandBefore(Action action)
+        {
+            return _beforeCommand.Register(action);
+        }
+
+        public void UnRegisterBefore(Action action)
+        {
+            _beforeCommand.UnRegister(action);
+        }
+
+        public ICustomUnRegister RegisterCommandAfter(Action action)
+        {
+            return _afterCommand.Register(action);
+        }
+
+        public void UnRegisterAfter(Action action)
+        {
+            _afterCommand.UnRegister(action);
+        }
     }
 
     public class DelegateCommand<TData> : BaseCommand<TData> where TData : struct
     {
-        private Action<TData> action;
+        private readonly Action<TData> action;
 
         public DelegateCommand(Action<TData> action)
         {

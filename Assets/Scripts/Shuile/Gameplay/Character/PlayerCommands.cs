@@ -6,9 +6,9 @@ namespace Shuile.Gameplay.Character
 {
     internal class AttackCommand : ICommand
     {
-        public Vector2 position;
-        public float attackRadius;
         public int attackPoint;
+        public float attackRadius;
+        public Vector2 position;
 
         public void Execute()
         {
@@ -16,7 +16,9 @@ namespace Shuile.Gameplay.Character
             foreach (var hit in hits)
             {
                 if (hit.TryGetComponent<IHurtable>(out var hurt))
+                {
                     hurt.OnHurt(attackPoint);
+                }
             }
         }
     }

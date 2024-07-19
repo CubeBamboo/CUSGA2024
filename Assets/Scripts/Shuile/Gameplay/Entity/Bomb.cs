@@ -1,10 +1,8 @@
-using CbUtils.ActionKit;
 using CbUtils.Event;
 using CbUtils.Extension;
 using DG.Tweening;
 using Shuile.Core.Gameplay.Common;
 using System.Linq;
-
 using UnityEngine;
 
 namespace Shuile.Gameplay.Entity
@@ -32,7 +30,9 @@ namespace Shuile.Gameplay.Entity
                 .Where(hurtable => hurtable != null);
 
             foreach (var hurtable in hurtables)
+            {
                 hurtable.OnHurt(attackPoint);
+            }
 
             // play effect
             DOTween.Sequence()
@@ -40,10 +40,10 @@ namespace Shuile.Gameplay.Entity
                     .SetLoops(2, LoopType.Yoyo))
                 .AppendInterval(0.5f)
                 .Append(transform.DOScale(0f, 0.6f)
-                        .OnComplete(() =>
-                        {
-                            gameObject.Destroy();
-                        }));
+                    .OnComplete(() =>
+                    {
+                        gameObject.Destroy();
+                    }));
         }
 
         public void Interrupt()
@@ -60,6 +60,5 @@ namespace Shuile.Gameplay.Entity
                     gameObject.Destroy();
                 });
         }
-
     }
 }

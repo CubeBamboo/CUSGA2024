@@ -7,17 +7,6 @@ namespace Shuile.UI.Menu
 {
     public class MainMenuUIStateMachine : MonoBehaviour
     {
-        [SerializeField] private GameObject titlePanel;
-        [SerializeField] private GameObject selectPanel;
-        [SerializeField] private GameObject settingsPanel;
-        [SerializeField] private Animation flashAnimation;
-        [SerializeField] private Button btn_Start;
-        [SerializeField] private Button btn_Setting;
-        [SerializeField] private Button btn_Back;
-
-        // [start panel]
-        private RectTransform titleLogo;
-
         //private readonly Vector2 titleLogoStartPos = new Vector2(0f, 640f);
         //private readonly Vector2 titleInTitlePos = new Vector2(0f, 16f);
         //private readonly Vector2 titleInMenuPos = new Vector2(0f, 170f);
@@ -38,7 +27,23 @@ namespace Shuile.UI.Menu
             Settings
         }
 
+        [SerializeField] private GameObject titlePanel;
+        [SerializeField] private GameObject selectPanel;
+        [SerializeField] private GameObject settingsPanel;
+        [SerializeField] private Animation flashAnimation;
+        [SerializeField] private Button btn_Start;
+        [SerializeField] private Button btn_Setting;
+        [SerializeField] private Button btn_Back;
+
         private FSM<State> _fsm;
+
+        // [start panel]
+        private RectTransform titleLogo;
+
+        private AnimationState FlashAnimState => flashAnimation[flashAnimation.clip.name];
+
+        public State CurrentState => _fsm.CurrentStateId;
+
         private void Awake()
         {
             InitUIComponent();
@@ -72,12 +77,13 @@ namespace Shuile.UI.Menu
 
         private void InitFSM()
         {
-            _fsm = new();
+            _fsm = new FSM<State>();
             _fsm.NewEventState(State.Menu)
                 .OnEnter(() =>
                 {
                     ((RectTransform)titleLogo.transform).DOAnchorPosY(106, 0.4f).SetEase(Ease.OutSine);
-                    ((RectTransform)flashAnimation.transform).DOAnchorPos(new(-215f, 56f), 0.3f).SetEase(Ease.OutSine);
+                    ((RectTransform)flashAnimation.transform).DOAnchorPos(new Vector2(-215f, 56f), 0.3f)
+                        .SetEase(Ease.OutSine);
                     RewindFlash();
                 })
                 .OnExit(() =>
@@ -88,7 +94,7 @@ namespace Shuile.UI.Menu
                 .OnEnter(() =>
                 {
                     PlayFlash();
-                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, 20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Back.transform.parent.DOLocalRotate(new Vector3(0f, 0f, 20f), 0.2f).SetEase(Ease.OutSine);
                     btn_Setting.targetGraphic.DOFade(0f, 0.3f);
                     btn_Setting.enabled = false;
                     btn_Start.targetGraphic.DOFade(0f, 0.3f);
@@ -99,7 +105,7 @@ namespace Shuile.UI.Menu
                 })
                 .OnExit(() =>
                 {
-                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, -20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Back.transform.parent.DOLocalRotate(new Vector3(0f, 0f, -20f), 0.2f).SetEase(Ease.OutSine);
                     btn_Setting.targetGraphic.DOFade(1f, 0.3f);
                     btn_Setting.enabled = true;
                     btn_Start.targetGraphic.DOFade(1f, 0.3f);
@@ -113,9 +119,10 @@ namespace Shuile.UI.Menu
                 {
                     btn_Setting.enabled = false;
                     PlayFlash();
-                    ((RectTransform)flashAnimation.transform).DOAnchorPos(new(-330, 350), 0.3f).SetEase(Ease.OutSine);
-                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, 20f), 0.2f).SetEase(Ease.OutSine);
-                    btn_Setting.transform.DORotate(new(0f, 0f, 0), 0.3f).SetEase(Ease.OutSine);
+                    ((RectTransform)flashAnimation.transform).DOAnchorPos(new Vector2(-330, 350), 0.3f)
+                        .SetEase(Ease.OutSine);
+                    btn_Back.transform.parent.DOLocalRotate(new Vector3(0f, 0f, 20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Setting.transform.DORotate(new Vector3(0f, 0f, 0), 0.3f).SetEase(Ease.OutSine);
                     ((RectTransform)btn_Start.transform).DOAnchorPosY(300f, 0.3f).SetEase(Ease.OutSine);
                     ((RectTransform)btn_Setting.transform).DOAnchorPosY(-215f, 0.3f).SetEase(Ease.OutSine);
                     ((RectTransform)settingsPanel.transform).DOAnchorPosY(-325, 0.1f).SetEase(Ease.OutSine);
@@ -124,8 +131,8 @@ namespace Shuile.UI.Menu
                 .OnExit(() =>
                 {
                     btn_Setting.enabled = true;
-                    btn_Back.transform.parent.DOLocalRotate(new(0f, 0f, -20f), 0.2f).SetEase(Ease.OutSine);
-                    btn_Setting.transform.DORotate(new(0f, 0f, 18.4f), 0.3f).SetEase(Ease.OutSine);
+                    btn_Back.transform.parent.DOLocalRotate(new Vector3(0f, 0f, -20f), 0.2f).SetEase(Ease.OutSine);
+                    btn_Setting.transform.DORotate(new Vector3(0f, 0f, 18.4f), 0.3f).SetEase(Ease.OutSine);
                     ((RectTransform)btn_Start.transform).DOAnchorPosY(-486f, 0.3f).SetEase(Ease.OutSine);
                     ((RectTransform)btn_Setting.transform).DOAnchorPosY(-710f, 0.3f).SetEase(Ease.OutSine);
                     ((RectTransform)settingsPanel.transform).DOAnchorPosY(-600, 0.1f).SetEase(Ease.OutSine);
@@ -146,15 +153,12 @@ namespace Shuile.UI.Menu
             FlashAnimState.speed = 1f;
             flashAnimation.Play();
         }
+
         private void RewindFlash()
         {
             FlashAnimState.time = FlashAnimState.normalizedTime > 1f ? flashAnimation.clip.length : FlashAnimState.time;
             FlashAnimState.speed = -1f;
             flashAnimation.Play();
         }
-
-        private AnimationState FlashAnimState => flashAnimation[flashAnimation.clip.name];
-
-        public State CurrentState => _fsm.CurrentStateId;
     }
 }

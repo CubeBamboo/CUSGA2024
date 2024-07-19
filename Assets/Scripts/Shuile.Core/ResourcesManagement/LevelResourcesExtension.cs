@@ -20,25 +20,42 @@ namespace Shuile
             var prefabs = await self.GetGlobalPrefabsAsync();
             var particles = prefabs.particles;
             foreach (var particle in particles)
+            {
                 if (particle.name == name)
+                {
                     return particle.prefab;
+                }
+            }
+
             return null;
         }
+
         public static GameObject GetParticleFromCache(this LevelResourcesLoader self, string name)
         {
             var prefabs = self.SyncContext.globalPrefabs;
             var particles = prefabs.particles;
             foreach (var particle in particles)
+            {
                 if (particle.name == name)
+                {
                     return particle.prefab;
+                }
+            }
+
             return null;
         }
+
         public static GameObject GetParticle(this LevelResourcesLoader self, string name, PrefabConfigSO prefabs)
         {
             var particles = prefabs.particles;
             foreach (var particle in particles)
+            {
                 if (particle.name == name)
+                {
                     return particle.prefab;
+                }
+            }
+
             return null;
         }
     }

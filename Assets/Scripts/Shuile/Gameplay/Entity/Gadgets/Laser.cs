@@ -1,32 +1,30 @@
 using CbUtils.Event;
 using CbUtils.Extension;
-using Shuile.Gameplay;
-using Shuile.Rhythm.Runtime;
-
-using UnityEngine;
-using DG.Tweening;
 using Cysharp.Threading.Tasks;
-using Shuile.Core.Framework;
+using DG.Tweening;
+using Shuile.Gameplay;
 using Shuile.Gameplay.Character;
 using Shuile.Rhythm;
+using System;
+using UnityEngine;
 
 namespace Shuile
 {
     // attach to laser GameObject
     public class Laser : MonoBehaviour
     {
+        public static readonly float InTime = 2f;
         [SerializeField] private bool playOnAwake = true;
         [SerializeField] private float attackStayTime = 0.8f;
 
-        [Tooltip("time calculate will based on MusicRhythmManager.cs if is true")]
-        [SerializeField] private bool useRhythmTime = true;
+        [Tooltip("time calculate will based on MusicRhythmManager.cs if is true")] [SerializeField]
+        private bool useRhythmTime = true;
 
-        public static readonly float InTime = 2f;
-
-        float usingInTime;
-        float targetScaleX;
-        SpriteRenderer mRenderer;
+        private SpriteRenderer mRenderer;
+        private float targetScaleX;
         private LevelTimingManager timingManager;
+
+        private float usingInTime;
 
         private void Awake()
         {
@@ -42,23 +40,26 @@ namespace Shuile
             InitParameters();
 
             if (playOnAwake)
+            {
                 Play();
+            }
         }
 
         public void Play()
         {
             InternalPlay().Forget();
         }
+
         public async UniTaskVoid InternalPlay()
         {
             FadeInBehave();
 
-            await UniTask.Delay(System.TimeSpan.FromSeconds(usingInTime),
+            await UniTask.Delay(TimeSpan.FromSeconds(usingInTime),
                 cancellationToken: gameObject.GetCancellationTokenOnDestroy());
 
             AttackBehave().Forget();
 
-            await UniTask.Delay(System.TimeSpan.FromSeconds(attackStayTime),
+            await UniTask.Delay(TimeSpan.FromSeconds(attackStayTime),
                 cancellationToken: gameObject.GetCancellationTokenOnDestroy());
 
             FadeOutBehave();
@@ -69,7 +70,7 @@ namespace Shuile
             mRenderer.color = mRenderer.color.With(a: 0f);
             mRenderer.DOFade(0.2f, 0.8f);
 
-            transform.localScale = transform.localScale.With(x: targetScaleX);
+            transform.localScale = transform.localScale.With(targetScaleX);
             transform.DOScaleX(targetScaleX * 0.1f, usingInTime);
         }
 
@@ -79,17 +80,23 @@ namespace Shuile
             mRenderer.DOFade(1f, 0.15f);
 
             var evtMono = gameObject.GetOrAddComponent<Collider2DEventMono>();
-            evtMono.TriggerStayed += (collider) =>
+            evtMono.TriggerStayed += collider =>
             {
                 if (collider.CompareTag("Player"))
                 {
                     collider.GetComponent<Player>().OnHurt(200); // TODO: config
-                    if (evtMono) evtMono.Destroy(); //销毁组件
+                    if (evtMono)
+                    {
+                        evtMono.Destroy(); //销毁组件
+                    }
                 }
             };
 
             await UniTask.DelayFrame(30, cancellationToken: gameObject.GetCancellationTokenOnDestroy());
-            if (evtMono) evtMono.Destroy(); //销毁组件
+            if (evtMono)
+            {
+                evtMono.Destroy(); //销毁组件
+            }
         }
 
         private void FadeOutBehave()

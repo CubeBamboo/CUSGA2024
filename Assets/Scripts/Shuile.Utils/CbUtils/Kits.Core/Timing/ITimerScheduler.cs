@@ -16,10 +16,10 @@ namespace CbUtils.Timing.Scheduler
     public class MonoBehaviorTimerScheduler : ITimerScheduler
     {
         private readonly MonoBehaviour _monoBehaviour;
-        private float baseTimer = 0f;
+        private readonly List<RefTimerData> refTimerList = new();
 
         private readonly List<ValueTimerData> valueTimerList = new();
-        private readonly List<RefTimerData> refTimerList = new();
+        private float baseTimer;
 
         public MonoBehaviorTimerScheduler()
         {
@@ -28,6 +28,18 @@ namespace CbUtils.Timing.Scheduler
                 .AddComponent<EmptyMonoBehavior>();
             _monoBehaviour.gameObject.GetOrAddComponent<MonoUpdateEventTrigger>().UpdateEvt += OnUpdate;
         }
+
+        public void Schedule(ValueTimerData timerData, bool canBeCancelled = true)
+        {
+            valueTimerList.Add(timerData);
+        }
+
+        public void StopAllTimer()
+        {
+            valueTimerList.Clear();
+            refTimerList.Clear();
+        }
+
         ~MonoBehaviorTimerScheduler()
         {
             _monoBehaviour.gameObject.GetOrAddComponent<MonoUpdateEventTrigger>().UpdateEvt -= OnUpdate;
@@ -45,6 +57,7 @@ namespace CbUtils.Timing.Scheduler
                     valueTimerList.Remove(timer);
                 }
             }
+
             foreach (var timer in refTimerList)
             {
                 if (baseTimer > (float)timer.delay.TotalSeconds)
@@ -55,31 +68,15 @@ namespace CbUtils.Timing.Scheduler
             }
         }
 
-        public void Schedule(ValueTimerData timerData, bool canBeCancelled = true)
-        {
-            valueTimerList.Add(timerData);
-        }
-
         public void Schedule(RefTimerData timerData, bool canBeCancelled = true)
         {
             refTimerList.Add(timerData);
-        }
-
-        public void StopAllTimer()
-        {
-            valueTimerList.Clear();
-            refTimerList.Clear();
         }
     }
 
     public class UniTaskTimerScheduler : ITimerScheduler
     {
         private CancellationTokenSource globalCts = new();
-
-        public void Schedule(ValueTimerData timerData)
-        {
-            InternalSchedule(timerData, globalCts.Token).Forget();
-        }
 
         public void Schedule(ValueTimerData timerData, bool canBeCancelled = true)
         {
@@ -90,7 +87,12 @@ namespace CbUtils.Timing.Scheduler
         {
             globalCts.Cancel();
             globalCts.Dispose();
-            globalCts = new();
+            globalCts = new CancellationTokenSource();
+        }
+
+        public void Schedule(ValueTimerData timerData)
+        {
+            InternalSchedule(timerData, globalCts.Token).Forget();
         }
 
         private async UniTask InternalSchedule(ValueTimerData timerData, CancellationToken ct = default)

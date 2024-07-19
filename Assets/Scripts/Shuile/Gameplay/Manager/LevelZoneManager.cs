@@ -9,6 +9,8 @@ namespace Shuile.Gameplay.Manager
         [SerializeField] private MarkedZone2D markedZone;
 
         public Vector2 RandomValidPosition()
-            => markedZone.RandomPosition();
+        {
+            return markedZone.RandomPosition();
+        }
     }
 }

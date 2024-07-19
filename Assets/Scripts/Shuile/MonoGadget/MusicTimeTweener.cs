@@ -1,33 +1,34 @@
-using Shuile.Core.Framework;
 using Shuile.Gameplay;
 using Shuile.Rhythm;
-using Shuile.Rhythm.Runtime;
-
 using UnityEngine;
 
 namespace Shuile.MonoGadget
 {
     public class MusicTimeTweener : MonoBehaviour
     {
-        private MusicRhythmManager _manager;
         private float _lastManagerTime;
-        private float _tweenTime;
+        private MusicRhythmManager _manager;
 
-        public float TweenTime => _tweenTime;
+        public float TweenTime { get; private set; }
 
         protected void Awake()
         {
             var scope = LevelScope.Interface;
-            _manager = scope.GetImplementation<MusicRhythmManager>();;
-            _tweenTime = _lastManagerTime = _manager.CurrentTime;
+            _manager = scope.GetImplementation<MusicRhythmManager>();
+            ;
+            TweenTime = _lastManagerTime = _manager.CurrentTime;
         }
 
         private void Update()
         {
             if (!_manager.IsPlaying || _lastManagerTime != _manager.CurrentTime)
-                _tweenTime = _lastManagerTime = _manager.CurrentTime;
+            {
+                TweenTime = _lastManagerTime = _manager.CurrentTime;
+            }
             else
-                _tweenTime += Time.deltaTime;
+            {
+                TweenTime += Time.deltaTime;
+            }
         }
     }
 }

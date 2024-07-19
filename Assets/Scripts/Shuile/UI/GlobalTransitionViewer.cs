@@ -14,11 +14,6 @@ namespace Shuile.UI
         public float InDuration => inDuration;
         public float ExitDuration => outDuration;
 
-        protected override void OnAwake()
-        {
-            panel.color = panel.color.With(a: 0);
-        }
-
         public void OnStart()
         {
             gameObject.SetActive(true);
@@ -37,6 +32,11 @@ namespace Shuile.UI
         public void OnEnd()
         {
             gameObject.SetActive(false);
+        }
+
+        protected override void OnAwake()
+        {
+            panel.color = panel.color.With(a: 0);
         }
     }
 }

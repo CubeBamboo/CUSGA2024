@@ -1,7 +1,6 @@
 using CbUtils.Extension;
 using Shuile.Core.Framework.Unity;
 using Shuile.Core.Gameplay.Data;
-using Shuile.Gameplay;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Manager;
 using Shuile.Rhythm;
@@ -22,6 +21,7 @@ namespace Shuile.Chart
             _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
             _timingManager = scope.GetImplementation<LevelTimingManager>();
         }
+
         public void ProcessNote(BaseNoteData noteData)
         {
             switch (noteData)

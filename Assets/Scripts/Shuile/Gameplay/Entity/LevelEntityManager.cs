@@ -5,7 +5,6 @@ using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Event;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
-using Shuile.Rhythm.Runtime;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
@@ -15,41 +14,28 @@ namespace Shuile.Gameplay.Entity
     public class LevelEntityManager : IStartable, IDestroyable
     {
         private readonly List<Enemy> _enemyList = new();
-
-        private bool _judging = false;
-        private int _frameCounter = 0;
-        
-        private Transform _enemyParent;
-
-        private readonly LevelModel _levelModel;
         private readonly PrefabConfigSO _globalPrefab;
 
-        internal LevelEntityFactory EntityFactory { get; private set; }
+        private readonly LevelModel _levelModel;
 
-        public bool IsJudging => _judging;
-
-        public Transform EnemyParent => _enemyParent;
-
-        public int EnemyCount { get; set; }
-        public ReadOnlyCollection<Enemy> Enemies => _enemyList.AsReadOnly();
+        private int _frameCounter;
 
         public LevelEntityManager(IGetableScope scope)
         {
             _levelModel = scope.GetImplementation<LevelModel>();
-            
+
             var resourceLoader = LevelResourcesLoader.Instance;
             _globalPrefab = resourceLoader.SyncContext.globalPrefabs;
         }
 
-        public void Start()
-        {
-            EntityFactory = new LevelEntityFactory(this, _globalPrefab);
-            
-            _enemyParent = new GameObject("Enemies").transform;
-            
-            TypeEventSystem.Global.Register<EnemySpawnEvent>(OnEnemySpawn);
-            TypeEventSystem.Global.Register<EnemyDieEvent>(OnEnemyDie);
-        }
+        internal LevelEntityFactory EntityFactory { get; private set; }
+
+        public bool IsJudging { get; private set; }
+
+        public Transform EnemyParent { get; private set; }
+
+        public int EnemyCount { get; set; }
+        public ReadOnlyCollection<Enemy> Enemies => _enemyList.AsReadOnly();
 
         public void OnDestroy()
         {
@@ -57,23 +43,40 @@ namespace Shuile.Gameplay.Entity
             TypeEventSystem.Global.UnRegister<EnemyDieEvent>(OnEnemyDie);
         }
 
+        public void Start()
+        {
+            EntityFactory = new LevelEntityFactory(this, _globalPrefab);
+
+            EnemyParent = new GameObject("Enemies").transform;
+
+            TypeEventSystem.Global.Register<EnemySpawnEvent>(OnEnemySpawn);
+            TypeEventSystem.Global.Register<EnemyDieEvent>(OnEnemyDie);
+        }
+
         private void OnEnemySpawn(EnemySpawnEvent evt)
         {
             if (evt.enemy.TryGetComponent<Enemy>(out var enemy))
+            {
                 MarkEnemy(enemy);
+            }
+
             EnemyCount++;
         }
+
         private void OnEnemyDie(EnemyDieEvent evt)
         {
             _levelModel.DangerScore += DangerLevelUtils.GetEnemyKillAddition();
             if (evt.enemy.TryGetComponent<Enemy>(out var enemy))
+            {
                 _enemyList.UnorderedRemove(enemy);
+            }
+
             EnemyCount--;
         }
 
         public void OnRhythmHit()
         {
-            _judging = true;
+            IsJudging = true;
             var version = _frameCounter++;
 
             // common judgeable
@@ -84,11 +87,13 @@ namespace Shuile.Gameplay.Entity
 
             // Judge enemy first
             foreach (var enemy in _enemyList)
+            {
                 enemy.Judge(version, false);
+            }
 
-            _judging = false;
+            IsJudging = false;
         }
-        
+
         public void RemoveImmediate(Enemy enemy)
         {
             _enemyList.UnorderedRemove(enemy);

@@ -1,10 +1,9 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace CbUtils.LinkedValue
 {
     /// <summary>
-    ///  tweening by lerping itself
+    ///     tweening by lerping itself
     /// </summary>
     public class LerpFloatTweeningValue : TweeningValue<float>
     {
@@ -15,16 +14,17 @@ namespace CbUtils.LinkedValue
     }
 
     /// <summary>
-    /// tweening by velocity
+    ///     tweening by velocity
     /// </summary>
     public class VelFloatTweeningValue : TweeningValue<float>
     {
         public float maxDelta = 4f; // value - tweenValue
         public float maxVelocity = 0.05f; // to tween
+
         public override void OnUpdate()
         {
-            float delta = Mathf.Clamp01(Mathf.Abs(Value - TweenResult) / maxDelta);
-            float absVelocity = Mathf.Lerp(0, maxVelocity, delta);
+            var delta = Mathf.Clamp01(Mathf.Abs(Value - TweenResult) / maxDelta);
+            var absVelocity = Mathf.Lerp(0, maxVelocity, delta);
             TweenResult = Mathf.MoveTowards(TweenResult, Value, absVelocity);
         }
     }
@@ -33,10 +33,11 @@ namespace CbUtils.LinkedValue
     {
         public float maxDelta = 10f; // value - tweenValue
         public float maxVelocity = 0.08f; // to tween
+
         public override void OnUpdate()
         {
-            float delta = Mathf.Clamp01((Value - TweenResult).magnitude / maxDelta);
-            float absVelocity = Mathf.Lerp(0, maxVelocity, delta);
+            var delta = Mathf.Clamp01((Value - TweenResult).magnitude / maxDelta);
+            var absVelocity = Mathf.Lerp(0, maxVelocity, delta);
             TweenResult = Vector3.MoveTowards(TweenResult, Value, absVelocity);
         }
     }

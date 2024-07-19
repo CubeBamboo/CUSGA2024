@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioClipUtility : MonoBehaviour
@@ -8,20 +6,20 @@ public class AudioClipUtility : MonoBehaviour
     {
         resolution = _clip.frequency / resolution;
 
-        float[] samples = new float[_clip.samples * _clip.channels];
+        var samples = new float[_clip.samples * _clip.channels];
         _clip.GetData(samples, 0);
 
-        float[] waveForm = new float[(samples.Length / resolution)];
+        var waveForm = new float[samples.Length / resolution];
 
         float min = 0;
         float max = 0;
-        bool inited = false;
+        var inited = false;
 
-        for (int i = 0; i < waveForm.Length; i++)
+        for (var i = 0; i < waveForm.Length; i++)
         {
             waveForm[i] = 0;
 
-            for (int j = 0; j < resolution; j++)
+            for (var j = 0; j < resolution; j++)
             {
                 waveForm[i] += Mathf.Abs(samples[(i * resolution) + j]);
             }
@@ -48,13 +46,13 @@ public class AudioClipUtility : MonoBehaviour
         }
 
 
-        Color backgroundColor = Color.black;
-        Color waveformColor = Color.green;
-        Color[] blank = new Color[width * height];
-        Texture2D texture = new Texture2D(width, height);
+        var backgroundColor = Color.black;
+        var waveformColor = Color.green;
+        var blank = new Color[width * height];
+        var texture = new Texture2D(width, height);
 
         // init background color
-        for (int i = 0; i < blank.Length; ++i)
+        for (var i = 0; i < blank.Length; ++i)
         {
             blank[i] = backgroundColor;
         }
@@ -62,9 +60,9 @@ public class AudioClipUtility : MonoBehaviour
         texture.SetPixels(blank, 0);
 
         // draw waveform
-        float xScale = (float)width / (float)waveForm.Length;
+        var xScale = width / (float)waveForm.Length;
 
-        int tMid = (int)(height / 2.0f);
+        var tMid = (int)(height / 2.0f);
         float yScale = 1;
 
         if (max > tMid)
@@ -72,14 +70,14 @@ public class AudioClipUtility : MonoBehaviour
             yScale = tMid / max;
         }
 
-        for (int i = 0; i < waveForm.Length; ++i)
+        for (var i = 0; i < waveForm.Length; ++i)
         {
-            int x = (int)(i * xScale);
-            int yOffset = (int)(waveForm[i] * yScale);
-            int startY = tMid - yOffset;
-            int endY = tMid + yOffset;
+            var x = (int)(i * xScale);
+            var yOffset = (int)(waveForm[i] * yScale);
+            var startY = tMid - yOffset;
+            var endY = tMid + yOffset;
 
-            for (int y = startY; y <= endY; ++y)
+            for (var y = startY; y <= endY; ++y)
             {
                 texture.SetPixel(x, y, waveformColor);
             }

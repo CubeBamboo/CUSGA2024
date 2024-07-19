@@ -1,9 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-
-using UnityEngine;
-
 using UDebug = UnityEngine.Debug;
 
 namespace Shuile.Persistent
@@ -39,16 +36,22 @@ namespace Shuile.Persistent
             }
 
             if (field == value)
+            {
                 return;
+            }
 
             if (value is INotifyTreePropertyChanged newSubNotifier)
             {
                 var oldSubNotifier = field as INotifyTreePropertyChanged;
                 if (oldSubNotifier != null)
+                {
                     oldSubNotifier.OnTreePropertyChanged -= BuildEventLinker(notifier, caller);
+                }
 
                 if (newSubNotifier != null)
+                {
                     newSubNotifier.OnTreePropertyChanged += BuildEventLinker(notifier, caller);
+                }
             }
 
             field = value;
@@ -75,23 +78,30 @@ namespace Shuile.Persistent
             }
 
             if (field.Equals(value))
+            {
                 return;
+            }
 
             if (value is INotifyTreePropertyChanged newSubNotifier)
             {
                 var oldSubNotifier = field as INotifyTreePropertyChanged;
                 if (oldSubNotifier != null)
+                {
                     oldSubNotifier.OnTreePropertyChanged -= BuildEventLinker(notifier, caller);
+                }
 
                 if (newSubNotifier != null)
+                {
                     newSubNotifier.OnTreePropertyChanged += BuildEventLinker(notifier, caller);
+                }
             }
 
             field = value;
             notifier.InvokeTreePropertyChanged(value, caller);
         }
 
-        public static TreePropertyChangedEventHandler BuildEventLinker(INotifyTreePropertyChanged notifier, string callerName)
+        public static TreePropertyChangedEventHandler BuildEventLinker(INotifyTreePropertyChanged notifier,
+            string callerName)
         {
             return (value, path) => notifier.InvokeTreePropertyChanged(value, callerName + '.' + path);
         }

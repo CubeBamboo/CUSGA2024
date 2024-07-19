@@ -1,14 +1,17 @@
-using CbUtils.ActionKit;
 using CbUtils.Timing;
 using Cysharp.Threading.Tasks;
+using System;
 
 namespace Shuile
 {
-    public interface IGameRouter { }
+    public interface IGameRouter
+    {
+    }
+
     public static class IGameRouterExt
     {
         public static void DoTransition(this IGameRouter gameRouter,
-            System.Action action, IRouterLoadingViewer loadingViewer)
+            Action action, IRouterLoadingViewer loadingViewer)
         {
             loadingViewer.OnStart();
             loadingViewer.In();
@@ -26,7 +29,7 @@ namespace Shuile
         }
 
         public static void DoTransition(this IGameRouter gameRouter,
-            System.Func<UniTask> asyncAction, IRouterLoadingViewer loadingViewer)
+            Func<UniTask> asyncAction, IRouterLoadingViewer loadingViewer)
         {
             loadingViewer.OnStart();
             loadingViewer.In();
@@ -36,7 +39,10 @@ namespace Shuile
             var enterTimer = TimingCtrl.Instance.Timer(loadingViewer.InDuration, async () =>
             {
                 if (asyncAction != null)
+                {
                     await asyncAction.Invoke();
+                }
+
                 loadingViewer.Out();
                 exitTimer.Start(false);
             });

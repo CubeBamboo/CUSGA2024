@@ -1,8 +1,6 @@
 using DG.Tweening;
-using Shuile.Core.Framework;
 using Shuile.Gameplay;
 using Shuile.Rhythm;
-using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
 namespace Shuile.UI
@@ -10,15 +8,14 @@ namespace Shuile.UI
     [RequireComponent(typeof(RectTransform))]
     public class RhythmShakeAnim : MonoBehaviour
     {
-        private AutoPlayChartManager _autoPlayChartManager;
-
-        RectTransform rectTransform;
-        private Vector3 InitScale;
-
         [SerializeField] private float shakeScale = 1.2f;
         [SerializeField] private float shakeDuration = 0.2f;
+        private AutoPlayChartManager _autoPlayChartManager;
 
         private float halfShakeDurationCache;
+        private Vector3 InitScale;
+
+        private RectTransform rectTransform;
 
         private void Start()
         {

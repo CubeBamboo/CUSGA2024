@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Move
@@ -36,11 +37,15 @@ namespace Shuile.Gameplay.Move
             set { }
         }
 
-        public float Acceleration { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public float Acceleration
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
         public void XMove(float dir)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

@@ -18,61 +18,79 @@ namespace Shuile.Gameplay.Entity.Enemies
 
 
     /// <summary>
-    /// call it on FixedUpdate
+    ///     call it on FixedUpdate
     /// </summary>
     public class ZakoPatrolBehavior : IBehavior
     {
-        private GameObject target;
-        private SmoothMoveCtrl moveCtrl;
-        private float checkWallDist;
+        private readonly bool canMove = true;
+        private readonly float checkWallDist;
 
-        private Vector2 leftPoint, rightPoint;
+        private readonly Vector2 leftPoint;
+        private readonly Vector2 rightPoint;
+        private readonly SmoothMoveCtrl moveCtrl;
+        private readonly GameObject target;
 
-        float faceDir;
-
-        bool canMove = true;
-
-        public ZakoPatrolBehavior(GameObject target, SmoothMoveCtrl moveCtrl, float patrolDistance, float checkWallDistance = 0.8f)
+        public ZakoPatrolBehavior(GameObject target, SmoothMoveCtrl moveCtrl, float patrolDistance,
+            float checkWallDistance = 0.8f)
         {
             this.target = target;
             this.moveCtrl = moveCtrl;
-            this.checkWallDist = checkWallDistance;
+            checkWallDist = checkWallDistance;
 
             leftPoint = (Vector2)target.transform.position - new Vector2(patrolDistance, 0);
             rightPoint = (Vector2)target.transform.position + new Vector2(patrolDistance, 0);
 
-            faceDir = 1;
+            FaceDir = 1;
         }
+
+        public float FaceDir { get; private set; }
 
         public void Do()
         {
             //if(Random.Range(0, 1000) < 5)
             //    canMove = !canMove; // ai (in chinese), shit code
-            if (!canMove) return;
+            if (!canMove)
+            {
+                return;
+            }
 
-            if (EnemyBehaviorAction.XRayCastWall(moveCtrl.Position, faceDir, checkWallDist))
-                faceDir = -faceDir;
+            if (EnemyBehaviorAction.XRayCastWall(moveCtrl.Position, FaceDir, checkWallDist))
+            {
+                FaceDir = -FaceDir;
+            }
+
             var posX = target.transform.position.x;
             if (posX < leftPoint.x)
-                faceDir = 1;
+            {
+                FaceDir = 1;
+            }
             else if (posX > rightPoint.x)
-                faceDir = -1;
+            {
+                FaceDir = -1;
+            }
 
-            if (faceDir != 0) moveCtrl.XMove(faceDir);
+            if (FaceDir != 0)
+            {
+                moveCtrl.XMove(FaceDir);
+            }
         }
-
-        public float FaceDir => faceDir;
     }
 
     /// <summary>
-    /// call it on fixedupdate
+    ///     call it on fixedupdate
     /// </summary>
     public class ZakoChaseBehavior : IBehavior
     {
-        private GameObject toChase;
         private SmoothMoveCtrl moveCtrl;
+        private GameObject toChase;
 
-        private float faceDir;
+        public float FaceDir { get; private set; }
+
+        public void Do()
+        {
+            FaceDir = Mathf.Sign(toChase.transform.position.x - moveCtrl.Position.x);
+            moveCtrl.XMove(FaceDir);
+        }
 
         public void Bind(GameObject toChase, SmoothMoveCtrl moveCtrl)
         {
@@ -80,33 +98,50 @@ namespace Shuile.Gameplay.Entity.Enemies
             this.moveCtrl = moveCtrl;
         }
 
-        public void Do()
+        public bool CloseEnoughToTarget(float threshold)
         {
-            faceDir = Mathf.Sign(toChase.transform.position.x - moveCtrl.Position.x);
-            moveCtrl.XMove(faceDir);
+            return (toChase.transform.position - moveCtrl.Position).sqrMagnitude < threshold * threshold;
         }
 
-        public float FaceDir => faceDir;
-        public bool CloseEnoughToTarget(float threshold)
-            => (toChase.transform.position - moveCtrl.Position).sqrMagnitude < threshold * threshold;
         public bool XCloseEnoughToTarget(float threshold)
-            => Mathf.Abs(toChase.transform.position.x - moveCtrl.Position.x) < threshold;
+        {
+            return Mathf.Abs(toChase.transform.position.x - moveCtrl.Position.x) < threshold;
+        }
     }
 
     public static class EnemyBehaviorAction
     {
         public static RaycastHit2D XRayCastPlayer(Vector2 startPosition, float direction, float maxDistance)
-            => Physics2D.Raycast(startPosition, new Vector2(direction, 0), maxDistance, LayerMask.GetMask("Player"));
-        public static RaycastHit2D XRayCastWall(Vector2 startPosition, float direction, float maxDistance)
-            => Physics2D.Raycast(startPosition, new Vector2(direction, 0), maxDistance, LayerMask.GetMask("Ground"));
-
-        public static void CheckWallAndJump(SmoothMoveCtrl moveCtrl, float faceDir, float checkDistance = 0.5f, bool showDebugLine = false)
         {
-            if (!moveCtrl.IsOnGround) return;
+            return Physics2D.Raycast(startPosition, new Vector2(direction, 0), maxDistance,
+                LayerMask.GetMask("Player"));
+        }
+
+        public static RaycastHit2D XRayCastWall(Vector2 startPosition, float direction, float maxDistance)
+        {
+            return Physics2D.Raycast(startPosition, new Vector2(direction, 0), maxDistance,
+                LayerMask.GetMask("Ground"));
+        }
+
+        public static void CheckWallAndJump(SmoothMoveCtrl moveCtrl, float faceDir, float checkDistance = 0.5f,
+            bool showDebugLine = false)
+        {
+            if (!moveCtrl.IsOnGround)
+            {
+                return;
+            }
+
             var hit = XRayCastWall(moveCtrl.Position, faceDir, checkDistance);
-            if(showDebugLine) UnityAPIExtension.DebugLineForRayCast2D(moveCtrl.Position, Vector2.right * faceDir, checkDistance, LayerMask.GetMask("Ground"));
+            if (showDebugLine)
+            {
+                UnityAPIExtension.DebugLineForRayCast2D(moveCtrl.Position, Vector2.right * faceDir, checkDistance,
+                    LayerMask.GetMask("Ground"));
+            }
+
             if (hit)
+            {
                 moveCtrl.SimpleJump(1f);
+            }
         }
     }
 }

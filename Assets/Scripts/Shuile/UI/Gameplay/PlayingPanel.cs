@@ -1,4 +1,3 @@
-using Shuile.Core.Framework;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Character;
 using Shuile.Model;
@@ -12,7 +11,7 @@ namespace Shuile.UI.Gameplay
     {
         [SerializeField] private Image hpFillImage;
         [SerializeField] private TextMeshProUGUI dangerLevelText;
-        [SerializeField] private Player player; 
+        [SerializeField] private Player player;
 
         private float _playerMaxHp;
 
@@ -21,8 +20,8 @@ namespace Shuile.UI.Gameplay
             var scope = LevelScope.Interface;
             var levelModel = scope.GetImplementation<LevelModel>();
             levelModel.OnDangerScoreChange.Register(old =>
-                dangerLevelText.text = levelModel.DangerLevel.ToString())
-               .UnRegisterWhenGameObjectDestroyed(gameObject);
+                    dangerLevelText.text = levelModel.DangerLevel.ToString())
+                .UnRegisterWhenGameObjectDestroyed(gameObject);
             _playerMaxHp = player.Property.maxHealthPoint;
 
             UpdateHpUI(int.MinValue, player.CurrentHp.Value);

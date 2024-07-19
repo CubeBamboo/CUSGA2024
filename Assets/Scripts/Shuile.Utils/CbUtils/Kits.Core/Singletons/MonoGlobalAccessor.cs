@@ -11,6 +11,7 @@ namespace CbUtils.Unity
             Instance = this as T;
             OnAwake();
         }
+
         protected virtual void OnAwake() { }
     }
 }

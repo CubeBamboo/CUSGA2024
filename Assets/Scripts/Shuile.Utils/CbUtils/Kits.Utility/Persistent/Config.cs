@@ -2,9 +2,9 @@ namespace Shuile.Persistent
 {
     public class Config : PersistentData<Config>
     {
-        private int globalDelay = 0;
         private int bgAudioVolume = 100;
         private int fxAudioVolume = 100;
+        private int globalDelay;
         private bool vibrationFeel = true;
 
         public int GlobalDelay
@@ -12,24 +12,23 @@ namespace Shuile.Persistent
             get => globalDelay;
             set => this.UpdateStructProperty(ref globalDelay, value);
         }
+
         public int BgAudioVolume
         {
             get => bgAudioVolume;
             set => this.UpdateStructProperty(ref bgAudioVolume, value);
         }
+
         public int FxAudioVolume
         {
             get => fxAudioVolume;
             set => this.UpdateStructProperty(ref fxAudioVolume, value);
         }
+
         public bool VibrationFeel
         {
             get => vibrationFeel;
             set => this.UpdateStructProperty(ref vibrationFeel, value);
-        }
-
-        public Config()
-        {
         }
 
 

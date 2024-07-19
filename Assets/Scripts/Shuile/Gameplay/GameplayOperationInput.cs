@@ -25,9 +25,13 @@ namespace Shuile.Gameplay
             {
                 //Debug.Log(context.action.phase);
                 if (context.action.phase == InputActionPhase.Started)
+                {
                     exitPanel.Show();
+                }
                 else if (context.action.phase == InputActionPhase.Canceled)
+                {
                     exitPanel.Hide();
+                }
             }
         }
     }

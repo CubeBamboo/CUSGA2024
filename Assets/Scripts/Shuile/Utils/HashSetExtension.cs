@@ -7,7 +7,9 @@ namespace Shuile
         public static void AddRange<T>(this HashSet<T> set, params T[] items)
         {
             foreach (var item in items)
+            {
                 set.Add(item);
+            }
         }
     }
 }

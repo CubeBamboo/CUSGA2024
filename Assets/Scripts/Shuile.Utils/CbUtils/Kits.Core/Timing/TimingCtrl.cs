@@ -1,4 +1,5 @@
 using CbUtils.Timing.Scheduler;
+using System;
 
 namespace CbUtils.Timing
 {
@@ -6,12 +7,17 @@ namespace CbUtils.Timing
     {
         public ITimerScheduler CurrentTimerScheduler { get; set; } = new UniTaskTimerScheduler();
 
-        public ValueTimerData Timer(double secondsDelay, System.Action onComplete)
-            => ValueTimerData.Create(secondsDelay, onComplete);
+        public ValueTimerData Timer(double secondsDelay, Action onComplete)
+        {
+            return ValueTimerData.Create(secondsDelay, onComplete);
+        }
     }
 
     public static class TimingCtrlExtension
     {
-        public static void StopAllTimer(this TimingCtrl self) => self.CurrentTimerScheduler.StopAllTimer();
+        public static void StopAllTimer(this TimingCtrl self)
+        {
+            self.CurrentTimerScheduler.StopAllTimer();
+        }
     }
 }

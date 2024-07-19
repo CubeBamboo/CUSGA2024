@@ -16,7 +16,8 @@ namespace Shuile
             defaultLoadingViewer = GlobalTransitionViewer.Instance;
         }
 
-        private static async UniTask InternalLoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        private static async UniTask InternalLoadScene(string sceneName,
+            LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
             await SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
@@ -50,8 +51,10 @@ namespace Shuile
         }
 
         public Scene GetCurrentScene()
-            => SceneManager.GetActiveScene();
-        
+        {
+            return SceneManager.GetActiveScene();
+        }
+
         public void RestartGame()
         {
             SceneManager.LoadScene("Root");

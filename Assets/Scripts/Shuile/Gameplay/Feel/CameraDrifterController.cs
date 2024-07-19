@@ -1,5 +1,3 @@
-using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Gameplay.Character;
 using UnityEngine;
 
@@ -16,7 +14,7 @@ namespace Shuile.Gameplay.Feel
         {
             var scope = LevelScope.Interface;
             var player = scope.GetImplementation<Player>();
-            this._player = player.transform;
+            _player = player.transform;
         }
     }
 }

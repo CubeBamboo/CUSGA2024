@@ -1,46 +1,15 @@
 using CbUtils;
-using Shuile.Core.Framework;
-using Shuile.Core.Framework.Unity;
 using Shuile.Framework;
 using Shuile.Gameplay.Move;
 using Shuile.Gameplay.Weapon;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
-using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
     public class NormalPlayerCtrl : MonoBehaviour
     {
-        private enum MainState
-        {
-            Normal,
-            JumpUpAndInputHoldOn,
-            JumpUpAndInputHoldOff,
-            Drop
-        }
-        private enum MoveState
-        {
-            Idle,
-            Move,
-        }
-        private enum JumpState
-        {
-            Idle,
-            Jump,
-        }
-
-        // [behave state?]
-        private float moveParam;
-
-        private readonly FSM<MainState> mainFsm = new();
-        private readonly FSM<MoveState> moveFsm = new();
-        private readonly FSM<JumpState> jumpFsm = new();
-
-        private NormalPlayerInput mPlayerInput;
-        private SmoothMoveCtrl _moveController;
-
         // [normal move]
         [SerializeField] private float acc = 1.7f;
         [SerializeField] private float deAcc = 0.7f;
@@ -58,21 +27,32 @@ namespace Shuile.Gameplay.Character
         [SerializeField] private float attackRadius = 3.2f;
         [SerializeField] private int attackPoint = 20;
         [SerializeField] private Transform handTransform;
-        private bool attackingLock;
+        private readonly SimpleDurationTimer _holdJumpTimer = new();
+        private readonly FSM<JumpState> jumpFsm = new();
+
+        private readonly FSM<MainState> mainFsm = new();
+        private readonly FSM<MoveState> moveFsm = new();
+
+        private AttackCommand _attackCommand;
+        private TryHitNoteCommand _hitNoteCommand;
+        private SmoothMoveCtrl _moveController;
 
         private MusicRhythmManager _musicRhythmManager;
         private PlayerChartManager _playerChartManager;
         private PlayerModel _playerModel;
+        private bool attackingLock;
 
-        private AttackCommand _attackCommand;
-        private TryHitNoteCommand _hitNoteCommand;
+        // [behave state?]
+        private float moveParam;
+
+        private NormalPlayerInput mPlayerInput;
+
+        public EasyEvent OnJumpStart = new();
 
         public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
         public EasyEvent<WeaponHitData> OnWeaponHit { get; } = new();
         public EasyEvent<bool> OnWeaponAttack { get; } = new();
-
-        public EasyEvent OnJumpStart = new();
 
         // it has bug (((((
         public bool AttackingLock
@@ -82,14 +62,22 @@ namespace Shuile.Gameplay.Character
             {
                 Debug.Log("lock changed: " + value);
 
-                if (attackingLock == value) return;
+                if (attackingLock == value)
+                {
+                    return;
+                }
+
                 attackingLock = value;
                 //if (!value)
                 //    StopAttack();
 
                 _moveController.XMaxSpeed = value ? xMaxSpeed * 0.3f : xMaxSpeed;
                 if (value && Mathf.Abs(_moveController.Velocity.x) > _moveController.XMaxSpeed)
-                    _moveController.Velocity = _moveController.Velocity.With(x: Mathf.Sign(_moveController.Velocity.x) * _moveController.XMaxSpeed);
+                {
+                    _moveController.Velocity =
+                        _moveController.Velocity.With(
+                            Mathf.Sign(_moveController.Velocity.x) * _moveController.XMaxSpeed);
+                }
             }
         }
 
@@ -103,7 +91,6 @@ namespace Shuile.Gameplay.Character
                 return _hitNoteCommand.result.isHitOn;
             }
         }
-        private readonly SimpleDurationTimer _holdJumpTimer = new();
 
         private void Awake()
         {
@@ -112,16 +99,14 @@ namespace Shuile.Gameplay.Character
 
             _holdJumpTimer.MaxDuration = jumpMaxDuration;
         }
-        
+
         private void Start()
         {
-            _attackCommand = new()
+            _attackCommand = new AttackCommand
             {
-                position = transform.position,
-                attackRadius = attackRadius,
-                attackPoint = attackPoint
+                position = transform.position, attackRadius = attackRadius, attackPoint = attackPoint
             };
-            _hitNoteCommand = new()
+            _hitNoteCommand = new TryHitNoteCommand
             {
                 musicRhythmManager = _musicRhythmManager,
                 playerChartManager = _playerChartManager,
@@ -131,11 +116,6 @@ namespace Shuile.Gameplay.Character
             InitializeMainFSM();
             InitializeOtherFSM();
             RefreshParameter();
-        }
-
-        private void OnDestroy()
-        {
-            mPlayerInput.ClearAll();
         }
 
         private void FixedUpdate()
@@ -149,6 +129,11 @@ namespace Shuile.Gameplay.Character
 #endif
         }
 
+        private void OnDestroy()
+        {
+            mPlayerInput.ClearAll();
+        }
+
         /// <summary> update velocity </summary>
         public void NormalMove(float xInput)
         {
@@ -159,7 +144,10 @@ namespace Shuile.Gameplay.Character
 
         public void JumpPress()
         {
-            if (mainFsm.CurrentStateId != MainState.Normal) return;
+            if (mainFsm.CurrentStateId != MainState.Normal)
+            {
+                return;
+            }
 
             _moveController.Velocity = _moveController.Velocity.With(y: jumpStartVel);
             _holdJumpTimer.StartTime = Time.time;
@@ -169,7 +157,10 @@ namespace Shuile.Gameplay.Character
 
         public void HoldJump()
         {
-            if (mainFsm.CurrentStateId != MainState.JumpUpAndInputHoldOn) return;
+            if (mainFsm.CurrentStateId != MainState.JumpUpAndInputHoldOn)
+            {
+                return;
+            }
 
             _moveController.Velocity += new Vector2(0, holdJumpVelAdd);
             var hitWall = Mathf.Abs(_moveController.Velocity.y) < 1e-4; // ...
@@ -180,15 +171,23 @@ namespace Shuile.Gameplay.Character
                 mainFsm.SwitchState(MainState.JumpUpAndInputHoldOff);
             }
         }
+
         public void JumpRelese()
         {
-            if (mainFsm.CurrentStateId != MainState.JumpUpAndInputHoldOn) return;
+            if (mainFsm.CurrentStateId != MainState.JumpUpAndInputHoldOn)
+            {
+                return;
+            }
+
             mainFsm.SwitchState(MainState.JumpUpAndInputHoldOff);
         }
 
         public void Attack()
         {
-            if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm) return;
+            if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm)
+            {
+                return;
+            }
 
             _attackCommand.position = transform.position;
             _attackCommand.Execute();
@@ -233,7 +232,9 @@ namespace Shuile.Gameplay.Character
                     _moveController.Velocity -= new Vector2(0, holdOffYDamping);
 
                     if (_moveController.Velocity.y < 0)
+                    {
                         mainFsm.SwitchState(MainState.Drop);
+                    }
                 });
             mainFsm
                 .NewEventState(MainState.Drop)
@@ -263,7 +264,7 @@ namespace Shuile.Gameplay.Character
 
         private void ConfigureInputEvent()
         {
-            mPlayerInput.OnMoveStart.Register((v) =>
+            mPlayerInput.OnMoveStart.Register(v =>
             {
                 moveFsm.SwitchState(MoveState.Move);
                 moveParam = v;
@@ -282,9 +283,29 @@ namespace Shuile.Gameplay.Character
             _playerModel = scope.GetImplementation<PlayerModel>();
             _playerChartManager = scope.GetImplementation<PlayerChartManager>();
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
-            
+
             mPlayerInput = GetComponent<NormalPlayerInput>();
             _moveController = GetComponent<SmoothMoveCtrl>();
+        }
+
+        private enum MainState
+        {
+            Normal,
+            JumpUpAndInputHoldOn,
+            JumpUpAndInputHoldOff,
+            Drop
+        }
+
+        private enum MoveState
+        {
+            Idle,
+            Move
+        }
+
+        private enum JumpState
+        {
+            Idle,
+            Jump
         }
     }
 }

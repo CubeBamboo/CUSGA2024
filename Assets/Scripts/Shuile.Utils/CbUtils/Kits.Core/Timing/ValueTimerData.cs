@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace CbUtils.Timing
 {
@@ -7,16 +8,15 @@ namespace CbUtils.Timing
         public TimeSpan delay { get; private set; }
         public Action onComplete { get; private set; }
 
-        public static ValueTimerData Create(double secondsDelay, Action onComplete) => new()
+        public static ValueTimerData Create(double secondsDelay, Action onComplete)
         {
-            delay = TimeSpan.FromSeconds(secondsDelay),
-            onComplete = onComplete
-        };
-        public static ValueTimerData Create(TimeSpan delay, Action onComplete) => new()
+            return new ValueTimerData { delay = TimeSpan.FromSeconds(secondsDelay), onComplete = onComplete };
+        }
+
+        public static ValueTimerData Create(TimeSpan delay, Action onComplete)
         {
-            delay = delay,
-            onComplete = onComplete
-        };
+            return new ValueTimerData { delay = delay, onComplete = onComplete };
+        }
     }
 
     public static class ValueTimerDataExtension
@@ -28,7 +28,7 @@ namespace CbUtils.Timing
             return timer;
         }
 
-        public static ValueTimerData SetLink(this ValueTimerData timer, UnityEngine.GameObject go)
+        public static ValueTimerData SetLink(this ValueTimerData timer, GameObject go)
         {
             throw new NotImplementedException();
             //go.GetOrAddComponent<MonoSpawnEventTrigger>().OnDestroye_Evt += timer.ForceStopForExternal;
@@ -42,11 +42,10 @@ namespace CbUtils.Timing
         public Action onComplete { get; private set; }
         public int debounceMilliseconds { get; private set; } = -1;
 
-        public static RefTimerData Create(double secondsDelay, Action onComplete) => new()
+        public static RefTimerData Create(double secondsDelay, Action onComplete)
         {
-            delay = TimeSpan.FromSeconds(secondsDelay),
-            onComplete = onComplete
-        };
+            return new RefTimerData { delay = TimeSpan.FromSeconds(secondsDelay), onComplete = onComplete };
+        }
 
         public void Start(bool canBeCancelled = true)
         {

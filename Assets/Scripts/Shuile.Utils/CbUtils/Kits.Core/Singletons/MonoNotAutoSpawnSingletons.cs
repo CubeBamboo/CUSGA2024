@@ -7,11 +7,6 @@ namespace CbUtils
     {
         public static T Instance { get; protected set; }
 
-        public static void SpawnNew()
-        {
-            new GameObject("MonoSingleton:" + typeof(T).ToString()).AddComponent<T>();
-        }
-
         protected virtual void Awake()
         {
             if (Instance)
@@ -22,6 +17,11 @@ namespace CbUtils
 
             Instance = this as T;
             OnAwake();
+        }
+
+        public static void SpawnNew()
+        {
+            new GameObject("MonoSingleton:" + typeof(T)).AddComponent<T>();
         }
 
         protected virtual void OnAwake() { }

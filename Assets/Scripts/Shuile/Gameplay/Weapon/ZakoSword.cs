@@ -1,6 +1,5 @@
 using Shuile.Core.Gameplay.Common;
 using System.Linq;
-
 using UnityEngine;
 
 namespace Shuile.Gameplay.Weapon
@@ -14,10 +13,12 @@ namespace Shuile.Gameplay.Weapon
 
         protected override void OnAttack(WeaponCommandData data)
         {
-            var hits = Physics2D.OverlapCircleAll(data.position, this.attackRadius, LayerMask.GetMask("Player"));
+            var hits = Physics2D.OverlapCircleAll(data.position, attackRadius, LayerMask.GetMask("Player"));
             var hurts = hits.Select(hit => hit.GetComponent<IHurtable>());
             foreach (var hurt in hurts)
-                hurt.OnHurt(this.attackPoint);
+            {
+                hurt.OnHurt(attackPoint);
+            }
         }
 
         protected override void OnAttackFinish(WeaponCommandData data)
