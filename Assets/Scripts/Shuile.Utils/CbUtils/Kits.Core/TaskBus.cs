@@ -1,6 +1,7 @@
-using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace CbUtils.Kits.Tasks
 {
@@ -14,32 +15,33 @@ namespace CbUtils.Kits.Tasks
     {
         private static readonly Lazy<TaskBus> instance = new();
 
-        private IBusyScreen busyScreen;
-        private bool isBusy;
-        private int taskCount;
+        private readonly List<Task> _activeTasks = new();
+
+        private IBusyScreen _busyScreen;
+        private bool _isBusy;
         public static TaskBus Instance => instance.Value;
 
         public bool IsBusy
         {
-            get => isBusy;
+            get => _isBusy;
             private set
             {
-                if (isBusy == value)
+                if (_isBusy == value)
                 {
                     return;
                 }
 
-                isBusy = value;
+                _isBusy = value;
 
                 OnTaskComplete?.Invoke();
 
-                if (isBusy && busyScreen != null)
+                if (_isBusy && _busyScreen != null)
                 {
-                    busyScreen.Show();
+                    _busyScreen.Show();
                 }
                 else
                 {
-                    busyScreen.Hide();
+                    _busyScreen.Hide();
                 }
             }
         }
@@ -49,132 +51,51 @@ namespace CbUtils.Kits.Tasks
 
         public void Initialize(IBusyScreen busyScreen)
         {
-            this.busyScreen = busyScreen;
+            this._busyScreen = busyScreen;
         }
 
         public void Execute(Task task)
         {
             IsBusy = true;
-            taskCount++;
+            _activeTasks.Add(task);
             if (task.IsCompleted)
             {
-                HandleTaskComplete();
+                HandleTaskComplete(task);
             }
             else
             {
                 task.ConfigureAwait(false)
-                    .GetAwaiter().OnCompleted(HandleTaskComplete);
+                    .GetAwaiter().OnCompleted(() => HandleTaskComplete(task));
             }
         }
 
         public Task Run(Task task)
         {
-            IsBusy = true;
-            taskCount++;
-            if (task.IsCompleted)
-            {
-                HandleTaskComplete();
-            }
-            else
-            {
-                task.ConfigureAwait(false)
-                    .GetAwaiter().OnCompleted(HandleTaskComplete);
-            }
-
+            Execute(task);
             return task;
         }
 
         public Task<T> Run<T>(Task<T> task)
         {
-            IsBusy = true;
-            taskCount++;
-            if (task.IsCompleted)
-            {
-                HandleTaskComplete();
-            }
-            else
-            {
-                task.ConfigureAwait(false)
-                    .GetAwaiter().OnCompleted(HandleTaskComplete);
-            }
-
+            Execute(task);
             return task;
-        }
-
-        public void Execute(UniTask unitask)
-        {
-            IsBusy = true;
-            taskCount++;
-            if (unitask.Status.IsCompleted())
-            {
-                HandleTaskComplete();
-            }
-            else
-            {
-                unitask.ContinueWith(HandleTaskComplete);
-            }
-        }
-
-        public UniTask Run(UniTask unitask)
-        {
-            IsBusy = true;
-            taskCount++;
-            if (unitask.Status.IsCompleted())
-            {
-                HandleTaskComplete();
-                return unitask;
-            }
-
-            var ret = unitask.ContinueWith(HandleTaskComplete);
-            return ret;
-        }
-
-        /// <summary> [warning]: With GC </summary>
-        public UniTask<T> Run<T>(UniTask<T> unitask)
-        {
-            IsBusy = true;
-            taskCount++;
-
-            var tcs = new UniTaskCompletionSource<T>();
-
-            if (unitask.Status.IsCompleted())
-            {
-                HandleTaskComplete();
-                return unitask;
-            }
-
-            unitask.ContinueWith(res =>
-            {
-                HandleTaskComplete();
-                tcs.TrySetResult(res);
-            });
-            return tcs.Task;
-        }
-
-        private void HandleTaskComplete()
-        {
-            HandleTaskCompleteWithCount();
         }
 
         private void HandleTaskComplete(Task task)
         {
-            HandleTaskCompleteWithCount();
-        }
+            _activeTasks.Remove(task);
+            CheckoutBusy();
 
-        private void HandleTaskComplete(UniTask unitask)
-        {
-            HandleTaskCompleteWithCount();
-        }
-
-        private void HandleTaskCompleteWithCount()
-        {
-            taskCount--;
-            if (taskCount < 0)
+            if (task.IsFaulted)
             {
-                throw new Exception($"[{nameof(TaskBus)}] Task count can't be negative.");
+                var exception = task.Exception!.InnerException ?? task.Exception;
+                Debug.LogException(exception);
             }
+        }
 
-            if (taskCount == 0)
+        private void CheckoutBusy()
+        {
+            if (_activeTasks.Count == 0)
             {
                 IsBusy = false;
             }

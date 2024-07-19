@@ -7,6 +7,7 @@ namespace CbUtils.Timing
     {
         public ITimerScheduler CurrentTimerScheduler { get; set; } = new UniTaskTimerScheduler();
 
+        // may be replaced by UtilsCommands.SetTimer()
         public ValueTimerData Timer(double secondsDelay, Action onComplete)
         {
             return ValueTimerData.Create(secondsDelay, onComplete);

@@ -13,8 +13,8 @@ namespace Shuile.Editor.EditorTool
 {
     public class EditorToolboxWindow : EditorWindow
     {
-        private readonly BindingFlags _privateBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-        private string _drawNoteHeightMapMax = "100";
+        // private readonly BindingFlags _privateBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+        // private string _drawNoteHeightMapMax = "100";
 
         #region Methods: GUI
 

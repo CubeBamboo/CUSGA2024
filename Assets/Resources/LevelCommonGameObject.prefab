@@ -77,11 +77,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3c0e55b384e4133ab55dfde06e83c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicRhythmManager: {fileID: 8549199178753110100}
   levelAudioManager: {fileID: 7276062682042202717}
   levelZoneManager: {fileID: 2126869024058730763}
   endLevelPanel: {fileID: 678913754241128194}
   player: {fileID: 888734764693625756}
+  musicRhythmManager: {fileID: 8549199178753110100}
+  levelGlobalManager: {fileID: 5885612231794023484}
 --- !u!1 &2845726619159077925
 GameObject:
   m_ObjectHideFlags: 0

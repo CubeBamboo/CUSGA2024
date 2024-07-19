@@ -1,5 +1,6 @@
 using Shuile.Core.Framework.Unity;
 using Shuile.Core.Gameplay.Data;
+using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Entity;
 using Shuile.Model;
@@ -14,11 +15,15 @@ namespace Shuile.Gameplay.Manager
         private readonly AutoPlayChartManager _autoPlayChartManager;
         private readonly LevelEntityManager _levelEntityManager;
         private readonly LevelModel _levelModel;
-        [HideInInspector] public readonly LevelEnemySO currentEnemyData;
         private readonly LevelZoneManager _levelZoneManager;
+        private readonly SceneTransitionManager _sceneTransitionManager;
+        [HideInInspector] public readonly LevelEnemySO currentEnemyData;
 
         public EnemySpawnManager(IGetableScope scope)
         {
+            var services = GameApplication.GlobalService;
+            _sceneTransitionManager = services.GetService<SceneTransitionManager>();
+
             _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
             _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
@@ -56,7 +61,7 @@ namespace Shuile.Gameplay.Manager
             var useEnemies = currentEnemyData.enemies[useIndex].enemyList;
             var index = URandom.Range(0, useEnemies.Length);
             _levelEntityManager.EntityFactory.SpawnEnemyWithEffectDelay(useEnemies[index],
-                _levelZoneManager.RandomValidPosition());
+                _levelZoneManager.RandomValidPosition(), _sceneTransitionManager.SceneChangedToken);
         }
     }
 }

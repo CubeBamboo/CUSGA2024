@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
@@ -10,9 +11,9 @@ namespace Shuile.Gameplay.Feel
         private readonly CameraFeelHelper _cameraFeelHelper = new();
         private readonly VolumeFeelHelper _volumeFeelHelper = new();
 
-        public void CameraShake(float duration = 0.2f, float strength = 0.1f)
+        public void CameraShake(float duration = 0.2f, float strength = 0.1f, CancellationToken token = default)
         {
-            _cameraFeelHelper.CameraShake(duration, strength);
+            _cameraFeelHelper.CameraShake(duration, strength, token);
         }
 
         public void PlayParticle(string name, Vector3 position, Vector3 direction, Transform parent = null)

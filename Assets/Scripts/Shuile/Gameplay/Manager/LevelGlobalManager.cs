@@ -1,7 +1,8 @@
+using CbUtils.Kits.Tasks;
 using CbUtils.Timing;
-using CbUtils.Unity;
 using Shuile.Core.Framework;
 using Shuile.Core.Gameplay;
+using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Entity;
@@ -10,13 +11,14 @@ using Shuile.Gameplay.Feel;
 using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.UI.Gameplay;
+using Shuile.Utils;
 using UnityEngine;
 using UInput = UnityEngine.InputSystem;
 
 namespace Shuile.Gameplay.Manager
 {
     // if you dont know where to put the logic, put it here
-    public class LevelGlobalManager : MonoSingletons<LevelGlobalManager>
+    public class LevelGlobalManager : MonoBehaviour
     {
         private AutoPlayChartManager _autoPlayChartManager;
         private EndLevelPanel _endLevelPanel;
@@ -27,6 +29,24 @@ namespace Shuile.Gameplay.Manager
         private MusicRhythmManager _musicRhythmManager;
         private Player _player;
         private PlayerModel _playerModel;
+        private SceneTransitionManager _sceneTransitionManager;
+
+        private void Awake()
+        {
+            var services = GameApplication.GlobalService;
+            _sceneTransitionManager = services.GetService<SceneTransitionManager>();
+
+            var scope = LevelScope.Interface;
+            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
+            _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
+            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
+            _levelFeelManager = scope.GetImplementation<LevelFeelManager>();
+            _playerModel = scope.GetImplementation<PlayerModel>();
+            _player = scope.GetImplementation<Player>();
+            _levelModel = scope.GetImplementation<LevelModel>();
+            _endLevelPanel = scope.GetImplementation<EndLevelPanel>();
+            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
+        }
 
         private void Start()
         {
@@ -69,24 +89,9 @@ namespace Shuile.Gameplay.Manager
             TimingCtrl.Instance.StopAllTimer();
         }
 
-        protected override void OnAwake()
-        {
-            var scope = LevelScope.Interface;
-
-            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
-            _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
-            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
-            _levelFeelManager = scope.GetImplementation<LevelFeelManager>();
-            _playerModel = scope.GetImplementation<PlayerModel>();
-            _player = scope.GetImplementation<Player>();
-            _levelModel = scope.GetImplementation<LevelModel>();
-            _endLevelPanel = scope.GetImplementation<EndLevelPanel>();
-            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
-        }
-
         private void GlobalOnEnemyHurt(EnemyHurtEvent para)
         {
-            _levelFeelManager.CameraShake();
+            _levelFeelManager.CameraShake(token: _sceneTransitionManager.SceneChangedToken);
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Hurt");
         }
 
@@ -101,9 +106,9 @@ namespace Shuile.Gameplay.Manager
             _endLevelPanel.Show();
             MonoAudioCtrl.Instance.PlayOneShot("Level_Fail", 0.6f);
 
-            TimingCtrl.Instance
-                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName))
-                .Start();
+            UtilsCommands.SetTimer(3.0,
+                () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName),
+                _sceneTransitionManager.SceneChangedToken);
         }
 
         private void LevelWin()
@@ -114,9 +119,9 @@ namespace Shuile.Gameplay.Manager
             _musicRhythmManager.FadeOutAndStop(); // 当前音乐淡出 music fade out
             MonoAudioCtrl.Instance.PlayOneShot("Level_Win", 0.6f);
 
-            TimingCtrl.Instance
-                .Timer(3f, () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName))
-                .Start();
+            UtilsCommands.SetTimer(3.0,
+                () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName),
+                _sceneTransitionManager.SceneChangedToken);
         }
 
         private void DebugUpdate()

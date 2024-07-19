@@ -1,4 +1,5 @@
 using CbUtils.ActionKit;
+using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Feel;
 using Shuile.Gameplay.Move;
@@ -15,6 +16,7 @@ namespace Shuile.Gameplay.Character
         private const float HurtYForce = 0.2f;
         private LevelFeelManager _levelFeelManager;
         private LevelModel _levelModel;
+        private SceneTransitionManager _sceneTransitionManager;
 
         private SmoothMoveCtrl _moveController;
         private MusicRhythmManager _musicRhythmManager;
@@ -27,6 +29,9 @@ namespace Shuile.Gameplay.Character
 
         private void Awake()
         {
+            var services = GameApplication.GlobalService;
+            _sceneTransitionManager = services.GetService<SceneTransitionManager>();
+
             var scope = LevelScope.Interface;
             _levelModel = scope.GetImplementation<LevelModel>();
             _playerModel = scope.GetImplementation<PlayerModel>();
@@ -60,7 +65,7 @@ namespace Shuile.Gameplay.Character
             {
                 _moveController.Velocity = new Vector2(_playerModel.faceDir * HurtXForce, HurtYForce);
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt);
-                _levelFeelManager.CameraShake();
+                _levelFeelManager.CameraShake(token: _sceneTransitionManager.SceneChangedToken);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Hurt");
                 _levelModel.DangerScore -= DangerLevelConfigClass.PlayerHurtReduction;
 

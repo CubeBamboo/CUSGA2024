@@ -5,6 +5,7 @@ using Shuile.Gameplay;
 using Shuile.Gameplay.Model;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.UI.Data;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -69,7 +70,6 @@ namespace Shuile.UI.Menu
 
         public async void StartLevel(string label)
         {
-            //var level = await TaskBus.Instance.Execute(LoadLevelResources(label).AsTask());
             await TaskBus.Instance.Run(LoadLevelResources(label));
 
             var levelContext = new LevelContext();
@@ -79,13 +79,13 @@ namespace Shuile.UI.Menu
             MonoGameRouter.Instance.ToLevelScene(_level.sceneName);
         }
 
-        private async UniTask LoadLevelResources(string label)
+        private async Task LoadLevelResources(string label)
         {
             var levels = await GameResourcesLoader.Instance.GetLevelDataMapAsync();
 
             _level = levels.GetLevelData(label);
             await LevelResourcesLoader.Instance.PreCacheAsync();
-            await UniTask.Delay(1000);
+            await Task.Delay(1000);
         }
 
         private void RefreshSongView()

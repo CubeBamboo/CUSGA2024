@@ -21,6 +21,7 @@ namespace Shuile.Gameplay
         [SerializeField] private EndLevelPanel endLevelPanel;
         [SerializeField] private Player player;
         [SerializeField] private MusicRhythmManager musicRhythmManager;
+        [SerializeField] private LevelGlobalManager levelGlobalManager;
 
         public override void Configure(IRegisterableScope scope)
         {
@@ -37,6 +38,7 @@ namespace Shuile.Gameplay
             scope.RegisterMonoComponent(endLevelPanel);
             scope.RegisterMonoComponent(player);
             scope.RegisterMonoComponent(musicRhythmManager);
+            scope.RegisterMonoComponent(levelGlobalManager);
 
             scope.RegisterEntryPoint(() => new PreciseMusicPlayer(this));
             scope.RegisterEntryPoint(() => new PlayerChartManager(this));

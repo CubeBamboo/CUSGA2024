@@ -1,5 +1,7 @@
 using CbUtils.Timing;
 using DG.Tweening;
+using Shuile.Utils;
+using System.Threading;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
@@ -14,7 +16,7 @@ namespace Shuile.Gameplay.Feel
             mCamera = Camera.main;
         }
 
-        public void CameraShake(float duration = 0.2f, float strength = 0.1f)
+        public void CameraShake(float duration = 0.2f, float strength = 0.1f, CancellationToken token = default)
         {
             if (isCameraShake)
             {
@@ -28,8 +30,7 @@ namespace Shuile.Gameplay.Feel
                 mCamera.transform.position = initPos;
             });
 
-            TimingCtrl.Instance.Timer(duration, () => isCameraShake = false)
-                .Start();
+            UtilsCommands.SetTimer(duration, () => isCameraShake = false, token);
         }
     }
 }

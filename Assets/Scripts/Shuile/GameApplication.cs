@@ -1,5 +1,6 @@
 using CbUtils.Kits.Tasks;
 using Shuile.Core.Framework;
+using Shuile.Core.Global;
 using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
@@ -7,19 +8,20 @@ namespace Shuile
 {
     public static class GameApplication
     {
-        public static ModuleContainer Global { get; } = new();
+        public static readonly ServiceLocator GlobalService = new();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void PreInitialize()
         {
             // Initialize the game
+            GlobalService.AddImplemenation(() => new SceneTransitionManager());
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void PostInitialize()
         {
             // Post initialize the game
-            var globalGameObject = Global.InstantiateGlobalGameObject();
+            var globalGameObject = GlobalCommands.InstantiateGlobalGameObject();
             TaskBus.Instance.InitializeBusyScreenByGlobalGameObject(globalGameObject);
 
             _ = GameResourcesLoader.Instance.PreCacheAsync();

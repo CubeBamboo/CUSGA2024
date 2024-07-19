@@ -36,9 +36,6 @@ namespace Shuile
             var waitTime = !waitUtilFadeOut ? duration : ((int)(duration / unit) + 1) * unit;
 
             TimingCtrl.Instance.Timer(waitTime, HandleEnd).Start();
-            //ActionCtrl.Delay(waitTime)
-            //    .OnComplete(HandleEnd)
-            //    .Start(gameObject);
         }
 
         protected override void StopAnimation()

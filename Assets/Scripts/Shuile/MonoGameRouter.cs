@@ -1,5 +1,6 @@
 using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
+using Shuile.Core.Global;
 using Shuile.UI;
 using UnityEngine.SceneManagement;
 
@@ -21,23 +22,13 @@ namespace Shuile
         {
             await SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+            GameApplication.GlobalService.GetService<SceneTransitionManager>().OnNotifySceneChanged();
         }
 
         private async UniTask InternalLoadLevel(string sceneName)
         {
             LastLevelSceneName = sceneName;
-            await SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
-            SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
-
-            // await UniTask.WaitUntil(() => !TaskBus.Instance.IsBusy);
-            // ExceptionUtils.UnityCatch(() =>
-            // {
-            //     // // maybe obsolete in future
-            //     // LevelStartEvent_AutoClear.Trigger(sceneName);
-            //     // LevelStartEvent.Trigger(sceneName);
-            //     // LevelLoadEndEvent.Trigger(sceneName); 
-            //     // LevelLoadEndEvent.Clear();
-            // });
+            await InternalLoadScene(sceneName);
         }
 
         public void ToLevelScene(string sceneName)

@@ -1,5 +1,5 @@
-using CbUtils.Timing;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System;
 
 namespace Shuile
@@ -16,16 +16,15 @@ namespace Shuile
             loadingViewer.OnStart();
             loadingViewer.In();
 
-            var exitTimer = TimingCtrl.Instance.Timer(loadingViewer.ExitDuration,
-                () => loadingViewer.OnEnd());
-            var enterTimer = TimingCtrl.Instance.Timer(loadingViewer.InDuration, () =>
-            {
-                action?.Invoke();
-                loadingViewer.Out();
-                exitTimer.Start();
-            });
-            enterTimer.Start();
-            // 没有使用序列导致的抽象写法 not using sequence leads to such a fuuuuuuckkking code :((((
+            DOTween.Sequence()
+                .AppendInterval(loadingViewer.InDuration)
+                .AppendCallback(() =>
+                {
+                    action?.Invoke();
+                    loadingViewer.Out();
+                })
+                .AppendInterval(loadingViewer.ExitDuration)
+                .AppendCallback(loadingViewer.OnEnd);
         }
 
         public static void DoTransition(this IGameRouter gameRouter,
@@ -34,20 +33,19 @@ namespace Shuile
             loadingViewer.OnStart();
             loadingViewer.In();
 
-            var exitTimer = TimingCtrl.Instance.Timer(loadingViewer.ExitDuration,
-                () => loadingViewer.OnEnd());
-            var enterTimer = TimingCtrl.Instance.Timer(loadingViewer.InDuration, async () =>
-            {
-                if (asyncAction != null)
+            DOTween.Sequence()
+                .AppendInterval(loadingViewer.InDuration)
+                .AppendCallback(async () =>
                 {
-                    await asyncAction.Invoke();
-                }
+                    if (asyncAction != null)
+                    {
+                        await asyncAction.Invoke();
+                    }
 
-                loadingViewer.Out();
-                exitTimer.Start(false);
-            });
-            enterTimer.Start(false);
-            // 没有使用序列导致的抽象写法 not using sequence leads to such a fuuuuuuckkking code :((((
+                    loadingViewer.Out();
+                })
+                .AppendInterval(loadingViewer.ExitDuration)
+                .AppendCallback(loadingViewer.OnEnd);
         }
     }
 

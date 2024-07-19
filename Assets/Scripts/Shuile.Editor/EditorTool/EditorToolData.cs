@@ -12,6 +12,8 @@ namespace Shuile.Editor.EditorTool
             "Level2",
             "Level3",
             "Level4",
+            "-",
+            "GameEndScene",
         };
 
         public static readonly string[] Resolutions =

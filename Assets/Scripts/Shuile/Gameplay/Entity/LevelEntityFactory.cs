@@ -2,7 +2,9 @@ using CbUtils.Extension;
 using CbUtils.Timing;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Core.Global;
+using Shuile.Utils;
 using System;
+using System.Threading;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 
@@ -66,7 +68,7 @@ namespace Shuile.Gameplay.Entity
             return InternalSpawnEnemy(EnemyType2Prefab(enemyType), Vector3.zero);
         }
 
-        public GameObject SpawnEnemyWithEffectDelay(EnemyType enemyType, Vector3 pos)
+        public GameObject SpawnEnemyWithEffectDelay(EnemyType enemyType, Vector3 pos, CancellationToken token = default)
         {
             var effect = PrefabConfig.enemySpawnEffect;
             effect.effect.Instantiate()
@@ -74,9 +76,10 @@ namespace Shuile.Gameplay.Entity
 
             var enemy = InternalSpawnEnemy(EnemyType2Prefab(enemyType), pos);
             enemy.SetActive(false);
-            TimingCtrl.Instance
-                .Timer(effect.duration, () => enemy.SetActive(true))
-                .Start();
+
+            UtilsCommands.SetTimer(effect.duration,
+                () => enemy.SetActive(true),
+                token);
             return enemy;
         }
 
