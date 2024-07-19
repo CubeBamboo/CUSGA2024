@@ -56,7 +56,7 @@ namespace Shuile.UI.Menu
             vibrationFeelToggle.onValueChanged.RemoveListener(OnVibrationFeelToggleValueChanged);
         }
 
-        // TODO: change logic // TODO: use settings when enter the game.
+        // TODO: change logic, use settings when enter the game.
         private void OnBgAudioVolumeSliderValueChanged(float value)
         {
             _configViewer.Data.BgAudioVolume = (int)value;

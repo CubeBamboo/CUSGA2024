@@ -34,7 +34,8 @@ namespace CbUtils
         private TStateId _currentStateId;
 
         private TStateId _previousStateId;
-        protected Dictionary<TStateId, IState> _states = new();
+
+        public Dictionary<TStateId, IState> States { get; } = new();
 
         public FSM() { }
 
@@ -53,7 +54,7 @@ namespace CbUtils
         // recommend to using by class BaseState, to register states
         public void AddState(TStateId id, IState state)
         {
-            _states.Add(id, state);
+            States.Add(id, state);
         }
 
         private IState InnerCreateState()
@@ -69,9 +70,9 @@ namespace CbUtils
                 return;
             }
 
-            if (!_states.ContainsKey(id))
+            if (!States.ContainsKey(id))
             {
-                _states[id] = InnerCreateState();
+                States[id] = InnerCreateState();
             }
 
             if (_currentState == null)
@@ -91,7 +92,7 @@ namespace CbUtils
 
             _previousStateId = _currentStateId;
             _currentStateId = id;
-            _currentState = _states[id];
+            _currentState = States[id];
             OnStateChanged(_previousStateId, _currentStateId);
             if (callLifeTimeEvent)
             {
@@ -102,7 +103,7 @@ namespace CbUtils
         public void StartState(TStateId id)
         {
             _currentStateId = id;
-            _currentState = _states[id];
+            _currentState = States[id];
             _currentState.Enter();
         }
 
@@ -110,19 +111,19 @@ namespace CbUtils
         {
             _currentStateId = default;
             _currentState = null;
-            _states.Clear();
+            States.Clear();
         }
 
         // using by EventState, set it by chaining
         public EventState NewEventState(TStateId id)
         {
-            if (_states.ContainsKey(id))
+            if (States.ContainsKey(id))
             {
-                return _states[id] as EventState;
+                return States[id] as EventState;
             }
 
             var state = new EventState();
-            _states[id] = state;
+            States[id] = state;
             return state;
         }
 
@@ -160,15 +161,6 @@ namespace CbUtils
         public void Custom(string label = "")
         {
             _currentState.Custom(label);
-        }
-
-        // TODO: extension methods
-        public string StatesDataToString()
-        {
-            return _states.ToArray()
-                .Select(val => val.Key)
-                .ToArray()
-                .IEnumerableToString();
         }
     }
 

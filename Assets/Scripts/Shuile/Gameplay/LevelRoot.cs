@@ -29,7 +29,6 @@ namespace Shuile.Gameplay
 
             IsStart = true;
             IsLevelActive = true;
-            EntitySystem.Instance.EnableAllEntities();
             Debug.Log("Level load end, game start");
         }
 

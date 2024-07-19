@@ -188,8 +188,8 @@ namespace Shuile.Core.Framework.Unity
         {
             foreach (var item in EntryPoints)
             {
-                if (item is IInitializeable initializeable &&
-                    (!checkContain || !_initializeables.Contains(initializeable)))
+                // can't use switch case here because here are all if conditions
+                if (item is IInitializeable initializeable && (!checkContain || !_initializeables.Contains(initializeable)))
                 {
                     initializeable.Initialize(); // directly call
                     _initializeables.Add(initializeable);

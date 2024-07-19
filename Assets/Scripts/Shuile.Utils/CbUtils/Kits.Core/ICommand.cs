@@ -115,5 +115,4 @@ namespace Shuile.Framework
             action.Invoke(state);
         }
     }
-    // TODO: interceptable command (provide a async call before execute)
 }

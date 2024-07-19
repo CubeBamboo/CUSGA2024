@@ -43,29 +43,4 @@ namespace Shuile.Rhythm.Runtime
             public bool isHitOn;
         }
     }
-
-    //public static class ChartManagerCommands
-    //{
-    //    //public static bool TryHitNote(float inputTime, out float hitOffset, ModuleContainer serviceLocator)
-    //    //{
-    //    //    MusicRhythmManager musicRhythmManager = serviceLocator.GetSystemImplemenation<MusicRhythmManager>();
-    //    //    PlayerChartManager playerChartManager = serviceLocator.GetSystemImplemenation<PlayerChartManager>();
-
-    //    //    float missTolerance = ImmutableConfiguration.Instance.MissToleranceInSeconds;
-
-    //    //    // get the nearest note's time and judge
-    //    //    hitOffset = float.NaN;
-    //    //    SingleNote targetNote = playerChartManager.TryGetNearestNote(musicRhythmManager.CurrentTime);
-    //    //    if (targetNote == null)
-    //    //        return false;
-
-    //    //    bool ret = Mathf.Abs(inputTime - targetNote.realTime) < missTolerance;
-    //    //    if (ret)
-    //    //    {
-    //    //        playerChartManager.HitNote(targetNote);
-    //    //        hitOffset = inputTime - targetNote.realTime;
-    //    //    }
-    //    //    return ret;
-    //    //}
-    //}
 }

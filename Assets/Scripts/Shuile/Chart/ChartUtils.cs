@@ -71,7 +71,7 @@ namespace Shuile.Chart
 
                 if (note["column"] == null)
                 {
-                    continue; // TODO: ...
+                    continue;
                 }
 
                 var column = note["column"].ToObject<int>();

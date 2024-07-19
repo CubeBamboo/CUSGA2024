@@ -38,7 +38,6 @@ namespace Shuile.UI.Gameplay
 
         private void FixedUpdate()
         {
-            //TODO: not a good way
             hitOffsetText.text = $"HitOffset: {_playerModel.currentHitOffset:0.000}";
             playTimeText.text = $"PlayTime: {_musicRhythmManager.CurrentTime:0.000}";
             dangerScoreText.text = $"DangerScore: {_levelModel.DangerScore:0.000}";

@@ -9,7 +9,6 @@ namespace Shuile.Core.Framework
     {
         public LayerableServiceLocator ServiceLocator { get; } = new();
         public TypeEventSystem TypeEventSystem { get; } = new();
-        public CommandSystem CommandSystem { get; } = new();
     }
 
     public static class ModuleContainerExtension
@@ -48,11 +47,6 @@ namespace Shuile.Core.Framework
         public static T GetSystemImplementation<T>(this ModuleContainer module) where T : ISystem
         {
             return module.ServiceLocator.GetSystem<T>();
-        }
-
-        public static void ExecuteCommand<T>(this ModuleContainer module, T command) where T : ICommand
-        {
-            module.CommandSystem.Execute(command);
         }
 
         public static void RegisterEvent<T>(this ModuleContainer module, Action<T> action) where T : ITypeEvent
@@ -168,11 +162,6 @@ namespace Shuile.Core.Framework
         public static void TriggerEvent<T>(this ICanTriggerEvent entity, T para) where T : ITypeEvent
         {
             entity.GetModule().TriggerEvent(para);
-        }
-
-        public static void ExecuteCommand<T>(this ICanExecuteCommand entity, T command) where T : ICommand
-        {
-            entity.GetModule().ExecuteCommand(command);
         }
     }
 
