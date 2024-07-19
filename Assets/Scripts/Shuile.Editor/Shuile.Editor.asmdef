@@ -1,0 +1,20 @@
+{
+    "name": "Shuile.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c761ab3b292e4894e9dec975c6e97a57",
+        "GUID:18c5649a94a563f4a96462d2a2a85984",
+        "GUID:7f9f3c94ee41e1d4a8b6b9e285c07fd5"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
