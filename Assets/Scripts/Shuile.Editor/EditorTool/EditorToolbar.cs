@@ -2,7 +2,9 @@
  * original source code from phigrim
  ************************************/
 
+using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -15,10 +17,6 @@ namespace Shuile.Editor.EditorTool
     [InitializeOnLoad]
     public static class EditorToolbar
     {
-        private static readonly string[] SceneNames = EditorToolData.SceneNames;
-
-        private static readonly string[] Resolutions = EditorToolData.Resolutions;
-
         private static int _currentResolutionIndex;
 
         private static string _lastSceneName;
@@ -26,21 +24,6 @@ namespace Shuile.Editor.EditorTool
         private static void OnLeftZoneGUI()
         {
             GUILayout.BeginHorizontal();
-
-            // var sceneName = SceneManager.GetActiveScene().name;
-            // if (!EditorApplication.isPlaying && GUILayout.Button("Open/Close Designer"))
-            // {
-            //     if (sceneName == "DesignerScene")
-            //     {
-            //         LoadScene(_lastSceneName);
-            //     }
-            //     else
-            //     {
-            //         _lastSceneName = sceneName;
-            //         LoadScene("DesignerScene");
-            //     }
-            // }
-
 
             if (!EditorApplication.isPlaying && GUILayout.Button("Save Scene")) EditorSceneManager.SaveOpenScenes();
 
@@ -87,7 +70,10 @@ namespace Shuile.Editor.EditorTool
             ToolbarType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.Toolbar");
 
             ScenesMenu = new GenericMenu();
-            foreach (var name in SceneNames)
+
+            var sceneListString = File.ReadAllText(Path.Join(Application.dataPath, "/Editor/ScenesShortcutList.json"));
+            var sceneNames = JsonConvert.DeserializeObject<string[]>(sceneListString);
+            foreach (var name in sceneNames)
             {
                 if (name == "-")
                 {
