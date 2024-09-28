@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Text;
 using UnityEngine;
 
 namespace CbUtils.Extension
@@ -138,6 +140,36 @@ namespace CbUtils.Extension
         }
 
         #endregion
+
+        public static void LogComponentList(this GameObject go, in StringBuilder builder)
+        {
+            builder.AppendLine($"Components of {go.name}: ");
+            var components = go.GetComponents<Component>();
+            foreach (var component in components)
+            {
+                builder.AppendLine(component.ToString());
+            }
+        }
+
+        public static void LogGameObjectTree(GameObject go, int depth, in StringBuilder builder)
+        {
+            builder.Append('-', depth * 2);
+            builder.AppendLine($"{go.name} - active_{go.activeSelf}");
+            foreach (Transform child in go.transform)
+            {
+                LogGameObjectTree(child.gameObject, depth + 1, builder);
+            }
+        }
+
+        public static void LogSceneTree(in StringBuilder builder)
+        {
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            var rootObjects = scene.GetRootGameObjects();
+            foreach (var rootObject in rootObjects)
+            {
+                LogGameObjectTree(rootObject, 0, builder);
+            }
+        }
     }
 
     public static class GameObjectExtension
