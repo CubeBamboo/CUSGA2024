@@ -34,7 +34,7 @@ namespace Shuile.Gameplay.Manager
         private void Awake()
         {
             var services = GameApplication.GlobalService;
-            _sceneTransitionManager = services.GetService<SceneTransitionManager>();
+            _sceneTransitionManager = services.Get<SceneTransitionManager>();
 
             var scope = LevelScope.Interface;
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();

@@ -4,7 +4,13 @@ using System.Diagnostics;
 
 namespace Shuile.Core.Framework
 {
-    public class ServiceLocator
+    public interface IReadOnlyServiceLocator
+    {
+        T Get<T>();
+        object Get(Type type);
+    }
+
+    public class ServiceLocator : IReadOnlyServiceLocator
     {
         private static readonly Type objectType = typeof(object);
         private readonly Dictionary<Type, Func<object>> _serviceCreators = new();
@@ -36,24 +42,35 @@ namespace Shuile.Core.Framework
             _serviceCreators.Remove(type);
         }
 
-        public void AddServiceDirectly<T>(T service)
+        public void AddDirectly<T>(T service)
         {
-            AddServiceDirectly(typeof(T), service);
+            AddDirectly(typeof(T), service);
         }
 
-        public void AddServiceDirectly(Type type, object service)
+        public void AddDirectly(Type type, object service)
         {
             _services[type] = service;
         }
 
         [DebuggerHidden]
-        public T GetService<T>()
+        public T Get<T>()
         {
-            return (T)GetService(typeof(T));
+            return (T)Get(typeof(T));
         }
 
         [DebuggerHidden]
-        public object GetService(Type type)
+        public object Get(Type type)
+        {
+            return GetInternal(type);
+        }
+
+        public ServiceLocator Resolve<T>(out T dest)
+        {
+            dest = Get<T>();
+            return this;
+        }
+
+        private object GetInternal(Type type)
         {
             if (_services.TryGetValue(type, out var obj))
             {
@@ -70,27 +87,32 @@ namespace Shuile.Core.Framework
             throw new Exception($"Service creator of type {type} not found");
         }
 
-        public void ClearAllServices()
+        public void ClearAll()
         {
             _services.Clear();
         }
 
-        public void ClearAllServicesCreator()
+        public void ClearAllCreator()
         {
             _serviceCreators.Clear();
         }
 
-        public bool ContainsService(object instance)
+        public bool Contains(object instance)
+        {
+            return ContainsInternal(instance);
+        }
+
+        private bool ContainsInternal(object instance)
         {
             return _services.ContainsValue(instance);
         }
 
-        public bool ContainsService<T>()
+        public bool Contains<T>()
         {
             return _services.ContainsKey(typeof(T));
         }
 
-        public bool ContainsService(Type type)
+        public bool Contains(Type type)
         {
             return _services.ContainsKey(type);
         }

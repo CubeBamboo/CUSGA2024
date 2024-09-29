@@ -23,22 +23,22 @@ namespace Shuile.Core.Framework
 
         public T GetUtility<T>() where T : IUtility
         {
-            return _serviceLocator.GetService<T>();
+            return _serviceLocator.Get<T>();
         }
 
         public T GetModel<T>() where T : IModel
         {
-            return _serviceLocator.GetService<T>();
+            return _serviceLocator.Get<T>();
         }
 
         public T GetSystem<T>() where T : ISystem
         {
-            return _serviceLocator.GetService<T>();
+            return _serviceLocator.Get<T>();
         }
 
         public void ClearExisting()
         {
-            _serviceLocator.ClearAllServices();
+            _serviceLocator.ClearAll();
         }
     }
 }

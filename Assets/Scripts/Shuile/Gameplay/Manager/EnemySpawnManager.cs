@@ -22,7 +22,7 @@ namespace Shuile.Gameplay.Manager
         public EnemySpawnManager(IGetableScope scope)
         {
             var services = GameApplication.GlobalService;
-            _sceneTransitionManager = services.GetService<SceneTransitionManager>();
+            _sceneTransitionManager = services.Get<SceneTransitionManager>();
 
             _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();

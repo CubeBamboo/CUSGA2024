@@ -30,7 +30,7 @@ namespace Shuile.Gameplay.Character
         private void Awake()
         {
             var services = GameApplication.GlobalService;
-            _sceneTransitionManager = services.GetService<SceneTransitionManager>();
+            _sceneTransitionManager = services.Get<SceneTransitionManager>();
 
             var scope = LevelScope.Interface;
             _levelModel = scope.GetImplementation<LevelModel>();

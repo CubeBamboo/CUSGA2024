@@ -60,7 +60,7 @@ namespace Shuile.Core.Framework.Unity
         {
             if (!EnableGetChainCheck)
             {
-                return _serviceLocator.GetService(type);
+                return _serviceLocator.Get(type);
             }
 
             if (!_getChain.Add(type))
@@ -72,7 +72,7 @@ namespace Shuile.Core.Framework.Unity
                     $"Circular dependency detected, you need to refactor your code: {log}");
             }
 
-            var res = _serviceLocator.GetService(type);
+            var res = _serviceLocator.Get(type);
             _getChain.Remove(type);
             return res;
         }
@@ -84,7 +84,7 @@ namespace Shuile.Core.Framework.Unity
 
         public void RegisterMonoComponent<T>(T instance) where T : MonoBehaviour
         {
-            _serviceLocator.AddServiceDirectly(instance);
+            _serviceLocator.AddDirectly(instance);
         }
 
         public void RegisterEntryPoint<T>(Func<T> implementation)
@@ -94,7 +94,7 @@ namespace Shuile.Core.Framework.Unity
 
         public void ClearExisting()
         {
-            _serviceLocator.ClearAllServices();
+            _serviceLocator.ClearAll();
         }
 
         private void PreInitializeEntryPoints()
