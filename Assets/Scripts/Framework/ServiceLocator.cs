@@ -54,27 +54,27 @@ namespace Shuile.Framework
             parents.Add(parent);
         }
 
-        public void RegisterCreator<T>(Func<T> creator)
+        public void RegisterFactory<T>(Func<T> func)
         {
-            RegisterCreator(typeof(T), () => creator());
+            RegisterFactory(typeof(T), () => func());
         }
 
-        public void RegisterCreator(Type type, Func<object> creator)
+        public void RegisterFactory(Type type, Func<object> func)
         {
             if (type == objectType)
             {
                 throw new ArgumentException("Registering object type is not allowed.");
             }
 
-            _serviceFactory[type] = creator;
+            _serviceFactory[type] = func;
         }
 
-        public void UnRegisterCreator<T>()
+        public void UnRegisterFactory<T>()
         {
-            UnRegisterCreator(typeof(T));
+            UnRegisterFactory(typeof(T));
         }
 
-        public void UnRegisterCreator(Type type)
+        public void UnRegisterFactory(Type type)
         {
             _serviceFactory.Remove(type);
         }
@@ -211,20 +211,6 @@ namespace Shuile.Framework
                     PrintCurrent(parent, depth + 1);
                 }
             }
-        }
-    }
-
-    public static class Extensions
-    {
-        public static IReadOnlyServiceLocator Resolve<T>(this IReadOnlyServiceLocator serviceLocator, out T dest)
-        {
-            dest = serviceLocator.Get<T>();
-            if (dest == null)
-            {
-                throw new Exception($"Cannot resolve {typeof(T).Name}");
-            }
-
-            return serviceLocator;
         }
     }
 }

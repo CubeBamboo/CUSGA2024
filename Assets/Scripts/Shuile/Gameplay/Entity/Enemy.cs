@@ -1,5 +1,6 @@
 using Shuile.Core.Framework;
 using Shuile.Core.Gameplay.Common;
+using Shuile.Framework;
 using Shuile.Gameplay.Event;
 using Shuile.Gameplay.Move;
 using System;
@@ -8,7 +9,7 @@ using UnityEngine;
 namespace Shuile.Gameplay.Entity
 {
     /// <summary> base class for enemy </summary>
-    public abstract class Enemy : MonoBehaviour, IHurtable, IJudgeable
+    public abstract class Enemy : MonoContainer, IHurtable, IJudgeable
     {
         [SerializeField] protected int MaxHealth = 100;
 
@@ -20,12 +21,26 @@ namespace Shuile.Gameplay.Entity
         public bool IsAlive => health > 0;
         public SmoothMoveCtrl MoveController => moveController;
 
-        protected void Awake()
+        public override void BuildContext(ServiceLocator context)
         {
+            context.RegisterInstance(GetComponent<Rigidbody2D>());
+            context.RegisterInstance(transform);
+
+            context.RegisterFactory(() => new SmoothMoveCtrl(context));
+        }
+
+        public override void ResolveContext(IReadOnlyServiceLocator context)
+        {
+            base.ResolveContext(context);
+            context.Resolve(out moveController);
+        }
+
+        public override void Awake()
+        {
+            base.Awake();
             TypeEventSystem.Global.Trigger<EnemySpawnEvent>(new EnemySpawnEvent { enemy = gameObject });
             enemyHurtEvent = new EnemyHurtEvent { enemy = gameObject };
             health = MaxHealth;
-            moveController = GetComponent<SmoothMoveCtrl>();
 
             OnAwake();
         }

@@ -9,6 +9,5 @@ namespace Shuile
 
         public float faceDir = 1;
         public bool isInviciable = false;
-        public SmoothMoveCtrl moveCtrl;
     }
 }

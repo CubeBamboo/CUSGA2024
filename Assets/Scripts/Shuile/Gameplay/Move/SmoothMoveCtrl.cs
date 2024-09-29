@@ -1,14 +1,17 @@
+using Shuile.Framework;
+using Shuile.Gameplay.Character;
 using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Move
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-    public class SmoothMoveCtrl : MonoBehaviour, IMoveController
+    public class SmoothMoveCtrl : IHasContext, IMoveController
     {
         private Rigidbody2D _rb;
+        private Transform transform;
 
         private bool isFrozen;
+        private Player _player;
 
         public bool IsFrozen
         {
@@ -23,9 +26,9 @@ namespace Shuile.Gameplay.Move
         public float JumpVelocity { get; set; } = 10f;
         public float Gravity { get => _rb.gravityScale; set => _rb.gravityScale = value; }
 
-        private void Awake()
+        public SmoothMoveCtrl(IReadOnlyServiceLocator serviceLocator)
         {
-            _rb = GetComponent<Rigidbody2D>();
+            ResolveContext(serviceLocator);
         }
 
         private void FixedUpdate()
@@ -70,6 +73,21 @@ namespace Shuile.Gameplay.Move
         }
 
         public void HoldJump()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResolveContext(IReadOnlyServiceLocator context)
+        {
+            context
+                .Resolve(out _rb)
+                .Resolve(out transform)
+                .Resolve(out _player);
+
+            _player.OnFixedUpdate += FixedUpdate;
+        }
+
+        public void BuildContext(ServiceLocator context)
         {
             throw new NotImplementedException();
         }

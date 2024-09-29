@@ -7,7 +7,7 @@ namespace Shuile.Core.Framework
     {
         public static ServiceLocator AddImplemenation<T>(this ServiceLocator serviceLocator, Func<T> implementation)
         {
-            serviceLocator.RegisterCreator(implementation);
+            serviceLocator.RegisterFactory(implementation);
             return serviceLocator;
         }
 

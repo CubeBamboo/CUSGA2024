@@ -80,7 +80,7 @@ namespace Shuile.Core.Framework.Unity
 
         public void Register<T>(Func<T> implementation)
         {
-            _serviceLocator.RegisterCreator(implementation);
+            _serviceLocator.RegisterFactory(implementation);
         }
 
         public void RegisterMonoComponent<T>(T instance) where T : MonoBehaviour
@@ -103,7 +103,7 @@ namespace Shuile.Core.Framework.Unity
             // init creator
             foreach ((var key, var value) in _entryPointCreators)
             {
-                _serviceLocator.RegisterCreator(key, () =>
+                _serviceLocator.RegisterFactory(key, () =>
                 {
                     var instance = value();
                     _entryPoints.Add(instance);

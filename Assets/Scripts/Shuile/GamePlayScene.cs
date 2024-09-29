@@ -1,10 +1,9 @@
-using Shuile.Core.Framework;
 using Shuile.Framework;
 using Shuile.Gameplay.Feel;
 
 namespace Shuile
 {
-    public class GamePlayScene : SceneContainer
+    public class GamePlayScene : MonoContainer
     {
         public override void BuildContext(ServiceLocator context)
         {

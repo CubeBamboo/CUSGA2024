@@ -9,17 +9,17 @@ namespace Shuile.Core.Framework
 
         public void AddUtilityCreator<T>(Func<T> creator) where T : IUtility
         {
-            _serviceLocator.RegisterCreator(creator);
+            _serviceLocator.RegisterFactory(creator);
         }
 
         public void AddModelCreator<T>(Func<T> creator) where T : IModel
         {
-            _serviceLocator.RegisterCreator(creator);
+            _serviceLocator.RegisterFactory(creator);
         }
 
         public void AddSystemCreator<T>(Func<T> creator) where T : ISystem
         {
-            _serviceLocator.RegisterCreator(creator);
+            _serviceLocator.RegisterFactory(creator);
         }
 
         public T GetUtility<T>() where T : IUtility

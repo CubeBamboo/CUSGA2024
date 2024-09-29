@@ -3,11 +3,12 @@ using Shuile.Core.Gameplay;
 using Shuile.Core.Gameplay.Common;
 using Shuile.Framework;
 using Shuile.Gameplay.Move;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
-    public class Player : GameObjectContainer, IHurtable
+    public class Player : MonoContainer, IHurtable
     {
         [SerializeField] private PlayerPropertySO property;
         private LevelStateMachine _levelStateMachine;
@@ -19,14 +20,23 @@ namespace Shuile.Gameplay.Character
 
         public HearableProperty<int> CurrentHp { get; } = new();
         public PlayerPropertySO Property => property;
+        public event Action OnFixedUpdate;
 
-        private void Awake()
+        public override void BuildContext(ServiceLocator context)
         {
+            context.RegisterInstance(this);
+            context.RegisterInstance(transform);
+            context.RegisterInstance(GetComponent<Rigidbody2D>());
+
+            context.RegisterFactory(() => new SmoothMoveCtrl(context));
+        }
+
+        public override void Awake()
+        {
+            base.Awake();
             var scope = LevelScope.Interface;
             _playerModel = scope.GetImplementation<PlayerModel>();
             _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
-
-            _playerModel.moveCtrl = GetComponent<SmoothMoveCtrl>();
         }
 
         private void Start()
@@ -57,6 +67,11 @@ namespace Shuile.Gameplay.Character
                 OnDie.Invoke();
                 _levelStateMachine.State = LevelStateMachine.LevelState.Fail;
             }
+        }
+
+        private void FixedUpdate()
+        {
+            OnFixedUpdate?.Invoke();
         }
     }
 

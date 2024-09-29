@@ -279,13 +279,17 @@ namespace Shuile.Gameplay.Character
 
         private void ConfigureDependency()
         {
+            var monoContainer = GetComponent<MonoContainer>();
+            monoContainer.MakeSureAwake();
+            monoContainer.Context.ServiceLocator
+                .Resolve(out _moveController);
+
             var scope = LevelScope.Interface;
             _playerModel = scope.GetImplementation<PlayerModel>();
             _playerChartManager = scope.GetImplementation<PlayerChartManager>();
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
 
             mPlayerInput = GetComponent<NormalPlayerInput>();
-            _moveController = GetComponent<SmoothMoveCtrl>();
         }
 
         private enum MainState

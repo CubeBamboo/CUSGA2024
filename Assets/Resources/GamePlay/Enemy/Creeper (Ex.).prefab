@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7682511776118496296}
   - component: {fileID: -4031018267551204319}
   - component: {fileID: -8252572558612312455}
-  - component: {fileID: 8807684116662394676}
   m_Layer: 6
   m_Name: Creeper (Ex.)
   m_TagString: Untagged
@@ -126,18 +125,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &8807684116662394676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3418564270763865659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64861b9b386381040b4aa95b3506e3c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8123984159501024645
 GameObject:
   m_ObjectHideFlags: 0
