@@ -4,6 +4,7 @@ using Shuile.Core.Framework;
 using Shuile.Core.Gameplay;
 using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
+using Shuile.Framework;
 using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Event;
@@ -18,8 +19,10 @@ using UInput = UnityEngine.InputSystem;
 namespace Shuile.Gameplay.Manager
 {
     // if you dont know where to put the logic, put it here
-    public class LevelGlobalManager : MonoBehaviour
+    public class LevelGlobalManager : MonoContainer
     {
+        private GamePlayScene _gamePlayScene;
+        private Player _player;
         private AutoPlayChartManager _autoPlayChartManager;
         private EndLevelPanel _endLevelPanel;
         private LevelEntityManager _levelEntityManager;
@@ -27,25 +30,33 @@ namespace Shuile.Gameplay.Manager
         private LevelModel _levelModel;
         private LevelStateMachine _levelStateMachine;
         private MusicRhythmManager _musicRhythmManager;
-        private Player _player;
         private PlayerModel _playerModel;
         private SceneTransitionManager _sceneTransitionManager;
 
-        private void Awake()
+        public override void ResolveContext(IReadOnlyServiceLocator context)
         {
-            var services = GameApplication.GlobalService;
-            _sceneTransitionManager = services.Get<SceneTransitionManager>();
+            context
+                .Resolve(out _gamePlayScene)
+                .Resolve(out _levelStateMachine)
+                .Resolve(out _sceneTransitionManager)
+                .Resolve(out _levelFeelManager);
 
+            if (_gamePlayScene.TryGetPlayer(out _player))
+            {
+                _player.Context.ServiceLocator
+                    .Resolve(out _playerModel);
+            }
+        }
+
+        public override void Awake()
+        {
+            base.Awake();
             var scope = LevelScope.Interface;
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
             _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
-            _levelFeelManager = scope.GetImplementation<LevelFeelManager>();
-            _playerModel = scope.GetImplementation<PlayerModel>();
-            _player = scope.GetImplementation<Player>();
             _levelModel = scope.GetImplementation<LevelModel>();
             _endLevelPanel = scope.GetImplementation<EndLevelPanel>();
-            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
         }
 
         private void Start()
@@ -138,23 +149,26 @@ namespace Shuile.Gameplay.Manager
                 _musicRhythmManager.SetCurrentTime(_musicRhythmManager.CurrentTime - 5f);
             }
 
-            if (keyboard.upArrowKey.isPressed && keyboard.downArrowKey.wasPressedThisFrame)
+            if (_player != null)
             {
-                //DebugProperty.Instance.SetInt("PlayerKaiGua", 1);
-                Debug.Log("开挂模式");
-                _player.CurrentHp.Value = 999999;
-            }
+                if (keyboard.upArrowKey.isPressed && keyboard.downArrowKey.wasPressedThisFrame)
+                {
+                    //DebugProperty.Instance.SetInt("PlayerKaiGua", 1);
+                    Debug.Log("开挂模式");
+                    _player.CurrentHp.Value = 999999;
+                }
 
-            if (keyboard.upArrowKey.isPressed && keyboard.leftArrowKey.wasPressedThisFrame)
-            {
-                _playerModel.canInviciable = !_playerModel.canInviciable;
-                Debug.Log($"受击无敌变更 -> {_playerModel.canInviciable}");
-            }
+                if (keyboard.upArrowKey.isPressed && keyboard.leftArrowKey.wasPressedThisFrame)
+                {
+                    _playerModel.canInviciable = !_playerModel.canInviciable;
+                    Debug.Log($"受击无敌变更 -> {_playerModel.canInviciable}");
+                }
 
-            if (keyboard.bKey.wasPressedThisFrame)
-            {
-                _player.OnHurt(20);
-                _player.OnHurt((int)(_player.CurrentHp.Value * 0.25f));
+                if (keyboard.bKey.wasPressedThisFrame)
+                {
+                    _player.OnHurt(20);
+                    _player.OnHurt((int)(_player.CurrentHp.Value * 0.25f));
+                }
             }
         }
     }

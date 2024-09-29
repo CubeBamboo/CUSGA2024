@@ -1,3 +1,10 @@
+namespace Shuile.Framework
+{
+    public abstract class SceneContainer : MonoContainer
+    {
+    }
+}
+
 // using System;
 // using System.Collections.Generic;
 // using UnityEngine;

@@ -3,7 +3,6 @@ using Shuile.Core.Gameplay;
 using Shuile.Core.Gameplay.Common;
 using Shuile.Framework;
 using Shuile.Gameplay.Move;
-using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
@@ -26,17 +25,15 @@ namespace Shuile.Gameplay.Character
             context.RegisterInstance(this);
             context.RegisterInstance(transform);
             context.RegisterInstance(GetComponent<Rigidbody2D>());
+            context.RegisterInstance(_playerModel = new PlayerModel());
             context.RegisterMonoScheduler(this);
 
             context.RegisterFactory(() => new SmoothMoveCtrl(context));
         }
 
-        public override void Awake()
+        public override void ResolveContext(IReadOnlyServiceLocator context)
         {
-            base.Awake();
-            var scope = LevelScope.Interface;
-            _playerModel = scope.GetImplementation<PlayerModel>();
-            _levelStateMachine = scope.GetImplementation<LevelStateMachine>();
+            context.Resolve(out _levelStateMachine);
         }
 
         private void Start()

@@ -3,7 +3,9 @@
  * remove this script in the final release
  */
 
+using Shuile.Framework;
 using Shuile.Gameplay;
+using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Entity;
 using Shuile.Model;
 using Shuile.Rhythm;
@@ -20,6 +22,7 @@ namespace Shuile.UI.Gameplay
         [SerializeField] private TextMeshProUGUI dangerScoreText;
         [SerializeField] private TextMeshProUGUI dangerLevelText;
         [SerializeField] private TextMeshProUGUI enemyCountText;
+        [SerializeField] private Player player;
         private LevelEntityManager _levelEntityManager;
         private LevelModel _levelModel;
         private MusicRhythmManager _musicRhythmManager;
@@ -28,9 +31,10 @@ namespace Shuile.UI.Gameplay
 
         private void Start()
         {
+            player.Context.ServiceLocator
+                .Resolve(out _playerModel);
             var scope = LevelScope.Interface;
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
-            _playerModel = scope.GetImplementation<PlayerModel>();
             _levelModel = scope.GetImplementation<LevelModel>();
 
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();

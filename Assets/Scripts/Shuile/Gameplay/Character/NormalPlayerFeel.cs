@@ -35,17 +35,15 @@ namespace Shuile.Gameplay.Character
             monoContainer.MakeSureAwake();
             monoContainer.Context.ServiceLocator
                 .Resolve(out _levelFeelManager)
-                .Resolve(out _moveController);
-
-            var services = GameApplication.GlobalService;
-            _sceneTransitionManager = services.Get<SceneTransitionManager>();
+                .Resolve(out _moveController)
+                .Resolve(out player)
+                .Resolve(out _playerModel)
+                .Resolve(out _sceneTransitionManager);
 
             var scope = LevelScope.Interface;
             _levelModel = scope.GetImplementation<LevelModel>();
-            _playerModel = scope.GetImplementation<PlayerModel>();
 
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
-            player = GetComponent<Player>();
             playerCtrl = GetComponent<NormalPlayerCtrl>();
             _rb = GetComponent<Rigidbody2D>();
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Move
 {
-    public class SmoothMoveCtrl : IHasContext, IMoveController
+    public class SmoothMoveCtrl : IMoveController
     {
         private Rigidbody2D _rb;
         private UnityEntryPointScheduler _scheduler;
@@ -27,7 +27,12 @@ namespace Shuile.Gameplay.Move
 
         public SmoothMoveCtrl(IReadOnlyServiceLocator serviceLocator)
         {
-            ResolveContext(serviceLocator);
+            serviceLocator
+                .Resolve(out _rb)
+                .Resolve(out transform)
+                .Resolve(out _scheduler);
+
+            _scheduler.AddFixedUpdate(FixedUpdate);
         }
 
         private void FixedUpdate()
@@ -72,21 +77,6 @@ namespace Shuile.Gameplay.Move
         }
 
         public void HoldJump()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ResolveContext(IReadOnlyServiceLocator context)
-        {
-            context
-                .Resolve(out _rb)
-                .Resolve(out transform)
-                .Resolve(out _scheduler);
-
-            _scheduler.AddFixedUpdate(FixedUpdate);
-        }
-
-        public void BuildContext(ServiceLocator context)
         {
             throw new NotImplementedException();
         }

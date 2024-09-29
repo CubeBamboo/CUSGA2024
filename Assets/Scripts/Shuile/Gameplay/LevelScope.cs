@@ -25,13 +25,11 @@ namespace Shuile.Gameplay
 
         public override void Configure(IRegisterableScope scope)
         {
-            scope.Register(() => new PlayerModel());
             scope.Register(() => new LevelModel());
 
             scope.Register(() => new LevelFeelManager());
             scope.Register(() => new LevelTimingManager(this));
             scope.Register(() => new NoteDataProcessor(this));
-            scope.Register(() => new LevelStateMachine(this));
 
             scope.RegisterMonoComponent(levelAudioManager);
             scope.RegisterMonoComponent(levelZoneManager);

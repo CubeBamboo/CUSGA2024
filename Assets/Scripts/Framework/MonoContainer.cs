@@ -28,6 +28,10 @@ namespace Shuile.Framework
                 Context.ServiceLocator.AddParent(parent.Context.ServiceLocator);
                 parent.MakeSureAwake(); // make sure awake
             }
+            else if (ServiceLocator.Global != null)
+            {
+                Context.ServiceLocator.AddParent(ServiceLocator.Global);
+            }
             BuildContext(Context.ServiceLocator);
             ResolveContext(Context.ServiceLocator);
             IsAwake = true;

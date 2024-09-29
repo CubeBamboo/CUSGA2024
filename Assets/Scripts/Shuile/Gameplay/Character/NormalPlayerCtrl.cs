@@ -282,10 +282,10 @@ namespace Shuile.Gameplay.Character
             var monoContainer = GetComponent<MonoContainer>();
             monoContainer.MakeSureAwake();
             monoContainer.Context.ServiceLocator
-                .Resolve(out _moveController);
+                .Resolve(out _moveController)
+                .Resolve(out _playerModel);
 
             var scope = LevelScope.Interface;
-            _playerModel = scope.GetImplementation<PlayerModel>();
             _playerChartManager = scope.GetImplementation<PlayerChartManager>();
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
 

@@ -14,7 +14,7 @@ namespace Shuile.Core.Gameplay
 
         private LevelState _state;
 
-        public LevelStateMachine(IGetableScope scope)
+        public LevelStateMachine()
         {
             Initialize();
         }

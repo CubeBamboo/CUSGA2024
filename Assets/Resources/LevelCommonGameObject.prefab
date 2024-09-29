@@ -575,6 +575,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af6bbcd77024e24cbf86174e6fd5fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 888734764693625756}
 --- !u!114 &2126869024058730763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1130,6 +1131,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7278048431847427881, guid: dc3fd7047aaeba149897c818603d3b6c, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 888734764693625756}
     - target: {fileID: 7860458974508552525, guid: dc3fd7047aaeba149897c818603d3b6c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

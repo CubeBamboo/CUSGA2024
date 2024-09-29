@@ -170,6 +170,8 @@ namespace Shuile.Framework
                 return container;
             }
         }
+
+        public static ServiceLocator Global { get; set; }
     }
 
     public record FormattedRegistry

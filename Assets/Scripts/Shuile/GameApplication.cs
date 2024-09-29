@@ -14,8 +14,9 @@ namespace Shuile
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void PreInitialize()
         {
-            // Initialize the game
             GlobalService.AddImplemenation(() => new SceneTransitionManager());
+
+            ServiceLocator.Global = GlobalService;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

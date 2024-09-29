@@ -1,5 +1,3 @@
-using Shuile.Gameplay.Move;
-
 namespace Shuile
 {
     public class PlayerModel

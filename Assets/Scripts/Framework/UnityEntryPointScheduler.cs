@@ -8,10 +8,10 @@ namespace Shuile.Framework
     {
         private MonoBehaviour linkedObject;
         private readonly Queue<Action> taskQueue = new();
-        private List<Action> updateTasks = new();
-        private List<Action> fixedUpdateTasks = new();
-        private List<Action> lateUpdateTasks = new();
-        private List<Action> onDestroyTasks = new();
+        private readonly List<Action> updateTasks = new();
+        private readonly List<Action> fixedUpdateTasks = new();
+        private readonly List<Action> lateUpdateTasks = new();
+        private readonly List<Action> onDestroyTasks = new();
 
         public static UnityEntryPointScheduler Create(MonoBehaviour linkedObject)
         {
