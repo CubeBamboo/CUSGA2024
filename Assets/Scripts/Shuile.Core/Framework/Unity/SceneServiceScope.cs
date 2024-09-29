@@ -84,7 +84,7 @@ namespace Shuile.Core.Framework.Unity
 
         public void RegisterMonoComponent<T>(T instance) where T : MonoBehaviour
         {
-            _serviceLocator.AddDirectly(instance);
+            _serviceLocator.RegisterInstance(instance);
         }
 
         public void RegisterEntryPoint<T>(Func<T> implementation)
@@ -94,7 +94,7 @@ namespace Shuile.Core.Framework.Unity
 
         public void ClearExisting()
         {
-            _serviceLocator.ClearAll();
+            _serviceLocator.ClearAllInstance();
         }
 
         private void PreInitializeEntryPoints()

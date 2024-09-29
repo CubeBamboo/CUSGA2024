@@ -38,7 +38,7 @@ namespace Shuile.Core.Framework
 
         public void ClearExisting()
         {
-            _serviceLocator.ClearAll();
+            _serviceLocator.ClearAllInstance();
         }
     }
 }

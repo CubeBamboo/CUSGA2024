@@ -1,4 +1,6 @@
 using CbUtils.ActionKit;
+using Plugins.Framework;
+using Shuile.Core.Framework;
 using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
 using Shuile.Gameplay.Feel;
@@ -10,7 +12,7 @@ using UnityEngine;
 namespace Shuile.Gameplay.Character
 {
     // player feedback and other event
-    public class NormalPlayerFeel : MonoBehaviour
+    public class NormalPlayerFeel : GameObjectContainer
     {
         private const float HurtXForce = 6f;
         private const float HurtYForce = 0.2f;
@@ -27,7 +29,13 @@ namespace Shuile.Gameplay.Character
         private Player player;
         private NormalPlayerCtrl playerCtrl;
 
-        private void Awake()
+        public override void ResolveContext(IReadOnlyServiceLocator context)
+        {
+            base.ResolveContext(context);
+            context.Resolve(out _levelFeelManager);
+        }
+
+        protected override void Awake()
         {
             var services = GameApplication.GlobalService;
             _sceneTransitionManager = services.Get<SceneTransitionManager>();
@@ -35,7 +43,6 @@ namespace Shuile.Gameplay.Character
             var scope = LevelScope.Interface;
             _levelModel = scope.GetImplementation<LevelModel>();
             _playerModel = scope.GetImplementation<PlayerModel>();
-            _levelFeelManager = scope.GetImplementation<LevelFeelManager>();
 
             _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
             _moveController = GetComponent<SmoothMoveCtrl>();
