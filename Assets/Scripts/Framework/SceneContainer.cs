@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Plugins.Framework
+namespace Shuile.Framework
 {
     [DefaultExecutionOrder(-1000)]
     public abstract class SceneContainer : GameObjectContainer

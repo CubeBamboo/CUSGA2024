@@ -1,3 +1,4 @@
+using Shuile.Framework;
 using System;
 
 namespace Shuile.Core.Framework

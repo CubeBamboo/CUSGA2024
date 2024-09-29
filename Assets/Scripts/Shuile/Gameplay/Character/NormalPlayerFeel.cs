@@ -1,8 +1,8 @@
 using CbUtils.ActionKit;
-using Plugins.Framework;
 using Shuile.Core.Framework;
 using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
+using Shuile.Framework;
 using Shuile.Gameplay.Feel;
 using Shuile.Gameplay.Move;
 using Shuile.Model;

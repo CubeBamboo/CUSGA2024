@@ -1,12 +1,13 @@
 using CbUtils;
 using Shuile.Core.Gameplay;
 using Shuile.Core.Gameplay.Common;
+using Shuile.Framework;
 using Shuile.Gameplay.Move;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
-    public class Player : MonoBehaviour, IHurtable
+    public class Player : GameObjectContainer, IHurtable
     {
         [SerializeField] private PlayerPropertySO property;
         private LevelStateMachine _levelStateMachine;

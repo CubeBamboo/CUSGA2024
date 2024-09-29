@@ -1,6 +1,7 @@
 using CbUtils.Kits.Tasks;
 using Shuile.Core.Framework;
 using Shuile.Core.Global;
+using Shuile.Framework;
 using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 

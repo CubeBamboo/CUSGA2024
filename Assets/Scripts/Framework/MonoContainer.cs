@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Plugins.Framework
+namespace Shuile.Framework
 {
     public class MonoContainer : MonoBehaviour
     {

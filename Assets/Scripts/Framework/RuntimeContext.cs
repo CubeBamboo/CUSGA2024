@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
-using Shuile.Core.Framework;
 
-namespace Plugins.Framework
+namespace Shuile.Framework
 {
     public class RuntimeContext
     {

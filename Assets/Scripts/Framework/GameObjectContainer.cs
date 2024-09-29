@@ -1,8 +1,6 @@
-using Shuile.Core.Framework;
-using System;
 using UnityEngine;
 
-namespace Plugins.Framework
+namespace Shuile.Framework
 {
     public abstract class GameObjectContainer : MonoContainer
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Debug = UnityEngine.Debug;
 
-namespace Shuile.Core.Framework
+namespace Shuile.Framework
 {
     public interface IReadOnlyServiceLocator
     {

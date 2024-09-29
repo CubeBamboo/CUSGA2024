@@ -1,5 +1,5 @@
-using Plugins.Framework;
 using Shuile.Core.Framework;
+using Shuile.Framework;
 using Shuile.Gameplay.Feel;
 
 namespace Shuile
