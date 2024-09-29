@@ -1,7 +1,6 @@
 using Shuile.Audio;
 using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
-using Shuile.Core.Gameplay;
 using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Feel;
@@ -14,6 +13,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay
 {
+    // we are now work in progress with the new architecture named MonoContainer, to replace the service scope.
     public class LevelScope : SceneServiceScope<LevelScope>
     {
         [SerializeField] private LevelAudioManager levelAudioManager;

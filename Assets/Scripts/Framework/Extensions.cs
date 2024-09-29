@@ -19,7 +19,7 @@ namespace Shuile.Framework
         public static UnityEntryPointScheduler RegisterMonoScheduler(this ServiceLocator serviceLocator, MonoBehaviour monoBehaviour)
         {
             UnityEntryPointScheduler scheduler;
-            serviceLocator.RegisterInstance(scheduler = UnityEntryPointScheduler.Create(monoBehaviour));
+            serviceLocator.RegisterInstance(scheduler = UnityEntryPointScheduler.Create(monoBehaviour.gameObject));
             return scheduler;
         }
     }

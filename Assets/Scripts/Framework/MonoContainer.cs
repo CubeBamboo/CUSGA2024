@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace Shuile.Framework
 {
+    /// <summary>
+    /// provide the context shared based on the hierarchy of the GameObject.
+    /// if you need to access Unity's event functions, use <see cref="UnityEntryPointScheduler"/>.
+    /// </summary>
     public abstract class MonoContainer : MonoBehaviour, IHasContext
     {
         public bool IsAwake { get; private set; }
@@ -72,6 +76,6 @@ namespace Shuile.Framework
             Awake();
         }
 
-        public static InvalidOperationException MultiMonoContainerException() => new("cannot have more than one GameObjectContainer in a GameObject, try use child GameObjects or plain c# classes.");
+        public static InvalidOperationException MultiMonoContainerException() => new($"cannot have more than one {nameof(MonoContainer)} in a GameObject, try use child GameObjects or plain c# classes.");
     }
 }

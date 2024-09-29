@@ -4,18 +4,21 @@ using UnityEngine;
 
 namespace Shuile.Framework
 {
+    /// <summary>
+    /// to access the Unity's entry point from the outside of the MonoBehaviour.
+    /// </summary>
     public class UnityEntryPointScheduler : MonoBehaviour
     {
-        private MonoBehaviour linkedObject;
+        private GameObject linkedObject;
         private readonly Queue<Action> taskQueue = new();
         private readonly List<Action> updateTasks = new();
         private readonly List<Action> fixedUpdateTasks = new();
         private readonly List<Action> lateUpdateTasks = new();
         private readonly List<Action> onDestroyTasks = new();
 
-        public static UnityEntryPointScheduler Create(MonoBehaviour linkedObject)
+        public static UnityEntryPointScheduler Create(GameObject linkedObject)
         {
-            var scheduler = linkedObject.gameObject.AddComponent<UnityEntryPointScheduler>();
+            var scheduler = linkedObject.AddComponent<UnityEntryPointScheduler>();
             scheduler.linkedObject = linkedObject;
             return scheduler;
         }
