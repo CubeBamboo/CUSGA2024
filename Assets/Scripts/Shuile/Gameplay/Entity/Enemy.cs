@@ -25,6 +25,7 @@ namespace Shuile.Gameplay.Entity
         {
             context.RegisterInstance(GetComponent<Rigidbody2D>());
             context.RegisterInstance(transform);
+            context.RegisterMonoScheduler(this);
 
             context.RegisterFactory(() => new SmoothMoveCtrl(context));
         }

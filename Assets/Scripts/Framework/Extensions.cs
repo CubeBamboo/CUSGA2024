@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Shuile.Framework
 {
@@ -13,6 +14,13 @@ namespace Shuile.Framework
             }
 
             return serviceLocator;
+        }
+
+        public static UnityEntryPointScheduler RegisterMonoScheduler(this ServiceLocator serviceLocator, MonoBehaviour monoBehaviour)
+        {
+            UnityEntryPointScheduler scheduler;
+            serviceLocator.RegisterInstance(scheduler = UnityEntryPointScheduler.Create(monoBehaviour));
+            return scheduler;
         }
     }
 }

@@ -20,13 +20,13 @@ namespace Shuile.Gameplay.Character
 
         public HearableProperty<int> CurrentHp { get; } = new();
         public PlayerPropertySO Property => property;
-        public event Action OnFixedUpdate;
 
         public override void BuildContext(ServiceLocator context)
         {
             context.RegisterInstance(this);
             context.RegisterInstance(transform);
             context.RegisterInstance(GetComponent<Rigidbody2D>());
+            context.RegisterMonoScheduler(this);
 
             context.RegisterFactory(() => new SmoothMoveCtrl(context));
         }
@@ -67,11 +67,6 @@ namespace Shuile.Gameplay.Character
                 OnDie.Invoke();
                 _levelStateMachine.State = LevelStateMachine.LevelState.Fail;
             }
-        }
-
-        private void FixedUpdate()
-        {
-            OnFixedUpdate?.Invoke();
         }
     }
 

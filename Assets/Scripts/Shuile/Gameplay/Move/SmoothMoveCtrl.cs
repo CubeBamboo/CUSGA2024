@@ -1,5 +1,4 @@
 using Shuile.Framework;
-using Shuile.Gameplay.Character;
 using System;
 using UnityEngine;
 
@@ -8,10 +7,10 @@ namespace Shuile.Gameplay.Move
     public class SmoothMoveCtrl : IHasContext, IMoveController
     {
         private Rigidbody2D _rb;
+        private UnityEntryPointScheduler _scheduler;
         private Transform transform;
 
         private bool isFrozen;
-        private Player _player;
 
         public bool IsFrozen
         {
@@ -82,9 +81,9 @@ namespace Shuile.Gameplay.Move
             context
                 .Resolve(out _rb)
                 .Resolve(out transform)
-                .Resolve(out _player);
+                .Resolve(out _scheduler);
 
-            _player.OnFixedUpdate += FixedUpdate;
+            _scheduler.AddFixedUpdate(FixedUpdate);
         }
 
         public void BuildContext(ServiceLocator context)
