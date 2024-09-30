@@ -1,3 +1,4 @@
+using Shuile.Rhythm.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,14 +18,14 @@ namespace Shuile.Chart
             Init(chart, onPlayTimeConvert);
         }
 
-        public ChartPlayer(ChartData chart, NoteDataProcessor noteDataProcessor)
+        public ChartPlayer(ChartData chart, BaseChartManager chartManager)
         {
             Init(chart, PlayTimeConvert);
             return;
 
             float PlayTimeConvert(BaseNoteData note)
             {
-                return note.GetNotePlayTime(noteDataProcessor);
+                return chartManager.GetNotePlayTime(note);
             }
         }
 

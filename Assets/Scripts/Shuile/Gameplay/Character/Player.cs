@@ -3,6 +3,7 @@ using Shuile.Core.Gameplay;
 using Shuile.Core.Gameplay.Common;
 using Shuile.Framework;
 using Shuile.Gameplay.Move;
+using Shuile.Rhythm.Runtime;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
@@ -29,6 +30,7 @@ namespace Shuile.Gameplay.Character
             context.RegisterMonoScheduler(this);
 
             context.RegisterFactory(() => new SmoothMoveCtrl(context));
+            context.RegisterFactory(() => new PlayerChartManager(context));
         }
 
         public override void ResolveContext(IReadOnlyServiceLocator context)

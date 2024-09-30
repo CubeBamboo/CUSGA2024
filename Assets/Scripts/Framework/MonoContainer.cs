@@ -10,7 +10,8 @@ namespace Shuile.Framework
     public abstract class MonoContainer : MonoBehaviour, IHasContext
     {
         public bool IsAwake { get; private set; }
-        public bool IsResolved { get; protected set; }
+        public bool IsResolved { get; private set; }
+        public bool IsBuild { get; private set; }
 
         public readonly RuntimeContext Context;
 
@@ -69,6 +70,7 @@ namespace Shuile.Framework
 
         public virtual void BuildContext(ServiceLocator context)
         {
+            IsBuild = true;
         }
 
         public void MakeSureAwake()

@@ -39,6 +39,8 @@ namespace Shuile.Gameplay.Manager
                 .Resolve(out _gamePlayScene)
                 .Resolve(out _levelStateMachine)
                 .Resolve(out _sceneTransitionManager)
+                .Resolve(out _autoPlayChartManager)
+                .Resolve(out _musicRhythmManager)
                 .Resolve(out _levelFeelManager);
 
             if (_gamePlayScene.TryGetPlayer(out _player))
@@ -52,8 +54,6 @@ namespace Shuile.Gameplay.Manager
         {
             base.Awake();
             var scope = LevelScope.Interface;
-            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
-            _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
             _levelModel = scope.GetImplementation<LevelModel>();
             _endLevelPanel = scope.GetImplementation<EndLevelPanel>();

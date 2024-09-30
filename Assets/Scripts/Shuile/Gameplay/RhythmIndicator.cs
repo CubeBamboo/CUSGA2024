@@ -2,6 +2,8 @@ using CbUtils.Extension;
 using DG.Tweening;
 using Shuile.Chart;
 using Shuile.Core.Global.Config;
+using Shuile.Framework;
+using Shuile.Gameplay.Character;
 using Shuile.MonoGadget;
 using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm;
@@ -55,10 +57,20 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
+            SceneContainer.Instance.Context.ServiceLocator.Resolve(out GamePlayScene playScene);
+            if (playScene.TryGetPlayer(out var player))
+            {
+                player.Context.ServiceLocator.Resolve(out _playerChartManager);
+            }
+            else
+            {
+                Debug.LogWarning("Player not found, RhythmIndicator will not work");
+                enabled = false;
+                return;
+            }
+
             var resourcesLoader = LevelResourcesLoader.Instance;
             var sceneLocator = LevelScope.Interface;
-
-            _playerChartManager = sceneLocator.GetImplementation<PlayerChartManager>();
 
             var preciseMusicPlayer = sceneLocator.GetImplementation<PreciseMusicPlayer>();
             _timeTweener =
@@ -129,7 +141,7 @@ namespace Shuile.Gameplay
             var graphic = obj;
             graphic.color = graphic.color.With(a: 0f);
             _uiNoteList.Add(new UINote((RectTransform)obj.transform, graphic,
-                noteData.GetNotePlayTime(LevelScope.Interface)));
+                _playerChartManager.GetNotePlayTime(noteData)));
         }
 
         private void ReleaseNote(UINote note)

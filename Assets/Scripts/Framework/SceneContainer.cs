@@ -2,6 +2,19 @@ namespace Shuile.Framework
 {
     public abstract class SceneContainer : MonoContainer
     {
+        public static SceneContainer Instance { get; private set; }
+
+        public override void Awake()
+        {
+            if (IsAwake) return;
+            base.Awake();
+
+            if (Instance != null)
+            {
+                throw new System.InvalidOperationException("SceneContainer should be singleton in a scene.");
+            }
+            Instance = this;
+        }
     }
 }
 

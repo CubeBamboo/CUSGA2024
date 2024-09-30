@@ -1,24 +1,30 @@
 using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
+using Shuile.Framework;
+using Shuile.Rhythm.Runtime;
 using System;
 
 namespace Shuile.Rhythm
 {
     // manage auto play chart. (for someone like enemy or game ui animation)
-    public class AutoPlayChartManager : IStartable, IFixedTickable
+    public class AutoPlayChartManager : BaseChartManager, IStartable, IFixedTickable
     {
         // chart part
         private readonly ChartData _chart = ChartDataCreator.CreatePlayerDefault();
-        private readonly MusicRhythmManager _musicRhythmManager;
-        private readonly NoteDataProcessor _noteDataProcessor;
+        private MusicRhythmManager _musicRhythmManager;
         private ChartPlayer _chartPlayer;
 
         private Action onNextRhythm;
 
-        public AutoPlayChartManager(IGetableScope scope)
+        public AutoPlayChartManager(IGetableScope scope, ServiceLocator context) : base(scope)
         {
-            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
-            _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
+            context
+                .Resolve(out _musicRhythmManager)
+                .Resolve(out UnityEntryPointScheduler scheduler);
+
+            scheduler.AddOnce(Start);
+            scheduler.AddFixedUpdate(FixedTick);
+            _chartPlayer = new ChartPlayer(_chart, this);
         }
 
         public void FixedTick()
@@ -28,7 +34,6 @@ namespace Shuile.Rhythm
 
         public void Start()
         {
-            _chartPlayer = new ChartPlayer(_chart, _noteDataProcessor);
             _chartPlayer.OnNotePlay += (_, _) =>
             {
                 OnRhythmHit?.Invoke();

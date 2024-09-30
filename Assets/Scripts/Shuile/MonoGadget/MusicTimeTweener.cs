@@ -1,4 +1,4 @@
-using Shuile.Gameplay;
+using Shuile.Framework;
 using Shuile.Rhythm;
 using UnityEngine;
 
@@ -13,9 +13,7 @@ namespace Shuile.MonoGadget
 
         protected void Awake()
         {
-            var scope = LevelScope.Interface;
-            _manager = scope.GetImplementation<MusicRhythmManager>();
-            ;
+            SceneContainer.Instance.Context.ServiceLocator.Resolve(out _manager);
             TweenTime = _lastManagerTime = _manager.CurrentTime;
         }
 

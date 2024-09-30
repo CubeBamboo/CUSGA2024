@@ -1,6 +1,6 @@
 using Shuile.Chart;
-using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
+using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.ResourcesManagement.Loader;
 using System;
@@ -8,24 +8,29 @@ using System;
 namespace Shuile.Rhythm.Runtime
 {
     // manage chart of player, convert chart to runtime note object noteContainer
-    public class PlayerChartManager : IInitializeable, IFixedTickable
+    public class PlayerChartManager : BaseChartManager
     {
         // chart part
         private readonly ChartData _chart = ChartDataCreator.CreatePlayerDefault();
         private readonly LevelConfigSO _levelConfig;
         private readonly MusicRhythmManager _musicRhythmManager;
-        private readonly NoteDataProcessor _noteDataProcessor;
         private Lazy<ChartPlayer> _chartPlayer;
 
         private float _notePreShowInterval = 0.4f;
 
-        public PlayerChartManager(IGetableScope scope)
+        public PlayerChartManager(ServiceLocator locator) : base(LevelScope.Interface)
         {
-            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
-            ;
-            _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
+            locator.Resolve(out _musicRhythmManager)
+                .Resolve(out UnityEntryPointScheduler scheduler);
+
+            scheduler.AddFixedUpdate(FixedTick);
 
             _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+            _notePreShowInterval = _levelConfig.playerNotePreShowTime;
+            noteContainer = new NoteContainer();
+            _chartPlayer = new Lazy<ChartPlayer>(() => new ChartPlayer(_chart,
+                note => GetNotePlayTime(note) - _notePreShowInterval));
+            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(GetNotePlayTime(note));
         }
 
         public NoteContainer noteContainer { get; private set; }
@@ -43,16 +48,6 @@ namespace Shuile.Rhythm.Runtime
 
             ChartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
             noteContainer.CheckRelease(_musicRhythmManager.CurrentTime);
-        }
-
-        public void Initialize()
-        {
-            _notePreShowInterval = _levelConfig.playerNotePreShowTime;
-
-            noteContainer = new NoteContainer();
-            _chartPlayer = new Lazy<ChartPlayer>(() => new ChartPlayer(_chart,
-                note => note.GetNotePlayTime(_noteDataProcessor) - _notePreShowInterval));
-            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(note.GetNotePlayTime(_noteDataProcessor));
         }
 
         public event Action OnPlayerHitOn;

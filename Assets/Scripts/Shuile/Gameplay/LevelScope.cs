@@ -9,11 +9,13 @@ using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using Shuile.UI.Gameplay;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay
 {
     // we are now work in progress with the new architecture named MonoContainer, to replace the service scope.
+    [Obsolete]
     public class LevelScope : SceneServiceScope<LevelScope>
     {
         [SerializeField] private LevelAudioManager levelAudioManager;
@@ -29,21 +31,15 @@ namespace Shuile.Gameplay
 
             scope.Register(() => new LevelFeelManager());
             scope.Register(() => new LevelTimingManager(this));
-            scope.Register(() => new NoteDataProcessor(this));
 
             scope.RegisterMonoComponent(levelAudioManager);
             scope.RegisterMonoComponent(levelZoneManager);
             scope.RegisterMonoComponent(endLevelPanel);
             scope.RegisterMonoComponent(player);
-            scope.RegisterMonoComponent(musicRhythmManager);
             scope.RegisterMonoComponent(levelGlobalManager);
 
             scope.RegisterEntryPoint(() => new PreciseMusicPlayer(this));
-            scope.RegisterEntryPoint(() => new PlayerChartManager(this));
             scope.RegisterEntryPoint(() => new LevelEntityManager(this));
-            scope.RegisterEntryPoint(() => new AutoPlayChartManager(this));
-            scope.RegisterEntryPoint(() => new EnemySpawnManager(this));
-            scope.RegisterEntryPoint(() => new LevelChartManager(this));
         }
     }
 }

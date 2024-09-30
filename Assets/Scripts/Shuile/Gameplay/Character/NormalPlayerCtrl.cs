@@ -283,11 +283,9 @@ namespace Shuile.Gameplay.Character
             monoContainer.MakeSureAwake();
             monoContainer.Context.ServiceLocator
                 .Resolve(out _moveController)
-                .Resolve(out _playerModel);
-
-            var scope = LevelScope.Interface;
-            _playerChartManager = scope.GetImplementation<PlayerChartManager>();
-            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
+                .Resolve(out _playerModel)
+                .Resolve(out _playerChartManager)
+                .Resolve(out _musicRhythmManager);
 
             mPlayerInput = GetComponent<NormalPlayerInput>();
         }

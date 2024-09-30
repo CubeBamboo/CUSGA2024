@@ -25,9 +25,9 @@ namespace Shuile.Gameplay.Move
         public float JumpVelocity { get; set; } = 10f;
         public float Gravity { get => _rb.gravityScale; set => _rb.gravityScale = value; }
 
-        public SmoothMoveCtrl(IReadOnlyServiceLocator serviceLocator)
+        public SmoothMoveCtrl(IReadOnlyServiceLocator context)
         {
-            serviceLocator
+            context
                 .Resolve(out _rb)
                 .Resolve(out transform)
                 .Resolve(out _scheduler);

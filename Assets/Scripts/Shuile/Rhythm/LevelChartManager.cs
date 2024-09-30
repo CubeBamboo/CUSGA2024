@@ -1,16 +1,17 @@
 using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
+using Shuile.Framework;
 using Shuile.Gameplay;
+using Shuile.Rhythm.Runtime;
 
 namespace Shuile.Rhythm
 {
     // play chart for single level
     // control enemy spawn and other event
     // it will auto play.
-    public class LevelChartManager : IStartable, IFixedTickable
+    public class LevelChartManager : BaseChartManager, IStartable, IFixedTickable
     {
-        private readonly MusicRhythmManager _musicRhythmManager;
-        private readonly NoteDataProcessor _noteDataProcessor;
+        private MusicRhythmManager _musicRhythmManager;
 
         // chart part
         private readonly ChartData chart;
@@ -18,12 +19,16 @@ namespace Shuile.Rhythm
 
         public bool isPlay = true;
 
-        public LevelChartManager(IGetableScope scope)
+        public LevelChartManager(IGetableScope scope, ServiceLocator context) : base(scope)
         {
-            _noteDataProcessor = scope.GetImplementation<NoteDataProcessor>();
-            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
-            ;
             chart = LevelRoot.LevelContext.ChartData;
+
+            context
+                .Resolve(out _musicRhythmManager)
+                .Resolve(out UnityEntryPointScheduler scheduler);
+
+            scheduler.AddOnce(Start);
+            scheduler.AddFixedUpdate(FixedTick);
         }
 
         public void FixedTick()
@@ -39,8 +44,8 @@ namespace Shuile.Rhythm
 
         public void Start()
         {
-            chartPlayer = new ChartPlayer(chart, _noteDataProcessor);
-            chartPlayer.OnNotePlay += (note, _) => note.ProcessNote(_noteDataProcessor);
+            chartPlayer = new ChartPlayer(chart, this);
+            chartPlayer.OnNotePlay += (note, _) => ProcessNote(note);
         }
     }
 }

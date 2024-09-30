@@ -2,6 +2,7 @@ using Shuile.Core.Framework.Unity;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
+using Shuile.Framework;
 using Shuile.Gameplay.Entity;
 using Shuile.Model;
 using Shuile.Rhythm;
@@ -10,7 +11,7 @@ using URandom = UnityEngine.Random;
 
 namespace Shuile.Gameplay.Manager
 {
-    public class EnemySpawnManager : IStartable, IDestroyable
+    public class EnemySpawnManager
     {
         private readonly AutoPlayChartManager _autoPlayChartManager;
         private readonly LevelEntityManager _levelEntityManager;
@@ -19,12 +20,16 @@ namespace Shuile.Gameplay.Manager
         private readonly SceneTransitionManager _sceneTransitionManager;
         [HideInInspector] public readonly LevelEnemySO currentEnemyData;
 
-        public EnemySpawnManager(IGetableScope scope)
+        public EnemySpawnManager(IGetableScope scope, ServiceLocator context)
         {
-            var services = GameApplication.GlobalService;
-            _sceneTransitionManager = services.Get<SceneTransitionManager>();
+            context
+                .Resolve(out _autoPlayChartManager)
+                .Resolve(out _sceneTransitionManager)
+                .Resolve(out UnityEntryPointScheduler scheduler);
 
-            _autoPlayChartManager = scope.GetImplementation<AutoPlayChartManager>();
+            scheduler.AddOnce(Start);
+            scheduler.AddCallOnDestroy(OnDestroy);
+
             _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
             _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
             _levelModel = scope.GetImplementation<LevelModel>();

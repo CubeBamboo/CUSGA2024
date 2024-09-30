@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Debug = UnityEngine.Debug;
 
 namespace Shuile.Framework
 {
@@ -86,6 +85,11 @@ namespace Shuile.Framework
 
         public void RegisterInstance(Type type, object service)
         {
+            RegisterInstanceInternal(type, service);
+        }
+
+        private void RegisterInstanceInternal(Type type, object service)
+        {
             _services[type] = service;
         }
 
@@ -111,7 +115,7 @@ namespace Shuile.Framework
             if (_serviceFactory.TryGetValue(type, out var cre))
             {
                 var service = cre();
-                _services[type] = service;
+                RegisterInstanceInternal(type, service);
                 return service;
             }
 
