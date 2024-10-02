@@ -31,12 +31,12 @@ namespace Shuile.UI.Gameplay
 
         private void Start()
         {
-            player.Context.ServiceLocator
+            var runtimeContext = player.Context;
+            runtimeContext
                 .Resolve(out _playerModel)
+                .Resolve(out _levelEntityManager)
                 .Resolve(out _musicRhythmManager);
-            var scope = LevelScope.Interface;
-            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
-            _levelModel = scope.GetImplementation<LevelModel>();
+            _levelModel = runtimeContext.GetImplementation<LevelModel>();
         }
 
         private void FixedUpdate()

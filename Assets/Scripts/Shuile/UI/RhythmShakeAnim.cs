@@ -20,7 +20,7 @@ namespace Shuile.UI
 
         private void Start()
         {
-            SceneContainer.Instance.Context.ServiceLocator
+            SceneContainer.Instance.Context
                 .Resolve(out _autoPlayChartManager);
 
             rectTransform = GetComponent<RectTransform>();

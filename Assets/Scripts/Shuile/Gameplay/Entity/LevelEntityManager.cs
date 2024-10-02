@@ -2,6 +2,7 @@ using Shuile.Core.Framework;
 using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
+using Shuile.Framework;
 using Shuile.Gameplay.Event;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
@@ -13,6 +14,7 @@ namespace Shuile.Gameplay.Entity
 {
     public class LevelEntityManager : IStartable, IDestroyable
     {
+        private readonly Transform enemyParent;
         private readonly List<Enemy> _enemyList = new();
         private readonly PrefabConfigSO _globalPrefab;
 
@@ -20,12 +22,18 @@ namespace Shuile.Gameplay.Entity
 
         private int _frameCounter;
 
-        public LevelEntityManager(IGetableScope scope)
+        public LevelEntityManager(IReadOnlyServiceLocator serviceLocator, Transform enemyParent)
         {
-            _levelModel = scope.GetImplementation<LevelModel>();
+            this.enemyParent = enemyParent;
+            serviceLocator
+                .Resolve(out _levelModel)
+                .Resolve(out UnityEntryPointScheduler scheduler);
 
             var resourceLoader = LevelResourcesLoader.Instance;
             _globalPrefab = resourceLoader.SyncContext.globalPrefabs;
+
+            scheduler.AddOnce(Start);
+            scheduler.AddCallOnDestroy(OnDestroy);
         }
 
         internal LevelEntityFactory EntityFactory { get; private set; }
@@ -45,7 +53,7 @@ namespace Shuile.Gameplay.Entity
 
         public void Start()
         {
-            EntityFactory = new LevelEntityFactory(this, _globalPrefab);
+            EntityFactory = new LevelEntityFactory(this, _globalPrefab, enemyParent);
 
             EnemyParent = new GameObject("Enemies").transform;
 
@@ -55,12 +63,15 @@ namespace Shuile.Gameplay.Entity
 
         private void OnEnemySpawn(EnemySpawnEvent evt)
         {
-            if (evt.enemy.TryGetComponent<Enemy>(out var enemy))
+            if (evt.enemy != null)
             {
-                MarkEnemy(enemy);
+                MarkEnemy(evt.enemy);
+                EnemyCount++;
             }
-
-            EnemyCount++;
+            else
+            {
+                Debug.LogError("EnemySpawnEvent enemy is null.");
+            }
         }
 
         private void OnEnemyDie(EnemyDieEvent evt)

@@ -9,14 +9,13 @@ namespace Shuile
 {
     public static class GameApplication
     {
-        public static readonly ServiceLocator GlobalService = new();
+        public static readonly RuntimeContext GlobalContext = new();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void PreInitialize()
         {
-            GlobalService.AddImplemenation(() => new SceneTransitionManager());
-
-            ServiceLocator.Global = GlobalService;
+            GlobalContext.RegisterFactory(() => new SceneTransitionManager());
+            MonoContainer.FallbackContext = GlobalContext;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

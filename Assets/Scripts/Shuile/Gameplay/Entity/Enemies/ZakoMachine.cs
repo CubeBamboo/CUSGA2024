@@ -1,6 +1,7 @@
 using CbUtils;
 using CbUtils.Event;
 using DG.Tweening;
+using Shuile.Framework;
 using Shuile.Gameplay.Character;
 using UnityEngine;
 
@@ -20,7 +21,6 @@ namespace Shuile.Gameplay.Entity.Enemies
         private SpriteRenderer _mRenderer;
 
         private ZakoPatrolBehavior _patrolBehavior;
-        private Player _player;
 
         private void Update()
         {
@@ -34,9 +34,6 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         protected override void OnAwake()
         {
-            var scope = LevelScope.Interface;
-            _player = scope.GetImplementation<Player>();
-
             _patrolBehavior = new ZakoPatrolBehavior(gameObject, moveController, 5f);
             _chaseBehavior = new ZakoChaseBehavior();
             RegisterState(_mFsm);

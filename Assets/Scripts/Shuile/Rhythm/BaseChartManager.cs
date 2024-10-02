@@ -1,7 +1,7 @@
 using CbUtils.Extension;
 using Shuile.Chart;
-using Shuile.Core.Framework.Unity;
 using Shuile.Core.Gameplay.Data;
+using Shuile.Framework;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Manager;
 using System;
@@ -14,11 +14,11 @@ namespace Shuile.Rhythm.Runtime
         private readonly LevelZoneManager _levelZoneManager;
         private readonly LevelTimingManager _timingManager;
 
-        public BaseChartManager(IGetableScope scope)
+        public BaseChartManager(RuntimeContext context)
         {
-            _entityManager = scope.GetImplementation<LevelEntityManager>();
-            _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
-            _timingManager = scope.GetImplementation<LevelTimingManager>();
+            _entityManager = context.GetImplementation<LevelEntityManager>();
+            _levelZoneManager = context.GetImplementation<LevelZoneManager>();
+            _timingManager = context.GetImplementation<LevelTimingManager>();
         }
 
         public float GetNotePlayTime(BaseNoteData noteData)

@@ -13,7 +13,7 @@ namespace Shuile.MonoGadget
 
         protected void Awake()
         {
-            SceneContainer.Instance.Context.ServiceLocator.Resolve(out _manager);
+            SceneContainer.Instance.Context.Resolve(out _manager);
             TweenTime = _lastManagerTime = _manager.CurrentTime;
         }
 

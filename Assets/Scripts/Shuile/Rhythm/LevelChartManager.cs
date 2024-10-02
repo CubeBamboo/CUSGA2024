@@ -19,7 +19,7 @@ namespace Shuile.Rhythm
 
         public bool isPlay = true;
 
-        public LevelChartManager(IGetableScope scope, ServiceLocator context) : base(scope)
+        public LevelChartManager(RuntimeContext context) : base(context)
         {
             chart = LevelRoot.LevelContext.ChartData;
 
@@ -29,6 +29,8 @@ namespace Shuile.Rhythm
 
             scheduler.AddOnce(Start);
             scheduler.AddFixedUpdate(FixedTick);
+
+            chartPlayer = new ChartPlayer(chart, this);
         }
 
         public void FixedTick()
@@ -44,7 +46,6 @@ namespace Shuile.Rhythm
 
         public void Start()
         {
-            chartPlayer = new ChartPlayer(chart, this);
             chartPlayer.OnNotePlay += (note, _) => ProcessNote(note);
         }
     }

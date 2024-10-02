@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Shuile.Gameplay.Character
 {
     // player feedback and other event
-    public class NormalPlayerFeel : MonoBehaviour
+    public class NormalPlayerFeel : PlainContainer
     {
         private const float HurtXForce = 6f;
         private const float HurtYForce = 0.2f;
@@ -27,28 +27,32 @@ namespace Shuile.Gameplay.Character
 
         private Player player;
         private NormalPlayerCtrl playerCtrl;
+        private GameObject gameObject;
 
-        private void Awake()
+        private Transform transform;
+
+        public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
-            // TODO
-            var monoContainer = GetComponent<MonoContainer>();
-            monoContainer.MakeSureAwake();
-            monoContainer.Context.ServiceLocator
+            base.LoadFromParentContext(context);
+            context
                 .Resolve(out _levelFeelManager)
                 .Resolve(out _moveController)
                 .Resolve(out player)
                 .Resolve(out _playerModel)
+                .Resolve(out _musicRhythmManager)
+                .Resolve(out transform)
+                .Resolve(out playerCtrl)
+                .Resolve(out _rb)
+                .Resolve(out _levelModel)
                 .Resolve(out _sceneTransitionManager);
 
-            var scope = LevelScope.Interface;
-            _levelModel = scope.GetImplementation<LevelModel>();
-
-            _musicRhythmManager = scope.GetImplementation<MusicRhythmManager>();
-            playerCtrl = GetComponent<NormalPlayerCtrl>();
-            _rb = GetComponent<Rigidbody2D>();
-
-            animCtrl = new PlayerAnimCtrl(gameObject, _playerModel);
             ConfigureFeelEvent();
+        }
+
+        public override void BuildSelfContext(RuntimeContext context)
+        {
+            base.BuildSelfContext(context);
+            context.Inject(animCtrl = new PlayerAnimCtrl());
         }
 
         private void FixedUpdate()

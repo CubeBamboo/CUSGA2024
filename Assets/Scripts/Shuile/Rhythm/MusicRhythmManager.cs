@@ -1,5 +1,6 @@
 using Shuile.Chart;
 using Shuile.Core.Global.Config;
+using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Model;
 using Shuile.Persistent;
@@ -28,9 +29,9 @@ namespace Shuile.Rhythm
 
         private void Awake()
         {
-            var scope = LevelScope.Interface;
-            _levelModel = scope.GetImplementation<LevelModel>();
-            _preciseMusicPlayer = scope.GetImplementation<PreciseMusicPlayer>();
+            var context = ContainerExtensions.FindSceneContext();
+            _levelModel = context.GetImplementation<LevelModel>();
+            _preciseMusicPlayer = context.GetImplementation<PreciseMusicPlayer>();
 
             var resourcesLoader = LevelResourcesLoader.Instance;
             _levelConfig = resourcesLoader.SyncContext.levelConfig;

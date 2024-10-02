@@ -22,7 +22,7 @@ namespace Shuile
         {
             await SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
-            GameApplication.GlobalService.Get<SceneTransitionManager>().OnNotifySceneChanged();
+            GameApplication.GlobalContext.Get<SceneTransitionManager>().OnNotifySceneChanged();
         }
 
         private async UniTask InternalLoadLevel(string sceneName)

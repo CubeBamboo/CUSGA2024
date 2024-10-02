@@ -155,7 +155,15 @@ namespace CbUtils
 
         public void Custom()
         {
-            _currentState.Custom();
+            try
+            {
+                _currentState.Custom();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                throw;
+            }
         }
 
         public void Custom(string label = "")

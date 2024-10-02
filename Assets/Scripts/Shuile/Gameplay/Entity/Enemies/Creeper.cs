@@ -2,6 +2,7 @@ using CbUtils;
 using CbUtils.Event;
 using CbUtils.Extension;
 using DG.Tweening;
+using Shuile.Framework;
 using Shuile.Gameplay.Character;
 using UnityEngine;
 
@@ -21,12 +22,17 @@ namespace Shuile.Gameplay.Entity.Enemies
         private SpriteRenderer _mRenderer;
 
         private ZakoPatrolBehavior _patrolBehavior;
-        private Player _player;
 
-        private void Start()
+        public override void Awake()
         {
-            var scope = LevelScope.Interface;
-            _player = scope.GetImplementation<Player>();
+            base.Awake();
+            RegisterState(_mFsm);
+
+            _patrolBehavior = new ZakoPatrolBehavior(gameObject, moveController, 5f);
+            _chaseBehavior = new ZakoChaseBehavior();
+            _mRenderer = GetComponentInChildren<SpriteRenderer>();
+            moveController.JumpVelocity = jumpVel;
+            moveController.XMaxSpeed = xMaxSpeed;
         }
 
         private void Update()
@@ -39,17 +45,6 @@ namespace Shuile.Gameplay.Entity.Enemies
             _mFsm.FixedUpdate();
         }
 
-        protected override void OnAwake()
-        {
-            moveController.JumpVelocity = jumpVel;
-            moveController.XMaxSpeed = xMaxSpeed;
-            _patrolBehavior = new ZakoPatrolBehavior(gameObject, moveController, 5f);
-            _chaseBehavior = new ZakoChaseBehavior();
-            _mRenderer = GetComponentInChildren<SpriteRenderer>();
-
-            RegisterState(_mFsm);
-        }
-
         protected override void OnSelfDie()
         {
             _mFsm.SwitchState(DefaultEnemyState.Dead);
@@ -60,6 +55,7 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         protected void RegisterState(FSM<DefaultEnemyState> mFsm)
         {
+            Debug.Log("register state");
             mFsm.NewEventState(DefaultEnemyState.Patrol)
                 .OnFixedUpdate(() =>
                 {

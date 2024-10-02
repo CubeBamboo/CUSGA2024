@@ -1,4 +1,5 @@
 using Shuile.Core.Framework.Unity;
+using Shuile.Framework;
 using Shuile.Model;
 
 namespace Shuile.Rhythm
@@ -7,9 +8,9 @@ namespace Shuile.Rhythm
     {
         private readonly LevelModel _levelModel;
 
-        public LevelTimingManager(IGetableScope scope)
+        public LevelTimingManager(RuntimeContext context)
         {
-            _levelModel = scope.GetImplementation<LevelModel>();
+            _levelModel = context.GetImplementation<LevelModel>();
         }
 
         public float GetRealTime(float rhythmTime)

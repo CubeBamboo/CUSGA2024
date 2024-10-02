@@ -1,6 +1,7 @@
 using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
 using Shuile.Framework;
+using Shuile.Gameplay.Entity;
 using Shuile.Rhythm.Runtime;
 using System;
 
@@ -16,7 +17,7 @@ namespace Shuile.Rhythm
 
         private Action onNextRhythm;
 
-        public AutoPlayChartManager(IGetableScope scope, ServiceLocator context) : base(scope)
+        public AutoPlayChartManager(RuntimeContext context) : base(context)
         {
             context
                 .Resolve(out _musicRhythmManager)

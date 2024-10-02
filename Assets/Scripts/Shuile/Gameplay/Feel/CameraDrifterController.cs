@@ -1,4 +1,4 @@
-using Shuile.Gameplay.Character;
+using Shuile.Framework;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
@@ -12,9 +12,11 @@ namespace Shuile.Gameplay.Feel
 
         private void Start()
         {
-            var scope = LevelScope.Interface;
-            var player = scope.GetImplementation<Player>();
-            _player = player.transform;
+            // GameplayScene can be inherited so it can be reusable.
+            if (((GamePlayScene)ContainerExtensions.FindSceneContainer()).TryGetPlayer(out var player))
+            {
+                _player = player.transform;
+            }
         }
     }
 }

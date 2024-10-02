@@ -13,6 +13,8 @@ using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.UI.Gameplay;
 using Shuile.Utils;
+using System;
+using System.Collections;
 using UnityEngine;
 using UInput = UnityEngine.InputSystem;
 
@@ -33,39 +35,47 @@ namespace Shuile.Gameplay.Manager
         private PlayerModel _playerModel;
         private SceneTransitionManager _sceneTransitionManager;
 
-        public override void ResolveContext(IReadOnlyServiceLocator context)
+        public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
+            Debug.Log("LevelGlobalManager LoadFromParentContext");
             context
                 .Resolve(out _gamePlayScene)
                 .Resolve(out _levelStateMachine)
                 .Resolve(out _sceneTransitionManager)
                 .Resolve(out _autoPlayChartManager)
                 .Resolve(out _musicRhythmManager)
+                .Resolve(out _levelEntityManager)
                 .Resolve(out _levelFeelManager);
+            _levelModel = context.GetImplementation<LevelModel>();
+            _endLevelPanel = context.GetImplementation<EndLevelPanel>();
 
             if (_gamePlayScene.TryGetPlayer(out _player))
             {
-                _player.Context.ServiceLocator
+                _player.Context
                     .Resolve(out _playerModel);
             }
         }
 
         public override void Awake()
         {
+            Debug.Log("level global manager awake");
             base.Awake();
-            var scope = LevelScope.Interface;
-            _levelEntityManager = scope.GetImplementation<LevelEntityManager>();
-            _levelModel = scope.GetImplementation<LevelModel>();
-            _endLevelPanel = scope.GetImplementation<EndLevelPanel>();
         }
 
         private void Start()
         {
             TypeEventSystem.Global.Register<EnemyDieEvent>(GlobalOnEnemyDie);
             TypeEventSystem.Global.Register<EnemyHurtEvent>(GlobalOnEnemyHurt);
-            _autoPlayChartManager.OnRhythmHit += _levelEntityManager.OnRhythmHit;
-            _levelStateMachine.OnWin += LevelWin;
-            _levelStateMachine.OnFail += LevelFail;
+            try
+            {
+                _levelStateMachine.OnWin += LevelWin;
+                _levelStateMachine.OnFail += LevelFail;
+                _autoPlayChartManager.OnRhythmHit += _levelEntityManager.OnRhythmHit;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         private void Update()

@@ -1,6 +1,7 @@
 using Shuile.Core.Framework;
 using Shuile.Core.Gameplay.Common;
 using Shuile.Framework;
+using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Event;
 using Shuile.Gameplay.Move;
 using System;
@@ -21,29 +22,34 @@ namespace Shuile.Gameplay.Entity
         public bool IsAlive => health > 0;
         public SmoothMoveCtrl MoveController => moveController;
 
-        public override void BuildContext(ServiceLocator context)
+        protected Player _player;
+
+        public override void BuildSelfContext(RuntimeContext context)
         {
             context.RegisterInstance(GetComponent<Rigidbody2D>());
             context.RegisterInstance(transform);
             context.RegisterMonoScheduler(this);
-
-            context.RegisterFactory(() => new SmoothMoveCtrl(context));
+            context.RegisterInstance(moveController);
         }
 
-        public override void ResolveContext(IReadOnlyServiceLocator context)
+        public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
-            base.ResolveContext(context);
-            context.Resolve(out moveController);
+            base.LoadFromParentContext(context);
+            context.Resolve(out GamePlayScene gamePlayScene);
+            if (!gamePlayScene.TryGetPlayer(out _player))
+            {
+                Debug.LogWarning("Player not found.");
+            }
         }
 
         public override void Awake()
         {
             base.Awake();
-            TypeEventSystem.Global.Trigger<EnemySpawnEvent>(new EnemySpawnEvent { enemy = gameObject });
+            moveController = new SmoothMoveCtrl(Context);
             enemyHurtEvent = new EnemyHurtEvent { enemy = gameObject };
             health = MaxHealth;
-
             OnAwake();
+            TypeEventSystem.Global.Trigger<EnemySpawnEvent>(new EnemySpawnEvent { enemy = this });
         }
 
         public virtual void OnHurt(int attackPoint)

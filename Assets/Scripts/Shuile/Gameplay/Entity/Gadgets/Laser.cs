@@ -2,6 +2,7 @@ using CbUtils.Event;
 using CbUtils.Extension;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Character;
 using Shuile.Rhythm;
@@ -28,8 +29,7 @@ namespace Shuile
 
         private void Awake()
         {
-            var scope = LevelScope.Interface;
-            timingManager = scope.GetImplementation<LevelTimingManager>();
+            timingManager = ContainerExtensions.FindSceneContext().GetImplementation<LevelTimingManager>();
             mRenderer = GetComponent<SpriteRenderer>();
             gameObject.SetOnDestroy(() => mRenderer.DOKill(), "renderer");
             targetScaleX = transform.localScale.x;

@@ -1,11 +1,13 @@
 using Shuile.Core.Framework;
+using Shuile.Gameplay.Entity;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Event
 {
+    // maybe not a good idea...
     internal class EnemySpawnEvent : ITypeEvent
     {
-        public GameObject enemy;
+        public Enemy enemy;
     }
 
     internal class EnemyDieEvent : ITypeEvent

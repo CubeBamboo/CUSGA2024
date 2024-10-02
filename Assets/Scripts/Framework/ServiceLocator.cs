@@ -12,11 +12,38 @@ namespace Shuile.Framework
         object Get(Type type);
         bool Contains(Type type);
         public bool ContainsInternalWithoutParent(Type type);
-        public FormattedRegistry CurrentRegistry { get; }
     }
 
-    public class ServiceLocator : IReadOnlyServiceLocator
+    // maybe diagnostic window or track reference in debug mode is a better choice.
+    [Obsolete]
+    public interface IDebugServiceLocator
     {
+        string KeyName { get; set; }
+        FormattedRegistry CurrentRegistry { get; }
+        FormattedParent CurrentParentGraph { get; }
+    }
+
+    public interface IServiceLocatorRegister
+    {
+        void RegisterFactory<T>(Func<T> func);
+        void RegisterFactory(Type type, Func<object> func);
+        void UnRegisterFactory<T>();
+        void UnRegisterFactory(Type type);
+        void RegisterInstance<T>(T service);
+        void RegisterInstance(Type type, object service);
+    }
+
+    /// <summary>
+    /// service locator (implementation of inversion of control), provide instance and factory registration. contains parent locators.
+    /// if you are using <see cref="MonoContainer"/>, use <see cref="RuntimeContext"/> instead of this, it's also a <see cref="IReadOnlyServiceLocator"/> and more maintainable.
+    /// </summary>
+    public class ServiceLocator : IReadOnlyServiceLocator, IServiceLocatorRegister, IDebugServiceLocator
+    {
+        /// <summary>
+        /// it seems not a good idea...
+        /// </summary>
+        public string KeyName { get; set; }
+
         private static readonly Type objectType = typeof(object);
         private readonly Dictionary<Type, Func<object>> _serviceFactory = new();
 
@@ -46,7 +73,7 @@ namespace Shuile.Framework
             }
             if (parents != null && parents.Contains(parent))
             {
-                throw new InvalidOperationException($"Parent already exists: {parent.CurrentRegistry}");
+                throw new InvalidOperationException($"Parent already exists. {(parent as IDebugServiceLocator)?.KeyName}");
             }
 
             parents ??= new List<IReadOnlyServiceLocator>();
@@ -88,7 +115,7 @@ namespace Shuile.Framework
             RegisterInstanceInternal(type, service);
         }
 
-        private void RegisterInstanceInternal(Type type, object service)
+        protected virtual void RegisterInstanceInternal(Type type, object service)
         {
             _services[type] = service;
         }
@@ -107,11 +134,13 @@ namespace Shuile.Framework
 
         private object GetInternal(Type type)
         {
+            // in cache
             if (_services.TryGetValue(type, out var obj))
             {
                 return obj;
             }
 
+            // load from factory
             if (_serviceFactory.TryGetValue(type, out var cre))
             {
                 var service = cre();
@@ -119,6 +148,7 @@ namespace Shuile.Framework
                 return service;
             }
 
+            // get from parent
             if (parents != null)
             {
                 foreach (var locator in parents)
@@ -164,23 +194,79 @@ namespace Shuile.Framework
         {
             get
             {
-                var container = new FormattedRegistry { Types = _serviceFactory.Keys.Union(_services.Keys) };
+                var container = new FormattedRegistry { Current = _serviceFactory.Keys.Union(_services.Keys) };
 
                 if (parents != null)
                 {
-                    container.Parents = parents.Select(locator => locator.CurrentRegistry);
+                    container.Parents = parents.Select(locator => (locator as IDebugServiceLocator)?.CurrentRegistry);
                 }
 
                 return container;
             }
         }
 
-        public static ServiceLocator Global { get; set; }
+        public FormattedParent CurrentParentGraph
+        {
+            get
+            {
+                var container = new FormattedParent { Current = this };
+
+                if (parents != null)
+                {
+                    container.Parents = parents.Select(locator => (locator as IDebugServiceLocator)?.CurrentParentGraph);
+                }
+
+                return container;
+            }
+        }
+
+        public static ServiceLocator Global { get; set; } = new();
     }
 
+    // null value will be handled as cannot debug.
+    public record FormattedParent
+    {
+        public IDebugServiceLocator Current { get; set; }
+        public IEnumerable<FormattedParent> Parents { get; set; }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            PrintCurrent(this, 0);
+
+            return builder.ToString();
+
+            void PrintCurrent(FormattedParent registry, int depth)
+            {
+                builder.Append($"parents {depth}: ");
+                if (registry.Current != null)
+                {
+                    builder.Append(registry.Current.KeyName);
+                }
+                else
+                {
+                    builder.Append("empty");
+                }
+
+                if (registry.Parents == null)
+                {
+                    return;
+                }
+
+                builder.AppendLine();
+
+                foreach (var parent in registry.Parents)
+                {
+                    PrintCurrent(parent, depth + 1);
+                }
+            }
+        }
+    }
+
+    // null value will be handled as cannot debug.
     public record FormattedRegistry
     {
-        public IEnumerable<Type> Types { get; set; }
+        public IEnumerable<Type> Current { get; set; }
         public IEnumerable<FormattedRegistry> Parents { get; set; }
 
         public override string ToString()
@@ -192,19 +278,14 @@ namespace Shuile.Framework
 
             void PrintCurrent(FormattedRegistry registry, int depth)
             {
-                builder.AppendLine($"parents {depth}");
-                var indent = new string(' ', depth * 2);
-
-                var hasType = false;
-                foreach (var type in registry.Types)
+                builder.Append($"parentRegistry {depth}: ");
+                if (registry.Current.Any())
                 {
-                    builder.AppendLine($"{indent}{type.Name}");
-                    hasType = true;
+                    builder.AppendJoin(", ", registry.Current.Select(x => x?.ToString() ?? "not debuggable"));
                 }
-
-                if (!hasType)
+                else
                 {
-                    builder.AppendLine($"{indent}empty");
+                    builder.Append("empty");
                 }
 
                 if (registry.Parents == null)

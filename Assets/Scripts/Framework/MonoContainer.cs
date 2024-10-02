@@ -6,78 +6,120 @@ namespace Shuile.Framework
     /// <summary>
     /// provide the context shared based on the hierarchy of the GameObject.
     /// if you need to access Unity's event functions, use <see cref="UnityEntryPointScheduler"/>.
+    ///
+    /// c# version is <see cref="PlainContainer"/>. actually, <see cref="MonoContainer"/> is a wrapper(entry-point) of <see cref="PlainContainer"/>.
     /// </summary>
     public abstract class MonoContainer : MonoBehaviour, IHasContext
     {
-        public bool IsAwake { get; private set; }
-        public bool IsResolved { get; private set; }
-        public bool IsBuild { get; private set; }
+        [SerializeField] private bool autoAwake = true;
 
-        public readonly RuntimeContext Context;
+        // make monoContainer can be used as a plain container.
+        protected readonly MonoPlainContainerAdapter ContainerAdapter;
 
-        public MonoContainer()
+        public bool IsInit { get; private set; } // TODO: consistent api naming (init/awoken)
+        public RuntimeContext Context => ContainerAdapter.Context;
+
+        public static RuntimeContext FallbackContext { get; set; }
+
+        protected MonoContainer()
         {
-            Context = new RuntimeContext { Reference = this };
+            ContainerAdapter = new MonoPlainContainerAdapter
+            {
+                OnBuildChildContext = BuildSelfContext, OnLoadFromContext = LoadFromParentContext, Reference = this
+            };
         }
 
         public virtual void Awake()
         {
-            if (IsAwake) return;
+            if (autoAwake)
+            {
+                MakeSureInit();
+            }
+        }
 
+        protected void AwakeIt()
+        {
+            if (IsInit) throw new InvalidOperationException("monoContainer already initialized.");
             if (GetComponents<MonoContainer>().Length > 1) throw MultiMonoContainerException();
 
-            // build self context and parent.
+            InitParentAboveTransform();
+            ContainerHelper.AwakeContainer(ContainerAdapter);
+        }
+
+        private void InitParentAboveTransform()
+        {
             var parent = FindParent();
             if (parent != null)
             {
-                Context.ServiceLocator.AddParent(parent.Context.ServiceLocator);
-                parent.MakeSureAwake(); // make sure awake
+                Context.AddParent(parent.Context);
+                parent.MakeSureInit();
             }
-            else if (ServiceLocator.Global != null)
+            else if (FallbackContext != null)
             {
-                Context.ServiceLocator.AddParent(ServiceLocator.Global);
+                Context.AddParent(FallbackContext);
             }
-            BuildContext(Context.ServiceLocator);
-            ResolveContext(Context.ServiceLocator);
-            IsAwake = true;
+
+            return;
+
+            MonoContainer FindParent()
+            {
+                var transformParent = transform.parent;
+                while (transformParent != null)
+                {
+                    var containers = transformParent.GetComponents<MonoContainer>();
+                    switch (containers.Length)
+                    {
+                        case 0:
+                            transformParent = transformParent.parent;
+                            break;
+                        case 1:
+                            return containers[0];
+                        default:
+                            throw MultiMonoContainerException();
+                    }
+                }
+
+                return null;
+            }
         }
 
-        private MonoContainer FindParent()
+        private void InitChildrenTree(Transform current)
         {
-            var parent = transform.parent;
-            while (parent != null)
+            // till the end
+            if (current == null) return;
+
+            for(var i = 0; i < current.childCount; i++)
             {
-                var containers = parent.GetComponents<MonoContainer>();
-                switch (containers.Length)
+                var child = current.GetChild(i);
+
+                if (child.TryGetComponent<MonoContainer>(out var container))
                 {
-                    case 0:
-                        parent = parent.parent;
-                        break;
-                    case 1:
-                        return containers[0];
-                    default:
-                        throw MultiMonoContainerException();
+                    ContainerAdapter.SetChildContainer(container.ContainerAdapter);
+                    container.MakeSureInit(); // remains will be initialized by this child.
+                }
+                else
+                {
+                    // deeper search
+                    InitChildrenTree(child);
                 }
             }
-
-            return null;
         }
 
-        public virtual void ResolveContext(IReadOnlyServiceLocator context)
+        public virtual void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
-            IsResolved = true;
         }
 
-        public virtual void BuildContext(ServiceLocator context)
+        public virtual void BuildSelfContext(RuntimeContext context)
         {
-            IsBuild = true;
         }
 
-        public void MakeSureAwake()
+        public void MakeSureInit()
         {
-            Awake();
+            if(IsInit) return;
+            AwakeIt();
+            IsInit = true;
         }
 
-        public static InvalidOperationException MultiMonoContainerException() => new($"cannot have more than one {nameof(MonoContainer)} in a GameObject, try use child GameObjects or plain c# classes.");
+        private static InvalidOperationException MultiMonoContainerException() => new($"cannot have more than one {nameof(MonoContainer)} in a GameObject, try use child GameObjects or plain c# classes.");
     }
 }

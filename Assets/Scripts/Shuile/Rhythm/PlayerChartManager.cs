@@ -18,7 +18,7 @@ namespace Shuile.Rhythm.Runtime
 
         private float _notePreShowInterval = 0.4f;
 
-        public PlayerChartManager(ServiceLocator locator) : base(LevelScope.Interface)
+        public PlayerChartManager(RuntimeContext locator) : base(locator)
         {
             locator.Resolve(out _musicRhythmManager)
                 .Resolve(out UnityEntryPointScheduler scheduler);

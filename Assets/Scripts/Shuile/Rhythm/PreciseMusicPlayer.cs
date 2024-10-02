@@ -3,6 +3,7 @@ using DG.Tweening;
 using Shuile.Audio;
 using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
+using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Model;
 using Shuile.ResourcesManagement.Loader;
@@ -15,7 +16,7 @@ namespace Shuile.Rhythm
     /// <summary>
     ///     it provides an async player for lower delay, a timer start from music's specific position
     /// </summary>
-    public class PreciseMusicPlayer : IInitializeable, IFixedTickable, IDestroyable
+    public class PreciseMusicPlayer : IFixedTickable, IDestroyable
     {
         private readonly LevelAudioManager _levelAudioManager;
         private readonly LevelConfigSO _levelConfig;
@@ -23,12 +24,19 @@ namespace Shuile.Rhythm
 
         private CancellationTokenSource _asyncPlayTokenSource;
 
-        public PreciseMusicPlayer(IGetableScope scope)
+        public PreciseMusicPlayer(RuntimeContext context)
         {
-            _levelAudioManager = scope.GetImplementation<LevelAudioManager>();
-            _levelModel = scope.GetImplementation<LevelModel>();
+            _levelAudioManager = context.GetImplementation<LevelAudioManager>();
+            _levelModel = context.GetImplementation<LevelModel>();
+            context.Resolve(out UnityEntryPointScheduler scheduler);
+            scheduler.AddOnce(Restore);
+            scheduler.AddFixedUpdate(FixedTick);
+            scheduler.AddCallOnDestroy(OnDestroy);
+
             var resourcesLoader = LevelResourcesLoader.Instance;
             _levelConfig = resourcesLoader.SyncContext.levelConfig;
+
+            AudioPlayer = new UnityAudioPlayer(_levelAudioManager.MusicSource);
         }
 
         public UnityAudioPlayer AudioPlayer { get; private set; }
@@ -59,12 +67,6 @@ namespace Shuile.Rhythm
 
             CurrentTime += Time.fixedDeltaTime;
             _levelModel.CurrentMusicTime = CurrentTime;
-        }
-
-        public void Initialize()
-        {
-            AudioPlayer = new UnityAudioPlayer(_levelAudioManager.MusicSource);
-            Restore();
         }
 
         public void LoadClip(AudioClip clip)

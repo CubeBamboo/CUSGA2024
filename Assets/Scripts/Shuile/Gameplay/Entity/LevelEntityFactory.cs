@@ -12,8 +12,11 @@ namespace Shuile.Gameplay.Entity
 {
     internal class LevelEntityFactory
     {
-        public LevelEntityFactory(LevelEntityManager levelEntityManager, PrefabConfigSO prefabConfig)
+        private readonly Transform enemyParent;
+
+        public LevelEntityFactory(LevelEntityManager levelEntityManager, PrefabConfigSO prefabConfig, Transform enemyParent)
         {
+            this.enemyParent = enemyParent; // TODO: remove this
             LevelEntityManager = levelEntityManager;
             PrefabConfig = prefabConfig;
         }
@@ -49,23 +52,13 @@ namespace Shuile.Gameplay.Entity
         private GameObject InternalSpawnEnemy(GameObject enemyPrefab, Vector3 pos)
         {
             var enemyObject =
-                UObject.Instantiate(enemyPrefab, pos, Quaternion.identity, LevelEntityManager.EnemyParent);
+                UObject.Instantiate(enemyPrefab, pos, Quaternion.identity, enemyParent);
             return enemyObject;
-        }
-
-        public GameObject SpawnEnemy(GameObject enemyPrefab, Vector3 pos)
-        {
-            return InternalSpawnEnemy(enemyPrefab, pos);
         }
 
         public GameObject SpawnEnemy(EnemyType enemyType, Vector3 pos)
         {
             return InternalSpawnEnemy(EnemyType2Prefab(enemyType), pos);
-        }
-
-        public GameObject SpawnEnemy(EnemyType enemyType)
-        {
-            return InternalSpawnEnemy(EnemyType2Prefab(enemyType), Vector3.zero);
         }
 
         public GameObject SpawnEnemyWithEffectDelay(EnemyType enemyType, Vector3 pos, CancellationToken token = default)

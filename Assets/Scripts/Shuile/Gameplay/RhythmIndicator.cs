@@ -57,10 +57,11 @@ namespace Shuile.Gameplay
 
         private void Start()
         {
-            SceneContainer.Instance.Context.ServiceLocator.Resolve(out GamePlayScene playScene);
+            var sceneContext = SceneContainer.Instance.Context;
+            sceneContext.Resolve(out GamePlayScene playScene);
             if (playScene.TryGetPlayer(out var player))
             {
-                player.Context.ServiceLocator.Resolve(out _playerChartManager);
+                player.Context.Resolve(out _playerChartManager);
             }
             else
             {
@@ -70,9 +71,8 @@ namespace Shuile.Gameplay
             }
 
             var resourcesLoader = LevelResourcesLoader.Instance;
-            var sceneLocator = LevelScope.Interface;
 
-            var preciseMusicPlayer = sceneLocator.GetImplementation<PreciseMusicPlayer>();
+            var preciseMusicPlayer = sceneContext.GetImplementation<PreciseMusicPlayer>();
             _timeTweener =
                 new Lazy<MusicTimeTweener>(() =>
                     preciseMusicPlayer.AudioPlayer.TargetSource.gameObject.GetOrAddComponent<MusicTimeTweener>());

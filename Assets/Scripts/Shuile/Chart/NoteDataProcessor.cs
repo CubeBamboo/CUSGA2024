@@ -5,6 +5,7 @@ using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Manager;
 using Shuile.Rhythm;
 using System;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Shuile.Chart
@@ -16,9 +17,9 @@ namespace Shuile.Chart
         private readonly LevelZoneManager _levelZoneManager;
         private readonly LevelTimingManager _timingManager;
 
-        public NoteDataProcessor(IGetableScope scope)
+        public NoteDataProcessor(IGetableScope scope, LevelEntityManager entityManager)
         {
-            _entityManager = scope.GetImplementation<LevelEntityManager>();
+            _entityManager = entityManager;
             _levelZoneManager = scope.GetImplementation<LevelZoneManager>();
             _timingManager = scope.GetImplementation<LevelTimingManager>();
         }
@@ -31,11 +32,8 @@ namespace Shuile.Chart
                     _entityManager.EntityFactory.SpawnLaser()
                         .SetPosition(_levelZoneManager.RandomValidPosition());
                     break;
-                case SpawnSingleEnemyNoteData enemyNoteData:
-                    var randomType = (EnemyType)Random.Range(0, (int)EnemyType.TotalCount);
-                    _entityManager.EntityFactory.SpawnEnemy(randomType, _levelZoneManager.RandomValidPosition());
-                    break;
                 case not null:
+                    Debug.LogWarning("unknown note type");
                     break;
                 default:
                     throw new ArgumentException();

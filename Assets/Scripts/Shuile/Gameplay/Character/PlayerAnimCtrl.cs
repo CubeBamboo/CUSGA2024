@@ -1,11 +1,12 @@
 using DG.Tweening;
+using Shuile.Framework;
 using Shuile.Gameplay.Weapon;
 using Shuile.MonoGadget;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
-    public class PlayerAnimCtrl
+    public class PlayerAnimCtrl : PlainContainer
     {
         public enum AnimTrigger
         {
@@ -19,23 +20,30 @@ namespace Shuile.Gameplay.Character
             //Land,
         }
 
-        private readonly Animator _animator;
-
+        private Animator _animator;
+        private GameObject _gameObject;
+        private SpriteRenderer _spriteRenderer;
         private PlayerModel _playerModel;
-        private readonly SpriteRenderer _spriteRenderer;
         private GameObject _target;
 
-        public PlayerAnimCtrl(GameObject go, PlayerModel playerModel)
+        public PlayerAnimCtrl()
         {
-            _target = go;
-            _spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
-            _animator = go.GetComponentInChildren<Animator>();
+        }
+
+        public override void LoadFromParentContext(IReadOnlyServiceLocator context)
+        {
+            base.LoadFromParentContext(context);
+            context
+                .Resolve(out _playerModel)
+                .Resolve(out _gameObject);
+
+            _target = _gameObject;
+            _spriteRenderer = _gameObject.GetComponentInChildren<SpriteRenderer>();
+            _animator = _gameObject.GetComponentInChildren<Animator>();
             if (_animator.gameObject.GetComponent<AttackingUnlocker>() is AttackingUnlocker unlocker)
             {
-                unlocker.ctrl = go.GetComponent<NormalPlayerCtrl>();
+                unlocker.ctrl = _gameObject.GetComponent<NormalPlayerCtrl>();
             }
-
-            _playerModel = playerModel;
         }
 
         public bool FlipX

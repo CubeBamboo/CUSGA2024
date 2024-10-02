@@ -16,11 +16,26 @@ namespace Shuile.Framework
         private readonly List<Action> lateUpdateTasks = new();
         private readonly List<Action> onDestroyTasks = new();
 
+        private readonly List<Action> onDrawGizmosSelectedTasks = new();
+        private readonly List<Action> onGUITasks = new();
+
         public static UnityEntryPointScheduler Create(GameObject linkedObject)
         {
             var scheduler = linkedObject.AddComponent<UnityEntryPointScheduler>();
             scheduler.linkedObject = linkedObject;
             return scheduler;
+        }
+
+        #region UnityEntryPoint
+
+        private void OnDrawGizmosSelected()
+        {
+            InvokeList(onDrawGizmosSelectedTasks);
+        }
+
+        private void OnGUI()
+        {
+            InvokeList(onGUITasks);
         }
 
         private void Update()
@@ -30,39 +45,25 @@ namespace Shuile.Framework
                 SafeInvoke(taskQueue.Dequeue());
             }
 
-            for (var i = 0; i < updateTasks.Count; i++)
-            {
-                var task = updateTasks[i];
-                SafeInvoke(task);
-            }
+            InvokeList(updateTasks);
         }
 
         private void FixedUpdate()
         {
-            for (var i = 0; i < fixedUpdateTasks.Count; i++)
-            {
-                var task = fixedUpdateTasks[i];
-                SafeInvoke(task);
-            }
+            InvokeList(fixedUpdateTasks);
         }
 
         private void LateUpdate()
         {
-            for (var i = 0; i < lateUpdateTasks.Count; i++)
-            {
-                var task = lateUpdateTasks[i];
-                SafeInvoke(task);
-            }
+            InvokeList(lateUpdateTasks);
         }
 
         private void OnDestroy()
         {
-            for (var i = 0; i < onDestroyTasks.Count; i++)
-            {
-                var task = onDestroyTasks[i];
-                SafeInvoke(task);
-            }
+            InvokeList(onDestroyTasks);
         }
+
+        #endregion
 
         /// <summary>
         /// will be executed in the next frame. can be used as Start() if called during MonoBehaviour.Awake()
@@ -91,6 +92,24 @@ namespace Shuile.Framework
         public void AddCallOnDestroy(Action action)
         {
             onDestroyTasks.Add(action);
+        }
+
+        public void AddOnDrawGizmosSelected(Action action)
+        {
+            onDrawGizmosSelectedTasks.Add(action);
+        }
+
+        public void AddOnGUI(Action action)
+        {
+            onGUITasks.Add(action);
+        }
+
+        private static void InvokeList(List<Action> tasks)
+        {
+            for (var i = 0; i < tasks.Count; i++)
+            {
+                SafeInvoke(tasks[i]);
+            }
         }
 
         private static void SafeInvoke(Action action)

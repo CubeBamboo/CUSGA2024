@@ -21,21 +21,25 @@ namespace Shuile.Gameplay.Character
         public HearableProperty<int> CurrentHp { get; } = new();
         public PlayerPropertySO Property => property;
 
-        public override void BuildContext(ServiceLocator context)
+        public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
+            context.Resolve(out _levelStateMachine);
+        }
+
+        public override void BuildSelfContext(RuntimeContext context)
+        {
+            context.RegisterMonoScheduler(this);
             context.RegisterInstance(this);
             context.RegisterInstance(transform);
-            context.RegisterInstance(GetComponent<Rigidbody2D>());
+            context.RegisterInstance(gameObject);
             context.RegisterInstance(_playerModel = new PlayerModel());
-            context.RegisterMonoScheduler(this);
+            context.RegisterInstance(GetComponent<Rigidbody2D>());
+            context.RegisterInstance(GetComponent<NormalPlayerCtrl>());
 
             context.RegisterFactory(() => new SmoothMoveCtrl(context));
             context.RegisterFactory(() => new PlayerChartManager(context));
-        }
 
-        public override void ResolveContext(IReadOnlyServiceLocator context)
-        {
-            context.Resolve(out _levelStateMachine);
+            Context.Inject(new NormalPlayerFeel());
         }
 
         private void Start()

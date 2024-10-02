@@ -7,6 +7,9 @@ namespace Shuile.Core.Framework
     {
     }
 
+    /// <summary>
+    /// event id based on type, which can easily stored parameter
+    /// </summary>
     public class TypeEventSystem
     {
         private static readonly Lazy<TypeEventSystem> global = new(() => new TypeEventSystem());

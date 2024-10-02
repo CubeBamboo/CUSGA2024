@@ -280,8 +280,8 @@ namespace Shuile.Gameplay.Character
         private void ConfigureDependency()
         {
             var monoContainer = GetComponent<MonoContainer>();
-            monoContainer.MakeSureAwake();
-            monoContainer.Context.ServiceLocator
+            monoContainer.MakeSureInit();
+            monoContainer.Context
                 .Resolve(out _moveController)
                 .Resolve(out _playerModel)
                 .Resolve(out _playerChartManager)
