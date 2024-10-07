@@ -4,29 +4,16 @@ using Shuile.Gameplay.Move;
 using Shuile.Gameplay.Weapon;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
     public partial class NormalPlayerCtrl : MonoBehaviour
     {
-        // [normal move]
-        [SerializeField] private float acc = 1.7f;
-        [SerializeField] private float deAcc = 0.7f;
-        [SerializeField] private float xMaxSpeed = 6.5f;
-
-        // [hold jump]
-        [SerializeField] private float jumpStartVel = 14f;
-        [SerializeField] private float jumpMaxDuration = 0.27f;
-        [SerializeField] private float holdJumpVelAdd = 0.65f;
-        [SerializeField] private float normalGravity = 3f;
-        [SerializeField] private float dropGravity = 6f;
-        [SerializeField] private float holdOffYDamping = 0.4f;
-
-        // [attack]
-        [SerializeField] private float attackRadius = 3.2f;
-        [SerializeField] private int attackPoint = 20;
-        [SerializeField] private Transform handTransform;
+        [SerializeField] private MoveSettings _moveSettings = new();
+        [SerializeField] private JumpSettings _jumpSettings = new();
+        [SerializeField] private AttackSettings _attackSettings = new();
 
         private readonly FSM<MoveState> moveFsm = new();
 
@@ -45,7 +32,6 @@ namespace Shuile.Gameplay.Character
 
         private NormalPlayerInput mPlayerInput;
 
-        public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
         public EasyEvent<WeaponHitData> OnWeaponHit { get; } = new();
         public EasyEvent<bool> OnWeaponAttack { get; } = new();
@@ -69,7 +55,7 @@ namespace Shuile.Gameplay.Character
                 //if (!value)
                 //    StopAttack();
 
-                _moveController.XMaxSpeed = value ? xMaxSpeed * 0.3f : xMaxSpeed;
+                _moveController.XMaxSpeed = value ? _moveSettings.xMaxSpeed * 0.3f : _moveSettings.xMaxSpeed;
                 if (value && Mathf.Abs(_moveController.Velocity.x) > _moveController.XMaxSpeed)
                 {
                     _moveController.Velocity =
@@ -105,11 +91,11 @@ namespace Shuile.Gameplay.Character
             jumpDependencies.RegisterInstance(_moveController);
             jumpDependencies.RegisterInstance(new PlayerJumpProxy.Settings
             {
-                jumpStartVel = jumpStartVel,
-                holdJumpVelAdd = holdJumpVelAdd,
-                jumpMaxDuration = jumpMaxDuration,
-                normalGravity = normalGravity,
-                dropGravity = dropGravity,
+                jumpStartVel = _jumpSettings.jumpStartVel,
+                holdJumpVelAdd = _jumpSettings.holdJumpVelAdd,
+                jumpMaxDuration = _jumpSettings.jumpMaxDuration,
+                normalGravity = _jumpSettings.normalGravity,
+                dropGravity = _jumpSettings.dropGravity,
                 onInputJumpStart = mPlayerInput.OnJumpStart,
                 onInputJumpCanceled = mPlayerInput.OnJumpCanceled,
             });
@@ -121,7 +107,7 @@ namespace Shuile.Gameplay.Character
         {
             _attackCommand = new AttackCommand
             {
-                position = transform.position, attackRadius = attackRadius, attackPoint = attackPoint
+                position = transform.position, attackRadius = _attackSettings.attackRadius, attackPoint = _attackSettings.attackPoint
             };
             _hitNoteCommand = new TryHitNoteCommand
             {
@@ -172,9 +158,9 @@ namespace Shuile.Gameplay.Character
         private void RefreshParameter()
         {
             _moveController.IsFrozen = false;
-            _moveController.Acceleration = acc;
-            _moveController.Deceleration = deAcc;
-            _moveController.XMaxSpeed = xMaxSpeed;
+            _moveController.Acceleration = _moveSettings.acc;
+            _moveController.Deceleration = _moveSettings.deAcc;
+            _moveController.XMaxSpeed = _moveSettings.xMaxSpeed;
         }
 
         private void InitializeOtherFSM()
@@ -216,6 +202,31 @@ namespace Shuile.Gameplay.Character
         {
             Idle,
             Move
+        }
+
+        [Serializable]
+        public class MoveSettings
+        {
+            public float acc = 1.7f;
+            public float deAcc = 0.7f;
+            public float xMaxSpeed = 6.5f;
+        }
+
+        [Serializable]
+        public class JumpSettings
+        {
+            public float jumpStartVel = 14f;
+            public float jumpMaxDuration = 0.27f;
+            public float holdJumpVelAdd = 0.65f;
+            public float normalGravity = 3f;
+            public float dropGravity = 6f;
+        }
+
+        [Serializable]
+        public class AttackSettings
+        {
+            public float attackRadius = 3.2f;
+            public int attackPoint = 20;
         }
     }
 }
