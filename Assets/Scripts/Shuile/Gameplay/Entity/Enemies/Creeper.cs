@@ -2,8 +2,6 @@ using CbUtils;
 using CbUtils.Event;
 using CbUtils.Extension;
 using DG.Tweening;
-using Shuile.Framework;
-using Shuile.Gameplay.Character;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Entity.Enemies
@@ -55,7 +53,6 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         protected void RegisterState(FSM<DefaultEnemyState> mFsm)
         {
-            Debug.Log("register state");
             mFsm.NewEventState(DefaultEnemyState.Patrol)
                 .OnFixedUpdate(() =>
                 {
