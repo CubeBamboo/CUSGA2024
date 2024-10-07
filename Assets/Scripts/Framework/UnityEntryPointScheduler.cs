@@ -9,20 +9,21 @@ namespace Shuile.Framework
     /// </summary>
     public class UnityEntryPointScheduler : MonoBehaviour
     {
-        private GameObject linkedObject;
         private readonly Queue<Action> taskQueue = new();
-        private readonly List<Action> updateTasks = new();
-        private readonly List<Action> fixedUpdateTasks = new();
-        private readonly List<Action> lateUpdateTasks = new();
+        private readonly List<SchedulerTask> updateTasks = new();
+        private readonly List<SchedulerTask> fixedUpdateTasks = new();
+        private readonly List<SchedulerTask> lateUpdateTasks = new();
         private readonly List<Action> onDestroyTasks = new();
 
         private readonly List<Action> onDrawGizmosSelectedTasks = new();
         private readonly List<Action> onGUITasks = new();
 
+        public GameObject LinkedObject { get; private set; }
+
         public static UnityEntryPointScheduler Create(GameObject linkedObject)
         {
             var scheduler = linkedObject.AddComponent<UnityEntryPointScheduler>();
-            scheduler.linkedObject = linkedObject;
+            scheduler.LinkedObject = linkedObject;
             return scheduler;
         }
 
@@ -68,25 +69,35 @@ namespace Shuile.Framework
         /// <summary>
         /// will be executed in the next frame. can be used as Start() if called during MonoBehaviour.Awake()
         /// </summary>
-        /// <param name="action"></param>
         public void AddOnce(Action action)
         {
             taskQueue.Enqueue(action);
         }
 
-        public void AddUpdate(Action action)
+        public SchedulerTask AddDelayed(Action action, float delay)
         {
-            updateTasks.Add(action);
+            throw new NotImplementedException();
         }
 
-        public void AddFixedUpdate(Action action)
+        public SchedulerTask AddUpdate(Action action)
         {
-            fixedUpdateTasks.Add(action);
+            var schedulerTask = new SchedulerTask(action, this);
+            updateTasks.Add(schedulerTask);
+            return schedulerTask;
         }
 
-        public void AddLateUpdate(Action action)
+        public SchedulerTask AddFixedUpdate(Action action)
         {
-            lateUpdateTasks.Add(action);
+            var schedulerTask = new SchedulerTask(action, this);
+            fixedUpdateTasks.Add(schedulerTask);
+            return schedulerTask;
+        }
+
+        public SchedulerTask AddLateUpdate(Action action)
+        {
+            var schedulerTask = new SchedulerTask(action, this);
+            lateUpdateTasks.Add(schedulerTask);
+            return schedulerTask;
         }
 
         public void AddCallOnDestroy(Action action)
@@ -112,6 +123,20 @@ namespace Shuile.Framework
             }
         }
 
+        /// <summary>
+        /// contains disable logic
+        /// </summary>
+        /// <param name="tasks"></param>
+        private static void InvokeList(List<SchedulerTask> tasks)
+        {
+            for (var i = 0; i < tasks.Count; i++)
+            {
+                var task = tasks[i];
+                if(!task.IsEnabled) continue;
+                SafeInvoke(task.OriginAction);
+            }
+        }
+
         private static void SafeInvoke(Action action)
         {
             try
@@ -121,6 +146,70 @@ namespace Shuile.Framework
             catch (Exception e)
             {
                 Debug.LogException(e);
+            }
+        }
+
+        /// <summary>
+        /// it's recommend to use SchedulerTask.Disabled = true instead of this method
+        /// </summary>
+        /// <param name="task"></param>
+        /// <exception cref="Exception"></exception>
+        public void RemoveTask(SchedulerTask task)
+        {
+            for (var i = 0; i < updateTasks.Count; i++)
+            {
+                if (updateTasks[i] == task)
+                {
+                    updateTasks.Remove(task);
+                    return;
+                }
+            }
+
+            for (var i = 0; i < fixedUpdateTasks.Count; i++)
+            {
+                if (fixedUpdateTasks[i] == task)
+                {
+                    fixedUpdateTasks.Remove(task);
+                    return;
+                }
+            }
+
+            for (var i = 0; i < lateUpdateTasks.Count; i++)
+            {
+                if (lateUpdateTasks[i] == task)
+                {
+                    lateUpdateTasks.Remove(task);
+                    return;
+                }
+            }
+
+            throw new Exception("task not found");
+        }
+
+        public class SchedulerTask : IDisposable
+        {
+            private readonly UnityEntryPointScheduler _scheduler;
+            public Action OriginAction { get; }
+            public bool IsAlive { get; private set; }
+
+            /// <summary>
+            /// will not be invoked by scheduler if set to false
+            /// </summary>
+            public bool IsEnabled { get; set; } = true;
+
+            // action maintained by the scheduler class
+            public SchedulerTask(Action originAction, UnityEntryPointScheduler scheduler)
+            {
+                _scheduler = scheduler;
+                OriginAction = originAction;
+                IsAlive = true;
+            }
+
+            public void Dispose()
+            {
+                if (!IsAlive) throw new ObjectDisposedException(nameof(SchedulerTask));
+                _scheduler.RemoveTask(this);
+                IsAlive = false;
             }
         }
     }

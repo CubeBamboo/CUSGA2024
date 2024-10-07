@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
-    public class NormalPlayerCtrl : MonoBehaviour
+    public partial class NormalPlayerCtrl : MonoBehaviour
     {
         // [normal move]
         [SerializeField] private float acc = 1.7f;
@@ -27,15 +27,13 @@ namespace Shuile.Gameplay.Character
         [SerializeField] private float attackRadius = 3.2f;
         [SerializeField] private int attackPoint = 20;
         [SerializeField] private Transform handTransform;
-        private readonly SimpleDurationTimer _holdJumpTimer = new();
-        private readonly FSM<JumpState> jumpFsm = new();
 
-        private readonly FSM<MainState> mainFsm = new();
         private readonly FSM<MoveState> moveFsm = new();
 
         private AttackCommand _attackCommand;
         private TryHitNoteCommand _hitNoteCommand;
         private SmoothMoveCtrl _moveController;
+        private UnityEntryPointScheduler _scheduler;
 
         private MusicRhythmManager _musicRhythmManager;
         private PlayerChartManager _playerChartManager;
@@ -47,12 +45,12 @@ namespace Shuile.Gameplay.Character
 
         private NormalPlayerInput mPlayerInput;
 
-        public EasyEvent OnJumpStart = new();
-
         public EasyEvent OnTouchGround { get; } = new();
         public EasyEvent<float> OnMoveStart { get; } = new();
         public EasyEvent<WeaponHitData> OnWeaponHit { get; } = new();
         public EasyEvent<bool> OnWeaponAttack { get; } = new();
+
+        private PlayerJumpProxy _playerJumpProxy;
 
         // it has bug (((((
         public bool AttackingLock
@@ -94,10 +92,29 @@ namespace Shuile.Gameplay.Character
 
         private void Awake()
         {
+            _scheduler = UnityEntryPointScheduler.Create(gameObject);
             ConfigureDependency();
             ConfigureInputEvent();
 
-            _holdJumpTimer.MaxDuration = jumpMaxDuration;
+            ConfigJumpProxy();
+        }
+
+        private void ConfigJumpProxy()
+        {
+            var jumpDependencies = new ServiceLocator();
+            jumpDependencies.RegisterInstance(_moveController);
+            jumpDependencies.RegisterInstance(new PlayerJumpProxy.Settings
+            {
+                jumpStartVel = jumpStartVel,
+                holdJumpVelAdd = holdJumpVelAdd,
+                jumpMaxDuration = jumpMaxDuration,
+                normalGravity = normalGravity,
+                dropGravity = dropGravity,
+                onInputJumpStart = mPlayerInput.OnJumpStart,
+                onInputJumpCanceled = mPlayerInput.OnJumpCanceled,
+            });
+            _playerJumpProxy = new PlayerJumpProxy(_scheduler, jumpDependencies);
+            _playerJumpProxy.Forget();
         }
 
         private void Start()
@@ -113,16 +130,13 @@ namespace Shuile.Gameplay.Character
                 inputTime = _musicRhythmManager.CurrentTime
             };
 
-            InitializeMainFSM();
             InitializeOtherFSM();
             RefreshParameter();
         }
 
         private void FixedUpdate()
         {
-            mainFsm.FixedUpdate();
             moveFsm.FixedUpdate();
-            jumpFsm.FixedUpdate();
 
 #if UNITY_EDITOR
             RefreshParameter();
@@ -142,46 +156,6 @@ namespace Shuile.Gameplay.Character
             _playerModel.faceDir = xInput;
         }
 
-        public void JumpPress()
-        {
-            if (mainFsm.CurrentStateId != MainState.Normal)
-            {
-                return;
-            }
-
-            _moveController.Velocity = _moveController.Velocity.With(y: jumpStartVel);
-            _holdJumpTimer.StartTime = Time.time;
-            mainFsm.SwitchState(MainState.JumpUpAndInputHoldOn);
-            OnJumpStart.Invoke();
-        }
-
-        public void HoldJump()
-        {
-            if (mainFsm.CurrentStateId != MainState.JumpUpAndInputHoldOn)
-            {
-                return;
-            }
-
-            _moveController.Velocity += new Vector2(0, holdJumpVelAdd);
-            var hitWall = Mathf.Abs(_moveController.Velocity.y) < 1e-4; // ...
-
-            if (_holdJumpTimer.HasReachTime(Time.time) || hitWall)
-            {
-                //Debug.Log("Stop Jump Hold On Acceleration"); // end timer
-                mainFsm.SwitchState(MainState.JumpUpAndInputHoldOff);
-            }
-        }
-
-        public void JumpRelese()
-        {
-            if (mainFsm.CurrentStateId != MainState.JumpUpAndInputHoldOn)
-            {
-                return;
-            }
-
-            mainFsm.SwitchState(MainState.JumpUpAndInputHoldOff);
-        }
-
         public void Attack()
         {
             if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm)
@@ -195,52 +169,12 @@ namespace Shuile.Gameplay.Character
             OnWeaponAttack.Invoke(true);
         }
 
-        private void CheckGround()
-        {
-            if (_moveController.IsOnGround)
-            {
-                mainFsm.SwitchState(MainState.Normal);
-                OnTouchGround.Invoke();
-            }
-        }
-
         private void RefreshParameter()
         {
             _moveController.IsFrozen = false;
             _moveController.Acceleration = acc;
             _moveController.Deceleration = deAcc;
             _moveController.XMaxSpeed = xMaxSpeed;
-
-            _holdJumpTimer.MaxDuration = jumpMaxDuration;
-        }
-
-        private void InitializeMainFSM()
-        {
-            mainFsm
-                .NewEventState(MainState.Normal)
-                .OnEnter(() => _moveController.Gravity = normalGravity);
-            mainFsm
-                .NewEventState(MainState.JumpUpAndInputHoldOff)
-                .OnEnter(() =>
-                {
-                    _moveController.Gravity = dropGravity;
-                    jumpFsm.SwitchState(JumpState.Idle);
-                })
-                .OnFixedUpdate(() =>
-                {
-                    CheckGround();
-                    _moveController.Velocity -= new Vector2(0, holdOffYDamping);
-
-                    if (_moveController.Velocity.y < 0)
-                    {
-                        mainFsm.SwitchState(MainState.Drop);
-                    }
-                });
-            mainFsm
-                .NewEventState(MainState.Drop)
-                .OnEnter(() => _moveController.Gravity = dropGravity)
-                .OnFixedUpdate(() => CheckGround());
-            mainFsm.StartState(MainState.Normal);
         }
 
         private void InitializeOtherFSM()
@@ -251,15 +185,6 @@ namespace Shuile.Gameplay.Character
                 .NewEventState(MoveState.Move)
                 .OnFixedUpdate(() => NormalMove(moveParam));
             moveFsm.StartState(MoveState.Idle);
-
-            jumpFsm
-                .NewEventState(JumpState.Idle);
-            jumpFsm
-                .NewEventState(JumpState.Jump)
-                .OnEnter(JumpPress)
-                .OnFixedUpdate(HoldJump)
-                .OnExit(JumpRelese);
-            jumpFsm.StartState(JumpState.Idle);
         }
 
         private void ConfigureInputEvent()
@@ -270,9 +195,6 @@ namespace Shuile.Gameplay.Character
                 moveParam = v;
             });
             mPlayerInput.OnMoveCanceled.Register(_ => moveFsm.SwitchState(MoveState.Idle));
-
-            mPlayerInput.OnJumpStart.Register(_ => jumpFsm.SwitchState(JumpState.Jump));
-            mPlayerInput.OnJumpCanceled.Register(_ => jumpFsm.SwitchState(JumpState.Idle));
 
             mPlayerInput.OnAttackStart.Register(_ => Attack());
         }
@@ -290,24 +212,10 @@ namespace Shuile.Gameplay.Character
             mPlayerInput = GetComponent<NormalPlayerInput>();
         }
 
-        private enum MainState
-        {
-            Normal,
-            JumpUpAndInputHoldOn,
-            JumpUpAndInputHoldOff,
-            Drop
-        }
-
         private enum MoveState
         {
             Idle,
             Move
-        }
-
-        private enum JumpState
-        {
-            Idle,
-            Jump
         }
     }
 }

@@ -40,9 +40,28 @@ namespace Shuile
             onValueChanged.UnRegister(_onValueChanged);
         }
 
+        public void SetValueWithoutEvent(T value)
+        {
+            _value = value;
+        }
+
         public override string ToString()
         {
             return _value.ToString();
+        }
+    }
+
+    public static class Extensions
+    {
+        public static void BindValueChangeTo<T>(this HearableProperty<T> property, T targetValue, Action action)
+        {
+            property.onValueChanged.Register((_, newValue) =>
+            {
+                if (HearableProperty<T>.Comparer(newValue, targetValue))
+                {
+                    action.Invoke();
+                }
+            });
         }
     }
 }

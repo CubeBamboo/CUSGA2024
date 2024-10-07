@@ -39,7 +39,7 @@ namespace Shuile.Gameplay.Character
             context.RegisterFactory(() => new SmoothMoveCtrl(context));
             context.RegisterFactory(() => new PlayerChartManager(context));
 
-            Context.Inject(new NormalPlayerFeel());
+            context.Inject(new NormalPlayerFeel());
         }
 
         private void Start()
