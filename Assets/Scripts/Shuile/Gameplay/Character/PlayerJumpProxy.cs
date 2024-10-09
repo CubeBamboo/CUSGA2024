@@ -10,7 +10,7 @@ namespace Shuile.Gameplay.Character
         /// <summary>
         ///     state machine based on event driven
         /// </summary>
-        private partial class PlayerJumpProxy : BaseProxy
+        private class PlayerJumpProxy : BaseProxy
         {
             private readonly UnityEntryPointScheduler _scheduler;
             private readonly SmoothMoveCtrl _moveController;

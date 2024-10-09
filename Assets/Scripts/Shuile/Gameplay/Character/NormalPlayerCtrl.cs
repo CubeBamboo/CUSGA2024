@@ -1,9 +1,6 @@
 using CbUtils;
 using Shuile.Framework;
 using Shuile.Gameplay.Move;
-using Shuile.Gameplay.Weapon;
-using Shuile.Rhythm;
-using Shuile.Rhythm.Runtime;
 using System;
 using UnityEngine;
 
@@ -17,13 +14,7 @@ namespace Shuile.Gameplay.Character
 
         private readonly FSM<MoveState> moveFsm = new();
 
-        private AttackCommand _attackCommand;
-        private TryHitNoteCommand _hitNoteCommand;
         private SmoothMoveCtrl _moveController;
-        private UnityEntryPointScheduler _scheduler;
-
-        private MusicRhythmManager _musicRhythmManager;
-        private PlayerChartManager _playerChartManager;
         private PlayerModel _playerModel;
         private bool attackingLock;
 
@@ -33,10 +24,12 @@ namespace Shuile.Gameplay.Character
         private NormalPlayerInput mPlayerInput;
 
         public EasyEvent<float> OnMoveStart { get; } = new();
-        public EasyEvent<WeaponHitData> OnWeaponHit { get; } = new();
         public EasyEvent<bool> OnWeaponAttack { get; } = new();
 
+        private UnityEntryPointScheduler _scheduler;
+        private RuntimeContext _containerContext;
         private PlayerJumpProxy _playerJumpProxy;
+        private PlayerAttackProxy _playerAttackProxy;
 
         // it has bug (((((
         public bool AttackingLock
@@ -65,28 +58,18 @@ namespace Shuile.Gameplay.Character
             }
         }
 
-        public bool CheckRhythm
-        {
-            get
-            {
-                _hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
-                _hitNoteCommand.Execute();
-                _playerModel.currentHitOffset = _hitNoteCommand.result.hitOffset;
-                return _hitNoteCommand.result.isHitOn;
-            }
-        }
-
         private void Awake()
         {
             _scheduler = UnityEntryPointScheduler.Create(gameObject);
             ConfigureDependency();
             ConfigureInputEvent();
 
-            ConfigJumpProxy();
+            ConfigProxy();
         }
 
-        private void ConfigJumpProxy()
+        private void ConfigProxy()
         {
+            // jump
             var jumpDependencies = new ServiceLocator();
             jumpDependencies.RegisterInstance(_moveController);
             jumpDependencies.RegisterInstance(new PlayerJumpProxy.Settings
@@ -101,21 +84,21 @@ namespace Shuile.Gameplay.Character
             });
             _playerJumpProxy = new PlayerJumpProxy(_scheduler, jumpDependencies);
             _playerJumpProxy.Forget();
+
+            // attack
+            var attackDependencies = new ServiceLocator();
+            attackDependencies.AddParent(_containerContext);
+
+            attackDependencies.RegisterInstance(mPlayerInput);
+            attackDependencies.RegisterInstance(transform);
+            attackDependencies.RegisterInstance(_attackSettings);
+            attackDependencies.RegisterInstance(this);
+            _playerAttackProxy = new PlayerAttackProxy(_scheduler, attackDependencies);
+            _playerAttackProxy.Forget();
         }
 
         private void Start()
         {
-            _attackCommand = new AttackCommand
-            {
-                position = transform.position, attackRadius = _attackSettings.attackRadius, attackPoint = _attackSettings.attackPoint
-            };
-            _hitNoteCommand = new TryHitNoteCommand
-            {
-                musicRhythmManager = _musicRhythmManager,
-                playerChartManager = _playerChartManager,
-                inputTime = _musicRhythmManager.CurrentTime
-            };
-
             InitializeOtherFSM();
             RefreshParameter();
         }
@@ -140,19 +123,6 @@ namespace Shuile.Gameplay.Character
             _moveController.XMove(xInput);
             OnMoveStart?.Invoke(xInput);
             _playerModel.faceDir = xInput;
-        }
-
-        public void Attack()
-        {
-            if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm)
-            {
-                return;
-            }
-
-            _attackCommand.position = transform.position;
-            _attackCommand.Execute();
-
-            OnWeaponAttack.Invoke(true);
         }
 
         private void RefreshParameter()
@@ -181,19 +151,16 @@ namespace Shuile.Gameplay.Character
                 moveParam = v;
             });
             mPlayerInput.OnMoveCanceled.Register(_ => moveFsm.SwitchState(MoveState.Idle));
-
-            mPlayerInput.OnAttackStart.Register(_ => Attack());
         }
 
         private void ConfigureDependency()
         {
             var monoContainer = GetComponent<MonoContainer>();
             monoContainer.MakeSureInit();
-            monoContainer.Context
+            _containerContext = monoContainer.Context;
+            _containerContext
                 .Resolve(out _moveController)
-                .Resolve(out _playerModel)
-                .Resolve(out _playerChartManager)
-                .Resolve(out _musicRhythmManager);
+                .Resolve(out _playerModel);
 
             mPlayerInput = GetComponent<NormalPlayerInput>();
         }
