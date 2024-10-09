@@ -1,4 +1,5 @@
 ﻿using CbUtils;
+using Shuile.Core.Gameplay.Common;
 using Shuile.Framework;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
@@ -11,7 +12,6 @@ namespace Shuile.Gameplay.Character
         private class PlayerAttackProxy : BaseProxy
         {
             private TryHitNoteCommand _hitNoteCommand;
-            private AttackCommand _attackCommand;
 
             private readonly Transform _transform;
             private readonly PlayerModel _playerModel;
@@ -19,17 +19,6 @@ namespace Shuile.Gameplay.Character
             private readonly EasyEvent<bool> _weaponAttack;
             private readonly PlayerChartManager _playerChartManager;
             private readonly AttackSettings _attackSettings;
-
-            public bool CheckRhythm
-            {
-                get
-                {
-                    _hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
-                    _hitNoteCommand.Execute();
-                    _playerModel.currentHitOffset = _hitNoteCommand.result.hitOffset;
-                    return _hitNoteCommand.result.isHitOn;
-                }
-            }
 
             public PlayerAttackProxy(UnityEntryPointScheduler scheduler, IReadOnlyServiceLocator dependencies) : base(scheduler, dependencies)
             {
@@ -50,10 +39,6 @@ namespace Shuile.Gameplay.Character
 
             private void Start()
             {
-                _attackCommand = new AttackCommand
-                {
-                    position = _transform.position, attackRadius = _attackSettings.attackRadius, attackPoint = _attackSettings.attackPoint
-                };
                 _hitNoteCommand = new TryHitNoteCommand
                 {
                     musicRhythmManager = _musicRhythmManager,
@@ -62,15 +47,31 @@ namespace Shuile.Gameplay.Character
                 };
             }
 
+            private bool CheckRhythm()
+            {
+                _hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
+                _hitNoteCommand.Execute();
+                _playerModel.currentHitOffset = _hitNoteCommand.result.hitOffset;
+                return _hitNoteCommand.result.isHitOn;
+            }
+
             private void Attack()
             {
-                if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm)
+                if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm())
                 {
                     return;
                 }
 
-                _attackCommand.position = _transform.position;
-                _attackCommand.Execute();
+                var attackRadius = _attackSettings.attackRadius;
+                var attackPoint = _attackSettings.attackPoint;
+                var hits = Physics2D.OverlapCircleAll(_transform.position, attackRadius, LayerMask.GetMask("Enemy"));
+                foreach (var hit in hits)
+                {
+                    if (hit.TryGetComponent<IHurtable>(out var hurt))
+                    {
+                        hurt.OnHurt(attackPoint);
+                    }
+                }
 
                 _weaponAttack.Invoke(true);
             }

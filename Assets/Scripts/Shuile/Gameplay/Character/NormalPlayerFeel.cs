@@ -31,6 +31,11 @@ namespace Shuile.Gameplay.Character
 
         private Transform transform;
 
+        public NormalPlayerFeel(UnityEntryPointScheduler scheduler)
+        {
+            scheduler.AddFixedUpdate(FixedUpdate);
+        }
+
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
             base.LoadFromParentContext(context);

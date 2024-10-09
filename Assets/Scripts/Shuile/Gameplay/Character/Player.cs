@@ -28,7 +28,7 @@ namespace Shuile.Gameplay.Character
 
         public override void BuildSelfContext(RuntimeContext context)
         {
-            context.RegisterMonoScheduler(this);
+            var scheduler = context.RegisterMonoScheduler(this);
             context.RegisterInstance(this);
             context.RegisterInstance(transform);
             context.RegisterInstance(gameObject);
@@ -39,7 +39,7 @@ namespace Shuile.Gameplay.Character
             context.RegisterFactory(() => new SmoothMoveCtrl(context));
             context.RegisterFactory(() => new PlayerChartManager(context));
 
-            context.Inject(new NormalPlayerFeel());
+            context.Inject(new NormalPlayerFeel(scheduler));
         }
 
         private void Start()
