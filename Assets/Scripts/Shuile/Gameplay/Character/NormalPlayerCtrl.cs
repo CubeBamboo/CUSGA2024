@@ -12,42 +12,32 @@ namespace Shuile.Gameplay.Character
         [SerializeField] private JumpSettings _jumpSettings = new();
         [SerializeField] private AttackSettings _attackSettings = new();
 
-        private readonly FSM<MoveState> moveFsm = new();
-
-        private SmoothMoveCtrl _moveController;
-        private PlayerModel _playerModel;
-
-        // [behave state?]
-        private float moveParam;
+        private SmoothMoveCtrl _moveController; // only used for refresh parameter in unity editor
 
         private NormalPlayerInput mPlayerInput;
 
-        public EasyEvent<float> OnMoveStart { get; } = new();
         public EasyEvent<bool> OnWeaponAttack { get; } = new();
 
         private UnityEntryPointScheduler _scheduler;
         private RuntimeContext _containerContext;
         private PlayerJumpProxy _playerJumpProxy;
         private PlayerAttackProxy _playerAttackProxy;
+        private PlayerMoveProxy _playerMoveProxy;
 
         private void Awake()
         {
             _scheduler = UnityEntryPointScheduler.Create(gameObject);
             ConfigureDependency();
-            ConfigureInputEvent();
             ConfigProxy();
         }
 
         private void Start()
         {
-            InitializeOtherFSM();
             RefreshParameter();
         }
 
         private void FixedUpdate()
         {
-            moveFsm.FixedUpdate();
-
 #if UNITY_EDITOR
             RefreshParameter();
 #endif
@@ -58,14 +48,6 @@ namespace Shuile.Gameplay.Character
             mPlayerInput.ClearAll();
         }
 
-        /// <summary> update velocity </summary>
-        public void NormalMove(float xInput)
-        {
-            _moveController.XMove(xInput);
-            OnMoveStart?.Invoke(xInput);
-            _playerModel.faceDir = xInput;
-        }
-
         private void RefreshParameter()
         {
             _moveController.IsFrozen = false;
@@ -74,43 +56,31 @@ namespace Shuile.Gameplay.Character
             _moveController.XMaxSpeed = _moveSettings.xMaxSpeed;
         }
 
-        private void InitializeOtherFSM()
-        {
-            moveFsm
-                .NewEventState(MoveState.Idle);
-            moveFsm
-                .NewEventState(MoveState.Move)
-                .OnFixedUpdate(() => NormalMove(moveParam));
-            moveFsm.StartState(MoveState.Idle);
-        }
-
-        private void ConfigureInputEvent()
-        {
-            mPlayerInput.OnMoveStart.Register(v =>
-            {
-                moveFsm.SwitchState(MoveState.Move);
-                moveParam = v;
-            });
-            mPlayerInput.OnMoveCanceled.Register(_ => moveFsm.SwitchState(MoveState.Idle));
-        }
-
         private void ConfigureDependency()
         {
             var monoContainer = GetComponent<MonoContainer>();
             monoContainer.MakeSureInit();
             _containerContext = monoContainer.Context;
             _containerContext
-                .Resolve(out _moveController)
-                .Resolve(out _playerModel);
+                .Resolve(out _moveController);
 
             mPlayerInput = GetComponent<NormalPlayerInput>();
         }
 
         private void ConfigProxy()
         {
+            // move
+            var moveDependencies = new ServiceLocator();
+            moveDependencies.AddParent(_containerContext);
+
+            moveDependencies.RegisterInstance(mPlayerInput);
+            _playerMoveProxy = new PlayerMoveProxy(_scheduler, moveDependencies);
+            _playerMoveProxy.Forget();
+
             // jump
             var jumpDependencies = new ServiceLocator();
-            jumpDependencies.RegisterInstance(_moveController);
+            jumpDependencies.AddParent(_containerContext);
+
             jumpDependencies.RegisterInstance(new PlayerJumpProxy.Settings
             {
                 jumpStartVel = _jumpSettings.jumpStartVel,
@@ -134,12 +104,6 @@ namespace Shuile.Gameplay.Character
             attackDependencies.RegisterInstance(this);
             _playerAttackProxy = new PlayerAttackProxy(_scheduler, attackDependencies);
             _playerAttackProxy.Forget();
-        }
-
-        private enum MoveState
-        {
-            Idle,
-            Move
         }
 
         [Serializable]

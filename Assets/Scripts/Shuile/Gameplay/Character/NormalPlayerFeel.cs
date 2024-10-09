@@ -63,6 +63,14 @@ namespace Shuile.Gameplay.Character
         private void FixedUpdate()
         {
             animCtrl.XVelocity = _rb.velocity.x;
+            if (Abs(_playerModel.faceDir) > 1e-6)
+            {
+                animCtrl.FlipX = _playerModel.faceDir < 0;
+            }
+
+            return;
+
+            float Abs(float x) => x > 0 ? x : -x;
         }
 
         private void ConfigureFeelEvent()
@@ -113,11 +121,6 @@ namespace Shuile.Gameplay.Character
                 {
                     _levelModel.DangerScore += DangerLevelConfigClass.PlayerAttackAddition;
                 }
-            });
-
-            playerCtrl.OnMoveStart.Register(v =>
-            {
-                animCtrl.FlipX = v < 0;
             });
         }
     }

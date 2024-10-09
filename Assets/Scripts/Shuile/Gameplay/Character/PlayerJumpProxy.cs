@@ -89,12 +89,14 @@ namespace Shuile.Gameplay.Character
                     _inputState.Value = InputState.HoldOff;
                 });
 
+                // jump update
                 _jumpingUpdate = _scheduler.AddFixedUpdate(() =>
                 {
                     _onJumpingUpdate.Invoke();
                 });
                 _jumpingUpdate.IsEnabled = false;
 
+                // fall update
                 _fallUpdate = _scheduler.AddFixedUpdate(() =>
                 {
                     if (_moveController.IsOnGround)
