@@ -16,7 +16,6 @@ namespace Shuile.Gameplay.Character
 
         private SmoothMoveCtrl _moveController;
         private PlayerModel _playerModel;
-        private bool attackingLock;
 
         // [behave state?]
         private float moveParam;
@@ -31,70 +30,12 @@ namespace Shuile.Gameplay.Character
         private PlayerJumpProxy _playerJumpProxy;
         private PlayerAttackProxy _playerAttackProxy;
 
-        // it has bug (((((
-        public bool AttackingLock
-        {
-            get => attackingLock;
-            set
-            {
-                Debug.Log("lock changed: " + value);
-
-                if (attackingLock == value)
-                {
-                    return;
-                }
-
-                attackingLock = value;
-                //if (!value)
-                //    StopAttack();
-
-                _moveController.XMaxSpeed = value ? _moveSettings.xMaxSpeed * 0.3f : _moveSettings.xMaxSpeed;
-                if (value && Mathf.Abs(_moveController.Velocity.x) > _moveController.XMaxSpeed)
-                {
-                    _moveController.Velocity =
-                        _moveController.Velocity.With(
-                            Mathf.Sign(_moveController.Velocity.x) * _moveController.XMaxSpeed);
-                }
-            }
-        }
-
         private void Awake()
         {
             _scheduler = UnityEntryPointScheduler.Create(gameObject);
             ConfigureDependency();
             ConfigureInputEvent();
-
             ConfigProxy();
-        }
-
-        private void ConfigProxy()
-        {
-            // jump
-            var jumpDependencies = new ServiceLocator();
-            jumpDependencies.RegisterInstance(_moveController);
-            jumpDependencies.RegisterInstance(new PlayerJumpProxy.Settings
-            {
-                jumpStartVel = _jumpSettings.jumpStartVel,
-                holdJumpVelAdd = _jumpSettings.holdJumpVelAdd,
-                jumpMaxDuration = _jumpSettings.jumpMaxDuration,
-                normalGravity = _jumpSettings.normalGravity,
-                dropGravity = _jumpSettings.dropGravity,
-                onInputJumpStart = mPlayerInput.OnJumpStart,
-                onInputJumpCanceled = mPlayerInput.OnJumpCanceled,
-            });
-            _playerJumpProxy = new PlayerJumpProxy(_scheduler, jumpDependencies);
-            _playerJumpProxy.Forget();
-
-            // attack
-            var attackDependencies = new ServiceLocator();
-            attackDependencies.AddParent(_containerContext);
-
-            attackDependencies.RegisterInstance(mPlayerInput);
-            attackDependencies.RegisterInstance(transform);
-            attackDependencies.RegisterInstance(_attackSettings);
-            attackDependencies.RegisterInstance(this);
-            _playerAttackProxy = new PlayerAttackProxy(_scheduler, attackDependencies);
-            _playerAttackProxy.Forget();
         }
 
         private void Start()
@@ -163,6 +104,36 @@ namespace Shuile.Gameplay.Character
                 .Resolve(out _playerModel);
 
             mPlayerInput = GetComponent<NormalPlayerInput>();
+        }
+
+        private void ConfigProxy()
+        {
+            // jump
+            var jumpDependencies = new ServiceLocator();
+            jumpDependencies.RegisterInstance(_moveController);
+            jumpDependencies.RegisterInstance(new PlayerJumpProxy.Settings
+            {
+                jumpStartVel = _jumpSettings.jumpStartVel,
+                holdJumpVelAdd = _jumpSettings.holdJumpVelAdd,
+                jumpMaxDuration = _jumpSettings.jumpMaxDuration,
+                normalGravity = _jumpSettings.normalGravity,
+                dropGravity = _jumpSettings.dropGravity,
+                onInputJumpStart = mPlayerInput.OnJumpStart,
+                onInputJumpCanceled = mPlayerInput.OnJumpCanceled,
+            });
+            _playerJumpProxy = new PlayerJumpProxy(_scheduler, jumpDependencies);
+            _playerJumpProxy.Forget();
+
+            // attack
+            var attackDependencies = new ServiceLocator();
+            attackDependencies.AddParent(_containerContext);
+
+            attackDependencies.RegisterInstance(mPlayerInput);
+            attackDependencies.RegisterInstance(transform);
+            attackDependencies.RegisterInstance(_attackSettings);
+            attackDependencies.RegisterInstance(this);
+            _playerAttackProxy = new PlayerAttackProxy(_scheduler, attackDependencies);
+            _playerAttackProxy.Forget();
         }
 
         private enum MoveState

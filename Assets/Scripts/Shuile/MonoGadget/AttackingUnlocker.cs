@@ -1,4 +1,5 @@
 using Shuile.Gameplay.Character;
+using System;
 using UnityEngine;
 
 namespace Shuile.MonoGadget
@@ -9,7 +10,8 @@ namespace Shuile.MonoGadget
 
         public void UnlockAttacking()
         {
-            ctrl.AttackingLock = false;
+            // ctrl.AttackingLock = false;
+            throw new NotSupportedException();
         }
     }
 }

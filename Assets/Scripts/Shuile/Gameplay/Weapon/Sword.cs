@@ -1,5 +1,6 @@
 using Shuile.Core.Gameplay.Common;
 using Shuile.Gameplay.Character;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Weapon
@@ -17,25 +18,26 @@ namespace Shuile.Gameplay.Weapon
         private void OnTriggerEnter2D(Collider2D collision)
         {
             //Debug.Log(collision.name);
-            if (!playerCtrl.AttackingLock || collision.CompareTag("Player")) // 防止紫砂
-            {
-                return;
-            }
-
-            var hurtable = collision.GetComponent<IHurtable>();
-            if (hurtable != null)
-            {
-                hurtable.OnHurt(IsHypermode ? hyperAttackPoint : attackPoint);
-            }
-
-            OnHit.Invoke(new WeaponHitData(this, hurtable));
+            // if (!playerCtrl.AttackingLock || collision.CompareTag("Player")) // 防止紫砂
+            // {
+            //     return;
+            // }
+            //
+            // var hurtable = collision.GetComponent<IHurtable>();
+            // if (hurtable != null)
+            // {
+            //     hurtable.OnHurt(IsHypermode ? hyperAttackPoint : attackPoint);
+            // }
+            //
+            // OnHit.Invoke(new WeaponHitData(this, hurtable));
         }
 
         protected override void OnAttack(WeaponCommandData data)
         {
             if (playerCtrl != null)
             {
-                playerCtrl.AttackingLock = true;
+                // playerCtrl.AttackingLock = true;
+                throw new NotSupportedException();
             }
         }
 
@@ -43,7 +45,8 @@ namespace Shuile.Gameplay.Weapon
         {
             if (playerCtrl != null)
             {
-                playerCtrl.AttackingLock = false;
+                // playerCtrl.AttackingLock = false;
+                throw new NotSupportedException();
             }
         }
 
