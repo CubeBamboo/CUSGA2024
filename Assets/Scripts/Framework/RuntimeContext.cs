@@ -7,7 +7,7 @@ namespace Shuile.Framework
     /// <summary>
     /// can be accessed for object which has sibling nodes and child nodes. it contains runtime dependencies.
     /// </summary>
-    public class RuntimeContext : IReadOnlyServiceLocator, IServiceLocatorRegister, IDebugServiceLocator
+    public class RuntimeContext : IReadOnlyServiceLocator, IServiceLocatorRegister
     {
         private ServiceLocator serviceLocator;
 
@@ -61,9 +61,6 @@ namespace Shuile.Framework
             get => serviceLocator.KeyName;
             set => serviceLocator.KeyName = value;
         }
-
-        public FormattedRegistry CurrentRegistry => serviceLocator.CurrentRegistry;
-        public FormattedParent CurrentParentGraph => serviceLocator.CurrentParentGraph;
 
         public void RegisterFactory<T>(Func<T> func)
         {

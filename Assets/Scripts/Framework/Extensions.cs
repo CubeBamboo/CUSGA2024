@@ -33,12 +33,6 @@ namespace Shuile.Framework
         {
             var msg = new StringBuilder();
             msg.AppendLine($"Cannot resolve {typeof(T).Name}");
-            if (serviceLocator != null)
-            {
-                msg.AppendLine("ParentGraph:");
-                msg.Append((serviceLocator as IDebugServiceLocator)?.CurrentParentGraph.ToString() ??
-                           $"Cannot get parent graph. (not a {nameof(IDebugServiceLocator)})");
-            }
             return new Exception(msg.ToString());
         }
 

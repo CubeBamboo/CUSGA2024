@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Shuile.Gameplay
 {
+    // old shit code
     [DefaultExecutionOrder(-4000)]
     public class LevelRoot : MonoSingletons<LevelRoot>
     {
