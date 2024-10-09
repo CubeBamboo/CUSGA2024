@@ -33,12 +33,6 @@ namespace Shuile.Gameplay.Character
                 });
                 _moveUpdate.IsEnabled = false;
 
-                scheduler.AddOnGUI(() =>
-                {
-                    GUI.skin.label.fontSize = 30;
-                    GUILayout.Label($"moveInput: {_moveInputState.Value} - moveUpdate: {_moveUpdate.IsEnabled} - faceDir: {_playerModel.faceDir}");
-                });
-
                 _moveInputState.onValueChanged.Register((_, curr) =>
                 {
                     _moveUpdate.IsEnabled = curr != 0;

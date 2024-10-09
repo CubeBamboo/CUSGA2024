@@ -37,7 +37,6 @@ namespace Shuile.Gameplay.Manager
 
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
-            Debug.Log("LevelGlobalManager LoadFromParentContext");
             context
                 .Resolve(out _gamePlayScene)
                 .Resolve(out _levelStateMachine)
@@ -54,12 +53,6 @@ namespace Shuile.Gameplay.Manager
                 _player.Context
                     .Resolve(out _playerModel);
             }
-        }
-
-        public override void Awake()
-        {
-            Debug.Log("level global manager awake");
-            base.Awake();
         }
 
         private void Start()
