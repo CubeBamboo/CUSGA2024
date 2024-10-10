@@ -4,7 +4,7 @@ using Shuile.Persistent;
 
 namespace Shuile
 {
-    public class MainGame : AbstractLocator<MainGame> // nearly obsolete, use GameApplication.Global instead
+    public class MainGame : AbstractLocator<MainGame> // nearly obsolete, use RuntimeContext in MonoContainer instead
     {
         public override bool InitOnApplicationAwake => true;
 

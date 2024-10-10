@@ -26,16 +26,24 @@ namespace Shuile.Gameplay.Character
             private UnityEntryPointScheduler.SchedulerTask _jumpingUpdate;
             private UnityEntryPointScheduler.SchedulerTask _fallUpdate;
 
+            private MonoAudioChannel _audioChannel;
+            private ResourceLoader _resourceLoader;
+            private AudioClip _jumpFx;
+
             public PlayerJumpProxy(UnityEntryPointScheduler scheduler,
                 IReadOnlyServiceLocator dependencies) : base(scheduler, dependencies)
             {
                 _scheduler = scheduler;
                 dependencies
                     .Resolve(out _moveController)
+                    .Resolve(out _audioChannel)
                     .Resolve(out _settings);
 
                 ConfigureBaseEvent();
                 ConfigureFacadeEvent();
+
+                _resourceLoader = new ResourceLoader();
+                _jumpFx = _resourceLoader.Load<AudioClip>("Assets/Audio/Test/jump.wav");
             }
 
             private void ConfigureFacadeEvent()
@@ -44,6 +52,7 @@ namespace Shuile.Gameplay.Character
                 _jumpingState.BindValueChangeTo(JumpingState.JumpUp, () =>
                 {
                     _moveController.Velocity = _moveController.Velocity.With(y: _settings.jumpStartVel);
+                    _audioChannel.Play(_jumpFx);
 
                     // timer
                     holdStartTime = Time.time;

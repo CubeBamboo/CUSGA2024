@@ -34,6 +34,7 @@ namespace Shuile.Gameplay.Manager
         private MusicRhythmManager _musicRhythmManager;
         private PlayerModel _playerModel;
         private SceneTransitionManager _sceneTransitionManager;
+        private MonoAudioChannel _monoAudioChannel;
 
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
@@ -44,9 +45,10 @@ namespace Shuile.Gameplay.Manager
                 .Resolve(out _autoPlayChartManager)
                 .Resolve(out _musicRhythmManager)
                 .Resolve(out _levelEntityManager)
+                .Resolve(out _levelModel)
+                .Resolve(out _endLevelPanel)
+                .Resolve(out _monoAudioChannel)
                 .Resolve(out _levelFeelManager);
-            _levelModel = context.GetImplementation<LevelModel>();
-            _endLevelPanel = context.GetImplementation<EndLevelPanel>();
 
             if (_gamePlayScene.TryGetPlayer(out _player))
             {
@@ -118,7 +120,7 @@ namespace Shuile.Gameplay.Manager
         {
             _endLevelPanel.SetState(false);
             _endLevelPanel.Show();
-            MonoAudioCtrl.Instance.PlayOneShot("Level_Fail", 0.6f);
+            _monoAudioChannel.Play("Assets/Audio/GameFX/down.wav");
 
             UtilsCommands.SetTimer(3.0,
                 () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName),
@@ -131,7 +133,7 @@ namespace Shuile.Gameplay.Manager
             _endLevelPanel.Show();
 
             _musicRhythmManager.FadeOutAndStop(); // 当前音乐淡出 music fade out
-            MonoAudioCtrl.Instance.PlayOneShot("Level_Win", 0.6f);
+            _monoAudioChannel.Play("Assets/Audio/GameFX/dingdong.wav");
 
             UtilsCommands.SetTimer(3.0,
                 () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName),

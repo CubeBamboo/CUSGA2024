@@ -55,5 +55,26 @@ namespace Shuile.Utils
             });
             return task;
         }
+
+        public static void ThrowIfObjectNull(object obj, string message = null)
+        {
+            if (obj == null)
+            {
+                throw new NullReferenceException(message);
+            }
+        }
+
+        /// <summary>
+        /// simplify the null check
+        /// </summary>
+        public static T ThrowIfNull<T>(this T obj, string message = null)
+        {
+            if (obj == null)
+            {
+                throw new NullReferenceException(message);
+            }
+
+            return obj;
+        }
     }
 }

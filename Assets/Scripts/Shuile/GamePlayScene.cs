@@ -8,6 +8,7 @@ using Shuile.Gameplay.Manager;
 using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.UI.Gameplay;
+using Shuile.Utils;
 using UnityEngine;
 
 namespace Shuile
@@ -15,11 +16,11 @@ namespace Shuile
     public class GamePlayScene : SceneContainer
     {
         [SerializeField] private Player player;
-        [SerializeField] private MusicRhythmManager musicRhythmManager;
-        [SerializeField] private LevelZoneManager levelZoneManager;
         [SerializeField] private EndLevelPanel endLevelPanel;
         [SerializeField] private LevelAudioManager levelAudioManager;
         [SerializeField] private Transform enemyParent;
+
+        [SerializeField] private GameObject preLoadGameObject;
 
         public override void BuildSelfContext(RuntimeContext context)
         {
@@ -30,8 +31,9 @@ namespace Shuile
             context.RegisterMonoScheduler(this);
 
             context.RegisterInstance(this);
-            context.RegisterInstance(musicRhythmManager);
-            context.RegisterInstance(levelZoneManager);
+            context.RegisterInstance(preLoadGameObject.GetComponent<MusicRhythmManager>().ThrowIfNull());
+            context.RegisterInstance(preLoadGameObject.GetComponent<LevelZoneManager>().ThrowIfNull());
+            context.RegisterInstance(preLoadGameObject.GetComponent<MonoAudioChannel>().ThrowIfNull());
             context.RegisterInstance(endLevelPanel);
             context.RegisterInstance(levelAudioManager);
             context.RegisterInstance(new LevelModel());
