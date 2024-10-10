@@ -1,4 +1,3 @@
-using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Feel
@@ -8,7 +7,7 @@ namespace Shuile.Gameplay.Feel
         public static GameObject CreateParticle(string name, Vector3 position, Vector3 direction,
             Transform parent = null)
         {
-            var particle = LevelResourcesLoader.Instance.GetParticleFromCache(name);
+            var particle = GameApplication.BuiltInData.globalPrefabs.GetParticle(name);
             if (particle == null)
             {
                 return null;

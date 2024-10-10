@@ -6,7 +6,6 @@ using Shuile.Core.Global.Config;
 using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Model;
-using Shuile.ResourcesManagement.Loader;
 using System;
 using System.Threading;
 using UnityEngine;
@@ -33,8 +32,7 @@ namespace Shuile.Rhythm
             scheduler.AddFixedUpdate(FixedTick);
             scheduler.AddCallOnDestroy(OnDestroy);
 
-            var resourcesLoader = LevelResourcesLoader.Instance;
-            _levelConfig = resourcesLoader.SyncContext.levelConfig;
+            _levelConfig = GameApplication.BuiltInData.levelConfig;
 
             AudioPlayer = new UnityAudioPlayer(_levelAudioManager.MusicSource);
         }

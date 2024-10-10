@@ -1,7 +1,5 @@
 using CbUtils.Unity;
-using Shuile.Core.Framework;
 using Shuile.Gameplay.Model;
-using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
 namespace Shuile.Gameplay
@@ -26,7 +24,7 @@ namespace Shuile.Gameplay
         {
             Debug.Log("Level awake and is initializing");
 
-            needHitWithRhythm = LevelResourcesLoader.Instance.SyncContext.levelConfig.needHitWithRhythm;
+            needHitWithRhythm = GameApplication.BuiltInData.levelConfig.needHitWithRhythm;
 
             IsStart = true;
             IsLevelActive = true;

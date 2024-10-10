@@ -4,7 +4,6 @@ using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Model;
 using Shuile.Persistent;
-using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
 namespace Shuile.Rhythm
@@ -33,8 +32,7 @@ namespace Shuile.Rhythm
             _levelModel = context.GetImplementation<LevelModel>();
             _preciseMusicPlayer = context.GetImplementation<PreciseMusicPlayer>();
 
-            var resourcesLoader = LevelResourcesLoader.Instance;
-            _levelConfig = resourcesLoader.SyncContext.levelConfig;
+            _levelConfig = GameApplication.BuiltInData.levelConfig;
         }
 
         private void Start()

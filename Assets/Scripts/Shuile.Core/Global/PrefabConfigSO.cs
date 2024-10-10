@@ -33,5 +33,18 @@ namespace Shuile.Core.Global
         [Header("Effect")] public SpawnEffect enemySpawnEffect;
 
         [Header("Particles")] public PrefabData[] particles;
+
+        public GameObject GetParticle(string name)
+        {
+            foreach (var particle in particles)
+            {
+                if (particle.name == name)
+                {
+                    return particle.prefab;
+                }
+            }
+
+            return null;
+        }
     }
 }

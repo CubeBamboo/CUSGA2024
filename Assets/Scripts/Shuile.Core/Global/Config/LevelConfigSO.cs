@@ -12,6 +12,8 @@ namespace Shuile.Core.Global.Config
         [Tooltip("(in plus of minus and in ms) Input offset out of this value will be judged by miss.")]
         public float missTolerance = 150f;
 
+        public float MissToleranceInSeconds => missTolerance * 0.001f;
+
         public int playerNotePreShowTime = 2;
 
         [Header("MusicManager")] public bool playOnAwake = true;

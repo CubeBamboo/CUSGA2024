@@ -3,9 +3,7 @@ using DG.Tweening;
 using Shuile.Chart;
 using Shuile.Core.Global.Config;
 using Shuile.Framework;
-using Shuile.Gameplay.Character;
 using Shuile.MonoGadget;
-using Shuile.ResourcesManagement.Loader;
 using Shuile.Rhythm;
 using Shuile.Rhythm.Runtime;
 using System;
@@ -53,7 +51,7 @@ namespace Shuile.Gameplay
         public MusicTimeTweener TimeTweener => _timeTweener.Value;
 
         private float CurrentTime => TimeTweener.TweenTime;
-        private float MissTolerance => ImmutableConfiguration.Instance.MissToleranceInSeconds;
+        private float MissTolerance => GameApplication.BuiltInData.levelConfig.MissToleranceInSeconds;
 
         private void Start()
         {
@@ -70,15 +68,14 @@ namespace Shuile.Gameplay
                 return;
             }
 
-            var resourcesLoader = LevelResourcesLoader.Instance;
-
             var preciseMusicPlayer = sceneContext.GetImplementation<PreciseMusicPlayer>();
             _timeTweener =
                 new Lazy<MusicTimeTweener>(() =>
                     preciseMusicPlayer.AudioPlayer.TargetSource.gameObject.GetOrAddComponent<MusicTimeTweener>());
 
-            _levelConfig = resourcesLoader.SyncContext.levelConfig;
-            _notePrefab = resourcesLoader.SyncContext.globalPrefabs.noteIndicator;
+            var builtInData = GameApplication.BuiltInData;
+            _levelConfig = builtInData.levelConfig;
+            _notePrefab = builtInData.globalPrefabs.noteIndicator;
             _preDisplayTime = _levelConfig.playerNotePreShowTime;
             _playerChartManager.ChartPlayer.OnNotePlay += OnNote;
             _playerChartManager.OnPlayerHitOn += OnPlayerHit;

@@ -15,7 +15,7 @@ namespace Shuile.Rhythm.Runtime
         public void Execute()
         {
             Result result = new();
-            var missTolerance = ImmutableConfiguration.Instance.MissToleranceInSeconds;
+            var missTolerance = GameApplication.BuiltInData.levelConfig.MissToleranceInSeconds;
 
             // get the nearest note's time and judge
             result.hitOffset = float.NaN;

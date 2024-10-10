@@ -2,7 +2,6 @@ using Shuile.Chart;
 using Shuile.Core.Global.Config;
 using Shuile.Framework;
 using Shuile.Gameplay;
-using Shuile.ResourcesManagement.Loader;
 using System;
 
 namespace Shuile.Rhythm.Runtime
@@ -25,7 +24,7 @@ namespace Shuile.Rhythm.Runtime
 
             scheduler.AddFixedUpdate(FixedTick);
 
-            _levelConfig = LevelResourcesLoader.Instance.SyncContext.levelConfig;
+            _levelConfig = GameApplication.BuiltInData.levelConfig;
             _notePreShowInterval = _levelConfig.playerNotePreShowTime;
             noteContainer = new NoteContainer();
             _chartPlayer = new Lazy<ChartPlayer>(() => new ChartPlayer(_chart,

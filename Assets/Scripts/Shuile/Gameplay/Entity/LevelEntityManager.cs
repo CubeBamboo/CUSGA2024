@@ -5,7 +5,6 @@ using Shuile.Core.Global.Config;
 using Shuile.Framework;
 using Shuile.Gameplay.Event;
 using Shuile.Model;
-using Shuile.ResourcesManagement.Loader;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
@@ -29,8 +28,7 @@ namespace Shuile.Gameplay.Entity
                 .Resolve(out _levelModel)
                 .Resolve(out UnityEntryPointScheduler scheduler);
 
-            var resourceLoader = LevelResourcesLoader.Instance;
-            _globalPrefab = resourceLoader.SyncContext.globalPrefabs;
+            _globalPrefab = GameApplication.BuiltInData.globalPrefabs;
 
             scheduler.AddOnce(Start);
             scheduler.AddCallOnDestroy(OnDestroy);

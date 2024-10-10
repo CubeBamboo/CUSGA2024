@@ -49,7 +49,7 @@ namespace Shuile.Chart
             _noteList.Sort((a, b) => a.realTime.CompareTo(b.realTime)); //升序排序
             // 检查所有需要销毁的note
             while (_noteList.Count > 0 &&
-                   _noteList[0].NeedRelease(currentTime, ImmutableConfiguration.Instance.MissToleranceInSeconds))
+                   _noteList[0].NeedRelease(currentTime, GameApplication.BuiltInData.levelConfig.MissToleranceInSeconds))
             {
                 var time = _noteList[0].realTime;
                 _notePool.Release(_noteList[0]);

@@ -1,8 +1,6 @@
 using CbUtils.Kits.Tasks;
-using Shuile.Core.Framework;
 using Shuile.Core.Global;
 using Shuile.Framework;
-using Shuile.ResourcesManagement.Loader;
 using UnityEngine;
 
 namespace Shuile
@@ -10,6 +8,7 @@ namespace Shuile
     public static class GameApplication
     {
         public static readonly RuntimeContext GlobalContext = new();
+        public static BuiltInData BuiltInData { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void PreInitialize()
@@ -25,7 +24,8 @@ namespace Shuile
             var globalGameObject = GlobalCommands.InstantiateGlobalGameObject();
             TaskBus.Instance.InitializeBusyScreenByGlobalGameObject(globalGameObject);
 
-            _ = GameResourcesLoader.Instance.PreCacheAsync();
+            var resourceLoader = new ResourceLoader();
+            BuiltInData = resourceLoader.Load<BuiltInData>("Assets/Data/BuiltInData.asset");
         }
     }
 }

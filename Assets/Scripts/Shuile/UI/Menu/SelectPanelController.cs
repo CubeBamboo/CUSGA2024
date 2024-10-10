@@ -1,9 +1,7 @@
 using CbUtils.Kits.Tasks;
-using Cysharp.Threading.Tasks;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Model;
-using Shuile.ResourcesManagement.Loader;
 using Shuile.UI.Data;
 using System.Threading.Tasks;
 using TMPro;
@@ -61,11 +59,6 @@ namespace Shuile.UI.Menu
                 RefreshSongView();
             });
             btn_Play.onClick.AddListener(() => StartLevel(levelSelectData.levelData[_currentIndex].levelDataLabel));
-
-            // seealso: GameResources.Instance.levelDataMap.levelDataList
-            //btn_level1.onClick.AddListener(() => StartLevel("Break"));
-            //btn_level2.onClick.AddListener(() => StartLevel("Forever_loved"));
-            //btn_level3.onClick.AddListener(() => StartLevel("Ginevra"));
         }
 
         public async void StartLevel(string label)
@@ -81,11 +74,9 @@ namespace Shuile.UI.Menu
 
         private async Task LoadLevelResources(string label)
         {
-            var levels = await GameResourcesLoader.Instance.GetLevelDataMapAsync();
-
+            var levels = GameApplication.BuiltInData.levelDataMap;
             _level = levels.GetLevelData(label);
-            await LevelResourcesLoader.Instance.PreCacheAsync();
-            await Task.Delay(1000);
+            await Task.Delay(1000); // show our cool loading screen // 展示我们牛逼的加载界面
         }
 
         private void RefreshSongView()
