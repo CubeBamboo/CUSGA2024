@@ -20,6 +20,7 @@ namespace Shuile.Gameplay.Entity
         private readonly LevelModel _levelModel;
 
         private int _frameCounter;
+        private Queue<Enemy> _removeQueue = new();
 
         public LevelEntityManager(IReadOnlyServiceLocator serviceLocator, Transform enemyParent)
         {
@@ -55,6 +56,7 @@ namespace Shuile.Gameplay.Entity
 
             EnemyParent = new GameObject("Enemies").transform;
 
+            // use global event system to handle enemy spawn and die, enemy will not focus on the outer metadata.
             TypeEventSystem.Global.Register<EnemySpawnEvent>(OnEnemySpawn);
             TypeEventSystem.Global.Register<EnemyDieEvent>(OnEnemyDie);
         }
@@ -75,12 +77,18 @@ namespace Shuile.Gameplay.Entity
         private void OnEnemyDie(EnemyDieEvent evt)
         {
             _levelModel.DangerScore += DangerLevelUtils.GetEnemyKillAddition();
-            if (evt.enemy.TryGetComponent<Enemy>(out var enemy))
-            {
-                _enemyList.UnorderedRemove(enemy);
-            }
+            QueueRemove(evt.enemy);
 
             EnemyCount--;
+        }
+
+        /// <summary>
+        /// in case of removing enemy in the middle of the judgement (while collection is enumerating)
+        /// </summary>
+        /// <param name="enemy"></param>
+        public void QueueRemove(Enemy enemy)
+        {
+            _removeQueue.Enqueue(enemy);
         }
 
         public void OnRhythmHit()
@@ -98,6 +106,13 @@ namespace Shuile.Gameplay.Entity
             foreach (var enemy in _enemyList)
             {
                 enemy.Judge(version, false);
+            }
+
+            // remove enemies
+            while (_removeQueue.Count > 0)
+            {
+                var enemy = _removeQueue.Dequeue();
+                RemoveImmediate(enemy);
             }
 
             IsJudging = false;

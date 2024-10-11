@@ -45,7 +45,7 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         protected override void OnSelfDie()
         {
-            _mFsm.SwitchState(DefaultEnemyState.Dead);
+            _mFsm.SwitchState(DefaultEnemyState.Empty);
             moveController.IsFrozen = true;
             transform.DOScale(Vector3.zero, 0.1f)
                 .OnComplete(() => gameObject.Destroy());
@@ -92,10 +92,14 @@ namespace Shuile.Gameplay.Entity.Enemies
                 });
             mFsm.NewEventState(DefaultEnemyState.Attack)
                 .OnCustom(() => Attack());
-            mFsm.NewEventState(DefaultEnemyState.Dead)
-                .OnEnter(() => OnHurt(MaxHealth));
+            mFsm.NewEventState(DefaultEnemyState.Empty);
 
             mFsm.StartState(DefaultEnemyState.Patrol);
+        }
+
+        private void ForceDie()
+        {
+            OnHurt(MaxHealth);
         }
 
         private bool Attack()
@@ -105,7 +109,7 @@ namespace Shuile.Gameplay.Entity.Enemies
                 _player.OnHurt((int)(_player.Property.maxHealthPoint * 0.6f));
             }
 
-            _mFsm.SwitchState(DefaultEnemyState.Dead);
+            ForceDie();
             return true;
         }
 

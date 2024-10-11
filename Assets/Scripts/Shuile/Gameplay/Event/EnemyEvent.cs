@@ -12,11 +12,11 @@ namespace Shuile.Gameplay.Event
 
     internal class EnemyDieEvent : ITypeEvent
     {
-        public GameObject enemy;
+        public Enemy enemy;
     }
 
     internal class EnemyHurtEvent : ITypeEvent
     {
-        public GameObject enemy;
+        public Enemy enemy;
     }
 }

@@ -9,20 +9,18 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Entity
 {
-    /// <summary> base class for enemy </summary>
+    /// <summary>
+    /// handle enemy's common dependencies. use event system to communicate with outer world.
+    /// </summary>
     public abstract class Enemy : MonoContainer, IHurtable, IJudgeable
     {
         [SerializeField] protected int MaxHealth = 100;
 
-        private EnemyHurtEvent enemyHurtEvent;
         protected int health;
         protected SmoothMoveCtrl moveController;
-
-        public int Health => health;
-        public bool IsAlive => health > 0;
-        public SmoothMoveCtrl MoveController => moveController;
-
         protected Player _player;
+
+        private EnemyHurtEvent enemyHurtEvent;
 
         public override void BuildSelfContext(RuntimeContext context)
         {
@@ -42,11 +40,15 @@ namespace Shuile.Gameplay.Entity
             }
         }
 
+        public int Health => health;
+        public bool IsAlive => health > 0;
+        public SmoothMoveCtrl MoveController => moveController;
+
         public override void Awake()
         {
             base.Awake();
             moveController = new SmoothMoveCtrl(Context);
-            enemyHurtEvent = new EnemyHurtEvent { enemy = gameObject };
+            enemyHurtEvent = new EnemyHurtEvent { enemy = this };
             health = MaxHealth;
             OnAwake();
             TypeEventSystem.Global.Trigger<EnemySpawnEvent>(new EnemySpawnEvent { enemy = this });
@@ -73,13 +75,11 @@ namespace Shuile.Gameplay.Entity
 
         public abstract void Judge(int frame, bool force);
 
-        public event Action<int> OnHpChangedEvent = _ => { };
-
         protected virtual void OnAwake() { }
 
         private void HandleDieEvent()
         {
-            TypeEventSystem.Global.Trigger<EnemyDieEvent>(new EnemyDieEvent { enemy = gameObject });
+            TypeEventSystem.Global.Trigger<EnemyDieEvent>(new EnemyDieEvent { enemy = this });
         }
 
         protected abstract void OnSelfHurt(int oldVal, int newVal);

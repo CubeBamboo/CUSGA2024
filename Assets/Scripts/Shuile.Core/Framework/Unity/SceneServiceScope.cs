@@ -21,6 +21,10 @@ namespace Shuile.Core.Framework.Unity
         public void ClearExisting();
     }
 
+    /// <summary>
+    /// use this <see cref="MonoContainer"/>
+    /// </summary>
+    [Obsolete("use MonoContainer")]
     [DefaultExecutionOrder(-2000)]
     public class SceneServiceScope<TScope> : MonoBehaviour, IRegisterableScope, IGetableScope
         where TScope : SceneServiceScope<TScope>
@@ -123,6 +127,10 @@ namespace Shuile.Core.Framework.Unity
         }
     }
 
+    /// <summary>
+    /// use this <see cref="UnityEntryPointScheduler"/>
+    /// </summary>
+    [Obsolete("use EntryPointScheduler")]
     [DefaultExecutionOrder(-500)]
     internal class EntryPointTrigger : MonoBehaviour
     {
