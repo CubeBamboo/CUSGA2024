@@ -22,11 +22,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3ac5709a755c72345a61a50cdc94d1a7
-    m_Address: Song/Ginevra.ogg
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 02c221cfd466b494abfbe696a382b4ee, type: 2}
   m_SchemaSet:

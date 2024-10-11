@@ -17,16 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 968d33bedf3a54a49a2514dc70967707
   m_SerializeEntries:
-  - m_GUID: f86459a467bc97c4cbc3f0134bbbf071
-    m_Address: Data/LevelDataMap.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 33051b7261f31514783d021c269ff9be
-    m_Address: Data/MainLevelConfig.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d3598c498b6374940a9ff15954777e23
     m_Address: Assets/Data/BuiltInData.asset
     m_ReadOnly: 0

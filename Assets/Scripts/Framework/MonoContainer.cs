@@ -4,14 +4,14 @@ using UnityEngine;
 namespace Shuile.Framework
 {
     /// <summary>
-    /// provide the context shared based on the hierarchy of the GameObject.
-    /// if you need to access Unity's event functions, use <see cref="UnityEntryPointScheduler"/>.
-    ///
+    /// provide the context shared based on the hierarchy of the GameObject. <br/>
+    /// if you need to access Unity's event functions, use <see cref="UnityEntryPointScheduler"/>. <br/>
     /// c# version is <see cref="PlainContainer"/>. actually, <see cref="MonoContainer"/> is a wrapper(entry-point) of <see cref="PlainContainer"/>.
     /// </summary>
     public abstract class MonoContainer : MonoBehaviour, IHasContext
     {
         [SerializeField] private bool autoAwake = true;
+        [SerializeField] private bool useParentTransformContext = true;
 
         // make monoContainer can be used as a plain container.
         protected readonly MonoPlainContainerAdapter ContainerAdapter;
@@ -42,7 +42,7 @@ namespace Shuile.Framework
             if (IsInit) throw new InvalidOperationException("monoContainer already initialized.");
             if (GetComponents<MonoContainer>().Length > 1) throw MultiMonoContainerException();
 
-            InitParentAboveTransform();
+            if(useParentTransformContext) InitParentAboveTransform();
             ContainerHelper.AwakeContainer(ContainerAdapter);
         }
 
