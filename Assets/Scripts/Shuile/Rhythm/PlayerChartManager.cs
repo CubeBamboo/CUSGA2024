@@ -40,11 +40,6 @@ namespace Shuile.Rhythm.Runtime
 
         public void FixedTick()
         {
-            if (!LevelRoot.Instance.IsStart)
-            {
-                return;
-            }
-
             ChartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
             noteContainer.CheckRelease(_musicRhythmManager.CurrentTime);
         }

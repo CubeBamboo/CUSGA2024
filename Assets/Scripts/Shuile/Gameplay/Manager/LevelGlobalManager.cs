@@ -80,11 +80,6 @@ namespace Shuile.Gameplay.Manager
 
         private void FixedUpdate()
         {
-            if (!LevelRoot.Instance.IsStart)
-            {
-                return;
-            }
-
             _levelModel.DangerScore -= DangerLevelConfigClass.NormalReductionPerSecond * Time.fixedDeltaTime;
 
             // check end

@@ -93,12 +93,9 @@ namespace Shuile.Gameplay
 
         private void OnDestroy()
         {
-            if (LevelRoot.IsLevelActive)
-            {
-                _playerChartManager.ChartPlayer.OnNotePlay -= OnNote;
-                _playerChartManager.OnPlayerHitOn -= OnPlayerHit;
-                _playerChartManager.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelease;
-            }
+            _playerChartManager.ChartPlayer.OnNotePlay -= OnNote;
+            _playerChartManager.OnPlayerHitOn -= OnPlayerHit;
+            _playerChartManager.NoteContainer.OnNoteAutoRelese -= OnNoteNeedRelease;
 
             _uiNoteList.Clear();
             _notePool.DestroyAll();

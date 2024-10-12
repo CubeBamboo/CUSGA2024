@@ -365,50 +365,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d2aa7f148b1c740a746059f33cbf89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &3866803536351830349
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8650736336350916334}
-  - component: {fileID: 4411592527388843300}
-  m_Layer: 0
-  m_Name: LevelRoot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8650736336350916334
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3866803536351830349}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3867265148498414738}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4411592527388843300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3866803536351830349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4ecf5e5687144c4ba2829a85a42d27f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4215720266511055698
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,7 +513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af6bbcd77024e24cbf86174e6fd5fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoAwake: 1
+  initOnAwake: 1
   useParentTransformContext: 1
 --- !u!114 &2126869024058730763
 MonoBehaviour:
@@ -668,7 +624,6 @@ Transform:
   - {fileID: 2982893155815747144}
   - {fileID: 7163252838033775576}
   - {fileID: 3134676315639176747}
-  - {fileID: 8650736336350916334}
   - {fileID: 8620468171421438568}
   - {fileID: 5094806873952685180}
   m_Father: {fileID: 0}
@@ -685,7 +640,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a126c16c573407a942419014eb5fa24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoAwake: 1
+  initOnAwake: 1
   useParentTransformContext: 1
   player: {fileID: 888734764693625756}
   endLevelPanel: {fileID: 678913754241128194}

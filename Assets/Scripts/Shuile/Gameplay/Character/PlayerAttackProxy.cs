@@ -11,6 +11,7 @@ namespace Shuile.Gameplay.Character
     {
         private class PlayerAttackProxy : BaseProxy
         {
+            private readonly bool _needHitWithRhythm;
             private TryHitNoteCommand _hitNoteCommand;
 
             private readonly Transform _transform;
@@ -35,6 +36,8 @@ namespace Shuile.Gameplay.Character
                 mPlayerInput.OnAttackStart.Register(_ => Attack());
 
                 scheduler.AddOnce(Start);
+
+                _needHitWithRhythm = GameApplication.BuiltInData.levelConfig.needHitWithRhythm;
             }
 
             private void Start()
@@ -57,7 +60,7 @@ namespace Shuile.Gameplay.Character
 
             private void Attack()
             {
-                if (LevelRoot.Instance.needHitWithRhythm && !CheckRhythm())
+                if (_needHitWithRhythm && !CheckRhythm())
                 {
                     return;
                 }
