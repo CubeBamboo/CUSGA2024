@@ -20,7 +20,7 @@ namespace Shuile.Core.Gameplay.Data
 
     public static class LevelDataMapSOExtensions
     {
-        public static LevelData GetLevelData(this LevelDataMapSO levelDataMap, string label)
+        public static LevelData FirstByLabel(this LevelDataMapSO levelDataMap, string label)
         {
             foreach (var levelData in levelDataMap.levelDataList)
             {

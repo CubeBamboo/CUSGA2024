@@ -1,7 +1,7 @@
 using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
 using Shuile.Framework;
-using Shuile.Gameplay;
+using Shuile.Gameplay.Model;
 using Shuile.Rhythm.Runtime;
 
 namespace Shuile.Rhythm
@@ -21,15 +21,16 @@ namespace Shuile.Rhythm
 
         public LevelChartManager(RuntimeContext context) : base(context)
         {
-            chart = LevelRoot.LevelContext.ChartData;
 
             context
                 .Resolve(out _musicRhythmManager)
+                .Resolve(out LevelContext levelContext)
                 .Resolve(out UnityEntryPointScheduler scheduler);
 
             scheduler.AddOnce(Start);
             scheduler.AddFixedUpdate(FixedTick);
 
+            chart = levelContext.ChartData;
             chartPlayer = new ChartPlayer(chart, this);
         }
 

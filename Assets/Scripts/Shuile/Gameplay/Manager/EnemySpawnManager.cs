@@ -3,6 +3,7 @@ using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
 using Shuile.Framework;
 using Shuile.Gameplay.Entity;
+using Shuile.Gameplay.Model;
 using Shuile.Model;
 using Shuile.Rhythm;
 using URandom = UnityEngine.Random;
@@ -24,6 +25,7 @@ namespace Shuile.Gameplay.Manager
                 .Resolve(out _autoPlayChartManager)
                 .Resolve(out _sceneTransitionManager)
                 .Resolve(out _levelEntityManager)
+                .Resolve(out LevelContext levelContext)
                 .Resolve(out UnityEntryPointScheduler scheduler);
 
             _levelZoneManager = context.GetImplementation<LevelZoneManager>();
@@ -32,7 +34,7 @@ namespace Shuile.Gameplay.Manager
             scheduler.AddOnce(Start);
             scheduler.AddCallOnDestroy(OnDestroy);
 
-            currentEnemyData = LevelRoot.LevelContext.LevelEnemyData;
+            currentEnemyData = levelContext.LevelEnemyData;
         }
 
         public int EnemyCount => _levelEntityManager.EnemyCount;

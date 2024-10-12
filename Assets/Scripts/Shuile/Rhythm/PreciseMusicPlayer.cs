@@ -4,7 +4,7 @@ using Shuile.Audio;
 using Shuile.Core.Framework.Unity;
 using Shuile.Core.Global.Config;
 using Shuile.Framework;
-using Shuile.Gameplay;
+using Shuile.Gameplay.Model;
 using Shuile.Model;
 using System;
 using System.Threading;
@@ -20,14 +20,18 @@ namespace Shuile.Rhythm
         private readonly LevelAudioManager _levelAudioManager;
         private readonly LevelConfigSO _levelConfig;
         private readonly LevelModel _levelModel;
+        private readonly LevelContext _levelContext;
 
         private CancellationTokenSource _asyncPlayTokenSource;
 
         public PreciseMusicPlayer(RuntimeContext context)
         {
-            _levelAudioManager = context.GetImplementation<LevelAudioManager>();
-            _levelModel = context.GetImplementation<LevelModel>();
-            context.Resolve(out UnityEntryPointScheduler scheduler);
+            context
+                .Resolve(out _levelAudioManager)
+                .Resolve(out _levelModel)
+                .Resolve(out _levelContext)
+                .Resolve(out UnityEntryPointScheduler scheduler);
+
             scheduler.AddOnce(Restore);
             scheduler.AddFixedUpdate(FixedTick);
             scheduler.AddCallOnDestroy(OnDestroy);
@@ -122,7 +126,7 @@ namespace Shuile.Rhythm
         public void ReloadData()
         {
             Restore();
-            LoadClip(LevelRoot.LevelContext.ChartData.audioClip);
+            LoadClip(_levelContext.ChartData.audioClip);
         }
 
         public void StartPlay(float offset)

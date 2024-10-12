@@ -1,15 +1,20 @@
 using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
-using Shuile.Core.Global;
+using Shuile.Framework;
 using Shuile.UI;
 using UnityEngine.SceneManagement;
 
 namespace Shuile
 {
+    /// <summary>
+    /// previously it's used to behave the loading view on loading scene.
+    /// recently i want to use it to manage (take over) the scene/prefab load process.
+    /// </summary>
     public class MonoGameRouter : MonoSingletons<MonoGameRouter>, IGameRouter
     {
         private IRouterLoadingViewer defaultLoadingViewer;
         public string LastLevelSceneName { get; private set; }
+        public SceneMeta CurrentScene { get; private set; }
 
         protected override void OnAwake()
         {
@@ -35,24 +40,34 @@ namespace Shuile
             this.DoTransition(async () => await InternalLoadLevel(sceneName), defaultLoadingViewer);
         }
 
-        public void ToMenu()
+        public void LoadFromName(string sceneName)
         {
-            this.DoTransition(async () => await InternalLoadScene("MainMenu"), defaultLoadingViewer);
+            this.DoTransition(async () => await InternalLoadScene(sceneName), defaultLoadingViewer);
         }
 
-        public Scene GetCurrentScene()
+        public void LoadScene(SceneMeta meta)
         {
-            return SceneManager.GetActiveScene();
+            CurrentScene = meta;
+            this.DoTransition(async () =>
+            {
+                // i don't know how to register dependencies inside the Scene Loading (Awake() invoking)
+                SceneContainer.SceneFallbackContext = meta.Context;
+                await InternalLoadScene(meta.SceneName);
+            }, defaultLoadingViewer);
         }
 
-        public void RestartGame()
+        public abstract class SceneMeta
         {
-            SceneManager.LoadScene("Root");
-        }
+            public string SceneName { get; set; }
+            // public LoadSceneMode LoadSceneMode { get; set; } // only use single mode
 
-        public void LoadMenu()
-        {
-            SceneManager.LoadScene("MainMenu");
+            public RuntimeContext Context { get; set; } = new();
+
+            // now you have to initialize the name because we use it as a key to locate the scene.
+            protected SceneMeta(string sceneName)
+            {
+                SceneName = sceneName;
+            }
         }
     }
 }

@@ -12,14 +12,9 @@ namespace Shuile.Gameplay.Model
         public LevelEnemySO LevelEnemyData => LevelData.enemyData;
         public ChartData ChartData => _chartData ??= ChartUtils.LoadChartSync(ChartFiles);
 
-        public void Initialize()
+        public LevelContext(LevelData data)
         {
-            _chartData = ChartUtils.LoadChartSync(ChartFiles);
-        }
-
-        public void DeInitialize()
-        {
-            _chartData = null;
+            LevelData = data;
         }
     }
 }

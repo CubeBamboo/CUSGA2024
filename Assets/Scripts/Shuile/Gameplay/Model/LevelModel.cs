@@ -1,7 +1,8 @@
 using CbUtils;
 using Shuile.Core.Gameplay.Common;
 using Shuile.Core.Global.Config;
-using Shuile.Gameplay;
+using Shuile.Framework;
+using Shuile.Gameplay.Model;
 using System.Collections.Generic;
 
 namespace Shuile.Model
@@ -15,7 +16,8 @@ namespace Shuile.Model
 
         public LevelModel()
         {
-            var currentChart = LevelRoot.LevelContext.ChartData;
+            ContainerExtensions.FindSceneContext().Resolve(out LevelContext levelContext);
+            var currentChart = levelContext.ChartData;
             _musicBpm = currentChart.time[0].bpm;
             _musicOffset = currentChart.time[0].offset;
 

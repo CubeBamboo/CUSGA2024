@@ -1,7 +1,7 @@
 using Shuile.Chart;
 using Shuile.Core.Global.Config;
 using Shuile.Framework;
-using Shuile.Gameplay;
+using Shuile.Gameplay.Model;
 using Shuile.Model;
 using Shuile.Persistent;
 using UnityEngine;
@@ -18,6 +18,7 @@ namespace Shuile.Rhythm
         private ChartData _currentChart;
         private LevelConfigSO _levelConfig;
         private LevelModel _levelModel;
+        private LevelContext _levelContext;
 
         private PreciseMusicPlayer _preciseMusicPlayer;
 
@@ -29,8 +30,10 @@ namespace Shuile.Rhythm
         private void Awake()
         {
             var context = ContainerExtensions.FindSceneContext();
-            _levelModel = context.GetImplementation<LevelModel>();
-            _preciseMusicPlayer = context.GetImplementation<PreciseMusicPlayer>();
+            context
+                .Resolve(out _levelModel)
+                .Resolve(out _preciseMusicPlayer)
+                .Resolve(out _levelContext);
 
             _levelConfig = GameApplication.BuiltInData.levelConfig;
         }
@@ -46,7 +49,7 @@ namespace Shuile.Rhythm
 
         public void RefreshData()
         {
-            _currentChart = LevelRoot.LevelContext.ChartData;
+            _currentChart = _levelContext.ChartData;
 
             playOnAwake = _levelConfig.playOnAwake;
             playTimeScale = _levelConfig.playTimeScale;

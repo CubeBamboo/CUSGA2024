@@ -64,18 +64,13 @@ namespace Shuile.UI.Menu
         public async void StartLevel(string label)
         {
             await TaskBus.Instance.Run(LoadLevelResources(label));
-
-            var levelContext = new LevelContext();
-            levelContext.LevelData = _level;
-            LevelRoot.RequestStart(levelContext);
-
-            MonoGameRouter.Instance.ToLevelScene(_level.sceneName);
+            MonoGameRouter.Instance.LoadScene(new LevelSceneMeta(new LevelContext(_level)));
         }
 
         private async Task LoadLevelResources(string label)
         {
             var levels = GameApplication.BuiltInData.levelDataMap;
-            _level = levels.GetLevelData(label);
+            _level = levels.FirstByLabel(label);
             await Task.Delay(1000); // show our cool loading screen // 展示我们牛逼的加载界面
         }
 

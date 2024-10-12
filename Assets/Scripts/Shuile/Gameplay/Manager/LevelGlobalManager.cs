@@ -123,7 +123,11 @@ namespace Shuile.Gameplay.Manager
             _monoAudioChannel.Play("Assets/Audio/GameFX/down.wav");
 
             UtilsCommands.SetTimer(3.0,
-                () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName),
+                () =>
+                {
+                    var monoGameRouter = MonoGameRouter.Instance;
+                    monoGameRouter.LoadScene(monoGameRouter.CurrentScene);
+                },
                 _sceneTransitionManager.SceneChangedToken);
         }
 
@@ -136,7 +140,11 @@ namespace Shuile.Gameplay.Manager
             _monoAudioChannel.Play("Assets/Audio/GameFX/dingdong.wav");
 
             UtilsCommands.SetTimer(3.0,
-                () => MonoGameRouter.Instance.ToLevelScene(MonoGameRouter.Instance.LastLevelSceneName),
+                () =>
+                {
+                    var monoGameRouter = MonoGameRouter.Instance;
+                    monoGameRouter.LoadScene(monoGameRouter.CurrentScene);
+                },
                 _sceneTransitionManager.SceneChangedToken);
         }
 

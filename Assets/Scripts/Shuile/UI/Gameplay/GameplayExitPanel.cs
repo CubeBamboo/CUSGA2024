@@ -26,7 +26,7 @@ namespace Shuile.UI.Gameplay
 
         public void Exit()
         {
-            MonoGameRouter.Instance.ToMenu();
+            MonoGameRouter.Instance.LoadFromName("MainMenu");
         }
     }
 }

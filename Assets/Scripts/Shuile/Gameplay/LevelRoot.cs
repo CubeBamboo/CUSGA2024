@@ -1,5 +1,6 @@
 using CbUtils.Unity;
 using Shuile.Gameplay.Model;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay
@@ -11,7 +12,6 @@ namespace Shuile.Gameplay
         public static bool IsLevelActive { get; private set; }
         public bool IsStart { get; private set; }
         public bool needHitWithRhythm { get; private set; }
-        public static LevelContext LevelContext { get; private set; }
 
         public void OnDestroy()
         {
@@ -33,7 +33,8 @@ namespace Shuile.Gameplay
 
         public static void RequestStart(LevelContext levelContext)
         {
-            LevelContext = levelContext;
+            // LevelContext = levelContext;
+            throw new NotSupportedException();
         }
     }
 }

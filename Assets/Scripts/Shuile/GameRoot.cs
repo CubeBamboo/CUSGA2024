@@ -1,4 +1,5 @@
 using CbUtils.Unity;
+using UnityEngine.SceneManagement;
 
 namespace Shuile
 {
@@ -6,7 +7,7 @@ namespace Shuile
     {
         private void Start()
         {
-            MonoGameRouter.Instance.LoadMenu();
+            SceneManager.LoadScene("MainMenu");
         }
     }
 }
