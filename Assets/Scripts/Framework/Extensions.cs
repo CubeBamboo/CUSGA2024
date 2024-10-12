@@ -56,7 +56,7 @@ namespace Shuile.Framework
         public static void Inject(this RuntimeContext context, PlainContainer plainContainer)
         {
             plainContainer.Context.AddParent(context);
-            ContainerHelper.AwakeContainer(plainContainer);
+            ContainerHelper.InitContainer(plainContainer);
         }
 
         public static bool HasParent<T>(this T container) where T : PlainContainer
@@ -68,7 +68,7 @@ namespace Shuile.Framework
         {
             var sceneContainer = SceneContainer.Instance;
             sceneContainer ??= Object.FindObjectOfType<SceneContainer>();
-            sceneContainer.MakeSureAwake();
+            sceneContainer.MakeSureInit();
             return sceneContainer;
         }
 

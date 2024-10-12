@@ -12,7 +12,7 @@ namespace Shuile.Framework
             base.RegisterInstanceInternal(type, service);
             if (service is PlainContainer container)
             {
-                ContainerHelper.AwakeContainer(container);
+                ContainerHelper.InitContainer(container);
             }
         }
     }

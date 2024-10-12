@@ -6,10 +6,10 @@ namespace Shuile.Framework
     public abstract class SceneContainer : MonoContainer
     {
         public static SceneContainer Instance { get; private set; }
+        public static RuntimeContext SceneFallbackContext { get; set; }
 
         public override void Awake()
         {
-            if (IsInit) return;
             base.Awake();
 
             if (Instance != null)
@@ -19,12 +19,10 @@ namespace Shuile.Framework
             Instance = this;
         }
 
-        public void MakeSureAwake()
+        protected override void OnInitContainer()
         {
-            if (!IsInit)
-            {
-                Awake();
-            }
+            if(SceneFallbackContext != null) Context.AddParent(SceneFallbackContext);
+            base.OnInitContainer();
         }
     }
 }

@@ -10,20 +10,20 @@ namespace Shuile.Framework
         /// awake itself and all its parents.
         /// plz construct object outside of this method.
         /// </summary>
-        public static void AwakeContainer(PlainContainer container)
+        public static void InitContainer(PlainContainer container)
         {
-            if (container.IsAwoken)
+            if (container.IsInit)
             {
                 Debug.LogWarning("trying to init a container multiple times.");
                 return;
             }
 
-            // awake parent first
-            container.MakeSureParentsAwoken();
+            // init parent first
+            container.MakeSureParentsInit();
             container.LoadFromParentContext(container.Context); // contains parents
+            container.IsInit = true;
 
             container.BuildSelfContext(container.Context);
-            container.IsAwoken = true;
         }
 
         /// <summary>

@@ -29,11 +29,14 @@ namespace Shuile.Framework
 
         #region PublicInterface
 
-        public void AddParent(RuntimeContext parent)
+        public void AddParent(IReadOnlyServiceLocator parent)
         {
-            serviceLocator.AddParent(parent.serviceLocator);
-            ParentReference ??= new List<object>();
-            ParentReference.Add(parent.Reference);
+            serviceLocator.AddParent(parent);
+            if (parent is RuntimeContext context)
+            {
+                ParentReference ??= new List<object>();
+                ParentReference.Add(context.Reference);
+            }
         }
 
         public T Get<T>()
@@ -93,5 +96,16 @@ namespace Shuile.Framework
         }
 
         #endregion
+
+        public static RuntimeContext Merge(params RuntimeContext[] contexts)
+        {
+            var newContext = new RuntimeContext();
+            foreach (var context in contexts)
+            {
+                newContext.AddParent(context);
+            }
+
+            return newContext;
+        }
     }
 }

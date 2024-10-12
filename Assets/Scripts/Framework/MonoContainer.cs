@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Shuile.Framework
 {
@@ -10,13 +11,13 @@ namespace Shuile.Framework
     /// </summary>
     public abstract class MonoContainer : MonoBehaviour, IHasContext
     {
-        [SerializeField] private bool autoAwake = true;
+        [FormerlySerializedAs("autoAwake")] [SerializeField] private bool initOnAwake = true;
         [SerializeField] private bool useParentTransformContext = true;
 
         // make monoContainer can be used as a plain container.
         protected readonly MonoPlainContainerAdapter ContainerAdapter;
 
-        public bool IsInit { get; private set; } // TODO: consistent api naming (init/awoken)
+        public bool IsInit => ContainerAdapter.IsInit;
         public RuntimeContext Context => ContainerAdapter.Context;
 
         public static RuntimeContext FallbackContext { get; set; }
@@ -31,19 +32,24 @@ namespace Shuile.Framework
 
         public virtual void Awake()
         {
-            if (autoAwake)
+            if (initOnAwake)
             {
                 MakeSureInit();
             }
         }
 
-        protected void AwakeIt()
+        private void InitIt()
         {
             if (IsInit) throw new InvalidOperationException("monoContainer already initialized.");
             if (GetComponents<MonoContainer>().Length > 1) throw MultiMonoContainerException();
 
+            OnInitContainer();
+        }
+
+        protected virtual void OnInitContainer()
+        {
             if(useParentTransformContext) InitParentAboveTransform();
-            ContainerHelper.AwakeContainer(ContainerAdapter);
+            ContainerHelper.InitContainer(ContainerAdapter);
         }
 
         private void InitParentAboveTransform()
@@ -115,9 +121,8 @@ namespace Shuile.Framework
 
         public void MakeSureInit()
         {
-            if(IsInit) return;
-            AwakeIt();
-            IsInit = true;
+            if (IsInit) return;
+            InitIt(); // isInit will be set to true inside.
         }
 
         private static InvalidOperationException MultiMonoContainerException() => new($"cannot have more than one {nameof(MonoContainer)} in a GameObject, try use child GameObjects or plain c# classes.");
