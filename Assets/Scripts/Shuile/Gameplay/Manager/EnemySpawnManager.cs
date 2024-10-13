@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Core.Global;
 using Shuile.Core.Global.Config;
@@ -6,33 +7,40 @@ using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Model;
 using Shuile.Model;
 using Shuile.Rhythm;
+using System;
+using UnityEngine;
+using UObject = UnityEngine.Object;
 using URandom = UnityEngine.Random;
 
 namespace Shuile.Gameplay.Manager
 {
     public class EnemySpawnManager
     {
+        private readonly Transform _enemyParent;
         private readonly AutoPlayChartManager _autoPlayChartManager;
         private readonly LevelEntityManager _levelEntityManager;
         private readonly LevelModel _levelModel;
         private readonly LevelZoneManager _levelZoneManager;
-        private readonly SceneTransitionManager _sceneTransitionManager;
         private readonly LevelEnemySO currentEnemyData;
 
-        public EnemySpawnManager(RuntimeContext context)
+        private readonly UnityEntryPointScheduler _scheduler;
+        private PrefabConfigSO _globalPrefabs;
+
+        public EnemySpawnManager(RuntimeContext context, Transform enemyParent)
         {
             context
                 .Resolve(out _autoPlayChartManager)
-                .Resolve(out _sceneTransitionManager)
                 .Resolve(out _levelEntityManager)
-                .Resolve(out LevelContext levelContext)
-                .Resolve(out UnityEntryPointScheduler scheduler);
+                .Resolve(out _scheduler)
+                .Resolve(out _levelZoneManager)
+                .Resolve(out _levelModel)
+                .Resolve(out LevelContext levelContext);
 
-            _levelZoneManager = context.GetImplementation<LevelZoneManager>();
-            _levelModel = context.GetImplementation<LevelModel>();
+            _enemyParent = enemyParent;
+            _globalPrefabs = GameApplication.BuiltInData.globalPrefabs;
 
-            scheduler.AddOnce(Start);
-            scheduler.AddCallOnDestroy(OnDestroy);
+            _scheduler.AddOnce(Start);
+            _scheduler.AddCallOnDestroy(OnDestroy);
 
             currentEnemyData = levelContext.LevelEnemyData;
         }
@@ -54,20 +62,48 @@ namespace Shuile.Gameplay.Manager
             var dangerLevel = _levelModel.DangerLevel;
             var currentEnemyCountIsTooLow = EnemyCount <= DangerLevelUtils.GetEnemySpawnThreshold(dangerLevel);
             //var currentEnemyCountIsTooLow = EnemyCount <= 0;
-            if (currentEnemyCountIsTooLow)
-            {
-                SpawnSingleEnemy(dangerLevel);
-            }
+            if (currentEnemyCountIsTooLow) SpawnSingleEnemy().Forget();
         }
 
-        private void SpawnSingleEnemy(int level)
+        private async UniTaskVoid SpawnSingleEnemy()
         {
+            var (enemyType, pos) = RandomEnemyInfo();
+
+            var effect = _globalPrefabs.enemySpawnEffect;
+            var effectInstance = UObject.Instantiate(effect.effect);
+            effectInstance.transform.position = pos;
+
+            var enemy = UObject.Instantiate(GetPrefabFromType(enemyType), pos, Quaternion.identity, _enemyParent);
+            enemy.SetActive(false);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(effect.duration),
+                cancellationToken: _scheduler.destroyCancellationToken);
+
+            enemy.SetActive(true);
+        }
+
+        private (EnemyType, Vector2) RandomEnemyInfo()
+        {
+            var dangerLevel = _levelModel.DangerLevel;
             var length = currentEnemyData.enemies.Length;
-            var useIndex = level <= length - 1 ? level : length - 1;
+            var useIndex = dangerLevel <= length - 1 ? dangerLevel : length - 1;
             var useEnemies = currentEnemyData.enemies[useIndex].enemyList;
-            var index = URandom.Range(0, useEnemies.Length);
-            _levelEntityManager.EntityFactory.SpawnEnemyWithEffectDelay(useEnemies[index],
-                _levelZoneManager.RandomValidPosition(), _sceneTransitionManager.SceneChangedToken);
+            var enemyType = useEnemies[URandom.Range(0, useEnemies.Length)];
+            var pos = _levelZoneManager.RandomValidPosition();
+            return (enemyType, pos);
+        }
+
+        private GameObject GetPrefabFromType(EnemyType enemyType)
+        {
+            var prefabConfig = _globalPrefabs;
+            var res = enemyType switch
+            {
+                EnemyType.ZakoRobot => prefabConfig.zakoRobot,
+                EnemyType.Creeper => prefabConfig.creeper,
+                EnemyType.MahouDefenseTower => prefabConfig.mahouDefenseTower,
+                _ => throw new Exception("Invalid EnemyType.")
+            };
+            return res;
         }
     }
 }

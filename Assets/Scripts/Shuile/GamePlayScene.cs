@@ -37,12 +37,12 @@ namespace Shuile
             context.RegisterInstance(endLevelPanel);
             context.RegisterInstance(levelAudioManager);
             context.RegisterInstance(new LevelModel());
-            context.RegisterInstance(new LevelEntityManager(context, enemyParent));
+            context.RegisterInstance(new LevelEntityManager(context));
             context.RegisterInstance(new PreciseMusicPlayer(context));
 
             context.RegisterInstance(new AutoPlayChartManager(context));
             context.RegisterInstance(new LevelChartManager(context));
-            context.RegisterInstance(new EnemySpawnManager(context));
+            context.RegisterInstance(new EnemySpawnManager(context, enemyParent));
         }
 
         // player can be null

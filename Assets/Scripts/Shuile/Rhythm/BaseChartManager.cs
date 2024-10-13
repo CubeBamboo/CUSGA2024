@@ -41,8 +41,7 @@ namespace Shuile.Rhythm.Runtime
                         .SetPosition(_levelZoneManager.RandomValidPosition());
                     break;
                 case SpawnSingleEnemyNoteData enemyNoteData:
-                    var randomType = (EnemyType)UnityEngine.Random.Range(0, (int)EnemyType.TotalCount);
-                    _entityManager.EntityFactory.SpawnEnemy(randomType, _levelZoneManager.RandomValidPosition());
+                    throw new NotSupportedException();
                     break;
                 case not null:
                     break;

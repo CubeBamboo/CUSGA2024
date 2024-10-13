@@ -13,7 +13,6 @@ namespace Shuile.Gameplay.Entity
 {
     public class LevelEntityManager : IStartable, IDestroyable
     {
-        private readonly Transform enemyParent;
         private readonly List<Enemy> _enemyList = new();
         private readonly PrefabConfigSO _globalPrefab;
 
@@ -22,9 +21,8 @@ namespace Shuile.Gameplay.Entity
         private int _frameCounter;
         private Queue<Enemy> _removeQueue = new();
 
-        public LevelEntityManager(IReadOnlyServiceLocator serviceLocator, Transform enemyParent)
+        public LevelEntityManager(IReadOnlyServiceLocator serviceLocator)
         {
-            this.enemyParent = enemyParent;
             serviceLocator
                 .Resolve(out _levelModel)
                 .Resolve(out UnityEntryPointScheduler scheduler);
@@ -52,7 +50,7 @@ namespace Shuile.Gameplay.Entity
 
         public void Start()
         {
-            EntityFactory = new LevelEntityFactory(this, _globalPrefab, enemyParent);
+            EntityFactory = new LevelEntityFactory(this, _globalPrefab);
 
             EnemyParent = new GameObject("Enemies").transform;
 
