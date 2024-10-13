@@ -1,6 +1,7 @@
 using CbUtils.Kits.Tasks;
 using Shuile.Core.Global;
 using Shuile.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Shuile
@@ -14,7 +15,9 @@ namespace Shuile
         public static void PreInitialize()
         {
             GlobalContext.RegisterFactory(() => new SceneTransitionManager());
-            MonoContainer.FallbackContext = GlobalContext;
+
+            MonoContainer.GlobalExtraParents ??= new List<RuntimeContext>();
+            MonoContainer.GlobalExtraParents.Add(GlobalContext);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

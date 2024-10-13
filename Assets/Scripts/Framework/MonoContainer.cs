@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Shuile.Framework
 {
@@ -11,8 +11,11 @@ namespace Shuile.Framework
     /// </summary>
     public abstract class MonoContainer : MonoBehaviour, IHasContext
     {
-        [FormerlySerializedAs("autoAwake")] [SerializeField] private bool initOnAwake = true;
+        [SerializeField] private bool initOnAwake = true;
         [SerializeField] private bool useParentTransformContext = true;
+
+        [Tooltip("for debug info if such MonoBehaviour's construct need extra dependies")] [SerializeField]
+        private bool markAsNeedExtraContext;
 
         // make monoContainer can be used as a plain container.
         protected readonly MonoPlainContainerAdapter ContainerAdapter;
@@ -20,7 +23,8 @@ namespace Shuile.Framework
         public bool IsInit => ContainerAdapter.IsInit;
         public RuntimeContext Context => ContainerAdapter.Context;
 
-        public static RuntimeContext FallbackContext { get; set; }
+        public static List<RuntimeContext> GlobalExtraParentForTop { get; set; }
+        public static List<RuntimeContext> GlobalExtraParents { get; set; }
 
         protected MonoContainer()
         {
@@ -43,12 +47,33 @@ namespace Shuile.Framework
             if (IsInit) throw new InvalidOperationException("monoContainer already initialized.");
             if (GetComponents<MonoContainer>().Length > 1) throw MultiMonoContainerException();
 
+            if (markAsNeedExtraContext && (GlobalExtraParents == null || GlobalExtraParentForTop == null))
+            {
+                Debug.LogWarning($"{name} is marked as need extra context, but no extra context found. are you forget to use the existing loader class?");
+            }
+
             OnInitContainer();
         }
 
         protected virtual void OnInitContainer()
         {
-            if(useParentTransformContext) InitParentAboveTransform();
+            if (useParentTransformContext) InitParentAboveTransform();
+            if (GlobalExtraParents != null)
+            {
+                foreach (var parent in GlobalExtraParents)
+                {
+                    Context.AddParent(parent);
+                }
+            }
+
+            if (GlobalExtraParentForTop != null && !transform.parent) // is top
+            {
+                foreach (var parent in GlobalExtraParentForTop)
+                {
+                    Context.AddParent(parent);
+                }
+            }
+
             ContainerHelper.InitContainer(ContainerAdapter);
         }
 
@@ -59,10 +84,6 @@ namespace Shuile.Framework
             {
                 Context.AddParent(parent.Context);
                 parent.MakeSureInit();
-            }
-            else if (FallbackContext != null)
-            {
-                Context.AddParent(FallbackContext);
             }
 
             return;
@@ -126,5 +147,51 @@ namespace Shuile.Framework
         }
 
         private static InvalidOperationException MultiMonoContainerException() => new($"cannot have more than one {nameof(MonoContainer)} in a GameObject, try use child GameObjects or plain c# classes.");
+
+        /// <summary>
+        ///   will be injected into top MonoContainer during ManagedExtraTopParent's life cycle.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static ManagedExtraTopParent EnqueueParentForTop(RuntimeContext context)
+        {
+            return new ManagedExtraTopParent(context);
+        }
+
+        public static ManagedExtraParent EnqueueParent(RuntimeContext context) => new(context);
+
+        public readonly struct ManagedExtraTopParent : IDisposable
+        {
+            private readonly RuntimeContext _context;
+
+            public ManagedExtraTopParent(RuntimeContext context)
+            {
+                _context = context;
+                GlobalExtraParentForTop ??= new List<RuntimeContext>();
+                GlobalExtraParentForTop.Add(context);
+            }
+
+            public void Dispose()
+            {
+                GlobalExtraParentForTop.Remove(_context);
+            }
+        }
+
+        public readonly struct ManagedExtraParent : IDisposable
+        {
+            private readonly RuntimeContext _context;
+
+            public ManagedExtraParent(RuntimeContext context)
+            {
+                _context = context;
+                GlobalExtraParents ??= new List<RuntimeContext>();
+                GlobalExtraParents.Add(context);
+            }
+
+            public void Dispose()
+            {
+                GlobalExtraParents.Remove(_context);
+            }
+        }
     }
 }

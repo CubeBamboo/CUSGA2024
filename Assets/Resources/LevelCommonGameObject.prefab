@@ -515,6 +515,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initOnAwake: 1
   useParentTransformContext: 1
+  markAsNeedExtraContext: 0
 --- !u!114 &2126869024058730763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -642,6 +643,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initOnAwake: 1
   useParentTransformContext: 1
+  markAsNeedExtraContext: 1
   player: {fileID: 888734764693625756}
   endLevelPanel: {fileID: 678913754241128194}
   levelAudioManager: {fileID: 7276062682042202717}

@@ -6,7 +6,7 @@ namespace Shuile.Framework
     public abstract class SceneContainer : MonoContainer
     {
         public static SceneContainer Instance { get; private set; }
-        public static RuntimeContext SceneFallbackContext { get; set; }
+        public static RuntimeContext GlobalSceneExtraContext { get; set; }
 
         public override void Awake()
         {
@@ -21,7 +21,7 @@ namespace Shuile.Framework
 
         protected override void OnInitContainer()
         {
-            if(SceneFallbackContext != null) Context.AddParent(SceneFallbackContext);
+            if(GlobalSceneExtraContext != null) Context.AddParent(GlobalSceneExtraContext);
             base.OnInitContainer();
         }
     }

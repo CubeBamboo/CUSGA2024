@@ -50,9 +50,10 @@ namespace Shuile
             CurrentScene = meta;
             this.DoTransition(async () =>
             {
-                // i don't know how to register dependencies inside the Scene Loading (Awake() invoking)
-                SceneContainer.SceneFallbackContext = meta.Context;
-                await InternalLoadScene(meta.SceneName);
+                using (MonoContainer.EnqueueParentForTop(meta.SceneContext))
+                {
+                    await InternalLoadScene(meta.SceneName);
+                }
             }, defaultLoadingViewer);
         }
 
@@ -61,7 +62,7 @@ namespace Shuile
             public string SceneName { get; set; }
             // public LoadSceneMode LoadSceneMode { get; set; } // only use single mode
 
-            public RuntimeContext Context { get; set; } = new();
+            public RuntimeContext SceneContext { get; set; } = new(); // will be added to the SceneContainer.SceneFallbackContext
 
             // now you have to initialize the name because we use it as a key to locate the scene.
             protected SceneMeta(string sceneName)

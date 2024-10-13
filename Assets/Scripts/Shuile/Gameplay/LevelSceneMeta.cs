@@ -6,7 +6,7 @@ namespace Shuile.Gameplay
     {
         public LevelSceneMeta(LevelContext context) : base(context.LevelData.sceneName)
         {
-            Context.RegisterInstance(context);
+            SceneContext.RegisterInstance(context);
         }
     }
 }

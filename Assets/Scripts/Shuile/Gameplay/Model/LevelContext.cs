@@ -3,6 +3,7 @@ using Shuile.Core.Gameplay.Data;
 
 namespace Shuile.Gameplay.Model
 {
+    // -- will be refactored in the future
     public class LevelContext
     {
         private ChartData _chartData;
