@@ -74,7 +74,7 @@ namespace Shuile.Gameplay.Manager
         public async UniTask SpawnEnemyWithEffect(EnemyType enemyType, Vector2 position)
         {
             var effect = _globalPrefabs.enemySpawnEffect;
-            var effectInstance = UObject.Instantiate(effect.effect);
+            var effectInstance = UObject.Instantiate(effect.prefab);
             effectInstance.transform.position = position;
 
             var enemy = UObject.Instantiate(GetPrefabFromType(enemyType), position, Quaternion.identity, _enemyParent);

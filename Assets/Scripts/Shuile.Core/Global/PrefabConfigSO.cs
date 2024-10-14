@@ -7,7 +7,7 @@ namespace Shuile.Core.Global
     [Serializable]
     public struct SpawnEffect
     {
-        public GameObject effect;
+        public GameObject prefab;
         public float duration;
     }
 

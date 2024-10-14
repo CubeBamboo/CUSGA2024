@@ -1,4 +1,5 @@
 using CbUtils.Extension;
+using NUnit.Framework;
 using Shuile.Gameplay.Entity.Enemies;
 using System.Collections;
 using UnityEditor.SceneManagement;
@@ -17,10 +18,10 @@ namespace Shuile.Test.PlayMode
                 new LoadSceneParameters());
         }
 
-        [UnityTest]
-        public IEnumerator Test()
+        [Test]
+        public void SpawnEffect()
         {
-            yield return null;
+            GameApplication.BuiltInData.globalPrefabs.enemySpawnEffect.prefab.Instantiate();
         }
 
         [UnityTest]

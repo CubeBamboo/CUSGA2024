@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Model;
@@ -16,6 +17,12 @@ namespace Shuile.Test.PlayMode
         {
             yield return EditorSceneManager.LoadSceneAsyncInPlayMode("Assets/Scenes/Test/TestRootScene.unity",
                 new LoadSceneParameters());
+        }
+
+        [Test]
+        public void TestRootScene()
+        {
+            Assert.AreEqual(SceneManager.GetActiveScene().name, "TestRootScene");
         }
 
         [UnityTest]

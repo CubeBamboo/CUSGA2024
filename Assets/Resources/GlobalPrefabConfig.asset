@@ -18,7 +18,7 @@ MonoBehaviour:
   laser: {fileID: 4784529181449652345, guid: 46fca5fda0616594f88291a7c395eaf0, type: 3}
   noteIndicator: {fileID: 7659363887422538052, guid: ace28f6eeea81c049ad66972a1a4c3d3, type: 3}
   enemySpawnEffect:
-    effect: {fileID: 545303052721366448, guid: 624d74f8dfb4b1643bc578f4f92579ac, type: 3}
+    prefab: {fileID: 545303052721366448, guid: 624d74f8dfb4b1643bc578f4f92579ac, type: 3}
     duration: 3
   particles:
   - name: SwordSlash
