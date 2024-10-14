@@ -18,7 +18,7 @@ namespace Shuile.Gameplay.Entity
 
         protected int health;
         protected SmoothMoveCtrl moveController;
-        protected Player _player;
+        private Player _player;
 
         private EnemyHurtEvent enemyHurtEvent;
 
@@ -33,12 +33,22 @@ namespace Shuile.Gameplay.Entity
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
             base.LoadFromParentContext(context);
-            context.Resolve(out GamePlayScene gamePlayScene);
-            if (!gamePlayScene.TryGetPlayer(out _player))
+            if (!context.TryGet(out GamePlayScene gamePlayScene) || !gamePlayScene.TryGetPlayer(out _player))
             {
-                Debug.LogWarning("Player not found.");
+                Debug.Log("Player not found. player feature will be disabled.");
             }
         }
+
+        /// <summary>
+        ///  player can be null
+        /// </summary>
+        protected bool TryGetPlayer(out Player player)
+        {
+            player = _player;
+            return _player;
+        }
+
+        protected Player GetPlayerOrThrow() => TryGetPlayer(out var player) ? player : throw new InvalidOperationException("Player not found but you are trying to access it.");
 
         public int Health => health;
         public bool IsAlive => health > 0;

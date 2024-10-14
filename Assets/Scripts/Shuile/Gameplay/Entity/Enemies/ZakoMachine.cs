@@ -1,8 +1,8 @@
 using CbUtils;
 using CbUtils.Event;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Shuile.Framework;
-using Shuile.Gameplay.Character;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Entity.Enemies
@@ -16,6 +16,7 @@ namespace Shuile.Gameplay.Entity.Enemies
         private readonly FSM<DefaultEnemyState> _mFsm = new();
         private ZakoChaseBehavior _chaseBehavior;
 
+        private Animator _mAnimator;
         private float _faceDir;
 
         private SpriteRenderer _mRenderer;
@@ -38,25 +39,37 @@ namespace Shuile.Gameplay.Entity.Enemies
             _chaseBehavior = new ZakoChaseBehavior();
             RegisterState(_mFsm);
 
+            _mAnimator = GetComponent<Animator>();
             _mRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
-        protected override void OnSelfDie()
+        protected override async void OnSelfDie()
         {
             _mFsm.SwitchState(DefaultEnemyState.Dead);
             moveController.IsFrozen = true;
 
-            transform.DOScale(Vector3.zero, 0.1f)
-                .OnComplete(() => Destroy(gameObject));
+            await PlayDieAnim();
+            Destroy(gameObject);
+
+            // transform.DOScale(Vector3.zero, 0.1f)
+            //     .OnComplete(() => Destroy(gameObject));
         }
 
-        private void Attack(Player target)
+        private async UniTask PlayDieAnim()
         {
-            var targetPos = target.transform.position;
+            _mAnimator.Play("Die");
+            await UniTask.Delay(TimeSpan.FromSeconds(0.42));
+        }
+
+        private void Attack()
+        {
+            var player = GetPlayerOrThrow();
+
+            var targetPos = player.transform.position;
             if ((targetPos - transform.position).sqrMagnitude < attackRange * attackRange)
             {
                 moveController.XMove(10f);
-                target.OnHurt(attackPoint);
+                player.OnHurt(attackPoint);
             }
         }
 
@@ -78,7 +91,8 @@ namespace Shuile.Gameplay.Entity.Enemies
             mFsm.NewEventState(DefaultEnemyState.Chase)
                 .OnEnter(() =>
                 {
-                    _chaseBehavior.Bind(_player.gameObject, moveController);
+                    var player = GetPlayerOrThrow();
+                    _chaseBehavior.Bind(player.gameObject, moveController);
                 })
                 .OnFixedUpdate(() =>
                 {
@@ -100,7 +114,7 @@ namespace Shuile.Gameplay.Entity.Enemies
                 });
 
             mFsm.NewEventState(DefaultEnemyState.Attack)
-                .OnCustom(() => Attack(_player))
+                .OnCustom(Attack)
                 .OnFixedUpdate(() =>
                 {
                     if (!_chaseBehavior.XCloseEnoughToTarget(checkAttackRange)) // can attack
@@ -133,131 +147,4 @@ namespace Shuile.Gameplay.Entity.Enemies
             _mFsm.Custom();
         }
     }
-
-    /*public class ZakoMachine : MonoBaseEnemy
-    {
-        // dependency
-        private FSM<DefaultEnemyState> _fsm = new();
-        private SmoothMoveCtrl moveController;
-        private Player target;
-
-        // parameter
-        private readonly float attackMoveSpeedScale = 0.5f;
-        private readonly float getPlayerYThresold = 2f;
-        private readonly float moveSpeed = 100f;
-
-        // behavior
-        private SpriteRenderer mRenderer;
-        private Collider2D touchDamageCollider;
-
-        public LevelModel levelModel => GameplayService.Interface.LevelModel;
-
-        protected void Awake()
-        {
-            mRenderer = GetComponentInChildren<SpriteRenderer>();
-            touchDamageCollider = GetComponentInChildren<Collider2D>();
-            moveController = GetComponent<SmoothMoveCtrl>();
-            target = GameplayService.Interface.Get<Player>();
-
-            InitializeFSM(_fsm);
-
-            _health.Value = _property.healthPoint;
-            if (_health.Value < 0)
-            {
-                _fsm.SwitchState(DefaultEnemyState.Dead);
-                EnemyDieEvent.Trigger();
-            }
-        }
-
-        private void OnDieBehavior()
-        {
-            touchDamageCollider.enabled = false;
-            this.DefaultDieBehavior(moveController);
-        }
-
-        private void Attack()
-        {
-            var targetPos = target.transform.position;
-            ActionCtrl.Delay(GameplayService.Interface.LevelModel.BpmIntervalInSeconds)
-                .OnComplete(() =>
-                {
-                    moveController.XMove(moveSpeed * Mathf.Sign(targetPos.x - transform.position.x) * attackMoveSpeedScale);
-                })
-                .Start(gameObject);
-        }
-
-        protected void InitializeFSM(FSM<DefaultEnemyState> mFSM)
-        {
-            // Patrol: move around
-            mFSM.NewEventState(DefaultEnemyState.Patrol)
-                .OnFixedUpdate(() =>
-                {
-
-                });
-
-            mFSM.NewEventState(DefaultEnemyState.Chase)
-                .OnCustom(() =>
-                {
-                    // move
-                    //var playerLoss = Mathf.Abs(target.transform.position.y - transform.position.y) < getPlayerYThresold;
-                    moveController.XMove(moveSpeed * Mathf.Sign(target.transform.position.x - transform.position.x));
-                    if (URandom.Range(0, 10) == 0)
-                    {
-                        moveController.JumpVelocity = _property.jumpForce;
-                        moveController.SimpleJump();
-                    }
-
-                    // check
-                    if (this.DefaultAttackCheck(_property.attackRange, target.transform.position))
-                        _fsm.SwitchState(DefaultEnemyState.Attack);
-                });
-
-            mFSM.NewEventState(DefaultEnemyState.Attack)
-                .OnCustom(() =>
-                {
-                    Attack();
-                    if (!this.DefaultAttackCheck(_property.attackRange, target.transform.position))
-                        _fsm.SwitchState(DefaultEnemyState.Chase);
-                })
-                .OnExit(() => transform.DOKill());
-
-            mFSM.NewEventState(DefaultEnemyState.Dead)
-                .OnEnter(() => OnDieBehavior())
-                .OnCondition(() => mFSM.CurrentStateId != DefaultEnemyState.Dead);
-
-            mFSM.StartState(DefaultEnemyState.Idle);
-        }
-
-        public override void OnHurt(int attackPoint)
-        {
-            if (_health.Value <= 0)
-                return;
-            this.DefaultHurtBehavior(mRenderer);
-            this.DefaultHurtLogic(_health.Value - attackPoint, () => _fsm.SwitchState(DefaultEnemyState.Dead));
-        }
-        public override void OnJudge(int judgeCount)
-        {
-            _fsm.Custom();
-        }
-    }*/
-
-    /*public class ZakoMachine : Enemy
-    {
-        protected override void RegisterState(FSM<EntityStateType> fsm)
-        {
-            fsm.AddState(EntityStateType.Spawn, new SpawnState(this));
-            fsm.AddState(EntityStateType.Idle, new EnemyIdleState(this));
-            fsm.AddState(EntityStateType.Attack, new CommonEnemyAttackState(this, Attack));
-            fsm.AddState(EntityStateType.Dead, new DeadState(this));
-        }
-
-        private bool Attack(CommonEnemyAttackState state)
-        {
-            var player = GameplayService.Interface.Get<Player>();
-
-            if (Vector3.Distance(player.transform.position, MoveController.Position) <= Property.attackRange)
-                player.OnHurt(Property.attackPoint);
-            return false;
-        }
-    }*/
 }

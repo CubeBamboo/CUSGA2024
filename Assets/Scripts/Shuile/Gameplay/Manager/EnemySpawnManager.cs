@@ -62,18 +62,22 @@ namespace Shuile.Gameplay.Manager
             var dangerLevel = _levelModel.DangerLevel;
             var currentEnemyCountIsTooLow = EnemyCount <= DangerLevelUtils.GetEnemySpawnThreshold(dangerLevel);
             //var currentEnemyCountIsTooLow = EnemyCount <= 0;
-            if (currentEnemyCountIsTooLow) SpawnSingleEnemy().Forget();
+            if (currentEnemyCountIsTooLow) SpawnSingleEnemy();
         }
 
-        private async UniTaskVoid SpawnSingleEnemy()
+        private void SpawnSingleEnemy()
         {
             var (enemyType, pos) = RandomEnemyInfo();
+            SpawnEnemyWithEffect(enemyType, pos).Forget();
+        }
 
+        public async UniTask SpawnEnemyWithEffect(EnemyType enemyType, Vector2 position)
+        {
             var effect = _globalPrefabs.enemySpawnEffect;
             var effectInstance = UObject.Instantiate(effect.effect);
-            effectInstance.transform.position = pos;
+            effectInstance.transform.position = position;
 
-            var enemy = UObject.Instantiate(GetPrefabFromType(enemyType), pos, Quaternion.identity, _enemyParent);
+            var enemy = UObject.Instantiate(GetPrefabFromType(enemyType), position, Quaternion.identity, _enemyParent);
             enemy.SetActive(false);
 
             await UniTask.Delay(TimeSpan.FromSeconds(effect.duration),

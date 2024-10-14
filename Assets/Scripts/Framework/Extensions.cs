@@ -18,6 +18,12 @@ namespace Shuile.Framework
             return serviceLocator;
         }
 
+        public static bool TryGet<T>(this IReadOnlyServiceLocator serviceLocator, out T dest)
+        {
+            dest = serviceLocator.Get<T>();
+            return dest != null;
+        }
+
         // compatible with old code
         public static T GetImplementation<T>(this IReadOnlyServiceLocator serviceLocator)
         {
