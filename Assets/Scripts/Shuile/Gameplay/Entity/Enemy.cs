@@ -76,11 +76,16 @@ namespace Shuile.Gameplay.Entity
             OnSelfHurt(oldVal, health);
             TypeEventSystem.Global.Trigger(enemyHurtEvent);
 
-            if (Health == 0)
+            if (Health <= 0)
             {
                 OnSelfDie();
                 HandleDieEvent();
             }
+        }
+
+        public virtual void ForceDie()
+        {
+            OnHurt(MaxHealth);
         }
 
         public abstract void Judge(int frame, bool force);

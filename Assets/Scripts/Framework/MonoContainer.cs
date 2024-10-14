@@ -149,15 +149,16 @@ namespace Shuile.Framework
         private static InvalidOperationException MultiMonoContainerException() => new($"cannot have more than one {nameof(MonoContainer)} in a GameObject, try use child GameObjects or plain c# classes.");
 
         /// <summary>
-        ///   will be injected into top MonoContainer during ManagedExtraTopParent's life cycle.
+        ///   will be injected into top MonoContainer which created during ManagedExtraTopParent's life cycle.
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
         public static ManagedExtraTopParent EnqueueParentForTop(RuntimeContext context)
         {
             return new ManagedExtraTopParent(context);
         }
 
+        /// <summary>
+        ///   will be injected into MonoContainer which created during ManagedExtraParent's life cycle.
+        /// </summary>
         public static ManagedExtraParent EnqueueParent(RuntimeContext context) => new(context);
 
         public readonly struct ManagedExtraTopParent : IDisposable

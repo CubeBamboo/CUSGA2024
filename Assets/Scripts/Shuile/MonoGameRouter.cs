@@ -62,7 +62,7 @@ namespace Shuile
             public string SceneName { get; set; }
             // public LoadSceneMode LoadSceneMode { get; set; } // only use single mode
 
-            public RuntimeContext SceneContext { get; set; } = new(); // will be added to the SceneContainer.SceneFallbackContext
+            public RuntimeContext SceneContext { get; set; } = new(); // will be added to the SceneContainer
 
             // now you have to initialize the name because we use it as a key to locate the scene.
             protected SceneMeta(string sceneName)
