@@ -1,4 +1,3 @@
-using CbUtils.Event;
 using CbUtils.Extension;
 using DG.Tweening;
 using UnityEngine;
@@ -39,7 +38,13 @@ namespace Shuile.Gameplay.Entity
 
             RendererTransform.localScale = Vector3.zero;
             RendererTransform.DOScale(spriteScale, 0.3f);
-            gameObject.SetOnDestroy(() => transform.DOKill(), "transform");
+        }
+
+        private void OnDestroy()
+        {
+            RendererTransform.DOKill();
+            _renderer.DOKill();
+            this.DOKill();
         }
 
         private void HandleExplode(int attackPoint, float radius)
@@ -49,10 +54,8 @@ namespace Shuile.Gameplay.Entity
             _explodeHandler.Explode();
         }
 
-        public void Explode(int attackPoint, float radius)
+        private void PlayEffectAnimWithDestroy()
         {
-            HandleExplode(attackPoint, radius);
-
             // play effect
             var seq = DOTween.Sequence()
                 .Append(RendererTransform.DOScale(explodeScale, 0.1f))
@@ -62,22 +65,19 @@ namespace Shuile.Gameplay.Entity
                 .Append(RendererTransform.DOScale(0f, 0.6f))
                 .Join(_renderer.DOColor(Color.white, 0.6f));
 
+            seq.SetTarget(this);
             seq.OnComplete(gameObject.Destroy);
+        }
+
+        public void Explode(int attackPoint, float radius)
+        {
+            HandleExplode(attackPoint, radius);
+            PlayEffectAnimWithDestroy();
         }
 
         public void Interrupt()
         {
-            // play anim
-            //transform.GetChild(0).transform.DOScale(6f, 0.2f).From()
-            //    .OnComplete(() => Destroy(this.gameObject));
-            //gameObject.SetOnDestroy(() => transform.DOKill(), "transform");
-            //animator.SetTrigger("Exit");
-
-            transform.DOScale(0f, 0.6f)
-                .OnComplete(() =>
-                {
-                    gameObject.Destroy();
-                });
+            PlayEffectAnimWithDestroy();
         }
     }
 }

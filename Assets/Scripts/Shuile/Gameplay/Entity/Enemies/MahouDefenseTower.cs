@@ -2,6 +2,7 @@ using CbUtils.Event;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Gameplay.Manager;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -120,7 +121,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             IsDie = true;
             InterruptAttack();
 
-            await ExitAnim();
+            try
+            {
+                await ExitAnim();
+            }
+            catch (OperationCanceledException)
+            {
+            }
             Destroy(gameObject);
         }
 

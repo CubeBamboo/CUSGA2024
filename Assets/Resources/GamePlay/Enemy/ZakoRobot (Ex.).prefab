@@ -49,6 +49,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b27668042c422b149ba1a202e63641f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initOnAwake: 1
+  useParentTransformContext: 1
+  markAsNeedExtraContext: 0
   MaxHealth: 100
   checkPlayerRange: 5
   checkAttackRange: 1.2
@@ -158,7 +161,7 @@ GameObject:
   - component: {fileID: 6699846929224068813}
   - component: {fileID: 6464066979822350348}
   m_Layer: 0
-  m_Name: Sprite
+  m_Name: ZakoSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

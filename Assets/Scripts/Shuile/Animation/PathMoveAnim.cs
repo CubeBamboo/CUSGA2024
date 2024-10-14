@@ -20,6 +20,11 @@ namespace Shuile
             Play();
         }
 
+        private void OnDestroy()
+        {
+            transform.DOKill();
+        }
+
         private void Initialize()
         {
             if (pointObjects.Length == 0)

@@ -62,7 +62,7 @@ GameObject:
   - component: {fileID: 6699846929224068813}
   - component: {fileID: 6464066979822350348}
   m_Layer: 0
-  m_Name: Sprite
+  m_Name: BombSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

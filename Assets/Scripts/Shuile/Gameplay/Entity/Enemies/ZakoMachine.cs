@@ -50,9 +50,12 @@ namespace Shuile.Gameplay.Entity.Enemies
 
             await PlayDieAnim();
             Destroy(gameObject);
+        }
 
-            // transform.DOScale(Vector3.zero, 0.1f)
-            //     .OnComplete(() => Destroy(gameObject));
+        private void OnDestroy()
+        {
+            _mRenderer.DOKill();
+            transform.DOKill();
         }
 
         private async UniTask PlayDieAnim()
@@ -138,8 +141,6 @@ namespace Shuile.Gameplay.Entity.Enemies
             var initPos = transform.position;
             transform.DOShakePosition(0.2f, 0.2f)
                 .OnComplete(() => transform.position = initPos);
-            gameObject.SetOnDestroy(() => _mRenderer.DOKill(), "mRenderer");
-            gameObject.SetOnDestroy(() => transform.DOKill(), "transform");
         }
 
         public override void Judge(int frame, bool force)

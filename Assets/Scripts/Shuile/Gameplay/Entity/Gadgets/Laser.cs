@@ -45,6 +45,12 @@ namespace Shuile
             }
         }
 
+        private void OnDestroy()
+        {
+            mRenderer.DOKill();
+            transform.DOKill();
+        }
+
         public void Play()
         {
             InternalPlay().Forget();

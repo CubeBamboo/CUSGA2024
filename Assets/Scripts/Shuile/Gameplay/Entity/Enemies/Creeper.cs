@@ -3,6 +3,7 @@ using CbUtils.Event;
 using CbUtils.Extension;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Entity.Enemies
@@ -39,6 +40,11 @@ namespace Shuile.Gameplay.Entity.Enemies
             EnterAnim().Forget();
         }
 
+        private void OnDestroy()
+        {
+            _mRenderer.DOKill();
+        }
+
         private async UniTaskVoid EnterAnim()
         {
             transform.localScale = Vector3.one * 0.1f;
@@ -55,7 +61,7 @@ namespace Shuile.Gameplay.Entity.Enemies
             _mRenderer.DOKill();
             _mRenderer.DOColor(Color.black, 0.4f)
                 .OnComplete(() => _mRenderer.DOFade(0, 0.2f));
-            await UniTask.Delay(600);
+            await UniTask.Delay(600, cancellationToken: destroyCancellationToken);
         }
 
         private void Update()
@@ -73,7 +79,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             _mFsm.SwitchState(DefaultEnemyState.Empty);
             moveController.IsFrozen = true;
 
-            await ExitAnim();
+            try
+            {
+                await ExitAnim();
+            }
+            catch (OperationCanceledException)
+            {
+            }
             Destroy(gameObject);
         }
 
