@@ -10,12 +10,13 @@ namespace Shuile.Gameplay.Entity.Enemies
     public class MahouDefenseTower : Enemy
     {
         private static Transform bombParent;
-        [SerializeField] private int attackPoint = 150;
 
-        [SerializeField] private GameObject bombPrefab;
+        [SerializeField] private int attackPoint = 150;
         [SerializeField] private int explosionDelay = 4;
         [SerializeField] private int bombCount = 3;
         [SerializeField] private float explodeRadius = 4f;
+
+        private GameObject bombPrefab;
         private readonly List<Bomb> bombs = new();
 
         private int counter;
@@ -35,6 +36,7 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         protected override void OnAwake()
         {
+            bombPrefab = GameApplication.BuiltInData.globalPrefabs.mahouBomb;
             mRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 

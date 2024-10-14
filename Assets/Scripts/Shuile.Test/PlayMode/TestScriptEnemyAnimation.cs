@@ -16,12 +16,25 @@ namespace Shuile.Test.PlayMode
         {
             yield return EditorSceneManager.LoadSceneAsyncInPlayMode("Assets/Scenes/Test/TestRootScene.unity",
                 new LoadSceneParameters());
+
+            yield return new WaitForSeconds(0.5f);
         }
 
         [Test]
         public void SpawnEffect()
         {
             GameApplication.BuiltInData.globalPrefabs.enemySpawnEffect.prefab.Instantiate();
+        }
+
+        [UnityTest]
+        public IEnumerator BombAnim()
+        {
+            var globalPrefabs = GameApplication.BuiltInData.globalPrefabs;
+            var bomb = Object.Instantiate(globalPrefabs.mahouBomb, Vector3.zero, Quaternion.identity).GetComponent<Bomb>();
+
+            yield return new WaitForSeconds(3f);
+
+            bomb.Explode(100, 2f);
         }
 
         [UnityTest]

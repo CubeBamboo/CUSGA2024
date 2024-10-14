@@ -15,6 +15,7 @@ MonoBehaviour:
   zakoRobot: {fileID: 3418564270763865659, guid: 728774616213cbd4e9465f369b371956, type: 3}
   creeper: {fileID: 3418564270763865659, guid: bed6d8ab2713c794ba1e909b55ab90af, type: 3}
   mahouDefenseTower: {fileID: 3418564270763865659, guid: 61b32462d49427c4ba2a641895c0b410, type: 3}
+  mahouBomb: {fileID: 3418564270763865659, guid: 8762d24ee396a8547a31197ba24b25b4, type: 3}
   laser: {fileID: 4784529181449652345, guid: 46fca5fda0616594f88291a7c395eaf0, type: 3}
   noteIndicator: {fileID: 7659363887422538052, guid: ace28f6eeea81c049ad66972a1a4c3d3, type: 3}
   enemySpawnEffect:

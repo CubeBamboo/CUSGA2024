@@ -26,6 +26,8 @@ namespace Shuile.Core.Global
         [Tooltip("炸猪")] public GameObject creeper;
         [Tooltip("追踪弹发射炮")] public GameObject mahouDefenseTower;
 
+        [Tooltip("for mahouDefenseTower")] public GameObject mahouBomb;
+
         [Header("Mechanism")] public GameObject laser;
 
         [Header("RhythmIndicator")] public Graphic noteIndicator;
