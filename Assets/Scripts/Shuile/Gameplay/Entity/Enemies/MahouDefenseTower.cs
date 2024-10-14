@@ -1,4 +1,5 @@
 using CbUtils.Event;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shuile.Gameplay.Manager;
 using System.Collections.Generic;
@@ -32,14 +33,37 @@ namespace Shuile.Gameplay.Entity.Enemies
 
         public bool IsDie { get; private set; }
 
-        private void Start()
-        {
-            moveController.IsFrozen = true;
-        }
-
         protected override void OnAwake()
         {
             mRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
+        private void Start()
+        {
+            moveController.IsFrozen = true;
+
+            // enter anim
+            EnterAnim().Forget();
+        }
+
+        private async UniTaskVoid EnterAnim()
+        {
+            transform.localScale = Vector3.one * 0.1f;
+            await UniTask.Delay(200, cancellationToken: destroyCancellationToken);
+            transform.localScale = Vector3.one * 0.4f;
+            await UniTask.Delay(200, cancellationToken: destroyCancellationToken);
+            transform.localScale = Vector3.one * 0.7f;
+            await UniTask.Delay(200, cancellationToken: destroyCancellationToken);
+            transform.localScale = Vector3.one * 1f;
+        }
+
+        private async UniTask ExitAnim()
+        {
+            transform.localScale = Vector3.one * 0.7f;
+            await UniTask.Delay(200, cancellationToken: destroyCancellationToken);
+            transform.localScale = Vector3.one * 0.4f;
+            await UniTask.Delay(200, cancellationToken: destroyCancellationToken);
+            transform.localScale = Vector3.one * 0.1f;
         }
 
         public override void Judge(int frame, bool force)
@@ -89,13 +113,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             bombs.Clear();
         }
 
-        protected override void OnSelfDie()
+        protected override async void OnSelfDie()
         {
             IsDie = true;
             InterruptAttack();
 
-            transform.DOScale(Vector3.zero, 0.1f)
-                .OnComplete(() => Destroy(gameObject));
+            await ExitAnim();
+            Destroy(gameObject);
         }
 
         protected override void OnSelfHurt(int oldVal, int newVal)

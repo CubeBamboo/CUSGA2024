@@ -1,6 +1,6 @@
 using CbUtils.Extension;
 using NUnit.Framework;
-using Shuile.Gameplay.Entity.Enemies;
+using Shuile.Gameplay.Entity;
 using System.Collections;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -28,11 +28,37 @@ namespace Shuile.Test.PlayMode
         public IEnumerator ZakoRobotAnim()
         {
             var instance = GameApplication.BuiltInData.globalPrefabs.zakoRobot.Instantiate();
-            var zako = instance.GetComponent<ZakoMachine>();
+            var enemy = instance.GetComponent<Enemy>();
             instance.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic; // disable gravity
 
             yield return new WaitForSeconds(3f);
-            zako.ForceDie();
+            enemy.ForceDie();
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator CreeperAnim()
+        {
+            var instance = GameApplication.BuiltInData.globalPrefabs.creeper.Instantiate();
+            var enemy = instance.GetComponent<Enemy>();
+            instance.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic; // disable gravity
+
+            yield return new WaitForSeconds(3f);
+            enemy.ForceDie();
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator MahouTowerAnim()
+        {
+            var instance = GameApplication.BuiltInData.globalPrefabs.mahouDefenseTower.Instantiate();
+            var enemy = instance.GetComponent<Enemy>();
+            instance.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic; // disable gravity
+
+            yield return new WaitForSeconds(3f);
+            enemy.ForceDie();
 
             yield return null;
         }

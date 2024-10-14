@@ -1,6 +1,7 @@
 using CbUtils;
 using CbUtils.Event;
 using CbUtils.Extension;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -33,6 +34,30 @@ namespace Shuile.Gameplay.Entity.Enemies
             moveController.XMaxSpeed = xMaxSpeed;
         }
 
+        private void Start()
+        {
+            EnterAnim().Forget();
+        }
+
+        private async UniTaskVoid EnterAnim()
+        {
+            transform.localScale = Vector3.one * 0.1f;
+            await UniTask.Delay(200, cancellationToken: destroyCancellationToken);
+            transform.localScale = Vector3.one * 0.4f;
+            await UniTask.Delay(200, cancellationToken: destroyCancellationToken);
+            transform.localScale = Vector3.one * 0.7f;
+            await UniTask.Delay(200, cancellationToken: destroyCancellationToken);
+            transform.localScale = Vector3.one * 1f;
+        }
+
+        private async UniTask ExitAnim()
+        {
+            _mRenderer.DOKill();
+            _mRenderer.DOColor(Color.black, 0.4f)
+                .OnComplete(() => _mRenderer.DOFade(0, 0.2f));
+            await UniTask.Delay(600);
+        }
+
         private void Update()
         {
             _mFsm.Update();
@@ -43,12 +68,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             _mFsm.FixedUpdate();
         }
 
-        protected override void OnSelfDie()
+        protected override async void OnSelfDie()
         {
             _mFsm.SwitchState(DefaultEnemyState.Empty);
             moveController.IsFrozen = true;
-            transform.DOScale(Vector3.zero, 0.1f)
-                .OnComplete(() => gameObject.Destroy());
+
+            await ExitAnim();
+            Destroy(gameObject);
         }
 
         protected void RegisterState(FSM<DefaultEnemyState> mFsm)
@@ -96,11 +122,6 @@ namespace Shuile.Gameplay.Entity.Enemies
             mFsm.NewEventState(DefaultEnemyState.Empty);
 
             mFsm.StartState(DefaultEnemyState.Patrol);
-        }
-
-        private void ForceDie()
-        {
-            OnHurt(MaxHealth);
         }
 
         private bool Attack()
