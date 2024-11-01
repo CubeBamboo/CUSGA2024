@@ -53,6 +53,11 @@ namespace Shuile
 
     public static class Extensions
     {
+        public static void BindValueChanged<T>(this HearableProperty<T> property, Action<T, T> action)
+        {
+            property.onValueChanged.Register(action);
+        }
+
         public static void BindValueChangeTo<T>(this HearableProperty<T> property, T targetValue, Action action)
         {
             property.onValueChanged.Register((_, newValue) =>

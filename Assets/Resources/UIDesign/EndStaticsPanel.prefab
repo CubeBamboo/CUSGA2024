@@ -641,8 +641,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 440120508389687378}
   - {fileID: 4340141011248919745}
+  - {fileID: 440120508389687378}
   m_Father: {fileID: 3111681292880168542}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -795,7 +795,7 @@ GameObject:
   - component: {fileID: 4340141011248919745}
   - component: {fileID: 2409764984321629183}
   - component: {fileID: 4381191705630907200}
-  - component: {fileID: 7205342177441042091}
+  - component: {fileID: 1797951930088155305}
   m_Layer: 5
   m_Name: Retry
   m_TagString: Untagged
@@ -861,7 +861,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7205342177441042091
+--- !u!114 &1797951930088155305
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -870,7 +870,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4619123192462568438}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 81df85eb86094538be732c24b948b05e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -880,7 +880,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1321,7 +1321,7 @@ GameObject:
   - component: {fileID: 440120508389687378}
   - component: {fileID: 4469852597191608427}
   - component: {fileID: 7443844522042534284}
-  - component: {fileID: 3258885036493341360}
+  - component: {fileID: 7068861121635753703}
   m_Layer: 5
   m_Name: Exit
   m_TagString: Untagged
@@ -1387,7 +1387,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3258885036493341360
+--- !u!114 &7068861121635753703
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1396,7 +1396,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9187381746502564226}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 81df85eb86094538be732c24b948b05e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -1406,7 +1406,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
