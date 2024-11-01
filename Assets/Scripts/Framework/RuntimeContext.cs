@@ -54,9 +54,9 @@ namespace Shuile.Framework
             return serviceLocator.Contains(type);
         }
 
-        public bool ContainsInternalWithoutParent(Type type)
+        public bool ContainsWithoutParent(Type type)
         {
-            return serviceLocator.ContainsInternalWithoutParent(type);
+            return serviceLocator.ContainsWithoutParent(type);
         }
 
         public string KeyName

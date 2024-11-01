@@ -1,7 +1,7 @@
 using CbUtils.Extension;
 using DG.Tweening;
 using Shuile.Framework;
-using System;
+using Shuile.Gameplay;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +11,7 @@ namespace Shuile.UI
     public class EndStaticsPanel : MonoContainer
     {
         [SerializeField] private AudioClip endBgm;
+        private BackgroundMusicChannel _musicChannel;
 
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
@@ -26,12 +27,30 @@ namespace Shuile.UI
             this.GetChildByName<InfoNumberText>("Score").Number.text = data.Score.ToString();
             this.GetChildByName<InfoNumberText>("HealthLoss").Number.text = data.HealthLoss.ToString();
 
-            this.GetChildByName<Button>("Retry").onClick.AddListener(() => throw new NotImplementedException());
-            this.GetChildByName<Button>("Exit").onClick.AddListener(() => throw new NotImplementedException());
+            if (context.TryGetValue<LevelSceneMeta>(out var prevLevel))
+            {
+                this.GetChildByName<Button>("Retry").onClick.AddListener(() =>
+                {
+                    OnExit();
+                    MonoGameRouter.Instance.LoadScene(prevLevel);
+                });
+            }
 
-            context.Resolve(out BackgroundMusicChannel musicChannel);
-            musicChannel.Play(endBgm);
+            this.GetChildByName<Button>("Exit").onClick.AddListener(() =>
+            {
+                OnExit();
+                MonoGameRouter.Instance.LoadFromName("MainMenu");
+            });
 
+            context.Resolve(out _musicChannel);
+            _musicChannel.Play(endBgm);
+
+            OnEnter();
+        }
+
+        private void OnEnter()
+        {
+            // enter animation
             var upElement = this.GetChildByName<RectTransform>("Up");
             upElement.GetComponent<RectNoiseMovement>().enabled = false;
             upElement.DOAnchorPosY(upElement.anchoredPosition.y + 300, 1.0f).From().SetEase(Ease.OutCubic).OnComplete(
@@ -41,6 +60,11 @@ namespace Shuile.UI
             downElement.GetComponent<RectNoiseMovement>().enabled = false;
             downElement.DOAnchorPosY(downElement.anchoredPosition.y - 300, 1.0f).From().SetEase(Ease.OutCubic).OnComplete(
                 () => downElement.GetComponent<RectNoiseMovement>().enabled = true);
+        }
+
+        private void OnExit()
+        {
+            _musicChannel.Source.Stop();
         }
 
         public struct Data

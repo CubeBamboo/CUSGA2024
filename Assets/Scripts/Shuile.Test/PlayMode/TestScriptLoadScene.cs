@@ -27,14 +27,12 @@ namespace Shuile.Test.PlayMode
             Assert.AreEqual(SceneManager.GetActiveScene().name, "TestRootScene");
         }
 
-        [UnityTest]
-        public IEnumerator ToTestLevel()
+        [Test]
+        public void ToTestLevel()
         {
-            var levelData = GameApplication.BuiltInData.levelDataMap.FirstByLabel("Ginevra");
-            var sceneMeta =
-                new LevelSceneMeta(new SingleLevelData(levelData));
-            MonoGameRouter.Instance.LoadScene(sceneMeta);
-            yield return null;
+            MonoGameRouter.Instance.LoadScene(
+                new LevelSceneMeta(
+                    new SingleLevelData(GameApplication.BuiltInData.levelDataMap.FirstByLabel("Ginevra"))));
         }
 
         [Test]

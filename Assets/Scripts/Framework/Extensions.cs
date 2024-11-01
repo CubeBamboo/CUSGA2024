@@ -18,9 +18,16 @@ namespace Shuile.Framework
             return serviceLocator;
         }
 
-        public static bool TryGet<T>(this IReadOnlyServiceLocator serviceLocator, out T dest)
+        public static bool TryGetValue<T>(this IReadOnlyServiceLocator serviceLocator, out T dest)
         {
-            dest = serviceLocator.Get<T>();
+            var ret = TryGetValue(serviceLocator, typeof(T), out var obj);
+            dest = (T)obj;
+            return ret;
+        }
+
+        public static bool TryGetValue(this IReadOnlyServiceLocator serviceLocator, Type type, out object dest)
+        {
+            dest = serviceLocator.Get(type);
             return dest != null;
         }
 

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Shuile.Framework
 {
@@ -11,7 +9,7 @@ namespace Shuile.Framework
         T Get<T>();
         object Get(Type type);
         bool Contains(Type type);
-        public bool ContainsInternalWithoutParent(Type type);
+        public bool ContainsWithoutParent(Type type);
     }
 
     public interface IServiceLocatorRegister
@@ -168,15 +166,27 @@ namespace Shuile.Framework
 
         public bool Contains<T>()
         {
-            return ContainsInternalWithoutParent(typeof(T));
+            return ContainsWithoutParent(typeof(T));
         }
 
         public bool Contains(Type type)
         {
-            return ContainsInternalWithoutParent(type);
+            if (ContainsWithoutParent(type))
+            {
+                return true;
+            }
+
+            if (parents == null || parents.Count == 0) return false;
+
+            foreach (var parent in parents)
+            {
+                if (parent.Contains(type)) return true;
+            }
+
+            return false;
         }
 
-        public bool ContainsInternalWithoutParent(Type type)
+        public bool ContainsWithoutParent(Type type)
         {
             return _serviceFactory.ContainsKey(type) || _services.ContainsKey(type);
         }

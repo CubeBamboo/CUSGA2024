@@ -33,7 +33,7 @@ namespace Shuile.Gameplay.Entity
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
             base.LoadFromParentContext(context);
-            if (!context.TryGet(out GamePlayScene gamePlayScene) || !gamePlayScene.TryGetPlayer(out _player))
+            if (!context.TryGetValue(out GamePlayScene gamePlayScene) || !gamePlayScene.TryGetPlayer(out _player))
             {
                 Debug.Log("Player not found. player feature will be disabled.");
             }

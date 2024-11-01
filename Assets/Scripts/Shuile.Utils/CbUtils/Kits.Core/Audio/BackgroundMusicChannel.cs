@@ -12,6 +12,7 @@ namespace Shuile
             _audioChannel.Source.loop = true;
         }
 
+        public AudioSource Source => _audioChannel.Source;
         public void Play(AudioClip clip) => _audioChannel.Play(clip);
     }
 }

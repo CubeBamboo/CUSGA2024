@@ -35,9 +35,11 @@ namespace Shuile.Gameplay.Manager
         private MonoAudioChannel _monoAudioChannel;
         private GamePlayScene.GameplayStatics _statics;
 
+        private IReadOnlyServiceLocator _parentContext;
+
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
-            context
+            _parentContext = context
                 .Resolve(out _gamePlayScene)
                 .Resolve(out _levelStateMachine)
                 .Resolve(out _sceneTransitionManager)
@@ -131,13 +133,19 @@ namespace Shuile.Gameplay.Manager
             _statics.Score = Mathf.RoundToInt(_levelModel.DangerScore); // update score on level end
 
             UtilsCommands.SetTimer(3.0,
-                () =>
-                {
-                    var monoGameRouter = MonoGameRouter.Instance;
-                    monoGameRouter.LoadScene(
-                        new EndStaticsSceneMeta(EndStaticsPanel.Data.FromGameplayStatics(_statics)));
-                },
+                LoadEndScene,
                 _sceneTransitionManager.SceneChangedToken);
+            return;
+
+            void LoadEndScene()
+            {
+                var monoGameRouter = MonoGameRouter.Instance;
+                var contextInLevel = new RuntimeContext();
+                contextInLevel.RegisterInstance(typeof(LevelSceneMeta), _parentContext.Get<MonoGameRouter.SceneMeta>());
+
+                monoGameRouter.LoadScene(new MonoGameRouter.NestedSceneMeta(
+                    new EndStaticsSceneMeta(EndStaticsPanel.Data.FromGameplayStatics(_statics)), contextInLevel));
+            }
         }
 
         private void DebugUpdate()

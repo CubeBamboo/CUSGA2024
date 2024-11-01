@@ -2,6 +2,7 @@ using CbUtils.Unity;
 using Cysharp.Threading.Tasks;
 using Shuile.Framework;
 using Shuile.UI;
+using System;
 using UnityEngine.SceneManagement;
 
 namespace Shuile
@@ -68,6 +69,18 @@ namespace Shuile
             protected SceneMeta(string sceneName)
             {
                 SceneName = sceneName;
+                SceneContext.RegisterInstance(BaseSceneMetaType, this);
+            }
+
+            private static Type BaseSceneMetaType { get; } = typeof(SceneMeta);
+        }
+
+        public sealed class NestedSceneMeta : SceneMeta
+        {
+            public NestedSceneMeta(SceneMeta sceneMeta, IReadOnlyServiceLocator context) : base(sceneMeta.SceneName)
+            {
+                SceneContext.AddParent(sceneMeta.SceneContext);
+                SceneContext.AddParent(context);
             }
         }
     }
