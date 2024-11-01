@@ -19,6 +19,7 @@ namespace Shuile.UI
             _originScale = transform.localScale;
             transition = Transition.None;
 
+            _currentState = new BindableProperty<State>();
             _currentState.BindValueChanged((_, state) =>
             {
                 switch (state)

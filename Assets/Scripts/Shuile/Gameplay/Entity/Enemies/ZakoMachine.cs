@@ -48,7 +48,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             _mFsm.SwitchState(DefaultEnemyState.Dead);
             moveController.IsFrozen = true;
 
-            await PlayDieAnim();
+            try
+            {
+                await PlayDieAnim();
+            }
+            catch (OperationCanceledException)
+            {
+            }
             Destroy(gameObject);
         }
 
@@ -61,7 +67,7 @@ namespace Shuile.Gameplay.Entity.Enemies
         private async UniTask PlayDieAnim()
         {
             _mAnimator.Play("Die");
-            await UniTask.Delay(TimeSpan.FromSeconds(0.42));
+            await UniTask.Delay(TimeSpan.FromSeconds(0.42), cancellationToken: destroyCancellationToken);
         }
 
         private void Attack()

@@ -60,14 +60,18 @@ namespace Shuile.Gameplay.Character
 
             OnHurted.Invoke();
 
-            var rawLoss = CurrentHp.Value - attackPoint;
-            _statics.HealthLoss += rawLoss > 0 ? rawLoss : 0;
+            var rawEndValue = CurrentHp.Value - attackPoint;
+            var prevHp = CurrentHp.Value;
 
-            CurrentHp.Value -= attackPoint;
-
-            if (CurrentHp.Value < 0)
+            if (rawEndValue > 0)
+            {
+                CurrentHp.Value = rawEndValue;
+                _statics.HealthLoss += attackPoint;
+            }
+            else
             {
                 CurrentHp.Value = 0;
+                _statics.HealthLoss += prevHp;
                 isDie = true;
                 OnDie.Invoke();
                 _levelStateMachine.State = LevelStateMachine.LevelState.Fail;
