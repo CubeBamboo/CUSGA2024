@@ -10,6 +10,11 @@ namespace Shuile.Framework
 
         public override void Awake()
         {
+            if (transform.parent)
+            {
+                Debug.LogWarning("SceneContainer should be top level object.");
+            }
+
             base.Awake();
 
             if (Instance != null)
