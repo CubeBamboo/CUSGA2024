@@ -8,13 +8,6 @@ namespace CbUtils
 {
     public class CbFoo : MonoBehaviour
     {
-        private void Start()
-        {
-            var levelData = GameApplication.BuiltInData.levelDataMap.FirstByLabel("Ginevra");
-            var sceneMeta =
-                new LevelSceneMeta(new LevelContext(levelData));
-            MonoGameRouter.Instance.LoadScene(sceneMeta);
-        }
     }
 
     /*[CustomEditor(typeof(CbFoo))]
