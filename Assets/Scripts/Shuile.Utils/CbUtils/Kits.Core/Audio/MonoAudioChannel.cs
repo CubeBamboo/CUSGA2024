@@ -7,13 +7,28 @@ namespace Shuile
     {
         [SerializeField] private AudioMixerGroup audioMixerGroup;
 
-        private AudioSource _audioSource;
-        private ResourceLoader _resourceLoader;
+        private PlainAudioChannel _audioChannel;
 
         private void Awake()
         {
-            _audioSource = gameObject.AddComponent<AudioSource>();
-            _audioSource.outputAudioMixerGroup = audioMixerGroup;
+            _audioChannel = new PlainAudioChannel(gameObject, audioMixerGroup);
+        }
+
+        public void Play(string addressableKey) => _audioChannel.Play(addressableKey);
+
+        public void Play(AudioClip clip) => _audioChannel.Play(clip);
+    }
+
+    public class PlainAudioChannel
+    {
+        private ResourceLoader _resourceLoader;
+
+        public AudioSource Source { get; }
+
+        public PlainAudioChannel(GameObject gameObject, AudioMixerGroup audioMixerGroup = null)
+        {
+            Source = gameObject.AddComponent<AudioSource>();
+            if(audioMixerGroup != null) Source.outputAudioMixerGroup = audioMixerGroup;
 
             _resourceLoader = new ResourceLoader();
         }
@@ -26,8 +41,8 @@ namespace Shuile
 
         public void Play(AudioClip clip)
         {
-            _audioSource.clip = clip;
-            _audioSource.Play();
+            Source.clip = clip;
+            Source.Play();
         }
     }
 }

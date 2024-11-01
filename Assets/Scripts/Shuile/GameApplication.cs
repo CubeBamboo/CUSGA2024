@@ -27,8 +27,13 @@ namespace Shuile
             var globalGameObject = GlobalCommands.InstantiateGlobalGameObject();
             TaskBus.Instance.InitializeBusyScreenByGlobalGameObject(globalGameObject);
 
+            var backgroundMusicChannel = new GameObject("BackgroundMusicChannel", typeof(BackgroundMusicChannel));
+            backgroundMusicChannel.transform.SetParent(globalGameObject.transform);
+            GlobalContext.RegisterInstance(backgroundMusicChannel.GetComponent<BackgroundMusicChannel>());
+
             var resourceLoader = new ResourceLoader();
             BuiltInData = resourceLoader.Load<BuiltInData>("Assets/Data/BuiltInData.asset");
+            GlobalContext.RegisterInstance(BuiltInData);
         }
     }
 }
