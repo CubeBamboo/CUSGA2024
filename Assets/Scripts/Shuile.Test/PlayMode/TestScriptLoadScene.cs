@@ -1,7 +1,10 @@
+using CbUtils.Extension;
 using NUnit.Framework;
 using Shuile.Core.Gameplay.Data;
+using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Model;
+using Shuile.UI;
 using System.Collections;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -33,6 +36,29 @@ namespace Shuile.Test.PlayMode
                 new LevelSceneMeta(new LevelContext(levelData));
             MonoGameRouter.Instance.LoadScene(sceneMeta);
             yield return null;
+        }
+
+        [Test]
+        public void LoadEndStaticsPanel()
+        {
+            var load = Resources.Load<GameObject>("UIDesign/EndStaticsPanel");
+
+            var context = new RuntimeContext();
+            context.RegisterInstance(new EndStaticsPanel.Data
+            {
+                SongName = "Waht can i say?",
+                Composer = "LaoDa",
+                HealthLoss = 1152,
+                HitOnRhythm = 441,
+                Score = 185632,
+                TotalHit = 156,
+                TotalKillEnemy = 77
+            });
+
+            using (MonoContainer.EnqueueParent(context))
+            {
+                load.Instantiate().SetParent(UIHelper.Root.transform, false);
+            }
         }
 
         [UnityTearDown]

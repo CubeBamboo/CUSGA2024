@@ -14,7 +14,7 @@ namespace Shuile.Framework
         [SerializeField] private bool initOnAwake = true;
         [SerializeField] private bool useParentTransformContext = true;
 
-        [Tooltip("for debug info if such MonoBehaviour's construct need extra dependies")] [SerializeField]
+        [Tooltip("for debug info if such MonoBehaviour's construct need extra dependencies")] [SerializeField]
         private bool markAsNeedExtraContext;
 
         // make monoContainer can be used as a plain container.
@@ -47,7 +47,7 @@ namespace Shuile.Framework
             if (IsInit) throw new InvalidOperationException("monoContainer already initialized.");
             if (GetComponents<MonoContainer>().Length > 1) throw MultiMonoContainerException();
 
-            if (markAsNeedExtraContext && (GlobalExtraParents == null || GlobalExtraParentForTop == null))
+            if (markAsNeedExtraContext && (GlobalExtraParents == null && GlobalExtraParentForTop == null))
             {
                 Debug.LogWarning($"{name} is marked as need extra context, but no extra context found. are you forget to use the existing loader class?");
             }
@@ -151,7 +151,7 @@ namespace Shuile.Framework
         /// <summary>
         ///   will be injected into top MonoContainer which created during ManagedExtraTopParent's life cycle. top means the GameObject has no parent.
         /// </summary>
-        public static ManagedExtraTopParent EnqueueParentForTop(RuntimeContext context)
+        public static IDisposable EnqueueParentForTop(RuntimeContext context)
         {
             return new ManagedExtraTopParent(context);
         }
@@ -159,9 +159,12 @@ namespace Shuile.Framework
         /// <summary>
         ///   will be injected into MonoContainer which created during ManagedExtraParent's life cycle.
         /// </summary>
-        public static ManagedExtraParent EnqueueParent(RuntimeContext context) => new(context);
+        public static IDisposable EnqueueParent(RuntimeContext context)
+        {
+            return new ManagedExtraParent(context);
+        }
 
-        public readonly struct ManagedExtraTopParent : IDisposable
+        private readonly struct ManagedExtraTopParent : IDisposable
         {
             private readonly RuntimeContext _context;
 
@@ -178,7 +181,7 @@ namespace Shuile.Framework
             }
         }
 
-        public readonly struct ManagedExtraParent : IDisposable
+        private readonly struct ManagedExtraParent : IDisposable
         {
             private readonly RuntimeContext _context;
 

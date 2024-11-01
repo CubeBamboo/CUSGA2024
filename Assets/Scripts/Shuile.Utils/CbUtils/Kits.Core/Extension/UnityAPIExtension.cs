@@ -1,6 +1,8 @@
-using System.Collections;
+using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CbUtils.Extension
 {
@@ -117,6 +119,141 @@ namespace CbUtils.Extension
         #endregion
 
         #region Transform
+
+        #endregion
+
+        #region Component
+
+        private static Transform Find(this Transform trans, Func<Transform, bool> pred)
+        {
+            foreach (Transform tran in trans)
+            {
+                if (pred(tran))
+                {
+                    return tran;
+                }
+            }
+            return null;
+        }
+
+        private static bool CompareStringIgnoreCaseAndSpace(string l, string r)
+        {
+            l = l.Replace(" ", string.Empty);
+            r = r.Replace(" ", string.Empty);
+            return l.Equals(r, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static string[] GetTransformPath(Transform transform)
+        {
+            var path = new System.Collections.Generic.List<string>();
+            while (transform != null)
+            {
+                path.Add(transform.name);
+                transform = transform.parent;
+            }
+            path.Reverse();
+            return path.ToArray();
+        }
+
+        private static T ResolveComponent<T>(Transform transform) where T : Component
+        {
+            if (!transform) throw new NullReferenceException("transform is null");
+            if (transform.TryGetComponent<T>(out var component)) return component;
+            var components = transform.GetComponents<Component>();
+
+            var transformPath = GetTransformPath(transform);
+            var msg = new StringBuilder($"component not match - trying to get {typeof(T)} from {transform.name}\n");
+            msg.AppendLine("Hint: transform path");
+            msg.AppendJoin(" -> ", transformPath);
+            msg.AppendLine();
+            msg.AppendLine("Hint: component list");
+            foreach (var c in components)
+            {
+                msg.AppendLine($" - {c.GetType()}");
+            }
+            throw new InvalidCastException(msg.ToString());
+        }
+
+        /// <summary>
+        /// path is separated by '/', ignore case and space
+        /// </summary>
+        public static Transform FindChildInPath(this Transform obj, string path, bool throwIfNull = true)
+        {
+            if (!obj) return null;
+            var toFinds = path.Split('/');
+
+            var ret = obj;
+            foreach (var find in toFinds)
+            {
+                ret = ret.Find(x => x.name.Replace(" ", string.Empty).Equals(find, StringComparison.OrdinalIgnoreCase));
+                if (ret) continue;
+
+                if(throwIfNull) throw new Exception($"Cannot find child {find} with full path {path}");
+                return null;
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// get child in any depth, ignore case and space, throw if null
+        /// </summary>
+        private static Transform FindFirstChild(Transform obj, string childName, bool throwIfNull = true)
+        {
+            if (!obj) return null;
+            var find = FindChildWithName(obj, childName);
+            if (!find && throwIfNull)
+            {
+                throw new Exception($"Cannot find child with name {childName}");
+            }
+            return find;
+
+            Transform FindChildWithName(Transform root, string name)
+            {
+                if (!root) return null;
+                foreach (Transform child in root)
+                {
+                    if (CompareStringIgnoreCaseAndSpace(child.name, name))
+                    {
+                        return child;
+                    }
+
+                    var found = FindChildWithName(child, name);
+                    if (found) return found;
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// get child in any depth, ignore case and space, throw if null
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform GetChildByName(this Component component, string childName)
+        {
+            return FindFirstChild(component.transform, childName);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T GetChildByName<T>(this Component component, string childName) where T : Component
+        {
+            return ResolveComponent<T>(GetChildByName(component.transform, childName));
+        }
+
+        /// <summary>
+        /// path is separated by '/', ignore case and space
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform GetChildByPath(this Component component, string path)
+        {
+            return FindChildInPath(component.transform, path);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T GetChildByPath<T>(this Component component, string path) where T : Component
+        {
+            return ResolveComponent<T>(GetChildByPath(component.transform, path));
+        }
 
         #endregion
 
