@@ -34,7 +34,7 @@ namespace Shuile.Gameplay.Manager
                 .Resolve(out _scheduler)
                 .Resolve(out _levelZoneManager)
                 .Resolve(out _levelModel)
-                .Resolve(out LevelContext levelContext);
+                .Resolve(out SingleLevelData levelContext);
 
             _enemyParent = enemyParent;
             _globalPrefabs = GameApplication.BuiltInData.globalPrefabs;

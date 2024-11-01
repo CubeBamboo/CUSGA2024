@@ -58,13 +58,14 @@ namespace Shuile.UI.Menu
                 _currentIndex = (_currentIndex + levelSelectData.levelData.Length) % levelSelectData.levelData.Length;
                 RefreshSongView();
             });
-            btn_Play.onClick.AddListener(() => StartLevel(levelSelectData.levelData[_currentIndex].levelDataLabel));
+            btn_Play.onClick.AddListener(() => StartLevel(levelSelectData.levelData[_currentIndex]));
         }
 
-        public async void StartLevel(string label)
+        public async void StartLevel(LevelSelectDataSO.Data data)
         {
-            await TaskBus.Instance.Run(LoadLevelResources(label));
-            MonoGameRouter.Instance.LoadScene(new LevelSceneMeta(new LevelContext(_level)));
+            await TaskBus.Instance.Run(LoadLevelResources(data.levelDataLabel));
+            var runtimeLevelData = new SingleLevelData(_level) { Composer = data.songArtist, SongName = data.songName };
+            MonoGameRouter.Instance.LoadScene(new LevelSceneMeta(runtimeLevelData));
         }
 
         private async Task LoadLevelResources(string label)

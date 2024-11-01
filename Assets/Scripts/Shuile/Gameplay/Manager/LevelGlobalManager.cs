@@ -1,4 +1,3 @@
-using CbUtils.Kits.Tasks;
 using CbUtils.Timing;
 using Shuile.Core.Framework;
 using Shuile.Core.Gameplay;
@@ -11,10 +10,9 @@ using Shuile.Gameplay.Event;
 using Shuile.Gameplay.Feel;
 using Shuile.Model;
 using Shuile.Rhythm;
+using Shuile.UI;
 using Shuile.UI.Gameplay;
 using Shuile.Utils;
-using System;
-using System.Collections;
 using UnityEngine;
 using UInput = UnityEngine.InputSystem;
 
@@ -35,6 +33,7 @@ namespace Shuile.Gameplay.Manager
         private PlayerModel _playerModel;
         private SceneTransitionManager _sceneTransitionManager;
         private MonoAudioChannel _monoAudioChannel;
+        private GamePlayScene.GameplayStatics _statics;
 
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
@@ -48,6 +47,7 @@ namespace Shuile.Gameplay.Manager
                 .Resolve(out _levelModel)
                 .Resolve(out _endLevelPanel)
                 .Resolve(out _monoAudioChannel)
+                .Resolve(out _statics)
                 .Resolve(out _levelFeelManager);
 
             if (_gamePlayScene.TryGetPlayer(out _player))
@@ -61,16 +61,9 @@ namespace Shuile.Gameplay.Manager
         {
             TypeEventSystem.Global.Register<EnemyDieEvent>(GlobalOnEnemyDie);
             TypeEventSystem.Global.Register<EnemyHurtEvent>(GlobalOnEnemyHurt);
-            try
-            {
-                _levelStateMachine.OnWin += LevelWin;
-                _levelStateMachine.OnFail += LevelFail;
-                _autoPlayChartManager.OnRhythmHit += _levelEntityManager.OnRhythmHit;
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
+            _levelStateMachine.OnWin += LevelWin;
+            _levelStateMachine.OnFail += LevelFail;
+            _autoPlayChartManager.OnRhythmHit += _levelEntityManager.OnRhythmHit;
         }
 
         private void Update()
@@ -108,6 +101,7 @@ namespace Shuile.Gameplay.Manager
 
         private void GlobalOnEnemyDie(EnemyDieEvent para)
         {
+            _statics.TotalKillEnemy++;
             //MonoAudioCtrl.Instance.PlayOneShot("Enemy_Die");
         }
 
@@ -134,11 +128,14 @@ namespace Shuile.Gameplay.Manager
             _musicRhythmManager.FadeOutAndStop(); // 当前音乐淡出 music fade out
             _monoAudioChannel.Play("Assets/Audio/GameFX/dingdong.wav");
 
+            _statics.Score = Mathf.RoundToInt(_levelModel.DangerScore); // update score on level end
+
             UtilsCommands.SetTimer(3.0,
                 () =>
                 {
                     var monoGameRouter = MonoGameRouter.Instance;
-                    monoGameRouter.LoadScene(monoGameRouter.CurrentScene);
+                    monoGameRouter.LoadScene(
+                        new EndStaticsSceneMeta(EndStaticsPanel.Data.FromGameplayStatics(_statics)));
                 },
                 _sceneTransitionManager.SceneChangedToken);
         }

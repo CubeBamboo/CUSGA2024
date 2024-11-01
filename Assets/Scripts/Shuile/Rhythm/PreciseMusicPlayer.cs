@@ -20,7 +20,7 @@ namespace Shuile.Rhythm
         private readonly LevelAudioManager _levelAudioManager;
         private readonly LevelConfigSO _levelConfig;
         private readonly LevelModel _levelModel;
-        private readonly LevelContext _levelContext;
+        private readonly SingleLevelData _singleLevelData;
 
         private CancellationTokenSource _asyncPlayTokenSource;
 
@@ -29,7 +29,7 @@ namespace Shuile.Rhythm
             context
                 .Resolve(out _levelAudioManager)
                 .Resolve(out _levelModel)
-                .Resolve(out _levelContext)
+                .Resolve(out _singleLevelData)
                 .Resolve(out UnityEntryPointScheduler scheduler);
 
             scheduler.AddOnce(Restore);
@@ -126,7 +126,7 @@ namespace Shuile.Rhythm
         public void ReloadData()
         {
             Restore();
-            LoadClip(_levelContext.ChartData.audioClip);
+            LoadClip(_singleLevelData.ChartData.audioClip);
         }
 
         public void StartPlay(float offset)

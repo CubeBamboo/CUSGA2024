@@ -23,5 +23,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level4.unity
     guid: 5d4cc4161803c0a45a82bcfc2bbb905e
+  - enabled: 1
+    path: Assets/Scenes/EndStatics.unity
+    guid: f13ce45b887f52b4c8496220687864b2
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 5bddff228ee5a724387610c2c6ef30ef, type: 2}

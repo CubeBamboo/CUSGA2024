@@ -66,7 +66,7 @@ namespace Shuile.Framework
                 }
             }
 
-            if (GlobalExtraParentForTop != null && !transform.parent) // is top
+            if (GlobalExtraParentForTop != null && IsTopContainer()) // is top
             {
                 foreach (var parent in GlobalExtraParentForTop)
                 {
@@ -75,6 +75,19 @@ namespace Shuile.Framework
             }
 
             ContainerHelper.InitContainer(ContainerAdapter);
+        }
+
+        private bool IsTopContainer()
+        {
+            var tr = transform.parent;
+            var containerType = typeof(MonoContainer);
+            while (tr)
+            {
+                if (tr.TryGetComponent(containerType, out _)) return false;
+                tr = tr.parent;
+            }
+
+            return true;
         }
 
         private void InitParentAboveTransform()
@@ -149,7 +162,7 @@ namespace Shuile.Framework
         private static InvalidOperationException MultiMonoContainerException() => new($"cannot have more than one {nameof(MonoContainer)} in a GameObject, try use child GameObjects or plain c# classes.");
 
         /// <summary>
-        ///   will be injected into top MonoContainer which created during ManagedExtraTopParent's life cycle. top means the GameObject has no parent.
+        ///   will be injected into top MonoContainer which created during ManagedExtraTopParent's life cycle. top means the MonoContainer has no parent in scene.
         /// </summary>
         public static IDisposable EnqueueParentForTop(RuntimeContext context)
         {

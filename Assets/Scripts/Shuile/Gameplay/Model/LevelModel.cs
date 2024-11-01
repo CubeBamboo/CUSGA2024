@@ -16,7 +16,7 @@ namespace Shuile.Model
 
         public LevelModel()
         {
-            ContainerExtensions.FindSceneContext().Resolve(out LevelContext levelContext);
+            ContainerExtensions.FindSceneContext().Resolve(out SingleLevelData levelContext);
             var currentChart = levelContext.ChartData;
             _musicBpm = currentChart.time[0].bpm;
             _musicOffset = currentChart.time[0].offset;

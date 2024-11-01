@@ -13,6 +13,7 @@ namespace Shuile.Gameplay.Character
         [SerializeField] private PlayerPropertySO property;
         private LevelStateMachine _levelStateMachine;
         private PlayerModel _playerModel;
+        private GamePlayScene.GameplayStatics _statics;
 
         private bool isDie;
         public EasyEvent OnDie = new();
@@ -23,7 +24,9 @@ namespace Shuile.Gameplay.Character
 
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)
         {
-            context.Resolve(out _levelStateMachine);
+            context
+                .Resolve(out _statics)
+                .Resolve(out _levelStateMachine);
         }
 
         public override void BuildSelfContext(RuntimeContext context)
@@ -56,14 +59,13 @@ namespace Shuile.Gameplay.Character
             }
 
             OnHurted.Invoke();
-            CurrentHp.Value -= attackPoint;
-            if (CurrentHp.Value < 0)
-            {
-                CurrentHp.Value = 0;
-            }
 
-            // check die
-            if (CurrentHp.Value <= 0)
+            var rawLoss = CurrentHp.Value - attackPoint;
+            _statics.HealthLoss += rawLoss > 0 ? rawLoss : 0;
+
+            CurrentHp.Value -= attackPoint;
+
+            if (CurrentHp.Value < 0)
             {
                 CurrentHp.Value = 0;
                 isDie = true;

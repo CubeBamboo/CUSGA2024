@@ -16,13 +16,10 @@ namespace Shuile.Core.Gameplay.Data
     public class LevelDataMapSO : ScriptableObject
     {
         public LevelData[] levelDataList;
-    }
 
-    public static class LevelDataMapSOExtensions
-    {
-        public static LevelData FirstByLabel(this LevelDataMapSO levelDataMap, string label)
+        public LevelData FirstByLabel(string label)
         {
-            foreach (var levelData in levelDataMap.levelDataList)
+            foreach (var levelData in levelDataList)
             {
                 if (levelData.label == label)
                 {

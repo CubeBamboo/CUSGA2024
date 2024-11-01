@@ -53,6 +53,20 @@ namespace Shuile.UI
             public int TotalKillEnemy;
             public int Score;
             public int HealthLoss;
+
+            public static Data FromGameplayStatics(GamePlayScene.GameplayStatics statics)
+            {
+                return new Data
+                {
+                    Composer = statics.Composer,
+                    SongName = statics.SongName,
+                    HealthLoss = statics.HealthLoss,
+                    HitOnRhythm = statics.HitOnRhythm,
+                    Score = statics.Score,
+                    TotalHit = statics.TotalHit,
+                    TotalKillEnemy = statics.TotalKillEnemy
+                };
+            }
         }
     }
 }

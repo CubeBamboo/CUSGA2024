@@ -5,6 +5,7 @@ using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Entity;
 using Shuile.Gameplay.Feel;
 using Shuile.Gameplay.Manager;
+using Shuile.Gameplay.Model;
 using Shuile.Model;
 using Shuile.Rhythm;
 using Shuile.UI.Gameplay;
@@ -29,6 +30,11 @@ namespace Shuile
             context.RegisterFactory(() => new LevelTimingManager(context));
 
             context.RegisterMonoScheduler(this);
+
+            context.Resolve(out SingleLevelData runtimeLevelData);
+            var statics = new GameplayStatics { SongName = runtimeLevelData.SongName, Composer = runtimeLevelData.Composer };
+
+            context.RegisterInstance(statics);
 
             context.RegisterInstance(this);
             context.RegisterInstance(preLoadGameObject.GetComponent<MusicRhythmManager>().ThrowIfNull());
@@ -56,6 +62,18 @@ namespace Shuile
 
             instance = player = GetComponentInChildren<Player>();
             return player == null;
+        }
+
+        public class GameplayStatics
+        {
+            public string SongName;
+            public string Composer;
+
+            public int TotalHit;
+            public int HitOnRhythm;
+            public int TotalKillEnemy;
+            public int Score;
+            public int HealthLoss;
         }
     }
 }

@@ -1,6 +1,5 @@
 using CbUtils.Extension;
 using NUnit.Framework;
-using Shuile.Core.Gameplay.Data;
 using Shuile.Framework;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Model;
@@ -33,7 +32,7 @@ namespace Shuile.Test.PlayMode
         {
             var levelData = GameApplication.BuiltInData.levelDataMap.FirstByLabel("Ginevra");
             var sceneMeta =
-                new LevelSceneMeta(new LevelContext(levelData));
+                new LevelSceneMeta(new SingleLevelData(levelData));
             MonoGameRouter.Instance.LoadScene(sceneMeta);
             yield return null;
         }
@@ -47,7 +46,7 @@ namespace Shuile.Test.PlayMode
             context.RegisterInstance(new EndStaticsPanel.Data
             {
                 SongName = "Waht can i say?",
-                Composer = "LaoDa",
+                Composer = "LaoDa 劳大",
                 HealthLoss = 1152,
                 HitOnRhythm = 441,
                 Score = 185632,

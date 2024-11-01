@@ -24,7 +24,7 @@ namespace Shuile.Rhythm
 
             context
                 .Resolve(out _musicRhythmManager)
-                .Resolve(out LevelContext levelContext)
+                .Resolve(out SingleLevelData levelContext)
                 .Resolve(out UnityEntryPointScheduler scheduler);
 
             scheduler.AddOnce(Start);

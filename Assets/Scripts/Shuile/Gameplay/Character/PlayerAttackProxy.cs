@@ -20,6 +20,7 @@ namespace Shuile.Gameplay.Character
             private readonly EasyEvent<bool> _weaponAttack;
             private readonly PlayerChartManager _playerChartManager;
             private readonly AttackSettings _attackSettings;
+            private readonly GamePlayScene.GameplayStatics _statics;
 
             public PlayerAttackProxy(UnityEntryPointScheduler scheduler, IReadOnlyServiceLocator dependencies) : base(scheduler, dependencies)
             {
@@ -29,6 +30,7 @@ namespace Shuile.Gameplay.Character
                     .Resolve(out _musicRhythmManager)
                     .Resolve(out _playerChartManager)
                     .Resolve(out _attackSettings)
+                    .Resolve(out _statics)
                     .Resolve(out NormalPlayerInput mPlayerInput)
                     .Resolve(out NormalPlayerCtrl playerCtrl);
 
@@ -60,10 +62,14 @@ namespace Shuile.Gameplay.Character
 
             private void Attack()
             {
+                _statics.TotalHit++;
+
                 if (_needHitWithRhythm && !CheckRhythm())
                 {
                     return;
                 }
+
+                _statics.HitOnRhythm++;
 
                 var attackRadius = _attackSettings.attackRadius;
                 var attackPoint = _attackSettings.attackPoint;
