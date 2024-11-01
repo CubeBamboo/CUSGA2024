@@ -19,7 +19,7 @@ namespace Shuile.Gameplay.Character
         public EasyEvent OnDie = new();
         public EasyEvent OnHurted = new();
 
-        public HearableProperty<int> CurrentHp { get; } = new();
+        public BindableProperty<int> CurrentHp { get; } = new();
         public PlayerPropertySO Property => property;
 
         public override void LoadFromParentContext(IReadOnlyServiceLocator context)

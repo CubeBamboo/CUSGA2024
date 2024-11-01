@@ -1,7 +1,6 @@
 ﻿using CbUtils;
 using Shuile.Framework;
 using Shuile.Gameplay.Move;
-using UnityEngine;
 
 namespace Shuile.Gameplay.Character
 {
@@ -9,7 +8,7 @@ namespace Shuile.Gameplay.Character
     {
         private class PlayerMoveProxy : BaseProxy
         {
-            private HearableProperty<float> _moveInputState = new();
+            private BindableProperty<float> _moveInputState = new();
             private readonly UnityEntryPointScheduler.SchedulerTask _moveUpdate;
 
             private SmoothMoveCtrl _moveController;

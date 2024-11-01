@@ -16,8 +16,8 @@ namespace Shuile.Gameplay.Character
             private readonly SmoothMoveCtrl _moveController;
             private readonly Settings _settings;
 
-            private HearableProperty<JumpingState> _jumpingState = new();
-            private HearableProperty<InputState> _inputState = new(InputState.HoldOff);
+            private BindableProperty<JumpingState> _jumpingState = new();
+            private BindableProperty<InputState> _inputState = new(InputState.HoldOff);
             private EasyEvent _onJumpingUpdate = new();
             private EasyEvent _onTouchGround = new();
 

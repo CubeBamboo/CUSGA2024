@@ -3,7 +3,7 @@ using System;
 
 namespace Shuile
 {
-    public class HearableProperty<T>
+    public class BindableProperty<T>
     {
         public static Func<T, T, bool> Comparer = (a, b) => a.Equals(b);
         private T _value;
@@ -11,7 +11,7 @@ namespace Shuile
         /// <summary> "T - old value, T - new value" </summary>
         public EasyEvent<T, T> onValueChanged = new();
 
-        public HearableProperty(T value = default)
+        public BindableProperty(T value = default)
         {
             _value = value;
         }
@@ -53,16 +53,16 @@ namespace Shuile
 
     public static class Extensions
     {
-        public static void BindValueChanged<T>(this HearableProperty<T> property, Action<T, T> action)
+        public static void BindValueChanged<T>(this BindableProperty<T> property, Action<T, T> action)
         {
             property.onValueChanged.Register(action);
         }
 
-        public static void BindValueChangeTo<T>(this HearableProperty<T> property, T targetValue, Action action)
+        public static void BindValueChangeTo<T>(this BindableProperty<T> property, T targetValue, Action action)
         {
             property.onValueChanged.Register((_, newValue) =>
             {
-                if (HearableProperty<T>.Comparer(newValue, targetValue))
+                if (BindableProperty<T>.Comparer(newValue, targetValue))
                 {
                     action.Invoke();
                 }

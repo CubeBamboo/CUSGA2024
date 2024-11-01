@@ -9,7 +9,7 @@ namespace Shuile.UI
     public class EndStaticsButton : Button
     {
         private Vector3 _originScale;
-        private HearableProperty<State> _currentState;
+        private BindableProperty<State> _currentState;
 
         private bool _isInBound;
 
