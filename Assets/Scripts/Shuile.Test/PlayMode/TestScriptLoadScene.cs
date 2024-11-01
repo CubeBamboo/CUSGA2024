@@ -60,6 +60,21 @@ namespace Shuile.Test.PlayMode
             }
         }
 
+        [Test]
+        public void LoadEndStaticsScene()
+        {
+            MonoGameRouter.Instance.LoadScene(new EndStaticsSceneMeta(new EndStaticsPanel.Data
+            {
+                SongName = "Waht can i say?",
+                Composer = "LaoDa 劳大",
+                HealthLoss = 1152,
+                HitOnRhythm = 441,
+                Score = 185632,
+                TotalHit = 156,
+                TotalKillEnemy = 77
+            }));
+        }
+
         [UnityTearDown]
         public IEnumerator TearDown()
         {

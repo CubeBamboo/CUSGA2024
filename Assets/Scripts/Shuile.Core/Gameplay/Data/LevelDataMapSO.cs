@@ -6,10 +6,13 @@ namespace Shuile.Core.Gameplay.Data
     [Serializable]
     public class LevelData
     {
-        public string label;
+        public string label; // key for identify
         public string sceneName;
         public LevelEnemySO enemyData;
         public ChartSO chartFiles;
+
+        public string songName;
+        public string composer;
     }
 
     [CreateAssetMenu(fileName = "LevelDataMap", menuName = "Config/LevelDataMap")]

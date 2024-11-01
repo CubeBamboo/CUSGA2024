@@ -2,7 +2,7 @@ using CbUtils.Kits.Tasks;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Gameplay;
 using Shuile.Gameplay.Model;
-using Shuile.UI.Data;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -22,13 +22,28 @@ namespace Shuile.UI.Menu
         [SerializeField] private TextMeshProUGUI text_SongArtist;
 
         [SerializeField] private MainMenuUIStateMachine stateMachine;
-        [SerializeField] private LevelSelectDataSO levelSelectData;
+
+        private List<SelectElement> _selectElements;
 
         private int _currentIndex;
-        private LevelData _level;
+
+        public int SelectionLength => _selectElements.Count;
 
         private void Awake()
         {
+            var levelDataMap = GameApplication.BuiltInData.levelDataMap;
+
+            _selectElements = new List<SelectElement>(levelDataMap.levelDataList.Length);
+            foreach (var levelData in levelDataMap.levelDataList)
+            {
+                if (levelData.label.StartsWith('#')) continue; // it will be ignored
+
+                _selectElements.Add(new SelectElement
+                {
+                    Origin = levelData, Composer = levelData.composer, SongName = levelData.songName
+                });
+            }
+
             ConfigureButtonEvent();
         }
 
@@ -49,37 +64,44 @@ namespace Shuile.UI.Menu
             btn_Next.onClick.AddListener(() =>
             {
                 _currentIndex++;
-                _currentIndex %= levelSelectData.levelData.Length;
+                _currentIndex %= SelectionLength;
                 RefreshSongView();
             });
             btn_Prev.onClick.AddListener(() =>
             {
                 _currentIndex--;
-                _currentIndex = (_currentIndex + levelSelectData.levelData.Length) % levelSelectData.levelData.Length;
+                _currentIndex = (_currentIndex + SelectionLength) % SelectionLength;
                 RefreshSongView();
             });
-            btn_Play.onClick.AddListener(() => StartLevel(levelSelectData.levelData[_currentIndex]));
+            btn_Play.onClick.AddListener(() => StartLevel(_selectElements[_currentIndex]));
         }
 
-        public async void StartLevel(LevelSelectDataSO.Data data)
+        private async void StartLevel(SelectElement data)
         {
-            await TaskBus.Instance.Run(LoadLevelResources(data.levelDataLabel));
-            var runtimeLevelData = new SingleLevelData(_level) { Composer = data.songArtist, SongName = data.songName };
+            await TaskBus.Instance.Run(LoadLevelResources(data));
+
+            var runtimeLevelData = new SingleLevelData(data.Origin);
             MonoGameRouter.Instance.LoadScene(new LevelSceneMeta(runtimeLevelData));
         }
 
-        private async Task LoadLevelResources(string label)
+        private async Task LoadLevelResources(SelectElement _)
         {
-            var levels = GameApplication.BuiltInData.levelDataMap;
-            _level = levels.FirstByLabel(label);
+            // well now it's empty... actually there were many code previously.
             await Task.Delay(1000); // show our cool loading screen // 展示我们牛逼的加载界面
         }
 
         private void RefreshSongView()
         {
-            var curr = levelSelectData.levelData[_currentIndex];
-            text_SongName.text = curr.songName;
-            text_SongArtist.text = curr.songArtist;
+            var curr = _selectElements[_currentIndex];
+            text_SongName.text = curr.SongName;
+            text_SongArtist.text = curr.Composer;
+        }
+
+        private class SelectElement
+        {
+            public LevelData Origin;
+            public string SongName;
+            public string Composer;
         }
     }
 }

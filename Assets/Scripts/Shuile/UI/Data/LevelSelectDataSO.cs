@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Shuile.UI.Data
 {
+    [Obsolete]
     [CreateAssetMenu(fileName = "LevelSelectDataSO", menuName = "Config/LevelSelectData")]
     public class LevelSelectDataSO : ScriptableObject
     {

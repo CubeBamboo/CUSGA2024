@@ -104,12 +104,4 @@ namespace Shuile.Chart
             return res;
         }
     }
-
-    /*public class FooChart
-    {
-        public static void Do()
-        {
-            ChartUtils.LoadChart("testchart.json");
-        }
-    }*/
 }
