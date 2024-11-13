@@ -35,6 +35,12 @@ namespace CbUtils.Extension
                 onCatch?.Invoke(e);
             }
         }
+
+        public static T With<T>(this T self, Action<T> action)
+        {
+            action(self);
+            return self;
+        }
     }
 
     public static class MathUtils

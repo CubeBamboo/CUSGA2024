@@ -1,3 +1,4 @@
+using CbUtils.Extension;
 using Cysharp.Threading.Tasks;
 using Shuile.Core.Gameplay.Data;
 using Shuile.Core.Global;
@@ -8,6 +9,7 @@ using Shuile.Gameplay.Model;
 using Shuile.Model;
 using Shuile.Rhythm;
 using System;
+using System.Threading;
 using UnityEngine;
 using UObject = UnityEngine.Object;
 using URandom = UnityEngine.Random;
@@ -20,11 +22,10 @@ namespace Shuile.Gameplay.Manager
         private readonly AutoPlayChartManager _autoPlayChartManager;
         private readonly LevelEntityManager _levelEntityManager;
         private readonly LevelModel _levelModel;
-        private readonly LevelZoneManager _levelZoneManager;
-        private readonly LevelEnemySO currentEnemyData;
 
         private readonly UnityEntryPointScheduler _scheduler;
-        private PrefabConfigSO _globalPrefabs;
+
+        private EnemyInfoProcessor _infoProcessor;
 
         public EnemySpawnManager(RuntimeContext context, Transform enemyParent)
         {
@@ -32,17 +33,21 @@ namespace Shuile.Gameplay.Manager
                 .Resolve(out _autoPlayChartManager)
                 .Resolve(out _levelEntityManager)
                 .Resolve(out _scheduler)
-                .Resolve(out _levelZoneManager)
                 .Resolve(out _levelModel)
                 .Resolve(out SingleLevelData levelContext);
 
+            var currentEnemyData = levelContext.LevelEnemyData;
+
+            _infoProcessor = new EnemyInfoProcessor(new RuntimeContext().With(x =>
+            {
+                x.AddParent(context);
+                x.RegisterInstance(currentEnemyData);
+            }));
+
             _enemyParent = enemyParent;
-            _globalPrefabs = GameApplication.BuiltInData.globalPrefabs;
 
             _scheduler.AddOnce(Start);
             _scheduler.AddCallOnDestroy(OnDestroy);
-
-            currentEnemyData = levelContext.LevelEnemyData;
         }
 
         public int EnemyCount => _levelEntityManager.EnemyCount;
@@ -67,26 +72,41 @@ namespace Shuile.Gameplay.Manager
 
         private void SpawnSingleEnemy()
         {
-            var (enemyType, pos) = RandomEnemyInfo();
+            var (enemyType, pos) = _infoProcessor.RandomEnemyInfo();
             SpawnEnemyWithEffect(enemyType, pos).Forget();
         }
 
         public async UniTask SpawnEnemyWithEffect(EnemyType enemyType, Vector2 position)
         {
-            var effect = _globalPrefabs.enemySpawnEffect;
-            var effectInstance = UObject.Instantiate(effect.prefab);
-            effectInstance.transform.position = position;
+            var infoProcessor = _infoProcessor;
 
-            var enemy = UObject.Instantiate(GetPrefabFromType(enemyType), position, Quaternion.identity, _enemyParent);
+            var enemy = UObject.Instantiate(infoProcessor.GetPrefabFromType(enemyType), position, Quaternion.identity, _enemyParent);
             enemy.SetActive(false);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(effect.duration),
-                cancellationToken: _scheduler.destroyCancellationToken);
+            await infoProcessor.PlaySpawnEffect(position, _scheduler.destroyCancellationToken);
 
             enemy.SetActive(true);
         }
+    }
 
-        private (EnemyType, Vector2) RandomEnemyInfo()
+    internal class EnemyInfoProcessor
+    {
+        private readonly PrefabConfigSO _globalPrefabs = GameApplication.BuiltInData.globalPrefabs;
+
+        private readonly LevelModel _levelModel;
+        private readonly LevelZoneManager _levelZoneManager;
+
+        private readonly LevelEnemySO currentEnemyData;
+
+        public EnemyInfoProcessor(IReadOnlyServiceLocator locator)
+        {
+            locator
+                .Resolve(out _levelModel)
+                .Resolve(out currentEnemyData)
+                .Resolve(out _levelZoneManager);
+        }
+
+        public (EnemyType, Vector2) RandomEnemyInfo()
         {
             var dangerLevel = _levelModel.DangerLevel;
             var length = currentEnemyData.enemies.Length;
@@ -97,7 +117,7 @@ namespace Shuile.Gameplay.Manager
             return (enemyType, pos);
         }
 
-        private GameObject GetPrefabFromType(EnemyType enemyType)
+        public GameObject GetPrefabFromType(EnemyType enemyType)
         {
             var prefabConfig = _globalPrefabs;
             var res = enemyType switch
@@ -108,6 +128,15 @@ namespace Shuile.Gameplay.Manager
                 _ => throw new Exception("Invalid EnemyType.")
             };
             return res;
+        }
+
+        public UniTask PlaySpawnEffect(Vector2 position, CancellationToken cancellationToken)
+        {
+            var effect = _globalPrefabs.enemySpawnEffect;
+            var effectInstance = UObject.Instantiate(effect.prefab);
+            effectInstance.transform.position = position;
+
+            return UniTask.Delay(TimeSpan.FromSeconds(effect.duration), cancellationToken: cancellationToken);
         }
     }
 }
