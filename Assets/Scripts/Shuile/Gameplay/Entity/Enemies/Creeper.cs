@@ -37,13 +37,15 @@ namespace Shuile.Gameplay.Entity.Enemies
             CurrentType = EnemyType.Creeper;
         }
 
-        private void Start()
+        public override void GetFromPool()
         {
+            base.GetFromPool();
             EnterAnim().Forget();
         }
 
-        private void OnDestroy()
+        public override void ReleaseFromPool()
         {
+            base.ReleaseFromPool();
             _mRenderer.DOKill();
         }
 
@@ -76,7 +78,7 @@ namespace Shuile.Gameplay.Entity.Enemies
             _mFsm.FixedUpdate();
         }
 
-        protected override async void OnSelfDie()
+        protected override async void BeginDie()
         {
             _mFsm.SwitchState(DefaultEnemyState.Empty);
             moveController.IsFrozen = true;
@@ -90,7 +92,7 @@ namespace Shuile.Gameplay.Entity.Enemies
             }
             finally
             {
-                DieFxEnd?.Invoke(this);
+                EndDie();
             }
         }
 

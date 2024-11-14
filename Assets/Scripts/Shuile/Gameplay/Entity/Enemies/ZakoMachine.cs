@@ -44,7 +44,14 @@ namespace Shuile.Gameplay.Entity.Enemies
             CurrentType = EnemyType.ZakoRobot;
         }
 
-        protected override async void OnSelfDie()
+        public override void ReleaseFromPool()
+        {
+            base.ReleaseFromPool();
+            _mRenderer.DOKill();
+            transform.DOKill();
+        }
+
+        protected override async void BeginDie()
         {
             _mFsm.SwitchState(DefaultEnemyState.Dead);
             moveController.IsFrozen = true;
@@ -58,14 +65,8 @@ namespace Shuile.Gameplay.Entity.Enemies
             }
             finally
             {
-                DieFxEnd?.Invoke(this);
+                EndDie();
             }
-        }
-
-        private void OnDestroy()
-        {
-            _mRenderer.DOKill();
-            transform.DOKill();
         }
 
         private async UniTask PlayDieAnim()

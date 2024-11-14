@@ -64,9 +64,8 @@ namespace Shuile.Gameplay.Entity
             base.Awake();
             moveController = new SmoothMoveCtrl(Context);
             enemyHurtEvent = new EnemyHurtEvent { enemy = this };
-            health = MaxHealth;
+
             OnAwake();
-            TypeEventSystem.Global.Trigger<EnemySpawnEvent>(new EnemySpawnEvent { enemy = this });
         }
 
         public virtual void OnHurt(int attackPoint)
@@ -83,7 +82,7 @@ namespace Shuile.Gameplay.Entity
 
             if (Health <= 0)
             {
-                OnSelfDie();
+                BeginDie();
                 TypeEventSystem.Global.Trigger<EnemyDieEvent>(new EnemyDieEvent { enemy = this });
             }
         }
@@ -98,10 +97,17 @@ namespace Shuile.Gameplay.Entity
         protected virtual void OnAwake() { }
 
         protected abstract void OnSelfHurt(int oldVal, int newVal);
-        protected abstract void OnSelfDie();
+        protected abstract void BeginDie();
+
+        protected void EndDie()
+        {
+            DieFxEnd?.Invoke(this);
+        }
 
         public virtual void GetFromPool()
         {
+            health = MaxHealth;
+            TypeEventSystem.Global.Trigger<EnemySpawnEvent>(new EnemySpawnEvent { enemy = this });
             gameObject.SetActive(true);
         }
 
