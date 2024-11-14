@@ -91,7 +91,7 @@ namespace Shuile.Gameplay.Manager
         private Enemy GetFromPool(EnemyType enemyType)
         {
             var enemy = _pool.GetByEnum(enemyType);
-            enemy.DieFxEnd += _pool.Release;
+            enemy.DieFxEnd += _pool.ManualRelease;
             return enemy;
         }
     }
@@ -126,7 +126,13 @@ namespace Shuile.Gameplay.Manager
             return _pools[enemyType].Get();
         }
 
-        public void Release(Enemy enemy)
+        public void KillEnemy(Enemy enemy)
+        {
+            enemy.DieFxEnd += ManualRelease;
+            enemy.ForceDie();
+        }
+
+        public void ManualRelease(Enemy enemy)
         {
             _pools[enemy.CurrentType].Release(enemy);
         }

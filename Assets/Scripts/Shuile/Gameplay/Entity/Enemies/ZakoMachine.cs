@@ -44,6 +44,13 @@ namespace Shuile.Gameplay.Entity.Enemies
             CurrentType = EnemyType.ZakoRobot;
         }
 
+        public override void GetFromPool()
+        {
+            base.GetFromPool();
+            moveController.IsFrozen = false;
+            _mFsm.SwitchState(DefaultEnemyState.Patrol);
+        }
+
         public override void ReleaseFromPool()
         {
             base.ReleaseFromPool();

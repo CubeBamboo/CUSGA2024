@@ -36,6 +36,7 @@ namespace CbUtils.Extension
             }
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         public static T With<T>(this T self, Action<T> action)
         {
             action(self);

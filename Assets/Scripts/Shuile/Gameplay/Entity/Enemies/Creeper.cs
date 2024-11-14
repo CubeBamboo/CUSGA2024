@@ -41,6 +41,8 @@ namespace Shuile.Gameplay.Entity.Enemies
         {
             base.GetFromPool();
             EnterAnim().Forget();
+            moveController.IsFrozen = false;
+            _mFsm.SwitchState(DefaultEnemyState.Patrol);
         }
 
         public override void ReleaseFromPool()
