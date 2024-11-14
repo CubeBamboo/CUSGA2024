@@ -9,7 +9,8 @@
         "Shuile.Utils",
         "Shuile.Framework",
         "Unity.Addressables",
-        "Unity.ResourceManager"
+        "Unity.ResourceManager",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

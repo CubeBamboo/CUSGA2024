@@ -3,6 +3,7 @@ using CbUtils.Event;
 using CbUtils.Extension;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Shuile.Core.Gameplay.Data;
 using System;
 using UnityEngine;
 
@@ -33,6 +34,7 @@ namespace Shuile.Gameplay.Entity.Enemies
             _mRenderer = GetComponentInChildren<SpriteRenderer>();
             moveController.JumpVelocity = jumpVel;
             moveController.XMaxSpeed = xMaxSpeed;
+            CurrentType = EnemyType.Creeper;
         }
 
         private void Start()
@@ -86,7 +88,10 @@ namespace Shuile.Gameplay.Entity.Enemies
             catch (OperationCanceledException)
             {
             }
-            Destroy(gameObject);
+            finally
+            {
+                DieFxEnd?.Invoke(this);
+            }
         }
 
         protected void RegisterState(FSM<DefaultEnemyState> mFsm)

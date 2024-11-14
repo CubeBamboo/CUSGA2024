@@ -1,5 +1,6 @@
 using Shuile.Core.Framework;
 using Shuile.Core.Gameplay.Common;
+using Shuile.Core.Gameplay.Data;
 using Shuile.Framework;
 using Shuile.Gameplay.Character;
 using Shuile.Gameplay.Event;
@@ -12,7 +13,7 @@ namespace Shuile.Gameplay.Entity
     /// <summary>
     /// handle enemy's common dependencies. use event system to communicate with outer world.
     /// </summary>
-    public abstract class Enemy : MonoContainer, IHurtable, IJudgeable
+    public abstract class Enemy : MonoContainer, IHurtable, IJudgeable, IPooledObject
     {
         [SerializeField] protected int MaxHealth = 100;
 
@@ -20,7 +21,11 @@ namespace Shuile.Gameplay.Entity
         protected SmoothMoveCtrl moveController;
         private Player _player;
 
+        public EnemyType CurrentType { get; protected set; }
+
         private EnemyHurtEvent enemyHurtEvent;
+
+        public Action<Enemy> DieFxEnd;
 
         public override void BuildSelfContext(RuntimeContext context)
         {
@@ -79,7 +84,7 @@ namespace Shuile.Gameplay.Entity
             if (Health <= 0)
             {
                 OnSelfDie();
-                HandleDieEvent();
+                TypeEventSystem.Global.Trigger<EnemyDieEvent>(new EnemyDieEvent { enemy = this });
             }
         }
 
@@ -92,12 +97,22 @@ namespace Shuile.Gameplay.Entity
 
         protected virtual void OnAwake() { }
 
-        private void HandleDieEvent()
-        {
-            TypeEventSystem.Global.Trigger<EnemyDieEvent>(new EnemyDieEvent { enemy = this });
-        }
-
         protected abstract void OnSelfHurt(int oldVal, int newVal);
         protected abstract void OnSelfDie();
+
+        public virtual void GetFromPool()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public virtual void ReleaseFromPool()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public virtual void DestroyFromPool()
+        {
+            Destroy(gameObject);
+        }
     }
 }

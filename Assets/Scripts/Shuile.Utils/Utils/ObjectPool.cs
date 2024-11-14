@@ -1,18 +1,36 @@
 using System;
 using System.Collections.Generic;
 
+public interface IPooledObject
+{
+    void GetFromPool();
+    void ReleaseFromPool();
+    void DestroyFromPool();
+}
+
+public class ClassedObjectPool<T> : ObjectPool<T> where T : class, IPooledObject
+{
+    public ClassedObjectPool(Func<T> createFunc, int capacity = 8) : base(createFunc, capacity: capacity)
+    {
+        getFunc = static x => x.GetFromPool();
+        releaseFunc = static x => x.ReleaseFromPool();
+        destroyFunc = static x => x.DestroyFromPool();
+    }
+}
+
 /// <summary>
 ///     Better than <see cref="UnityEngine.Pool.ObjectPool{T}" />
 /// </summary>
 /// <typeparam name="T">Element Type</typeparam>
 public class ObjectPool<T> where T : class
 {
-    private readonly Func<T> createFunc;
-    private readonly Action<T> destroyFunc;
-    private readonly Action<T> getFunc;
+    protected readonly Func<T> createFunc;
+    protected Action<T> destroyFunc;
+    protected Action<T> getFunc;
+    protected Action<T> releaseFunc;
 
+    // index 0 ~ CountActive - 1 are active, CountActive ~ Count - 1 are inactive
     private readonly List<T> objects;
-    private readonly Action<T> releaseFunc;
 
     public ObjectPool(
         Func<T> createFunc,
@@ -88,6 +106,26 @@ public class ObjectPool<T> where T : class
         {
             yield return objects[i];
         }
+    }
+
+    public IEnumerable<PoolObject> EnumerateAll()
+    {
+        for (var i = Count - 1; i >= 0; i--)
+        {
+            yield return new PoolObject
+            {
+                Obj = objects[i],
+                IsActive = i < CountActive,
+                Pool = this
+            };
+        }
+    }
+
+    public struct PoolObject
+    {
+        public T Obj;
+        public bool IsActive;
+        public ObjectPool<T> Pool;
     }
 
     /// <summary>

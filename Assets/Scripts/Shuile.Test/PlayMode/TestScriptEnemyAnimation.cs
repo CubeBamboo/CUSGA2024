@@ -2,24 +2,13 @@ using CbUtils.Extension;
 using NUnit.Framework;
 using Shuile.Gameplay.Entity;
 using System.Collections;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
 namespace Shuile.Test.PlayMode
 {
-    public class TestScriptEnemyAnimation
+    public class TestScriptEnemyAnimation : RootTestSceneTestScript
     {
-        [UnitySetUp]
-        public IEnumerator SetUp()
-        {
-            yield return EditorSceneManager.LoadSceneAsyncInPlayMode("Assets/Scenes/Test/TestRootScene.unity",
-                new LoadSceneParameters());
-
-            yield return new WaitForSeconds(0.5f);
-        }
-
         [Test]
         public void SpawnEffect()
         {
@@ -74,12 +63,6 @@ namespace Shuile.Test.PlayMode
             enemy.ForceDie();
 
             yield return null;
-        }
-
-        [UnityTearDown]
-        public IEnumerator TearDown()
-        {
-            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Escape) || Time.timeSinceLevelLoad > 180f);
         }
     }
 }

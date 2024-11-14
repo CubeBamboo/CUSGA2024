@@ -4,7 +4,12 @@ using UnityEngine;
 
 namespace Shuile.Gameplay.Manager
 {
-    public class LevelZoneManager : MonoNotAutoSpawnSingletons<LevelZoneManager>
+    public interface ILevelZoneManager
+    {
+        Vector2 RandomValidPosition();
+    }
+
+    public class LevelZoneManager : MonoNotAutoSpawnSingletons<LevelZoneManager>, ILevelZoneManager
     {
         [SerializeField] private MarkedZone2D markedZone;
 

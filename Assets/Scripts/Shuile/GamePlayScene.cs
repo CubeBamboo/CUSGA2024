@@ -38,7 +38,9 @@ namespace Shuile
 
             context.RegisterInstance(this);
             context.RegisterInstance(preLoadGameObject.GetComponent<MusicRhythmManager>().ThrowIfNull());
-            context.RegisterInstance(preLoadGameObject.GetComponent<LevelZoneManager>().ThrowIfNull());
+            var zoneManager = preLoadGameObject.GetComponent<LevelZoneManager>().ThrowIfNull();
+            context.RegisterInstance(zoneManager);
+            context.RegisterInstance((ILevelZoneManager)zoneManager);
             context.RegisterInstance(preLoadGameObject.GetComponent<MonoAudioChannel>().ThrowIfNull());
             context.RegisterInstance(endLevelPanel);
             context.RegisterInstance(levelAudioManager);

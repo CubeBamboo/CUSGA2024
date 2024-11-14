@@ -1,7 +1,7 @@
 using CbUtils;
-using CbUtils.Event;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Shuile.Core.Gameplay.Data;
 using System;
 using UnityEngine;
 
@@ -41,6 +41,7 @@ namespace Shuile.Gameplay.Entity.Enemies
 
             _mAnimator = GetComponent<Animator>();
             _mRenderer = GetComponentInChildren<SpriteRenderer>();
+            CurrentType = EnemyType.ZakoRobot;
         }
 
         protected override async void OnSelfDie()
@@ -55,7 +56,10 @@ namespace Shuile.Gameplay.Entity.Enemies
             catch (OperationCanceledException)
             {
             }
-            Destroy(gameObject);
+            finally
+            {
+                DieFxEnd?.Invoke(this);
+            }
         }
 
         private void OnDestroy()

@@ -1,3 +1,4 @@
+using Shuile.Core.Gameplay.Data;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,6 +48,19 @@ namespace Shuile.Core.Global
             }
 
             return null;
+        }
+
+        public GameObject GetPrefabFromType(EnemyType enemyType)
+        {
+            var prefabConfig = this;
+            var res = enemyType switch
+            {
+                EnemyType.ZakoRobot => prefabConfig.zakoRobot,
+                EnemyType.Creeper => prefabConfig.creeper,
+                EnemyType.MahouDefenseTower => prefabConfig.mahouDefenseTower,
+                _ => throw new Exception("Invalid EnemyType.")
+            };
+            return res;
         }
     }
 }

@@ -1,6 +1,7 @@
 using CbUtils.Event;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Shuile.Core.Gameplay.Data;
 using Shuile.Gameplay.Manager;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,7 @@ namespace Shuile.Gameplay.Entity.Enemies
         {
             bombPrefab = GameApplication.BuiltInData.globalPrefabs.mahouBomb;
             mRenderer = GetComponentInChildren<SpriteRenderer>();
+            CurrentType = EnemyType.MahouDefenseTower;
         }
 
         private void Start()
@@ -128,7 +130,10 @@ namespace Shuile.Gameplay.Entity.Enemies
             catch (OperationCanceledException)
             {
             }
-            Destroy(gameObject);
+            finally
+            {
+                DieFxEnd?.Invoke(this);
+            }
         }
 
         protected override void OnSelfHurt(int oldVal, int newVal)
