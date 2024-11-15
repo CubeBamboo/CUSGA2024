@@ -1,28 +1,27 @@
 using CbUtils.Extension;
 using Shuile.Core.Global;
-using UnityEngine;
 
 namespace Shuile.Gameplay.Entity
 {
-    internal class LevelEntityFactory
+    public class LevelEntityFactory
     {
-        public LevelEntityFactory(LevelEntityManager levelEntityManager, PrefabConfigSO prefabConfig)
+        public PrefabConfigSO PrefabConfig { get; } = GameApplication.BuiltInData.globalPrefabs;
+
+        private ClassedObjectPool<Laser> _laserPool;
+
+        public LevelEntityFactory()
         {
-            LevelEntityManager = levelEntityManager;
-            PrefabConfig = prefabConfig;
+            _laserPool = new ClassedObjectPool<Laser>(() =>
+            {
+                var laser = PrefabConfig.laser.Instantiate().GetComponent<Laser>();
+                laser.FxEnd = () => _laserPool.Release(laser);
+                return laser;
+            });
         }
 
-        public LevelEntityManager LevelEntityManager { get; }
-        public PrefabConfigSO PrefabConfig { get; }
-
-        #region Mechanism
-
-        public GameObject SpawnLaser()
+        public Laser SpawnLaser()
         {
-            var go = PrefabConfig.laser.Instantiate(); // spawn
-            return go;
+            return _laserPool.Get();
         }
-
-        #endregion
     }
 }

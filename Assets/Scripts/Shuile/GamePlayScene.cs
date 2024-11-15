@@ -48,6 +48,8 @@ namespace Shuile
             context.RegisterInstance(new LevelEntityManager(context));
             context.RegisterInstance(new PreciseMusicPlayer(context));
 
+            context.RegisterInstance(new LevelModel.TimingData(runtimeLevelData.ChartData.time));
+
             context.RegisterInstance(new AutoPlayChartManager(context));
             context.RegisterInstance(new LevelChartManager(context));
             context.RegisterInstance(new EnemySpawnManager(context, enemyParent));

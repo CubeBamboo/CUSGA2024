@@ -1,8 +1,7 @@
 using CbUtils;
+using Shuile.Chart;
 using Shuile.Core.Gameplay.Common;
 using Shuile.Core.Global.Config;
-using Shuile.Framework;
-using Shuile.Gameplay.Model;
 using System.Collections.Generic;
 
 namespace Shuile.Model
@@ -10,22 +9,13 @@ namespace Shuile.Model
     /// <summary> data in single level </summary>
     public class LevelModel
     {
-        private readonly float _musicBpm;
-        private readonly float _musicOffset;
         private float _dangerScore;
 
         public LevelModel()
         {
-            ContainerExtensions.FindSceneContext().Resolve(out SingleLevelData levelContext);
-            var currentChart = levelContext.ChartData;
-            _musicBpm = currentChart.time[0].bpm;
-            _musicOffset = currentChart.time[0].offset;
-
             DangerScore = 0f;
         }
 
-        public float BpmIntervalInSeconds => 60f / _musicBpm;
-        public float OffsetInSeconds => _musicOffset * 0.001f;
         public int DangerLevel => DangerLevelUtils.GetDangerLevelUnClamped(DangerScore);
         public List<IJudgeable> JudgeObjects { get; set; } = new();
         public float CurrentMusicTime { get; set; }
@@ -45,6 +35,24 @@ namespace Shuile.Model
                     OnDangerScoreChange.Invoke(oldVal);
                 }
             }
+        }
+
+        public class TimingData
+        {
+            public ChartData.TimingPoint[] timingPoints;
+
+            public TimingData(ChartData.TimingPoint[] timingPoints)
+            {
+                this.timingPoints = timingPoints;
+                _musicBpm = timingPoints[0].bpm;
+                _musicOffset = timingPoints[0].offset;
+            }
+
+            private readonly float _musicBpm;
+            private readonly float _musicOffset;
+
+            public float BpmIntervalInSeconds => 60f / _musicBpm;
+            public float OffsetInSeconds => _musicOffset * 0.001f;
         }
     }
 }

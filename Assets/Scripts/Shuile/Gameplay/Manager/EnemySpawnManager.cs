@@ -90,9 +90,7 @@ namespace Shuile.Gameplay.Manager
 
         private Enemy GetFromPool(EnemyType enemyType)
         {
-            var enemy = _pool.GetByEnum(enemyType);
-            enemy.DieFxEnd += _pool.ManualRelease;
-            return enemy;
+            return _pool.GetByEnum(enemyType);
         }
     }
 
@@ -114,9 +112,11 @@ namespace Shuile.Gameplay.Manager
                 Enemy Create()
                 {
                     var prefabConfigSo = GameApplication.BuiltInData.globalPrefabs;
-                    return UObject.Instantiate(prefabConfigSo.GetPrefabFromType(type),
+                    var enemy = UObject.Instantiate(prefabConfigSo.GetPrefabFromType(type),
                             _enemyParent)
                         .GetComponent<Enemy>();
+                    enemy.DieFxEnd = ManualRelease;
+                    return enemy;
                 }
             }
         }

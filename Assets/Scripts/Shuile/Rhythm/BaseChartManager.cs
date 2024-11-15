@@ -37,7 +37,7 @@ namespace Shuile.Rhythm.Runtime
             switch (noteData)
             {
                 case SpawnLaserNoteData laserNoteData:
-                    _entityManager.EntityFactory.SpawnLaser()
+                    _entityManager.EntityFactory.SpawnLaser().gameObject
                         .SetPosition(_levelZoneManager.RandomValidPosition());
                     break;
                 case SpawnSingleEnemyNoteData enemyNoteData:

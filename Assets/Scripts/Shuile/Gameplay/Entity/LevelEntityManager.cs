@@ -50,7 +50,7 @@ namespace Shuile.Gameplay.Entity
 
         public void Start()
         {
-            EntityFactory = new LevelEntityFactory(this, _globalPrefab);
+            EntityFactory = new LevelEntityFactory();
 
             EnemyParent = new GameObject("Enemies").transform;
 
