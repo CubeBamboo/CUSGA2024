@@ -2,9 +2,9 @@
  * original source code from phigrim
  ************************************/
 
-using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -71,20 +71,37 @@ namespace Shuile.Editor.EditorTool
 
             ScenesMenu = new GenericMenu();
 
-            var sceneListString = File.ReadAllText(Path.Join(Application.dataPath, "/Editor/ScenesShortcutList.json"));
-            var sceneNames = JsonConvert.DeserializeObject<string[]>(sceneListString);
-            foreach (var name in sceneNames)
+            var scenePath = Path.Join(Application.dataPath, "Scenes");
+            if (!Directory.Exists(scenePath))
             {
-                if (name == "-")
-                {
-                    ScenesMenu.AddSeparator("");
-                    continue;
-                }
+                return;
+            }
 
+            foreach (var se in Directory.EnumerateFiles(scenePath)
+                         .Where(x => Path.GetExtension(x) == ".unity")
+                         .Where(x => !Path.GetFileName(x).StartsWith('_'))
+                         .OrderBy(x => x[0]))
+            {
+                var name = Path.GetFileNameWithoutExtension(se);
                 ScenesMenu.AddItem(new GUIContent(name), false, () => LoadScene(name));
             }
-        }
 
+            var examplesScenes = Directory.EnumerateFiles(Path.Join(scenePath, "Examples"))
+                .Where(x => Path.GetExtension(x) == ".unity")
+                .Where(x => !Path.GetFileName(x).StartsWith('_'))
+                .OrderBy(x => x[0]).ToArray();
+
+            if (examplesScenes.Any())
+            {
+                ScenesMenu.AddSeparator("");
+
+                foreach (var se in examplesScenes)
+                {
+                    var name = "Examples/" + Path.GetFileNameWithoutExtension(se);
+                    ScenesMenu.AddItem(new GUIContent(name), false, () => LoadScene(name));
+                }
+            }
+        }
 
         private static void LoadScene(string sceneName)
         {
