@@ -1,0 +1,13 @@
+.custom-label {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: rgb(68, 138, 255);
+}
+
+.query-button {
+    width: 100%;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0);
+    border-radius: 5px;
+    align-self: flex-start;
+}

@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/Shuile.Editor/EditorObjectQueryWindow.uss?fileID=7433441132597879392&amp;guid=43104bfa3dce2104197b34247e9369c0&amp;type=3#EditorObjectQueryWindow" />
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement style="flex-grow: 1;">
+            <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" name="HeadGameObject" />
+            <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" name="ComponentType" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:ListView focusable="true" fixed-item-height="14" style="align-self: flex-end;" />
+</ui:UXML>
