@@ -15,3 +15,5 @@ MonoBehaviour:
   levelConfig: {fileID: 11400000, guid: 33051b7261f31514783d021c269ff9be, type: 2}
   globalPrefabs: {fileID: 11400000, guid: 952ea785214116b4eae37f9383ae9234, type: 2}
   levelDataMap: {fileID: 11400000, guid: f86459a467bc97c4cbc3f0134bbbf071, type: 2}
+  prefabArray:
+  - {fileID: 1765532895376760441, guid: 9ed80de52de4fee48bb2000319f3c9be, type: 3}

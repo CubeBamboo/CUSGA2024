@@ -9,7 +9,6 @@ namespace Shuile
         public static void InitializeBusyScreenByGlobalGameObject(this TaskBus taskBus, GameObject globalGameObject)
         {
             var busyScreen = globalGameObject.GetChildByPath<IBusyScreen>("GlobalCanvas/TaskBusyScreen");
-            Debug.Log("Use BusyScreen: " + busyScreen);
             taskBus.Initialize(busyScreen);
         }
     }

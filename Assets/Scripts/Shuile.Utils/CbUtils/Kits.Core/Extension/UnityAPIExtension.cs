@@ -62,6 +62,30 @@ namespace CbUtils.Extension
             return go;
         }
 
+        public static Transform WithChild(this Transform parent, Transform child)
+        {
+            child.SetParent(parent, false);
+            return parent;
+        }
+
+        public static Transform WithChildren(this Transform parent, params Transform[] children)
+        {
+            foreach (var child in children)
+            {
+                child.SetParent(parent);
+            }
+            return parent;
+        }
+
+        /// <summary>
+        /// set parent and not change local transform
+        /// </summary>
+        public static GameObject ChangeParent(this GameObject go, Transform parent)
+        {
+            go.transform.SetParent(parent, false);
+            return go;
+        }
+
         public static GameObject SetParent(this GameObject go, Transform parent, bool worldPositionStays = true)
         {
             go.transform.SetParent(parent, worldPositionStays);
@@ -115,10 +139,6 @@ namespace CbUtils.Extension
             Object.DontDestroyOnLoad(go);
             return go;
         }
-
-        #endregion
-
-        #region Transform
 
         #endregion
 
