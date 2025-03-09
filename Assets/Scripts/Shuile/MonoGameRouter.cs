@@ -82,6 +82,11 @@ namespace Shuile
                 SceneContext.AddParent(sceneMeta.SceneContext);
                 SceneContext.AddParent(context);
             }
+
+            public NestedSceneMeta(string sceneName, IReadOnlyServiceLocator context) : base(sceneName)
+            {
+                SceneContext.AddParent(context);
+            }
         }
     }
 }
