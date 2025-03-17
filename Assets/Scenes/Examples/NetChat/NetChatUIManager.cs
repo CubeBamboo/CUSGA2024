@@ -176,7 +176,7 @@ namespace Scenes.Examples.NetChat
             listener.ConnectionRequestEvent += request =>
             {
                 request.AcceptIfKey("AceTaffy");
-                Debug.Log($"[Server]: get connection request: {request.RemoteEndPoint} - {request.Data.PeekString()}");
+                Debug.Log($"[Server]: get connection request: {request.RemoteEndPoint} - Key: {request.Data.PeekString()}");
             };
 
             listener.PeerConnectedEvent += peer =>

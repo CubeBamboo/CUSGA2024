@@ -86,19 +86,30 @@ namespace Shuile.Editor.EditorTool
                 ScenesMenu.AddItem(new GUIContent(name), false, () => LoadScene(name));
             }
 
-            var examplesScenes = Directory.EnumerateFiles(Path.Join(scenePath, "Examples"))
-                .Where(x => Path.GetExtension(x) == ".unity")
-                .Where(x => !Path.GetFileName(x).StartsWith('_'))
-                .OrderBy(x => x[0]).ToArray();
-
-            if (examplesScenes.Any())
+            var examplesPath = Path.Join(scenePath, "Examples");
+            if (Directory.Exists(examplesPath))
             {
-                ScenesMenu.AddSeparator("");
+                var examplesScenes = Directory.EnumerateFiles(examplesPath, "*.unity")
+                    //.Where(x => Path.GetExtension(x) == ".unity")
+                    .Where(x => !Path.GetFileName(x).StartsWith('_'))
+                    .OrderBy(x => x[0]).ToArray();
 
-                foreach (var se in examplesScenes)
+                if (examplesScenes.Any())
                 {
-                    var name = "Examples/" + Path.GetFileNameWithoutExtension(se);
-                    ScenesMenu.AddItem(new GUIContent(name), false, () => LoadScene(name));
+                    ScenesMenu.AddSeparator("");
+
+                    foreach (var se in examplesScenes)
+                    {
+                        var name = "Examples/" + Path.GetFileNameWithoutExtension(se);
+                        ScenesMenu.AddItem(new GUIContent(name), false, () => LoadScene(name));
+                    }
+
+                    ScenesMenu.AddItem(new GUIContent("Explore Examples In Project"), false, () =>
+                    {
+                        var folderObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>("Assets/Scenes/Examples");
+                        EditorGUIUtility.PingObject(folderObject);
+                        Selection.activeObject = folderObject;
+                    });
                 }
             }
         }

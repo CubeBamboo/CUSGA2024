@@ -1,5 +1,8 @@
 ﻿using Shuile;
+using Shuile.Core.Gameplay.Data;
 using Shuile.Framework;
+using Shuile.Gameplay;
+using Shuile.Gameplay.Model;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -41,9 +44,22 @@ namespace Scenes.Examples.NetChat
                 config.ServerIp = input;
             }
 
-            var context = new ServiceLocator();
+            /*var context = new ServiceLocator();
             context.RegisterInstance(config);
-            MonoGameRouter.Instance.LoadScene(new MonoGameRouter.NestedSceneMeta("NetChatExamples", context));
+            MonoGameRouter.Instance.LoadScene(new MonoGameRouter.NestedSceneMeta("NetChatExamples", context));*/
+
+            var data = GameApplication.BuiltInData.levelDataMap.FirstByLabel("Ginevra");
+            var load = new LevelData
+            {
+                label = data.label, sceneName = "NetLevel2", enemyData = data.enemyData, chartFiles = data.chartFiles,
+                songName = data.songName,
+                composer = data.composer
+            };
+
+            var serviceLocator = new ServiceLocator();
+            serviceLocator.RegisterInstance(config);
+            var levelMeta = new LevelSceneMeta(new SingleLevelData(load));
+            MonoGameRouter.Instance.LoadScene(new MonoGameRouter.NestedSceneMeta(levelMeta, serviceLocator));
         }
     }
 }

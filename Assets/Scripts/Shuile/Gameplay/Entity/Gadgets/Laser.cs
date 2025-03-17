@@ -67,9 +67,10 @@ namespace Shuile
             var evtMono = gameObject.GetOrAddComponent<Collider2DEventMono>();
             evtMono.TriggerStayed += collider =>
             {
-                if (collider.CompareTag("Player"))
+                if (collider.CompareTag("Player") && collider.TryGetComponent(out Player player))
                 {
-                    collider.GetComponent<Player>().OnHurt(200); // TODO: config
+                    player.OnHurt(200); // TODO: config
+
                     if (evtMono)
                     {
                         evtMono.Destroy(); //销毁组件

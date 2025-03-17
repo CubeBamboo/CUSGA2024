@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Examples/NetChat/NetEnterUI.unity
+    guid: cabbb178a42ec9f4c842bc3a32799baf
+  - enabled: 1
     path: Assets/Scenes/Root.unity
     guid: bda70c0ea28b0004082f19a73fcb35a5
   - enabled: 1
@@ -26,5 +29,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EndStatics.unity
     guid: f13ce45b887f52b4c8496220687864b2
+  - enabled: 1
+    path: Assets/Scenes/Examples/NetChat/NetChatUI.unity
+    guid: 21c1690e4b1d1ba449fd77c279be6b0f
+  - enabled: 1
+    path: Assets/Scenes/Examples/NetChat/NetLevel2.unity
+    guid: f0e9abb81d369ff4990a1fbe2d946a16
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 5bddff228ee5a724387610c2c6ef30ef, type: 2}
