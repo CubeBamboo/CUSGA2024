@@ -1,6 +1,8 @@
 ﻿using CbUtils;
+using Cysharp.Threading.Tasks;
 using Shuile.Framework;
 using Shuile.Gameplay.Move;
+using System.Collections;
 using UnityEngine;
 
 namespace Shuile.Gameplay.Character
@@ -12,22 +14,18 @@ namespace Shuile.Gameplay.Character
         /// </summary>
         private class PlayerJumpProxy : BaseProxy
         {
+            private bool _enableUpUpdate;
+            private bool _isFalling;
+            private bool _isWaitJump;
+            private Coroutine _delayStopUpCoroutine;
+            private EasyEvent _onFallToGround = new();
+            private EasyEvent _onFallStart = new();
+
             private readonly UnityEntryPointScheduler _scheduler;
             private readonly SmoothMoveCtrl _moveController;
-            private readonly Settings _settings;
-
-            private BindableProperty<JumpingState> _jumpingState = new();
-            private BindableProperty<InputState> _inputState = new(InputState.HoldOff);
-            private EasyEvent _onJumpingUpdate = new();
-            private EasyEvent _onTouchGround = new();
-
-            private float holdStartTime;
-
-            private UnityEntryPointScheduler.SchedulerTask _jumpingUpdate;
-            private UnityEntryPointScheduler.SchedulerTask _fallUpdate;
+            private Settings _settings;
 
             private MonoAudioChannel _audioChannel;
-            private ResourceLoader _resourceLoader;
             private AudioClip _jumpFx;
 
             public PlayerJumpProxy(UnityEntryPointScheduler scheduler,
@@ -39,98 +37,97 @@ namespace Shuile.Gameplay.Character
                     .Resolve(out _audioChannel)
                     .Resolve(out _settings);
 
-                ConfigureBaseEvent();
-                ConfigureFacadeEvent();
-
-                _resourceLoader = new ResourceLoader();
-                _jumpFx = _resourceLoader.Load<AudioClip>("Assets/Audio/Test/jump.wav");
-            }
-
-            private void ConfigureFacadeEvent()
-            {
-                // jump-enter
-                _jumpingState.BindValueChangeTo(JumpingState.JumpUp, () =>
+                ConfigureEvent();
+                _scheduler.AddFixedUpdate(FixedUpdate);
+                scheduler.AddOnGUI(() =>
                 {
-                    _moveController.Velocity = _moveController.Velocity.With(y: _settings.jumpStartVel);
-                    _audioChannel.Play(_jumpFx);
-
-                    // timer
-                    holdStartTime = Time.time;
+                    GUILayout.Label("gravity: " + _moveController.Gravity);
                 });
 
-                // jumping
-                _onJumpingUpdate.Register(() =>
+                var resourceLoader = new ResourceLoader();
+                _jumpFx = resourceLoader.Load<AudioClip>("Assets/Audio/Test/jump.wav");
+            }
+
+            private void FixedUpdate()
+            {
+                if (_enableUpUpdate)
                 {
                     // lifting power
                     _moveController.Velocity += new Vector2(0, _settings.holdJumpVelAdd);
+                }
 
-                    var hitWall = Mathf.Abs(_moveController.Velocity.y) < 1e-4; // ...
-
-                    if (Time.time - holdStartTime > _settings.jumpMaxDuration || hitWall || _inputState.Value == InputState.HoldOff)
-                    {
-                        // force fall
-                        _jumpingState.Value = JumpingState.Fall;
-                    }
-                });
-
-                // fall
-                _jumpingState.BindValueChangeTo(JumpingState.Fall, () =>
+                if (!_moveController.IsOnGround && Mathf.Abs(_moveController.Velocity.y) < 1e-4) // hit wall
                 {
-                    _moveController.Gravity = _settings.dropGravity;
-                    _fallUpdate.IsEnabled = true;
-                });
+                    _enableUpUpdate = false;
+                }
 
-                // touch ground
-                _onTouchGround.Register(() =>
+                if (_isFalling && _moveController.IsOnGround)
                 {
-                    _moveController.Gravity = _settings.normalGravity;
-                });
+                    _isFalling = false;
+                    _onFallToGround.Invoke();
+                }
+                else if (!_moveController.IsOnGround && _moveController.Velocity.y < -0.1f)
+                {
+                    _isFalling = true;
+                    _onFallStart.Invoke();
+                }
             }
 
-            private void ConfigureBaseEvent()
+            private IEnumerator DelayStopUp()
             {
-                _settings.onInputJumpStart.Register(_ =>
-                {
-                    _inputState.Value = InputState.HoldOn;
-                });
-                _settings.onInputJumpCanceled.Register(_ =>
-                {
-                    _inputState.Value = InputState.HoldOff;
-                });
+                yield return new WaitForSeconds(_settings.jumpMaxDuration);
+                _enableUpUpdate = false;
+            }
 
-                // jump update
-                _jumpingUpdate = _scheduler.AddFixedUpdate(() =>
-                {
-                    _onJumpingUpdate.Invoke();
-                });
-                _jumpingUpdate.IsEnabled = false;
+            private async UniTask CoolDownJump()
+            {
+                await UniTask.DelayFrame(10); // shit coroutine no delay frame
+                _isWaitJump = false;
+            }
 
-                // fall update
-                _fallUpdate = _scheduler.AddFixedUpdate(() =>
+            private void ConfigureEvent()
+            {
+                _settings.onInputJumpStart.Register(OnJumpStart);
+                _settings.onInputJumpCanceled.Register(OnJumpCanceled);
+                _onFallToGround.Register(() => _moveController.Gravity = _settings.normalGravity);
+                _onFallStart.Register(() => _moveController.Gravity = _settings.dropGravity);
+                return;
+
+                // 松开
+                void OnJumpCanceled(float _)
                 {
-                    if (_moveController.IsOnGround)
+                    _enableUpUpdate = false;
+                    _moveController.Gravity = _settings.dropGravity;
+                }
+
+                // 按下
+                void OnJumpStart(float _)
+                {
+                    if (!_isWaitJump && _moveController.IsOnGround)
                     {
-                        _onTouchGround.Invoke();
-                        _jumpingState.Value = JumpingState.Idle;
+                        if (_delayStopUpCoroutine != null)
+                        {
+                            _scheduler.StopCoroutine(_delayStopUpCoroutine);
+                            _delayStopUpCoroutine = null;
+                        }
+
+                        _moveController.Velocity = _moveController.Velocity.With(y: _settings.jumpStartVel);
+                        _audioChannel.Play(_jumpFx);
+
+                        _enableUpUpdate = true;
+                        _delayStopUpCoroutine = _scheduler.StartCoroutine(DelayStopUp());
+
+                        _moveController.Gravity = _settings.normalGravity;
+
+                        _isWaitJump = true;
+                        CoolDownJump().Forget();
                     }
-                });
-                _fallUpdate.IsEnabled = false;
+                }
+            }
 
-                _inputState.BindValueChangeTo(InputState.HoldOn, () =>
-                {
-                    if (_jumpingState.Value != JumpingState.Idle) return;
-                    _jumpingState.Value = JumpingState.JumpUp;
-                });
-
-                _jumpingState.BindValueChangeTo(JumpingState.JumpUp, () =>
-                {
-                    _jumpingUpdate.IsEnabled = true;
-                });
-
-                _jumpingState.BindValueChangeTo(JumpingState.Fall, () =>
-                {
-                    _jumpingUpdate.IsEnabled = false;
-                });
+            public void RefreshSettings(Settings settings)
+            {
+                _settings = settings;
             }
 
             public struct Settings
@@ -144,16 +141,6 @@ namespace Shuile.Gameplay.Character
                 // this is the entry point
                 public EasyEvent<float> onInputJumpStart;
                 public EasyEvent<float> onInputJumpCanceled;
-            }
-
-            private enum JumpingState
-            {
-                Idle, JumpUp, Fall
-            }
-
-            private enum InputState
-            {
-                HoldOn, HoldOff
             }
         }
     }

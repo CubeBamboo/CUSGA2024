@@ -1,5 +1,4 @@
-﻿using CbUtils;
-using Shuile.Framework;
+﻿using Shuile.Framework;
 using Shuile.Gameplay.Move;
 
 namespace Shuile.Gameplay.Character
@@ -8,12 +7,10 @@ namespace Shuile.Gameplay.Character
     {
         private class PlayerMoveProxy : BaseProxy
         {
-            private BindableProperty<float> _moveInputState = new();
-            private readonly UnityEntryPointScheduler.SchedulerTask _moveUpdate;
+            private float _moveInputState;
 
             private SmoothMoveCtrl _moveController;
             private PlayerModel _playerModel;
-            private EasyEvent<float> OnMoveStart;
 
             public PlayerMoveProxy(UnityEntryPointScheduler scheduler, IReadOnlyServiceLocator dependencies) : base(scheduler, dependencies)
             {
@@ -22,28 +19,15 @@ namespace Shuile.Gameplay.Character
                     .Resolve(out _moveController)
                     .Resolve(out _playerModel);
 
-                OnMoveStart = playerInput.OnMoveStart;
-                playerInput.OnMoveStart.Register(v => _moveInputState.Value = v);
-                playerInput.OnMoveCanceled.Register(v => _moveInputState.Value = 0);
+                playerInput.OnMoveStart.Register(v => _moveInputState = v);
+                playerInput.OnMoveCanceled.Register(v => _moveInputState = 0);
 
-                _moveUpdate = scheduler.AddFixedUpdate(() =>
+                scheduler.AddFixedUpdate(() =>
                 {
-                    NormalMove(_moveInputState.Value);
+                    var xInput = _moveInputState;
+                    _moveController.XMove(xInput);
+                    _playerModel.faceDir = xInput;
                 });
-                _moveUpdate.IsEnabled = false;
-
-                _moveInputState.onValueChanged.Register((_, curr) =>
-                {
-                    _moveUpdate.IsEnabled = curr != 0;
-                });
-            }
-
-            /// <summary> update velocity </summary>
-            private void NormalMove(float xInput)
-            {
-                _moveController.XMove(xInput);
-                OnMoveStart?.Invoke(xInput);
-                _playerModel.faceDir = xInput;
             }
         }
     }

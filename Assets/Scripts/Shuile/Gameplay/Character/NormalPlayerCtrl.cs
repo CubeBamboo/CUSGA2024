@@ -54,6 +54,8 @@ namespace Shuile.Gameplay.Character
             _moveController.Acceleration = _moveSettings.acc;
             _moveController.Deceleration = _moveSettings.deAcc;
             _moveController.XMaxSpeed = _moveSettings.xMaxSpeed;
+
+            _playerJumpProxy.RefreshSettings(BuildPlayerJump(_jumpSettings));
         }
 
         private void ConfigureDependency()
@@ -81,16 +83,7 @@ namespace Shuile.Gameplay.Character
             var jumpDependencies = new ServiceLocator();
             jumpDependencies.AddParent(_containerContext);
 
-            jumpDependencies.RegisterInstance(new PlayerJumpProxy.Settings
-            {
-                jumpStartVel = _jumpSettings.jumpStartVel,
-                holdJumpVelAdd = _jumpSettings.holdJumpVelAdd,
-                jumpMaxDuration = _jumpSettings.jumpMaxDuration,
-                normalGravity = _jumpSettings.normalGravity,
-                dropGravity = _jumpSettings.dropGravity,
-                onInputJumpStart = mPlayerInput.OnJumpStart,
-                onInputJumpCanceled = mPlayerInput.OnJumpCanceled,
-            });
+            jumpDependencies.RegisterInstance(BuildPlayerJump(_jumpSettings));
             _playerJumpProxy = new PlayerJumpProxy(_scheduler, jumpDependencies);
             _playerJumpProxy.Forget();
 
@@ -105,6 +98,17 @@ namespace Shuile.Gameplay.Character
             _playerAttackProxy = new PlayerAttackProxy(_scheduler, attackDependencies);
             _playerAttackProxy.Forget();
         }
+
+        private PlayerJumpProxy.Settings BuildPlayerJump(JumpSettings jumpSettings) => new PlayerJumpProxy.Settings
+        {
+            jumpStartVel = jumpSettings.jumpStartVel,
+            holdJumpVelAdd = jumpSettings.holdJumpVelAdd,
+            jumpMaxDuration = jumpSettings.jumpMaxDuration,
+            normalGravity = jumpSettings.normalGravity,
+            dropGravity = jumpSettings.dropGravity,
+            onInputJumpStart = mPlayerInput.OnJumpStart,
+            onInputJumpCanceled = mPlayerInput.OnJumpCanceled,
+        };
 
         [Serializable]
         public class MoveSettings
