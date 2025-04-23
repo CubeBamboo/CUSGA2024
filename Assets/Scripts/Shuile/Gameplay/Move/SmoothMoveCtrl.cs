@@ -31,11 +31,9 @@ namespace Shuile.Gameplay.Move
                 .Resolve(out _rb)
                 .Resolve(out transform)
                 .Resolve(out _scheduler);
-
-            _scheduler.AddFixedUpdate(FixedUpdate);
         }
 
-        private void FixedUpdate()
+        public void FixedUpdate()
         {
             if (_rb.bodyType != RigidbodyType2D.Static)
             {

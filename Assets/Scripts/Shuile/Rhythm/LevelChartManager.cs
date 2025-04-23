@@ -43,13 +43,6 @@ namespace Shuile.Rhythm
             {
                 _noteList.Dispose();
             });
-
-            scheduler.AddOnGUI(() =>
-            {
-                GUI.skin.label.fontSize = 20;
-                GUILayout.Label($"time: {_noteList.CurrentTime}");
-                GUILayout.Label($"next: {_noteList.Current.Time}");
-            });
         }
 
         private void NoteListOnOnTickToNote(LevelNoteList.NoteData obj)

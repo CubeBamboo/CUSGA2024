@@ -19,7 +19,7 @@ namespace Shuile.Gameplay.Character
         private LevelModel _levelModel;
         private SceneTransitionManager _sceneTransitionManager;
 
-        private SmoothMoveCtrl _moveController;
+        // private SmoothMoveCtrl _moveController;
         private MusicRhythmManager _musicRhythmManager;
         private PlayerModel _playerModel;
         private Rigidbody2D _rb;
@@ -41,7 +41,7 @@ namespace Shuile.Gameplay.Character
             base.LoadFromParentContext(context);
             context
                 .Resolve(out _levelFeelManager)
-                .Resolve(out _moveController)
+                // .Resolve(out _moveController)
                 .Resolve(out player)
                 .Resolve(out _playerModel)
                 .Resolve(out _musicRhythmManager)
@@ -84,7 +84,7 @@ namespace Shuile.Gameplay.Character
 
             player.OnHurted.Register(() =>
             {
-                _moveController.Velocity = new Vector2(_playerModel.faceDir * HurtXForce, HurtYForce);
+                _rb.velocity = new Vector2(_playerModel.faceDir * HurtXForce, HurtYForce);
                 animCtrl.Trigger(PlayerAnimCtrl.AnimTrigger.Hurt);
                 _levelFeelManager.CameraShake(token: _sceneTransitionManager.SceneChangedToken);
                 //MonoAudioCtrl.Instance.PlayOneShot("Player_Hurt");

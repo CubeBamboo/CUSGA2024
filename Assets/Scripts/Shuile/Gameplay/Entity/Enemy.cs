@@ -68,6 +68,14 @@ namespace Shuile.Gameplay.Entity
             OnAwake();
         }
 
+        private void FixedUpdate()
+        {
+            if (IsAlive)
+            {
+                moveController.FixedUpdate();
+            }
+        }
+
         public virtual void OnHurt(int attackPoint)
         {
             if (Health <= 0)

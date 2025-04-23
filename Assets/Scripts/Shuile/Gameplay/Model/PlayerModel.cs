@@ -5,7 +5,7 @@ namespace Shuile
         public bool canInviciable = true;
         public float currentHitOffset;
 
-        public float faceDir = 1;
+        public int faceDir = 1;
         public bool isInviciable = false;
     }
 }

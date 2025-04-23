@@ -22,7 +22,8 @@ namespace Shuile.Gameplay.Character
             private EasyEvent _onFallStart = new();
 
             private readonly UnityEntryPointScheduler _scheduler;
-            private readonly SmoothMoveCtrl _moveController;
+            private Rigidbody2D _rb;
+            // private readonly SmoothMoveCtrl _moveController;
             private Settings _settings;
 
             private MonoAudioChannel _audioChannel;
@@ -33,36 +34,39 @@ namespace Shuile.Gameplay.Character
             {
                 _scheduler = scheduler;
                 dependencies
-                    .Resolve(out _moveController)
+                    .Resolve(out GameObject gameObject)
                     .Resolve(out _audioChannel)
                     .Resolve(out _settings);
 
                 ConfigureEvent();
                 _scheduler.AddFixedUpdate(FixedUpdate);
+                _rb = gameObject.GetComponent<Rigidbody2D>();
 
                 var resourceLoader = new ResourceLoader();
                 _jumpFx = resourceLoader.Load<AudioClip>("Assets/Audio/Test/jump.wav");
             }
+
+            private bool IsOnGround => Mathf.Abs(_rb.velocity.y) < 1e-4 && _rb.attachedColliderCount > 0;
 
             private void FixedUpdate()
             {
                 if (_enableUpUpdate)
                 {
                     // lifting power
-                    _moveController.Velocity += new Vector2(0, _settings.holdJumpVelAdd);
+                    _rb.velocity += new Vector2(0, _settings.holdJumpVelAdd);
                 }
 
-                if (!_moveController.IsOnGround && Mathf.Abs(_moveController.Velocity.y) < 1e-4) // hit wall
+                if (!IsOnGround && Mathf.Abs(_rb.velocity.y) < 1e-4) // hit wall
                 {
                     _enableUpUpdate = false;
                 }
 
-                if (_isFalling && _moveController.IsOnGround)
+                if (_isFalling && IsOnGround)
                 {
                     _isFalling = false;
                     _onFallToGround.Invoke();
                 }
-                else if (!_moveController.IsOnGround && _moveController.Velocity.y < -0.1f)
+                else if (!IsOnGround && _rb.velocity.y < -0.1f)
                 {
                     _isFalling = true;
                     _onFallStart.Invoke();
@@ -85,21 +89,21 @@ namespace Shuile.Gameplay.Character
             {
                 _settings.onInputJumpStart.Register(OnJumpStart);
                 _settings.onInputJumpCanceled.Register(OnJumpCanceled);
-                _onFallToGround.Register(() => _moveController.Gravity = _settings.normalGravity);
-                _onFallStart.Register(() => _moveController.Gravity = _settings.dropGravity);
+                _onFallToGround.Register(() => _rb.gravityScale = _settings.normalGravity);
+                _onFallStart.Register(() => _rb.gravityScale = _settings.dropGravity);
                 return;
 
                 // 松开
                 void OnJumpCanceled(float _)
                 {
                     _enableUpUpdate = false;
-                    _moveController.Gravity = _settings.dropGravity;
+                    _rb.gravityScale = _settings.dropGravity;
                 }
 
                 // 按下
                 void OnJumpStart(float _)
                 {
-                    if (!_isWaitJump && _moveController.IsOnGround)
+                    if (!_isWaitJump && IsOnGround)
                     {
                         if (_delayStopUpCoroutine != null)
                         {
@@ -107,13 +111,13 @@ namespace Shuile.Gameplay.Character
                             _delayStopUpCoroutine = null;
                         }
 
-                        _moveController.Velocity = _moveController.Velocity.With(y: _settings.jumpStartVel);
+                        _rb.velocity = _rb.velocity.With(y: _settings.jumpStartVel);
                         _audioChannel.Play(_jumpFx);
 
                         _enableUpUpdate = true;
                         _delayStopUpCoroutine = _scheduler.StartCoroutine(DelayStopUp());
 
-                        _moveController.Gravity = _settings.normalGravity;
+                        _rb.gravityScale = _settings.normalGravity;
 
                         _isWaitJump = true;
                         CoolDownJump().Forget();

@@ -39,7 +39,7 @@ namespace Shuile.Gameplay.Character
             context.RegisterInstance(GetComponent<Rigidbody2D>());
             context.RegisterInstance(GetComponent<NormalPlayerCtrl>());
 
-            context.RegisterFactory(() => new SmoothMoveCtrl(context));
+            // context.RegisterFactory(() => new SmoothMoveCtrl(context));
             context.RegisterFactory(() => new PlayerChartManager(context));
 
             context.Inject(new NormalPlayerFeel(scheduler));

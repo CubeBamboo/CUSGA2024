@@ -11,8 +11,10 @@ namespace Shuile.Gameplay.Character
         [SerializeField] private MoveSettings _moveSettings = new();
         [SerializeField] private JumpSettings _jumpSettings = new();
         [SerializeField] private AttackSettings _attackSettings = new();
+        [SerializeField] private AnimationCurve _accelerationCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        [SerializeField] private AnimationCurve _deAccelerationCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
-        private SmoothMoveCtrl _moveController; // only used for refresh parameter in unity editor
+        // private SmoothMoveCtrl _moveController; // only used for refresh parameter in unity editor
 
         private NormalPlayerInput mPlayerInput;
 
@@ -50,10 +52,10 @@ namespace Shuile.Gameplay.Character
 
         private void RefreshParameter()
         {
-            _moveController.IsFrozen = false;
-            _moveController.Acceleration = _moveSettings.acc;
-            _moveController.Deceleration = _moveSettings.deAcc;
-            _moveController.XMaxSpeed = _moveSettings.xMaxSpeed;
+            // _moveController.IsFrozen = false;
+            // _moveController.Acceleration = _moveSettings.acc;
+            // _moveController.Deceleration = _moveSettings.deAcc;
+            // _moveController.XMaxSpeed = _moveSettings.xMaxSpeed;
 
             _playerJumpProxy.RefreshSettings(BuildPlayerJump(_jumpSettings));
         }
@@ -63,8 +65,8 @@ namespace Shuile.Gameplay.Character
             var monoContainer = GetComponent<MonoContainer>();
             monoContainer.MakeSureInit();
             _containerContext = monoContainer.Context;
-            _containerContext
-                .Resolve(out _moveController);
+            // _containerContext
+            //     .Resolve(out _moveController);
 
             mPlayerInput = GetComponent<NormalPlayerInput>();
         }
@@ -75,8 +77,10 @@ namespace Shuile.Gameplay.Character
             var moveDependencies = new ServiceLocator();
             moveDependencies.AddParent(_containerContext);
 
+            moveDependencies.RegisterInstance(gameObject);
             moveDependencies.RegisterInstance(mPlayerInput);
-            _playerMoveProxy = new PlayerMoveProxy(_scheduler, moveDependencies);
+            moveDependencies.RegisterInstance(_moveSettings);
+            _playerMoveProxy = new PlayerMoveProxy(_scheduler, moveDependencies, _accelerationCurve, _deAccelerationCurve);
             _playerMoveProxy.Forget();
 
             // jump
