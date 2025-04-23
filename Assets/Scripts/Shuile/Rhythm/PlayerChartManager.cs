@@ -1,60 +1,70 @@
 using Shuile.Chart;
 using Shuile.Core.Global.Config;
 using Shuile.Framework;
-using Shuile.Gameplay;
-using System;
+using Shuile.Gameplay.Model;
 
 namespace Shuile.Rhythm.Runtime
 {
     // manage chart of player, convert chart to runtime note object noteContainer
     public class PlayerChartManager : BaseChartManager
     {
-        // chart part
         private readonly ChartData _chart = ChartDataCreator.CreatePlayerDefault();
+        private PlayerNoteList _noteList;
+        private float _lastRhythmTime;
+
         private readonly LevelConfigSO _levelConfig;
         private readonly MusicRhythmManager _musicRhythmManager;
-        private Lazy<ChartPlayer> _chartPlayer;
 
-        private float _notePreShowInterval = 0.4f;
+        public float LastHitNote { get; private set; }
+
+        public PlayerNoteList NoteList => _noteList;
 
         public PlayerChartManager(RuntimeContext locator) : base(locator)
         {
             locator.Resolve(out _musicRhythmManager)
+                .Resolve(out SingleLevelData singleLevelData)
                 .Resolve(out UnityEntryPointScheduler scheduler);
 
-            scheduler.AddFixedUpdate(FixedTick);
-
             _levelConfig = GameApplication.BuiltInData.levelConfig;
-            _notePreShowInterval = _levelConfig.playerNotePreShowTime;
-            noteContainer = new NoteContainer();
-            _chartPlayer = new Lazy<ChartPlayer>(() => new ChartPlayer(_chart,
-                note => GetNotePlayTime(note) - _notePreShowInterval));
-            ChartPlayer.OnNotePlay += (note, _) => noteContainer.AddNote(GetNotePlayTime(note));
+            _chart.time = singleLevelData.ChartData.time;
+            _noteList = new PlayerNoteList(_chart);
+
+            scheduler.AddOnce(Start);
+            scheduler.AddUpdate(Tick);
+            scheduler.AddCallOnDestroy(() =>
+            {
+                _noteList.Dispose();
+            });
         }
 
-        public NoteContainer noteContainer { get; private set; }
-
-        public NoteContainer NoteContainer => noteContainer;
-        public ChartPlayer ChartPlayer => _chartPlayer.Value;
-        public int Count => noteContainer.Count;
-
-        public void FixedTick()
+        private void Start()
         {
-            ChartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
-            noteContainer.CheckRelease(_musicRhythmManager.CurrentTime);
+            _noteList.PlayStart();
         }
 
-        public event Action OnPlayerHitOn;
-
-        public SingleNote TryGetNearestNote(float currentTime)
+        private void Tick()
         {
-            return noteContainer.TryGetNearestNote(currentTime);
+            var delta = _musicRhythmManager.CurrentTime - _lastRhythmTime;
+            _noteList.PlayTick(delta);
+            _noteList.PlayerListTick(delta);
+            _lastRhythmTime = _musicRhythmManager.CurrentTime;
         }
 
-        public void HitNote(SingleNote note)
+        // public event Action PlayerHitOn;
+
+        public bool TryHitNoteNow()
         {
-            OnPlayerHitOn?.Invoke();
-            noteContainer.ReleaseNote(note);
+            var time = _musicRhythmManager.CurrentTime;
+            var tolerance = _levelConfig.MissToleranceInSeconds;
+            var note = _noteList.ActiveNotes.First;
+            if (_noteList.TryHit(time, tolerance))
+            {
+                LastHitNote = note.Value.Time;
+                // PlayerHitOn?.Invoke();
+                return true;
+            }
+
+            return false;
         }
     }
 }

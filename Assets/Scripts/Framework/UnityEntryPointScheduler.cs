@@ -10,6 +10,7 @@ namespace Shuile.Framework
     public class UnityEntryPointScheduler : MonoBehaviour
     {
         private readonly Queue<Action> taskQueue = new();
+        private readonly Queue<Action> fixedTaskQueue = new(); // before FixedUpdate
         private readonly List<SchedulerTask> updateTasks = new();
         private readonly List<SchedulerTask> fixedUpdateTasks = new();
         private readonly List<SchedulerTask> lateUpdateTasks = new();
@@ -51,6 +52,11 @@ namespace Shuile.Framework
 
         private void FixedUpdate()
         {
+            while(fixedTaskQueue.Count > 0)
+            {
+                SafeInvoke(fixedTaskQueue.Dequeue());
+            }
+
             InvokeList(fixedUpdateTasks);
         }
 
@@ -65,6 +71,11 @@ namespace Shuile.Framework
         }
 
         #endregion
+
+        public void AddFixedOnce(Action action)
+        {
+            fixedTaskQueue.Enqueue(action);
+        }
 
         /// <summary>
         /// will be executed in the next frame. can be used as Start() if called during MonoBehaviour.Awake()

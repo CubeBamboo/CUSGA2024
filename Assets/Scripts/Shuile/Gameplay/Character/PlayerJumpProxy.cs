@@ -39,10 +39,6 @@ namespace Shuile.Gameplay.Character
 
                 ConfigureEvent();
                 _scheduler.AddFixedUpdate(FixedUpdate);
-                scheduler.AddOnGUI(() =>
-                {
-                    GUILayout.Label("gravity: " + _moveController.Gravity);
-                });
 
                 var resourceLoader = new ResourceLoader();
                 _jumpFx = resourceLoader.Load<AudioClip>("Assets/Audio/Test/jump.wav");

@@ -1,40 +1,79 @@
 using Shuile.Chart;
-using Shuile.Core.Framework.Unity;
 using Shuile.Framework;
+using Shuile.Gameplay.Entity;
+using Shuile.Gameplay.Manager;
 using Shuile.Gameplay.Model;
 using Shuile.Rhythm.Runtime;
+using System;
+using UnityEngine;
 
 namespace Shuile.Rhythm
 {
     // play chart for single level
     // control enemy spawn and other event
     // it will auto play.
-    public class LevelChartManager : BaseChartManager, IStartable, IFixedTickable
+    public class LevelChartManager : BaseChartManager
     {
+        private readonly LevelEntityManager _entityManager;
+        private readonly LevelZoneManager _levelZoneManager;
+
         private MusicRhythmManager _musicRhythmManager;
 
-        // chart part
-        private readonly ChartData chart;
-        private ChartPlayer chartPlayer;
+        private float _lastRhythmTime;
+        private LevelNoteList _noteList;
 
         public bool isPlay = true;
 
         public LevelChartManager(RuntimeContext context) : base(context)
         {
-
             context
                 .Resolve(out _musicRhythmManager)
                 .Resolve(out SingleLevelData levelContext)
+                .Resolve(out _entityManager)
+                .Resolve(out _levelZoneManager)
                 .Resolve(out UnityEntryPointScheduler scheduler);
 
-            scheduler.AddOnce(Start);
-            scheduler.AddFixedUpdate(FixedTick);
+            var chart = levelContext.ChartData;
+            _noteList = new LevelNoteList(chart);
+            _noteList.OnTickToPreNote += NoteListOnOnTickToNote;
 
-            chart = levelContext.ChartData;
-            chartPlayer = new ChartPlayer(chart, this);
+            scheduler.AddOnce(Start);
+            scheduler.AddUpdate(Tick);
+            scheduler.AddCallOnDestroy(() =>
+            {
+                _noteList.Dispose();
+            });
+
+            scheduler.AddOnGUI(() =>
+            {
+                GUI.skin.label.fontSize = 20;
+                GUILayout.Label($"time: {_noteList.CurrentTime}");
+                GUILayout.Label($"next: {_noteList.Current.Time}");
+            });
         }
 
-        public void FixedTick()
+        private void NoteListOnOnTickToNote(LevelNoteList.NoteData obj)
+        {
+            switch (obj.type)
+            {
+                case 0:
+                    var inst = _entityManager.EntityFactory.SpawnLaser();
+                    inst.transform.position = _levelZoneManager.RandomValidPosition();
+                    break;
+                case 1:
+                    throw new NotSupportedException();
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        public void Start()
+        {
+            _noteList.PlayStart();
+            _lastRhythmTime = _musicRhythmManager.CurrentTime;
+        }
+
+        public void Tick()
         {
 #if UNITY_EDITOR
             if (!isPlay)
@@ -42,12 +81,9 @@ namespace Shuile.Rhythm
                 return;
             }
 #endif
-            chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
-        }
 
-        public void Start()
-        {
-            chartPlayer.OnNotePlay += (note, _) => ProcessNote(note);
+            _noteList.PlayTick(_musicRhythmManager.CurrentTime - _lastRhythmTime);
+            _lastRhythmTime = _musicRhythmManager.CurrentTime;
         }
     }
 }

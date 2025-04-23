@@ -31,23 +31,5 @@ namespace Shuile.Rhythm.Runtime
                 _ => throw new ArgumentException()
             };
         }
-
-        public void ProcessNote(BaseNoteData noteData)
-        {
-            switch (noteData)
-            {
-                case SpawnLaserNoteData laserNoteData:
-                    _entityManager.EntityFactory.SpawnLaser().gameObject
-                        .SetPosition(_levelZoneManager.RandomValidPosition());
-                    break;
-                case SpawnSingleEnemyNoteData enemyNoteData:
-                    throw new NotSupportedException();
-                    break;
-                case not null:
-                    break;
-                default:
-                    throw new ArgumentException();
-            }
-        }
     }
 }

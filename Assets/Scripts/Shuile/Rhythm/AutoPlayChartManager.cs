@@ -1,7 +1,7 @@
 using Shuile.Chart;
 using Shuile.Core.Framework.Unity;
 using Shuile.Framework;
-using Shuile.Gameplay.Entity;
+using Shuile.Gameplay.Model;
 using Shuile.Rhythm.Runtime;
 using System;
 
@@ -13,7 +13,9 @@ namespace Shuile.Rhythm
         // chart part
         private readonly ChartData _chart = ChartDataCreator.CreatePlayerDefault();
         private MusicRhythmManager _musicRhythmManager;
-        private ChartPlayer _chartPlayer;
+
+        private AutoPlayNoteList _noteList;
+        private float _lastRhythmTime;
 
         private Action onNextRhythm;
 
@@ -21,27 +23,34 @@ namespace Shuile.Rhythm
         {
             context
                 .Resolve(out _musicRhythmManager)
+                .Resolve(out SingleLevelData singleLevelData)
                 .Resolve(out UnityEntryPointScheduler scheduler);
 
-            scheduler.AddOnce(Start);
+            _chart.time = singleLevelData.ChartData.time;
+            _noteList = new AutoPlayNoteList(_chart);
+            _noteList.OnTickToNote += NoteListOnOnTickToNote;
+
+            scheduler.AddFixedOnce(Start);
             scheduler.AddFixedUpdate(FixedTick);
-            _chartPlayer = new ChartPlayer(_chart, this);
+        }
+
+        private void NoteListOnOnTickToNote(AutoPlayNoteList.NoteData obj)
+        {
+            OnRhythmHit?.Invoke();
+
+            onNextRhythm?.Invoke();
+            onNextRhythm = null;
         }
 
         public void FixedTick()
         {
-            _chartPlayer.PlayUpdate(_musicRhythmManager.CurrentTime);
+            _noteList.PlayTick(_musicRhythmManager.CurrentTime - _lastRhythmTime);
+            _lastRhythmTime = _musicRhythmManager.CurrentTime;
         }
 
         public void Start()
         {
-            _chartPlayer.OnNotePlay += (_, _) =>
-            {
-                OnRhythmHit?.Invoke();
-
-                onNextRhythm?.Invoke();
-                onNextRhythm = null;
-            };
+            _noteList.PlayStart();
         }
 
         /// <summary> call when a beat is hit </summary>

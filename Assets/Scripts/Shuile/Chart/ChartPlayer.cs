@@ -1,105 +1,308 @@
-using Shuile.Rhythm.Runtime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
+using UnityEngine;
 
 namespace Shuile.Chart
 {
-    /// <summary> provide play interface and then use monobehavior to update its time </summary>
-    public class ChartPlayer
+    public interface INote
     {
-        private ChartData chart;
+        float Time { get; }
+    }
 
-        private int nextNoteIndex;
-        private List<PlayTimeData> playTimeArray;
+    public abstract class BaseNoteList<T> : IEnumerable<T>, IDisposable where T : INote
+    {
+        private IEnumerator<T> _nextNoteEnumerator; // precise position for next note
 
-        public ChartPlayer(ChartData chart, Func<BaseNoteData, float> onPlayTimeConvert)
+        protected float _currentTime;
+
+        public float CurrentTime => _currentTime;
+        public T Current => _nextNoteEnumerator.Current;
+        public bool MoveNext()
         {
-            Init(chart, onPlayTimeConvert);
+            return _nextNoteEnumerator.MoveNext();
         }
 
-        public ChartPlayer(ChartData chart, BaseChartManager chartManager)
-        {
-            Init(chart, PlayTimeConvert);
-            return;
+        public bool Ticking { get; protected set; }
+        public event Action<T> OnTickToNote; // real-time
 
-            float PlayTimeConvert(BaseNoteData note)
+        public void PlayStart()
+        {
+            _nextNoteEnumerator = GetEnumerator();
+            Ticking = _nextNoteEnumerator.MoveNext();
+        }
+
+        // public void OnGUI()
+        // {
+        //     GUILayout.Label($"CurrentTime: {CurrentTime}");
+        //     GUILayout.Label($"NextNote: {(Current?.Time.ToString() ?? "null")}");
+        //     GUILayout.Label($"TickEnd: {Ticking}");
+        // }
+
+        public virtual void PlayTick(float delta)
+        {
+            if (!Ticking) return;
+
+            _currentTime += delta;
+            if (_currentTime > _nextNoteEnumerator.Current.Time)
             {
-                return chartManager.GetNotePlayTime(note);
+                OnTickToNote?.Invoke(_nextNoteEnumerator.Current);
+                Ticking = _nextNoteEnumerator.MoveNext();
             }
         }
 
-        public ReadOnlyCollection<PlayTimeData> PlayTimeArray => playTimeArray.AsReadOnly();
-
-        /// <summary>
-        ///     call when it's time to play the note
-        /// </summary>
-        public event Action<BaseNoteData, float> OnNotePlay = (_, _) => { };
-
-        private void Init(ChartData chart, Func<BaseNoteData, float> onPlayTimeConvert)
+        public abstract IEnumerator<T> GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            this.chart = chart;
-            // convert target time (music beat) to play time (show in screen)
-            playTimeArray = new List<PlayTimeData>(chart.note.Length);
-            playTimeArray.Clear();
-            for (var i = 0; i < chart.note.Length; i++)
-            {
-                playTimeArray.Add(new PlayTimeData
-                {
-                    playTime = onPlayTimeConvert.Invoke(chart.note[i]), originNoteIndex = i
-                });
-            }
-
-            playTimeArray.Sort((a, b) => a.playTime.CompareTo(b.playTime));
+            return GetEnumerator();
         }
 
-        /// <summary> call OnNotePlay when a note need to play </summary>
-        /// <param name="time">update note state with it</param>
-        public void PlayUpdate(float time)
+        public void Dispose()
         {
-            if (nextNoteIndex >= playTimeArray.Count)
-            {
-                return;
-            }
-
-            // if next note time is less than current time, add note to noteContainer and trigger some event
-            var nextNoteTime = playTimeArray[nextNoteIndex].playTime;
-            if (time > nextNoteTime)
-            {
-                OnNotePlay.Invoke(chart.note[playTimeArray[nextNoteIndex].originNoteIndex], time);
-                nextNoteIndex++;
-            }
-        }
-
-        public struct PlayTimeData
-        {
-            public float playTime;
-            public int originNoteIndex;
+            _nextNoteEnumerator?.Dispose();
         }
     }
 
-    /* // example
-    public class PlayerChartManagerTest : MonoSingletons<PlayerChartManager>
+    public abstract class PreNoteList<T> : BaseNoteList<T> where T : INote
     {
-        private NoteContainer noteContainer = new();
+        protected float preInterval; // 1.5s before the note
 
-        // chart part
-        private readonly ChartData chart = ChartDataCreator.CreatePlayerDefault();
-        private ChartPlayer chartPlayer;
+        public event Action<T> OnTickToPreNote; // note need to be process in advance
 
-        private void Start()
+        protected PreNoteList(float preInterval)
         {
-            chartPlayer = new ChartPlayer(chart);
-            chartPlayer.OnNotePlay += note => noteContainer.AddNote(note.targetTime);
+            this.preInterval = preInterval;
         }
 
-        private void FixedUpdate()
+        public override void PlayTick(float delta)
         {
-            chartPlayer.PlayUpdate(MusicRhythmManager.Instance.CurrentTime);
+            if (!Ticking) return;
+
+            _currentTime += delta;
+            if (_currentTime > Current.Time - preInterval)
+            {
+                var current = Current;
+                OnTickToPreNote?.Invoke(current);
+                Ticking = MoveNext();
+            }
+        }
+    }
+
+    public class LevelNoteList : PreNoteList<LevelNoteList.NoteData>
+    {
+        public struct NoteData : INote
+        {
+            public int type;
+            public float time;
+
+            public float Time => time;
         }
 
-        public int Count => noteContainer.Count;
-        public SingleNote TryGetNearestNote() => noteContainer.TryGetNearestNote();
-        public void HitNote(SingleNote note) => noteContainer.ReleseNote(note);
-    }*/
+        private List<NoteData> _realTimeList;
+
+        public LevelNoteList(ChartData chartData) : base(0f)
+        {
+            var chart = chartData;
+            var bpm = chart.time[0].bpm;
+            var offset = chart.time[0].offset * 0.001f;
+            preInterval = Laser.InTime * (60 / bpm) + offset; // so complex so calculate here
+
+            _realTimeList = chart.note.Select(x =>
+            {
+                return new NoteData()
+                {
+                    time = x.rhythmTime * (60 / bpm) + offset,
+                    type = x.GetType().Name switch
+                    {
+                        nameof(SpawnLaserNoteData) => 0,
+                        nameof(SpawnSingleEnemyNoteData) => 1,
+                        _ => -1
+                    }
+                };
+            }).ToList();
+            _realTimeList.Sort((a, b) =>
+            {
+                var del = a.time - b.time;
+                return del == 0 ? 0 : del > 0 ? 1 : -1;
+            });
+        }
+
+        public override IEnumerator<NoteData> GetEnumerator()
+        {
+            return _realTimeList.GetEnumerator();
+        }
+    }
+
+    public class AutoPlayNoteList : BaseNoteList<AutoPlayNoteList.NoteData>
+    {
+        public struct NoteData : INote
+        {
+            public float time;
+            public float Time => time;
+        }
+
+        private float bpm;
+        private float offset;
+
+        private int _count = 0;
+
+        public AutoPlayNoteList(ChartData chartData)
+        {
+            bpm = chartData.time[0].bpm;
+            offset = chartData.time[0].offset * 0.001f;
+        }
+
+        public bool PlayEnd { get; set; }
+
+        public override IEnumerator<NoteData> GetEnumerator()
+        {
+            while (!PlayEnd)
+            {
+                yield return new NoteData() { time = (_count++) * (60 / bpm) + offset };
+            }
+        }
+    }
+
+    // no need to tick
+    public class PlayerNoteList : PreNoteList<PlayerNoteList.NoteData>
+    {
+        public struct NoteData : INote
+        {
+            public float time;
+
+            public float Time => time;
+        }
+
+        private float bpm;
+        private float offset;
+        // private float currentTime;
+
+        private int _count = 0;
+
+        private Stack<LinkedListNode<NoteData>> _nodePool = new Stack<LinkedListNode<NoteData>>();
+
+        public LinkedList<NoteData> ActiveNotes { get; } = new LinkedList<NoteData>();
+
+        public event Action<NoteData> ActiveNoteNewEnter, ActiveNoteDiscard, ActiveNoteHit;
+
+        public PlayerNoteList(ChartData chartData) : base(1.5f)
+        {
+            bpm = chartData.time[0].bpm;
+            offset = chartData.time[0].offset * 0.001f;
+
+            OnTickToPreNote += note =>
+            {
+                var node = GetNode(note); // gc optimize
+                ActiveNotes.AddLast(node);
+                // ActiveNotes.AddLast(NextNote);
+
+                ActiveNoteNewEnter?.Invoke(Current);
+            };
+        }
+
+        private LinkedListNode<NoteData> GetNode(NoteData note)
+        {
+            if (_nodePool.TryPop(out var node))
+            {
+                node.Value = note;
+                return node;
+            }
+            else
+            {
+                return new LinkedListNode<NoteData>(note);
+            }
+        }
+
+        private void ReleaseNode(LinkedListNode<NoteData> node)
+        {
+            _nodePool.Push(node);
+        }
+
+        public void PlayerListTick(float delta)
+        {
+            if (!Ticking) return;
+            if (ActiveNotes.First == null) return;
+
+            if (_currentTime > ActiveNotes.First.Value.time + 0.3f)
+            {
+                var first = ActiveNotes.First;
+                ActiveNotes.RemoveFirst();
+                ReleaseNode(first);
+                ActiveNoteDiscard?.Invoke(first.Value);
+            }
+        }
+
+        public bool TryHit(float time, float tolerance)
+        {
+            if (ActiveNotes.First == null)
+            {
+                return false;
+            }
+
+            if (Mathf.Abs(ActiveNotes.First.Value.Time - time) < tolerance)
+            {
+                var first = ActiveNotes.First.Value;
+                ActiveNotes.RemoveFirst();
+                ActiveNoteHit?.Invoke(first);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool PlayEnd { get; set; }
+
+        public override IEnumerator<NoteData> GetEnumerator()
+        {
+            while (!PlayEnd)
+            {
+                yield return new NoteData() { time = (_count++) * (60 / bpm) + offset };
+            }
+        }
+    }
 }
+
+/*public float PeekNearest(float time, float tolerance)
+{
+    if (NextNote.Time < time) // less
+    {
+        var nearestLess = NextNote.Time;
+        if (time - NextNote.Time > tolerance) // soooo far, use a nearer one
+        {
+            var bpmInterval = 60 / bpm;
+            var delta = time - (NextNote.Time - offset);
+            nearestLess = NextNote.Time + (int)(delta / bpmInterval) * bpmInterval;
+        }
+
+        if (time - nearestLess < tolerance)
+        {
+            return nearestLess;
+        }
+        else
+        {
+            return nearestLess + 60 / bpm;
+        }
+    }
+    else
+    {
+        return time;
+    }
+}
+
+public bool MoveToNearest(float time, float tolerance)
+{
+    var mov = true;
+    while (mov && NextNote.Time < time && time - NextNote.Time > tolerance)
+    {
+        mov = MoveNext();
+    }
+
+    return mov;
+}
+
+public float GetNearest(float time, float tolerance)
+{
+    MoveToNearest(time, tolerance);
+    return NextNote.Time;
+}*/

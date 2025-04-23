@@ -12,7 +12,6 @@ namespace Shuile.Gameplay.Character
         private class PlayerAttackProxy : BaseProxy
         {
             private readonly bool _needHitWithRhythm;
-            private TryHitNoteCommand _hitNoteCommand;
 
             private readonly Transform _transform;
             private readonly PlayerModel _playerModel;
@@ -44,20 +43,17 @@ namespace Shuile.Gameplay.Character
 
             private void Start()
             {
-                _hitNoteCommand = new TryHitNoteCommand
-                {
-                    musicRhythmManager = _musicRhythmManager,
-                    playerChartManager = _playerChartManager,
-                    inputTime = _musicRhythmManager.CurrentTime
-                };
             }
 
             private bool CheckRhythm()
             {
-                _hitNoteCommand.inputTime = _musicRhythmManager.CurrentTime;
-                _hitNoteCommand.Execute();
-                _playerModel.currentHitOffset = _hitNoteCommand.result.hitOffset;
-                return _hitNoteCommand.result.isHitOn;
+                if (_playerChartManager.TryHitNoteNow())
+                {
+                    _playerModel.currentHitOffset = _playerChartManager.LastHitNote - _musicRhythmManager.CurrentTime;
+                    return true; // minimal code so not handle statics logic here
+                }
+
+                return false;
             }
 
             private void Attack()
